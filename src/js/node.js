@@ -1,6 +1,7 @@
 /**
  * 트리의 노드를 구성한다
  *
+ * @author FE개발팀 이제인(jein.yi@nhnent.com)
  * @class
  *
  * **/
@@ -19,13 +20,14 @@ var Node = Class.extend(/** @lends Node.prototype */{
         this.state = options.state || 'close';
         this.childNodes = null;
         this.parent = null;
+        this.siblings = null;
     },
     /**
      *
      * 노드의 상태변경
      *
      * @param {String} type 변경할 노드의 필드값
-     * @param {String} state 노드 옵션
+     * @param {String} value 노드 옵션
      *
      * **/
     set: function(type, value) {

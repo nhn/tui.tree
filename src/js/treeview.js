@@ -1,6 +1,7 @@
 /**
  * 화면에 보여지는 트리를 그리고, 갱신한다.
  *
+ * @author FE개발팀 이제인(jein.yi@nhnent.com)
  * @class
  */
 var TreeView = Class.extend(/** @lends TreeView.prototype */{
@@ -12,29 +13,30 @@ var TreeView = Class.extend(/** @lends TreeView.prototype */{
      * @param {Object} options 트리 초기옵션값
      * @param {String} template 트리에사용되는 기본 태그(자식노드가 있을때와 없을때를 오브젝트 형태로 받는)
      * */
-    init: function (id, data, options, template) {
+    init: function (options, data, template) {
 
         this.template = template || {
             hasChild: '<li class="hasChild {{State}}">\
-                        <button type="button">{{StateLabel}}</button>\
-                        <span id="{{NodeID}}" path="{{Path}}" class="depth{{Depth}}">{{Title}}</span><em>{{DepthLabel}}</em>\
-                        <ul class="subTree">\
-                            {{ChildNodes}}\
-                        </ul>\
-                    </li>',
+                            <button type="button">{{StateLabel}}</button>\
+                            <span id="{{NodeID}}" path="{{Path}}" class="depth{{Depth}}">{{Title}}</span><em>{{DepthLabel}}</em>\
+                            <ul class="subTree">\
+                                {{ChildNodes}}\
+                            </ul>\
+                        </li>',
             leapNode: '<li class="leapNode">\
-                    <button type="button">{{StateLabel}}</button>\
-                    <span id="{{NodeID}}" path="{{Path}}" class="depth{{Depth}}">{{Title}}</span><em>{{DepthLabel}}</em>\
-                </li>'
+                        <span id="{{NodeID}}" path="{{Path}}" class="depth{{Depth}}">{{Title}}</span><em>{{DepthLabel}}</em>\
+                    </li>'
         };
+
         this.root = null;
         this.path = [];
-        this.openSet = ['open', '-'];
-        this.closeSet = ['close', '+'];
+        this.openSet = options.openSet || ['open', '-'];
+        this.closeSet = options.closeSet || ['close', '+'];
+        this.onSelectClassName = options.onSelectClassName || 'select';
         this.depthLabels = options.depthLabels || [];
 
-        if (id) {
-            this.root = document.getElementById(id);
+        if (options.viewId) {
+            this.root = document.getElementById(options.viewId);
         } else {
             this.root = document.createElement('ul');
             document.body.appendChild(this.root);
@@ -47,6 +49,7 @@ var TreeView = Class.extend(/** @lends TreeView.prototype */{
      * 트리 데이터를 받아 html 생성을 요청한다.
      *
      * @param {Object} drawData 화면에 그릴 데이터
+     * @private
      * */
     _makeTree: function (drawData) {
 
@@ -58,6 +61,8 @@ var TreeView = Class.extend(/** @lends TreeView.prototype */{
      *
      * @param {Object} data 화면에 그릴 데이터
      * @param {Path} beforePath 부분트리를 그릴때 상위 패스정보
+     * @private
+     *
      * @return {String} html
      * */
     _makeHTML: function (data, beforePath) {
@@ -75,27 +80,34 @@ var TreeView = Class.extend(/** @lends TreeView.prototype */{
                 path = this.path.join();
             }
 
+            // 스타일 제어 방식으로 변경
             var depth = path.split(',').length,
-                rate = this.depthLabels[depth - 1] || '';
+                rate = this.depthLabels[depth - 1] || '',
+                state = this[element.state + 'Set'][0],
+                label = this[element.state + 'Set'][1],
+                el = null, replaceMapper = {
+                    State: state,
+                    StateLabel: label,
+                    NodeID: element.id,
+                    Path: path,
+                    Depth: depth,
+                    Title: element.title,
+                    DepthLabel: rate
+                };
+
             if (element.childNodes) {
-                var state = this[element.state + 'Set'][0],
-                    label = this[element.state + 'Set'][1],
-                    el = this.template.hasChild.replace(/\{\{State\}\}/g, state);
-                el = el.replace(/\{\{StateLabel\}\}/g, label),
-                    el = el.replace(/\{\{NodeID\}\}/g, element.id),
-                    el = el.replace(/\{\{Path\}\}/g, path),
-                    el = el.replace(/\{\{Depth\}\}/g, depth),
-                    el = el.replace(/\{\{Title\}\}/g, element.title),
-                    el = el.replace(/\{\{DepthLabel\}\}/g, rate),
-                    el = el.replace(/\{\{ChildNodes\}\}/g, this._makeHTML(element.childNodes, beforePath));
+                el = this.template.hasChild;
+                replaceMapper.ChildNodes = this._makeHTML(element.childNodes, beforePath);
             } else {
-                var el = this.template.leapNode.replace(/\{\{State\}\}/g, state);
-                el = el.replace(/\{\{StateLabel\}\}/g, ''),
-                    el = el.replace(/\{\{NodeID\}\}/g, element.id),
-                    el = el.replace(/\{\{Path\}\}/g, path),
-                    el = el.replace(/\{\{Depth\}\}/g, depth),
-                    el = el.replace(/\{\{Title\}\}/g, element.title),
-                    el = el.replace(/\{\{DepthLabel\}\}/g, rate);
+                el = this.template.leapNode;
+            }
+            el = el.replace(/\{\{([^\}]+)\}\}/g, function callback(matchedString, name) {
+                return replaceMapper[name] || '';
+            });
+
+            var isChildHide = element.get('state') === 'close';
+            if (isChildHide) {
+                el = el.replace('<ul ', '<ul style="display:none"');
             }
 
             childEl.push(el);
@@ -110,13 +122,15 @@ var TreeView = Class.extend(/** @lends TreeView.prototype */{
      * 노드의 상태를 변경한다.
      *
      * @param {Object} nodeInfo 클래스변경(상태변경)될 노드의 정보
+     * @private
+     *
      * */
     _changeTargetClass: function(nodeInfo) {
 
         var target = document.getElementById(nodeInfo.id);
 
         if (!target) {
-            return void 0;
+            return;
         }
 
         var parent = target.parentNode,
@@ -138,25 +152,23 @@ var TreeView = Class.extend(/** @lends TreeView.prototype */{
      *
      * */
     action: function(type, target) {
-        if (type == 'remove') {
-            this._remove(target);
-        } else if (type == 'refresh') {
-            this._refresh(target);
-        } else if (type == 'rename') {
-            this._rename(target);
-        } else if (type == 'expand') {
-            this._expand(target);
-        } else if (type == 'select') {
-            this._select(target);
-        } else if (type == 'unselect') {
-            this._unSelect(target);
-        }
+        this._actionMap = this._actionMap || {
+            remove: this._remove,
+            refresh: this._refresh,
+            rename: this._rename,
+            toggle: this._toggle,
+            select: this._select,
+            unselect: this._unSelect
+        };
+        this._actionMap[type].call(this, target);
     },
     /**
      * 생성된 html을 붙인다
      *
      * @param {String} html 데이터에 의해 생성된 html
      * @param {Object} parent 타겟으로 설정된 부모요소, 없을시 내부에서 최상단 노드로 설정
+     * @private
+     *
      * */
     _draw: function(html, parent) {
 
@@ -177,6 +189,8 @@ var TreeView = Class.extend(/** @lends TreeView.prototype */{
      * 노드 삭제 - 타겟 노드를 제거하고 상위노드에서 한번 갱신해줌(패스유지를 위해)
      *
      * @param {Object} target 삭제 대상 노드
+     * @private
+     *
      * */
     _remove: function(target) {
         var targetElement = document.getElementById(target.id);
@@ -191,42 +205,62 @@ var TreeView = Class.extend(/** @lends TreeView.prototype */{
      * 노드 갱신 - 타겟 노드 기준으로 노드를 다시 만들어서 붙여줌
      *
      * @param {Object} target 갱신 대상 노드
+     * @private
+     *
      * */
     _refresh: function(target) {
 
         this._changeTargetClass(target);
 
-        var drawData = target.childNodes;
+        var drawData = target.childNodes,
+            targetId = target.get('id');
 
-        if (!target.id) {
-            this._draw(this._makeHTML(drawData));
+        if (targetId && targetId !== this.root.getAttribute('id')) {
+            this._refreshPartOfTree(target);
         } else {
-            var targetElement = document.getElementById(target.id),
-                childWrap = targetElement.lastChild;
-
-            if (childWrap.nodeType != 1) {
-                if (target.parent.id) {
-                    targetElement = document.getElementById(target.parent.id);
-                    childWrap = targetElement.lastChild;
-                    drawData = target.parent.childNodes;
-                    var prefix = targetElement.getAttribute('path');
-                    this._draw(this._makeHTML(drawData, prefix), childWrap);
-                } else {
-                    drawData = target.parent.childNodes;
-                    this._draw(this._makeHTML(drawData));
-                }
-            }
+            this._draw(this._makeHTML(drawData));
         }
 
+    },
+    /**
+     * 노드 부분 갱신 - 타겟노드가 최상위 노드가 아닐 경우 부분갱신한다.
+     *
+     * @param {Object} target 갱신 대상 노드
+     * @private
+     *
+     * */
+    _refreshPartOfTree: function(target) {
+        var targetId = target.get('id'),
+            targetElement = document.getElementById(targetId),
+            parent = target.parent,
+            parentID = (parent.get && parent.get('id')) || this.root.getAttribute('id'),
+            childWrapper = targetElement.lastChild,
+            hasChildWrapper = childWrapper.nodeType === 1 && childWrapper.tagName === 'UL',
+            /** 부분 갱신에 필요한 상위 path 정보 */
+            prePath,
+            drawData;
+
+        if (hasChildWrapper && parentID) {
+            drawData = parent.childNodes;
+            targetElement = document.getElementById(parentID);
+            prePath = targetElement.getAttribute('path');
+                childWrapper = targetElement.lastChild;
+                this._draw(this._makeHTML(drawData, prePath), childWrapper);
+        } else {
+            drawData = parent.childNodes;
+            this._draw(this._makeHTML(drawData));
+        }
     },
     /**
      * 노드 이름 변경
      *
      * @param {Object} target 이름변경된 노드정보
+     * @private
+     *
      * */
     _rename: function(target) {
-
-        var targetElement = document.getElementById(target.id);
+        var targetId = target.get('id'),
+            targetElement = document.getElementById(targetId);
         targetElement.innerHTML = target.title;
 
     },
@@ -234,37 +268,49 @@ var TreeView = Class.extend(/** @lends TreeView.prototype */{
      * 노드 여닫기 상태를 갱신한다.
      *
      * @param {Object} target 갱신할 노드 정보
+     * @private
+     *
      * */
-    _expand: function(target) {
-        var targetElement = document.getElementById(target.id),
+    _toggle: function(target) {
+
+        var targetElement = document.getElementById(target.get('id')),
             parent = targetElement.parentNode,
+            childWrap = parent.getElementsByTagName('ul')[0];
             button = parent.getElementsByTagName('button')[0];
 
-        if (target.state == 'open') {
-            parent.className = parent.className.replace('close', 'open');
-            button.innerHTML = '-';
-        } else {
-            parent.className = parent.className.replace('open', 'close');
-            button.innerHTML = '+';
-        }
+        var state = this[target.state + 'Set'][0],
+            label = this[target.state + 'Set'][1],
+            isOpen = target.get('state') === 'open';
+
+        parent.className = parent.className.replace(/(close|open)/g, '') + state;
+        childWrap.style.display = isOpen ? '' : 'none';
+        button.innerHTML = label;
+
     },
     /**
      * 노드 선택시 표시변경
      *
      * @param {Object} target 선택된 노드정보
+     * @private
+     *
      * */
     _select: function(target) {
+
         var span = document.getElementById(target.id);
-        span.className = span.className.replace(' select', '');
-        span.className += ' select';
+        span.className = span.className.replace(' ' + this.onSelectClassName, '') + ' ' + this.onSelectClassName;
+
     },
     /**
      * 노드 선택해제시 액션
      *
      * @param {Object} target 선택 해제 된 노드정보
+     * @private
+     *
      * */
     _unSelect: function(target) {
+
         var span = document.getElementById(target.id);
-        span.className = span.className.replace(' select', '');
+        span.className = span.className.replace(' ' + this.onSelectClassName, '');
+
     }
 });

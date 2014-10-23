@@ -2,6 +2,7 @@
  * 트리컴포넌트의 코어부분
  * 트리에 이벤트를 부여하고 이벤트 발생시, 모델을 조작함
  *
+ * @author FE개발팀 이제인(jein.yi@nhnent.com)
  * @class
  */
 
@@ -18,12 +19,12 @@ var Tree = Class.extend(/** @lends Tree.prototype */{
     init: function(options) {
 
         this.model = new TreeModel(options.config);
-        this.model.setModel(options.data);
+        this.model.setData(options.data);
 
         this.inputElement = document.createElement('input');
         this.inputElement.setAttribute('type', 'text');
 
-        this.view = new TreeView(options.viewId, this.model.getFirstChildren(), options.config);
+        this.view = new TreeView(options.config, this.model.getFirstChildren());
         this.event = new TreeEvent();
 
         this.model.listen(this.view);
@@ -40,80 +41,103 @@ var Tree = Class.extend(/** @lends Tree.prototype */{
      *
      * **/
     _setEvent: function() {
-        var self = this;
 
         this.event.add(this.view.root, 'click', function(data) {
 
             if (data.isButton) {
-                self.model.changeState(data.paths);
+                this.model.changeState(data.paths);
             } else if (data.paths) {
-                self.model.setBuffer(data.paths);
+                this.model.setBuffer(data.paths);
             }
 
-        });
+        }.bind(this));
 
         this.event.add(this.view.root, 'doubleclick', function(data) {
 
-            var targetElement = data.target,
-                targetParent = targetElement.parentNode;
-
-            targetParent.insertBefore(self.inputElement, targetElement);
-            self.inputElement.style.display = '';
-            self.inputElement.value = self.model.findNode(data.path).title;
-            self.inputElement.focus();
-
-            function _update() {
-                if (this.value) {
-                    self.rename(data.path, this.value);
-                }
-                self.modeSwitch(this, targetElement);
-                self.closeInputEvent();
-            }
-            self.onKeyDown = (function(e) {
-                if (e.keyCode == '13') {
-                    _update.call(this);
-                }
-            }).bind(self.inputElement);
-
-            self.onBlur = _update.bind(self.inputElement);
-
-            self.onClick = function(e) {
-                utils.stopEvent(e);
+            this.editableObject = {
+                element: data.target,
+                path: data.path
             };
 
-            utils.addEventListener(self.inputElement, 'keyup', self.onKeyDown);
-            utils.addEventListener(self.inputElement, 'blur', self.onBlur);
-            utils.addEventListener(self.inputElement, 'click', self.onClick);
-            targetElement.style.display = 'none';
+            var targetParent = this.editableObject.element.parentNode;
+            targetParent.insertBefore(this.inputElement, this.editableObject.element);
 
-        });
+            this.editableObject.element.style.display = 'none';
+
+            this.inputElement.style.display = '';
+            this.inputElement.value = this.model.findNode(data.path).title;
+            this.inputElement.focus();
+
+            if (!this.isInputEnabled) {
+                this._openInputEvent();
+            }
+
+        }.bind(this));
 
     },
     /**
-     * 이름변경시 사용하는 인풋의 이벤트들을 제거한다
+     * 이름을 업데이트 한다
      *
+     * @private
      * **/
-    closeInputEvent: function() {
-
-        utils.removeEventListener(this.inputElement, 'keyup', this.onKeyDown);
-        utils.removeEventListener(this.inputElement, 'blur', this.onBlur);
-        utils.removeEventListener(this.inputElement, 'click', this.onClick);
-
+    _updateName: function() {
+        var changeText = this.inputElement.value;
+        if (changeText) {
+            this.rename(this.editableObject.path, changeText);
+        }
+        this._stopEditable();
+    },
+    /**
+     * 노드의 이름변경 박스에 키다운 이벤트 핸들러
+     *
+     * @private
+     * **/
+    _onKeyDownInputElement: function(e) {
+        if (e.keyCode == '13') {
+            this._updateName();
+        }
+    },
+    /**
+     * 노드의 인풋박스에 블러 이벤트 처리 핸들러
+     *
+     * @private
+     * **/
+    _onBlurInputElement: function(e) {
+        this._updateName();
+    },
+    /**
+     * 노드의 인풋박스에 클릭시 전파방지
+     *
+     * @private
+     * **/
+    _onClickInputElement: function(e) {
+        utils.stopEvent(e);
+    },
+    /**
+     * 이름변경모드 활성화시, 이벤트를 등록한다
+     *
+     * @private
+     * **/
+    _openInputEvent: function() {
+        this.isInputEnabled = true;
+        utils.addEventListener(this.inputElement, 'keyup', this._onKeyDownInputElement.bind(this));
+        utils.addEventListener(this.inputElement, 'blur', this._onBlurInputElement.bind(this));
+        utils.addEventListener(this.inputElement, 'click', this._onClickInputElement.bind(this));
     },
     /**
      * 노드에서 활성화 될 엘리먼트와, 비활성화 되리먼트를 처리한다.
      *
      * @param {Object} offElement 보이지 않게 처리할 엘리먼트
      * @param {Object} onElement 보이도록 처리할 엘리먼트
+     * @parivate
      *
      * **/
-    modeSwitch: function(offElement, onElement) {
+    _stopEditable: function(offElement, onElement) {
 
-        offElement.value = '';
-        offElement.className = '';
-        offElement.style.display = 'none';
-
-        onElement.style.display = '';
+        this.inputElement.value = '';
+        this.inputElement.className = '';
+        this.inputElement.style.display = 'none';
+        this.editableObject.element.style.display = '';
 
     },
     /**
@@ -123,17 +147,17 @@ var Tree = Class.extend(/** @lends Tree.prototype */{
      * treeInstance.insert('0,0', NodeInfo);
      *
      * @param {String} path 추가될 노드의 위치정보
-     * @param {Object} object 추가될 노드의 정보(없을시 모델에서 기본값을 세팅)
+     * @param {Object} insertObject 추가될 노드의 정보(없을시 모델에서 기본값을 세팅)
      *
      * **/
-    insert: function(path, object) {
+    insert: function(path, insertObject) {
 
-        if (!arguments[1]) {
-            object = path;
-            this.model.insertNode(null, object);
+        if (!insertObject) {
+            insertObject = path;
+            this.model.insertNode(null, insertObject);
         } else {
             path = path.toString();
-            this.model.insertNode(path, object);
+            this.model.insertNode(path, insertObject);
         }
 
     },
@@ -191,20 +215,28 @@ var Tree = Class.extend(/** @lends Tree.prototype */{
         if (!events) {
             throw new Error('attach method must be used with events object.');
         }
-        var event;
+
+        var event,
+            element,
+            elements,
+            eventType;
         for (event in events) {
-            var element = event.split(' ')[1] || this.view.root;
+
+            eventType = event.split(' ')[0];
+            element = event.split(' ')[1] || this.view.root;
+
             if (typeof element === 'string') {
                 var className = element.replace('.', '');
-                element = document.getElementsByClassName(className);
+                elements = document.getElementsByClassName(className);
             }
-            var eventType = event.split(' ')[0];
-            if (element.length === undefined) {
-                element = [element];
-            }
-            for (var i = 0; i < element.length; i++) {
 
-                utils.addEventListener(element[i], eventType, events[event]);
+            if (!elements.length) {
+                elements = [elements];
+            }
+
+            for (var i = 0, len = elements.length; i < len; i++) {
+
+                utils.addEventListener(elements[i], eventType, events[event]);
 
             }
         }
@@ -220,10 +252,12 @@ var Tree = Class.extend(/** @lends Tree.prototype */{
      *
      * **/
     setDepthLabels: function(depthLabels) {
-        if (!depthLabels || typeof depthLabels != 'object') {
+
+        if (!depthLabels || !utils.isObject(depthLabels)) {
             throw new TypeError();
         }
         this.view.setDepthLabels(depthLabels);
         this.view.action('refresh', this.model.nodes);
+
     }
 });

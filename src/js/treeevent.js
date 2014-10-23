@@ -1,6 +1,7 @@
 /**
  * 트리에 이벤트를 등록한다
  *
+ * @author FE개발팀 이제인(jein.yi@nhnent.com)
  * @class
  */
 
@@ -12,68 +13,36 @@ var TreeEvent = Class.extend(/** @lends Event.prototype */{
     init: function() {
 
         this.doubleClickTimer = null;
-        this.clickTerm = null;
 
     },
     /**
-     * 이벤트를 추가한다,
-     * 더블클릭의 경우 click내부에서 타이머를 돌며 체크한다.
+     * 이벤트를 추가한다, 이벤트가 더블클릭인지 아닌지에 따라 다르게 처리한다.
      *
      * @param {Object} target 이벤트가 등록되고 이벤트 핸들러의 컨텍스트가 될 객체
      * @param {String} type 이벤트 명
      * @param {Function} callback 이벤트 핸들러
+     * @private
      *
      * **/
     add: function(target, type, callback) {
 
-        var self = this;
-
         if (type === 'doubleclick') {
-
-            utils.addEventListener(target, 'click', function(e) {
-
-                //utils.stopEvent(e);
-                var e = e || window.event,
-                    eventTarget = e.target || e.srcElement,
-                    path = eventTarget.getAttribute('path'),
-                    text = eventTarget.innerText;
-
-                if ((e.which && e.which == 3) || e.button && e.button == 2) {
-                    self.isDoubleClick = false;
-                    utils.stopEvent(e);
-                    return void 0;
-                }
-
-                if (path == undefined && path !== '0') {
-                    self.isDoubleClick = false;
-                    return void 0;
-                }
-
-                if (!self.doubleClickTimer) {
-                    self.doubleClickTimer = new Date();
-                    setTimeout(function(e) {
-                        if (self.isDoubleClick) {
-                            callback.call(target, {
-                                eventType: type,
-                                target: eventTarget,
-                                path: path,
-                                text: text
-                            });
-                        }
-                        self.doubleClickTimer = null;
-                    }, 400);
-                } else {
-                    callback.call(target, {
-                        eventType: type,
-                        target: eventTarget,
-                        path: path,
-                        text: text
-                    });
-                    self.doubleClickTimer = null;
-                }
-            });
-
+            this._addDoubleClickEvent(target, type, callback);
+        } else {
+            this._addEventListener(target, type, callback);
         }
+
+    },
+    /**
+     * 더블클릭이 아닌 일반적인 이벤트를 추가한다.
+     *
+     * @param {Object} target 이벤트가 등록되고 이벤트 핸들러의 컨텍스트가 될 객체
+     * @param {String} type 이벤트 명
+     * @param {Function} callback 이벤트 핸들러
+     * @private
+     *
+     * **/
+    _addEventListener: function(target, type, callback) {
 
         utils.addEventListener(target, type, function(e) {
 
@@ -82,9 +51,9 @@ var TreeEvent = Class.extend(/** @lends Event.prototype */{
                 targetTag = eventTarget.tagName.toLowerCase(),
                 paths = null;
 
-            if ((e.which && e.which == 3) || e.button && e.button == 2) {
+            if (this._checkRightButton(e.which || e.button)) {
                 utils.stopEvent(e);
-                return void 0;
+                return;
             }
 
             if (targetTag == 'button') {
@@ -102,8 +71,68 @@ var TreeEvent = Class.extend(/** @lends Event.prototype */{
                 target: eventTarget,
                 paths: paths
             });
-            callback.call(target, e);
+            callback(e);
 
-        });
+        }.bind(this));
+
+    },
+    /**
+     * 더블클릭 이벤트를 추가한다.
+     *
+     * @param {Object} target 이벤트가 등록되고 이벤트 핸들러의 컨텍스트가 될 객체
+     * @param {String} type 이벤트 명
+     * @param {Function} callback 이벤트 핸들러
+     * @private
+     *
+     * **/
+    _addDoubleClickEvent: function(target, type, callback) {
+        utils.addEventListener(target, 'click', function(e) {
+
+            var e = e || window.event,
+                eventTarget = e.target || e.srcElement,
+                path = eventTarget.getAttribute('path'),
+                text = eventTarget.innerText;
+
+
+            if (this._checkRightButton(e.which || e.button)) {
+                this.doubleClickTimer = null;
+                utils.stopEvent(e);
+                return;
+            }
+
+            if (!(path || isNaN(path))) {
+                this.doubleClickTimer = null;
+                return;
+            }
+
+            if (this.doubleClickTimer) {
+                callback({
+                    eventType: type,
+                    target: eventTarget,
+                    path: path,
+                    text: text
+                });
+                this.doubleClickTimer = null;
+            } else {
+                this.doubleClickTimer = setTimeout(function() {
+                    this.doubleClickTimer = null;
+                }.bind(this), 500);
+            }
+
+        }.bind(this));
+
+    },
+    /**
+     * 마우스 우클릭인지 확인한다.
+     *
+     * @param {Number} btnNumber 마우스 버튼 값
+     * @private
+     *
+     * **/
+    _checkRightButton: function(btnNumber) {
+
+        var isRightButton = (btnNumber == 3 || btnNumber == 2);
+        return isRightButton;
+
     }
 });

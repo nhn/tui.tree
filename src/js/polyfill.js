@@ -1,6 +1,8 @@
-/**
- * Created by janeir on 10/6/14.
- */
+/** polyfill.js
+ *
+ * Array.prototype.forEach {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach}
+ *
+ * */
 if (!Array.prototype.forEach) {
 
     Array.prototype.forEach = function(callback, thisArg) {
@@ -33,6 +35,11 @@ if (!Array.prototype.forEach) {
         }
     };
 }
+/**
+ *
+ * Array.prototype.filter {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter}
+ *
+ * */
 if (!Array.prototype.filter) {
 
     Array.prototype.filter = function(fun/*, thisArg*/) {
@@ -65,6 +72,12 @@ if (!Array.prototype.filter) {
     };
 }
 
+/**
+ *
+ * Function.prototype.bind {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind}
+ *
+ *
+ * */
 if (!Function.prototype.bind) {
     Function.prototype.bind = function(oThis) {
         if (typeof this !== 'function') {
@@ -89,6 +102,13 @@ if (!Function.prototype.bind) {
         return fBound;
     };
 }
+
+
+/**
+ *
+ * document.getElementsByClassName {@link https://gist.github.com/eikes/2299607}
+ *
+ * */
 
 if (!document.getElementsByClassName) {
     document.getElementsByClassName = function(search) {

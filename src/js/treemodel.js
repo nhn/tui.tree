@@ -2,13 +2,18 @@
  * 트리를 구성하는 데이터를 조작함
  * 데이터 변경사한 발생 시 뷰를 갱신함
  *
+ * @author FE개발팀 이제인(jein.yi@nhnent.com)
  * @class
  *
  * **/
 var TreeModel = Class.extend(/** @lends TreeModel.prototype */{
     init: function(options) {
 
-        this.nodes = {};
+        this.nodes = new Node({
+            id: options.viewId,
+            title: '',
+            state: 'open'
+        });
         this.count = 0;
         this.views = [];
         this.nodeDefaultState = options.defaultState || 'close';
@@ -26,10 +31,10 @@ var TreeModel = Class.extend(/** @lends TreeModel.prototype */{
      *
      * **/
 
-    setModel: function(data) {
+    setData: function(data) {
 
         this.data = data;
-        this.makeTree(this.data, this.nodes);
+        this._makeTree(this.data, this.nodes);
 
     },
 
@@ -82,21 +87,28 @@ var TreeModel = Class.extend(/** @lends TreeModel.prototype */{
      * 노드추가
      *
      * @param {String} path 노드가 추가될 부모의 위치값
-     * @param {Object} object 추가될 노드의 정보
+     * @param {Object} insertObject 추가될 노드의 정보
      *
      * **/
-    insertNode: function(path, object) {
+    insertNode: function(path, insertDataList) {
+
+
+        if (!insertDataList || !insertDataList.length) {
+            insertDataList = [{title: 'no Title'}];
+        }
 
         var target = null;
-
-        if (path !== null) {
+        if (path && !isNaN(path)) {
             target = this.findNode(path);
         }
-        if (!object) {
-            object = {title: 'no Title'};
-        }
+        target = target || this.nodes;
 
-        if (!target) {
+        this._makeTree(insertDataList, target);
+
+
+
+
+/*        if (!target && insertData) {
             target = new Node({
                 id: this._getIdentification(),
                 title: object.title,
@@ -104,9 +116,9 @@ var TreeModel = Class.extend(/** @lends TreeModel.prototype */{
             });
 
             this.nodes.childNodes.push(target);
-            target.parent = this.nodes;
-            if (object.child) {
-                this.makeTree(object.child, target);
+            target.set('parent', this.nodes);
+            if (object.children) {
+                this._makeTree(object.children, target);
             }
 
             target = this.nodes;
@@ -115,8 +127,10 @@ var TreeModel = Class.extend(/** @lends TreeModel.prototype */{
             if (!target.childNodes) {
                 target.childNodes = [];
             }
-            this.makeTree(object, target);
-        }
+            this._makeTree(object, target);
+        }*/
+
+
 
         this._notify('refresh', target);
     },
@@ -172,16 +186,13 @@ var TreeModel = Class.extend(/** @lends TreeModel.prototype */{
      *
      * @param {Object} data 트리를 만들 기본 데이터
      * @param {Object} parent 이 속성이 있으면 부분트리를 만들어 연결한다.
+     * @private
      *
      **/
-    makeTree: function(data, parent) {
+    _makeTree: function(data, parent) {
 
         if (!parent.childNodes) {
             parent.childNodes = [];
-        }
-
-        if (data && data.constructor !== Array) {
-            data = [data];
         }
 
         //@Todo 정렬, 추후 조건에 따른 변화 필요(내림, 올림)
@@ -200,8 +211,8 @@ var TreeModel = Class.extend(/** @lends TreeModel.prototype */{
                 newNode.parent = this.nodes;
             }
 
-            if (element.child) {
-                this.makeTree(element.child, newNode);
+            if (element.children) {
+                this._makeTree(element.children, newNode);
             }
 
         }.bind(this));
@@ -217,7 +228,7 @@ var TreeModel = Class.extend(/** @lends TreeModel.prototype */{
     _getIdentification: function() {
 
         var identification = 'tree_' + this.date;
-        return [identification, this.count++].join('_');
+        return identification + '_' + this.count++;
 
     },
     /**
@@ -245,12 +256,12 @@ var TreeModel = Class.extend(/** @lends TreeModel.prototype */{
     changeState: function(path) {
         var target = this.findNode(path);
 
-        if (target.get('state') == 'open') {
+        if (target.get('state') === 'open') {
             target.set('state', 'close');
         } else {
             target.set('state', 'open');
         }
-        this._notify('expand', target);
+        this._notify('toggle', target);
 
     },
     /**
@@ -274,7 +285,7 @@ var TreeModel = Class.extend(/** @lends TreeModel.prototype */{
      */
     clearBuffer: function() {
         if (!this.buffer) {
-           return void 0;
+           return;
         }
         var target = this.buffer;
         this.buffer = null;

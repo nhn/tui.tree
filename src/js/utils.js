@@ -1,6 +1,7 @@
 /**
  * 트리 컴포넌트에 쓰이는 헬퍼객체
  *
+ * @author FE개발팀 이제인(jein.yi@nhnent.com)
  * @namespace
  */
 var utils = {
