@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <!--<script type="text/javascript" src="js/polyfill.js"></script>-->
+    <!--<script type="text/javascript" src="js/class.js"></script>-->
+    <!--<script type="text/javascript" src="js/utils.js"></script>-->
+    <!--<script type="text/javascript" src="js/treeevent.js"></script>-->
+    <!--<script type="text/javascript" src="js/node.js"></script>-->
+    <!--<script type="text/javascript" src="js/tree.js"></script>-->
+    <!--<script type="text/javascript" src="js/treemodel.js"></script>-->
+    <!--<script type="text/javascript" src="js/view.js"></script>-->
+    <!--<script type="text/javascript" src="js/treeview.js"></script>-->
+    <!--<script type="text/javascript" src="js/treeFactory.js"></script>-->
+    <script type="text/javascript" src="../dest/tree.component.js"></script>
+    <title>트리컴포넌트</title>
+    <style type="text/css">
+        body {margin:0;padding:0; font-family: malgun gothic,verdana,consolas; font-size:12px;}
+        ul, ol, li { list-style:none;  }
+        .treeWrap {float:left; width:300px; }
+        .tree button {display:none; border:1px solid #ccc;background-color:#eee;padding:0;margin-right:5px; }
+        .tree li.hasChild button {display:inline-block }
+        .tree li.hasChild.open .subTree {display:block}
+        .tree li.hasChild.close .subTree {display:none}
+        .tree li.leapNode button {display:none; }
+        .tree li .select { background-color:#cccccc;}
+        h3 {margin-left:25px; font-weight: normal;}
+    </style>
+</head>
+<body>
+
+<h3>기본옵션 open 이고, 첫번째 노드에 하위노드 10개 추가</h3>
+<ul id="treeRoot4" class="tree"></ul>
+
+<script>
+    var data = [
+        {title: 'rootA', child:
+                [
+                    {title: 'root-1A'}, {title: 'root-1B'},{title: 'root-1C'}, {title: 'root-1D'},
+                    {title: 'root-2A', child: [
+                        {title:'sub_1A', child:[{title:'sub_sub_1A'}]}, {title:'sub_2A'}
+                    ]}, {title: 'root-2B'},{title: 'root-2C'}, {title: 'root-2D'},
+                    {title: 'root-3A',
+                        child: [
+                            {title:'sub3_a'}, {title:'sub3_b'}
+                        ]
+                    }, {title: 'root-3B'},{title: 'root-3C'}, {title: 'root-3D'}
+                ]
+        },
+        {title: 'rootB', child: [
+            {title:'B_sub1'}, {title:'B_sub2'}, {title:'b'}
+        ]}
+    ];
+    var tree1 = new Tree({data: data, viewId: 'treeRoot4', config: {defaultState: 'open'}});
+    var children = [];
+    for(var i = 0; i < 10; i++) {
+        children.push({title: 'titile '+ Math.ceil(Math.random() * 10)});
+    }
+    tree1.insert('0', children);
+    tree1.attach({
+        'click .depth2': function(data) {
+            console.log('depth2', data);
+        },
+        'click .leapNode': function(data) {
+            console.log('leapNode', data);
+        }
+    });
+</script>
+</body>
+</html>
