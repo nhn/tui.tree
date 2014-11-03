@@ -1,12 +1,13 @@
+var ne = ne || {};
+ne.Component = ne.Component || {};
 /**
- * 트리컴포넌트의 코어부분
- * 트리에 이벤트를 부여하고 이벤트 발생시, 모델을 조작함
+ * @fileoverview 트리컴포넌트의 코어부분<br />트리에 이벤트를 부여하고 이벤트 발생시, 모델을 조작함
  *
  * @author FE개발팀 이제인(jein.yi@nhnent.com)
- * @class
+ * @constructor
  */
 
-var Tree = Class.extend(/** @lends Tree.prototype */{
+ne.Component.Tree = Class.extend(/** @lends Tree.prototype */{
     /**
      * 트리의 모델을 생성하고 모델에 데이터를 부여한다.
      * 이름이 변경될 때 사용된 인풋박스를 생성한다.
@@ -18,14 +19,14 @@ var Tree = Class.extend(/** @lends Tree.prototype */{
      * **/
     init: function(options) {
 
-        this.model = new TreeModel(options.config);
+        this.model = new ne.Component.TreeModel(options.config);
         this.model.setData(options.data);
 
         this.inputElement = document.createElement('input');
         this.inputElement.setAttribute('type', 'text');
 
-        this.view = new TreeView(options.config, this.model.getFirstChildren());
-        this.event = new TreeEvent();
+        this.view = new ne.Component.TreeView(options.config, this.model.getFirstChildren());
+        this.event = new ne.Component.TreeEvent();
 
         this.model.listen(this.view);
 
@@ -111,7 +112,7 @@ var Tree = Class.extend(/** @lends Tree.prototype */{
      * @private
      * **/
     _onClickInputElement: function(e) {
-        utils.stopEvent(e);
+        ne.Component.treeUtils.stopEvent(e);
     },
     /**
      * 이름변경모드 활성화시, 이벤트를 등록한다
@@ -120,9 +121,9 @@ var Tree = Class.extend(/** @lends Tree.prototype */{
      * **/
     _openInputEvent: function() {
         this.isInputEnabled = true;
-        utils.addEventListener(this.inputElement, 'keyup', this._onKeyDownInputElement.bind(this));
-        utils.addEventListener(this.inputElement, 'blur', this._onBlurInputElement.bind(this));
-        utils.addEventListener(this.inputElement, 'click', this._onClickInputElement.bind(this));
+        ne.Component.treeUtils.addEventListener(this.inputElement, 'keyup', this._onKeyDownInputElement.bind(this));
+        ne.Component.treeUtils.addEventListener(this.inputElement, 'blur', this._onBlurInputElement.bind(this));
+        ne.Component.treeUtils.addEventListener(this.inputElement, 'click', this._onClickInputElement.bind(this));
     },
     /**
      * 노드에서 활성화 될 엘리먼트와, 비활성화 되리먼트를 처리한다.
@@ -236,7 +237,7 @@ var Tree = Class.extend(/** @lends Tree.prototype */{
 
             for (var i = 0, len = elements.length; i < len; i++) {
 
-                utils.addEventListener(elements[i], eventType, events[event]);
+                ne.Component.treeUtils.addEventListener(elements[i], eventType, events[event]);
 
             }
         }
@@ -253,7 +254,7 @@ var Tree = Class.extend(/** @lends Tree.prototype */{
      * **/
     setDepthLabels: function(depthLabels) {
 
-        if (!depthLabels || !utils.isObject(depthLabels)) {
+        if (!depthLabels || !ne.Component.treeUtils.isObject(depthLabels)) {
             throw new TypeError();
         }
         this.view.setDepthLabels(depthLabels);

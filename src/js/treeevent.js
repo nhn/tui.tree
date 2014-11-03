@@ -1,11 +1,13 @@
+var ne = ne || {};
+ne.Component = ne.Component || {};
 /**
- * 트리에 이벤트를 등록한다
+ * @fileoverview 트리에 이벤트를 등록한다
  *
  * @author FE개발팀 이제인(jein.yi@nhnent.com)
- * @class
+ * @constructor
  */
 
-var TreeEvent = Class.extend(/** @lends Event.prototype */{
+ne.Component.TreeEvent = Class.extend(/** @lends Event.prototype */{
     /**
      * 더블클릭을 판별하는 필드를 세팅한다.
      *
@@ -44,7 +46,7 @@ var TreeEvent = Class.extend(/** @lends Event.prototype */{
      * **/
     _addEventListener: function(target, type, callback) {
 
-        utils.addEventListener(target, type, function(e) {
+        ne.Component.treeUtils.addEventListener(target, type, function(e) {
 
             var e = e || window.event,
                 eventTarget = e.target || e.srcElement,
@@ -52,7 +54,7 @@ var TreeEvent = Class.extend(/** @lends Event.prototype */{
                 paths = null;
 
             if (this._checkRightButton(e.which || e.button)) {
-                utils.stopEvent(e);
+                ne.Component.treeUtils.stopEvent(e);
                 return;
             }
 
@@ -65,7 +67,7 @@ var TreeEvent = Class.extend(/** @lends Event.prototype */{
                 paths = eventTarget.getAttribute('path');
             }
 
-            utils.extend(e, {
+            ne.Component.treeUtils.extend(e, {
                 eventType: type,
                 isButton: targetTag == 'button',
                 target: eventTarget,
@@ -86,7 +88,7 @@ var TreeEvent = Class.extend(/** @lends Event.prototype */{
      *
      * **/
     _addDoubleClickEvent: function(target, type, callback) {
-        utils.addEventListener(target, 'click', function(e) {
+        ne.Component.treeUtils.addEventListener(target, 'click', function(e) {
 
             var e = e || window.event,
                 eventTarget = e.target || e.srcElement,
@@ -96,7 +98,7 @@ var TreeEvent = Class.extend(/** @lends Event.prototype */{
 
             if (this._checkRightButton(e.which || e.button)) {
                 this.doubleClickTimer = null;
-                utils.stopEvent(e);
+                ne.Component.treeUtils.stopEvent(e);
                 return;
             }
 

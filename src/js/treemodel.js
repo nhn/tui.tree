@@ -1,15 +1,16 @@
+var ne = ne || {};
+ne.Component = ne.Component || {};
 /**
- * 트리를 구성하는 데이터를 조작함
- * 데이터 변경사한 발생 시 뷰를 갱신함
+ * @fileoverview 트리를 구성하는 데이터를 조작함<br />데이터 변경사한 발생 시 뷰를 갱신함
  *
  * @author FE개발팀 이제인(jein.yi@nhnent.com)
- * @class
+ * @constructor
  *
  * **/
-var TreeModel = Class.extend(/** @lends TreeModel.prototype */{
+ne.Component.TreeModel = Class.extend(/** @lends TreeModel.prototype */{
     init: function(options) {
 
-        this.nodes = new Node({
+        this.nodes = new ne.Component.TreeNode({
             id: options.viewId,
             title: '',
             state: 'open'
@@ -109,7 +110,7 @@ var TreeModel = Class.extend(/** @lends TreeModel.prototype */{
 
 
 /*        if (!target && insertData) {
-            target = new Node({
+            target = new ne.Component.TreeNode({
                 id: this._getIdentification(),
                 title: object.title,
                 state: this.nodeDefaultState || 'close'
@@ -198,7 +199,7 @@ var TreeModel = Class.extend(/** @lends TreeModel.prototype */{
         //@Todo 정렬, 추후 조건에 따른 변화 필요(내림, 올림)
         data.forEach(function(element, index) {
 
-            var newNode = new Node({
+            var newNode = new ne.Component.TreeNode({
                 id: this._getIdentification(),
                 title: element.title,
                 state: this.nodeDefaultState

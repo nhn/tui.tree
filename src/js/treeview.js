@@ -1,10 +1,12 @@
+var ne = ne || {};
+ne.Component = ne.Component || {};
 /**
- * 화면에 보여지는 트리를 그리고, 갱신한다.
+ * @fileoverview 화면에 보여지는 트리를 그리고, 갱신한다.
  *
  * @author FE개발팀 이제인(jein.yi@nhnent.com)
- * @class
+ * @constructor
  */
-var TreeView = Class.extend(/** @lends TreeView.prototype */{
+ne.Component.TreeView = Class.extend(/** @lends TreeView.prototype */{
     /**
      * TreeView 초기화한다.
      *

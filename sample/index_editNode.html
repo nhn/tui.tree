@@ -2,14 +2,14 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-    <script type="text/javascript" src="js/polyfill.js"></script>
-    <script type="text/javascript" src="js/class.js"></script>
-    <script type="text/javascript" src="js/utils.js"></script>
-    <script type="text/javascript" src="js/treeevent.js"></script>
-    <script type="text/javascript" src="js/node.js"></script>
-    <script type="text/javascript" src="js/tree.js"></script>
-    <script type="text/javascript" src="js/treemodel.js"></script>
-    <script type="text/javascript" src="js/treeview.js"></script>
+    <script type="text/javascript" src="../src/js/polyfill.js"></script>
+    <script type="text/javascript" src="../src/js/class.js"></script>
+    <script type="text/javascript" src="../src/js/utils.js"></script>
+    <script type="text/javascript" src="../src/js/treeevent.js"></script>
+    <script type="text/javascript" src="../src/js/node.js"></script>
+    <script type="text/javascript" src="../src/js/tree.js"></script>
+    <script type="text/javascript" src="../src/js/treemodel.js"></script>
+    <script type="text/javascript" src="../src/js/treeview.js"></script>
     <!--<script type="text/javascript" src="../dest/tree.component.js"></script>-->
     <title>트리컴포넌트</title>
     <style type="text/css">
@@ -18,8 +18,9 @@
     </style>
 </head>
 <body>
-<h3>기본 트리상태 close일때</h3>
-<ul id="treeRoot1" class="tree"></ul>
+
+<h3>기본옵션 open 이고, 첫번째 노드에 하위노드 10개 추가</h3>
+<ul id="treeRoot4" class="tree"></ul>
 
 <script>
     var data = [
@@ -40,9 +41,21 @@
             {title:'B_sub1'}, {title:'B_sub2'}, {title:'b'}
         ]}
     ];
-
-    var tree1 = new Tree({data: data, viewId: 'treeRoot1', config: {defaultState: 'close'}});
-
+    var tree1 = new Tree({data: data, config: {defaultState: 'open',  viewId: 'treeRoot4'}});
+    var children = [];
+    for(var i = 0; i < 10; i++) {
+        children.push({title: 'titile '+ Math.ceil(Math.random() * 10)});
+    }
+    tree1.insert('0', children);
+    tree1.insert(children);
+    tree1.attach({
+        'click .depth2': function(data) {
+            console.log('depth2', data);
+        },
+        'click .leapNode': function(data) {
+            console.log('leapNode', data);
+        }
+    });
 </script>
 </body>
 </html>

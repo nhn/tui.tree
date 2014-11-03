@@ -1,11 +1,13 @@
+var ne = ne || {};
+ne.Component = ne.Component || {};
 /**
- * 트리의 노드를 구성한다
+ * @fileoverview 트리의 노드를 구성한다
  *
  * @author FE개발팀 이제인(jein.yi@nhnent.com)
- * @class
+ * @constructor
  *
  * **/
-var Node = Class.extend(/** @lends Node.prototype */{
+ne.Component.TreeNode = Class.extend(/** @lends Node.prototype */{
     /**
      *
      * 노드의 기본값및 옵션으로 받은 값들을 세팅한다
