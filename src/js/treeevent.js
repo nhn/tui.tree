@@ -1,5 +1,3 @@
-var ne = ne || {};
-ne.Component = ne.Component || {};
 /**
  * @fileoverview 트리에 이벤트를 등록한다
  *
@@ -7,7 +5,7 @@ ne.Component = ne.Component || {};
  * @constructor
  */
 
-ne.Component.TreeEvent = Class.extend(/** @lends Event.prototype */{
+ne.component.Tree.TreeEvent = ne.defineClass(/** @lends Event.prototype */{
     /**
      * 더블클릭을 판별하는 필드를 세팅한다.
      *
@@ -46,7 +44,7 @@ ne.Component.TreeEvent = Class.extend(/** @lends Event.prototype */{
      * **/
     _addEventListener: function(target, type, callback) {
 
-        ne.Component.treeUtils.addEventListener(target, type, function(e) {
+        ne.component.Tree.treeUtils.addEventListener(target, type, ne.bind(function(e) {
 
             var e = e || window.event,
                 eventTarget = e.target || e.srcElement,
@@ -54,7 +52,7 @@ ne.Component.TreeEvent = Class.extend(/** @lends Event.prototype */{
                 paths = null;
 
             if (this._checkRightButton(e.which || e.button)) {
-                ne.Component.treeUtils.stopEvent(e);
+                ne.component.Tree.treeUtils.stopEvent(e);
                 return;
             }
 
@@ -67,7 +65,7 @@ ne.Component.TreeEvent = Class.extend(/** @lends Event.prototype */{
                 paths = eventTarget.getAttribute('path');
             }
 
-            ne.Component.treeUtils.extend(e, {
+            ne.extend(e, {
                 eventType: type,
                 isButton: targetTag == 'button',
                 target: eventTarget,
@@ -75,7 +73,7 @@ ne.Component.TreeEvent = Class.extend(/** @lends Event.prototype */{
             });
             callback(e);
 
-        }.bind(this));
+        }, this));
 
     },
     /**
@@ -88,7 +86,7 @@ ne.Component.TreeEvent = Class.extend(/** @lends Event.prototype */{
      *
      * **/
     _addDoubleClickEvent: function(target, type, callback) {
-        ne.Component.treeUtils.addEventListener(target, 'click', function(e) {
+        ne.component.Tree.treeUtils.addEventListener(target, 'click', ne.bind(function(e) {
 
             var e = e || window.event,
                 eventTarget = e.target || e.srcElement,
@@ -98,7 +96,7 @@ ne.Component.TreeEvent = Class.extend(/** @lends Event.prototype */{
 
             if (this._checkRightButton(e.which || e.button)) {
                 this.doubleClickTimer = null;
-                ne.Component.treeUtils.stopEvent(e);
+                ne.component.Tree.treeUtils.stopEvent(e);
                 return;
             }
 
@@ -116,12 +114,12 @@ ne.Component.TreeEvent = Class.extend(/** @lends Event.prototype */{
                 });
                 this.doubleClickTimer = null;
             } else {
-                this.doubleClickTimer = setTimeout(function() {
+                this.doubleClickTimer = setTimeout(ne.bind(function() {
                     this.doubleClickTimer = null;
-                }.bind(this), 500);
+                }, this), 500);
             }
 
-        }.bind(this));
+        }, this));
 
     },
     /**

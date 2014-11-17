@@ -1,5 +1,3 @@
-var ne = ne || {};
-ne.Component = ne.Component || {};
 /**
  * @fileoverview 트리를 구성하는 데이터를 조작함<br />데이터 변경사한 발생 시 뷰를 갱신함
  *
@@ -7,18 +5,47 @@ ne.Component = ne.Component || {};
  * @constructor
  *
  * **/
-ne.Component.TreeModel = Class.extend(/** @lends TreeModel.prototype */{
+ne.component.Tree.TreeModel = ne.defineClass(/** @lends TreeModel.prototype */{
     init: function(options) {
-
-        this.nodes = new ne.Component.TreeNode({
+        /**
+         * 트리노드
+         *
+         * @type {ne.component.Tree.TreeNode}
+         */
+        this.nodes = new ne.component.Tree.TreeNode({
             id: options.viewId,
             title: '',
             state: 'open'
         });
+        /**
+         * 노드 고유아이디를 붙이기 위한 카운트
+         *
+         * @type {number}
+         */
         this.count = 0;
+        /**
+         * 모델의 변화를 구독하는 뷰들
+         *
+         * @type {Array}
+         */
         this.views = [];
+        /**
+         * 노드의 기본상태
+         *
+         * @type {String}
+         */
         this.nodeDefaultState = options.defaultState || 'close';
+        /**
+         * 복사및 붙여넣기시에 필요한 노드의 버퍼
+         * @todo 복사및 분여넣기 기능은 구현해야함
+         *
+         * @type {null}
+         */
         this.buffer = null;
+        /**
+         * 아이디 생성을 위한 date
+         * @type {number}
+         */
         this.date = new Date().getTime();
 
     },
@@ -65,7 +92,7 @@ ne.Component.TreeModel = Class.extend(/** @lends TreeModel.prototype */{
 
     _notify: function(type, target) {
 
-        this.views.forEach(function(view) {
+        ne.forEach(this.views, function(view) {
             view.action(type, target);
         });
 
@@ -93,46 +120,21 @@ ne.Component.TreeModel = Class.extend(/** @lends TreeModel.prototype */{
      * **/
     insertNode: function(path, insertDataList) {
 
-
-        if (!insertDataList || !insertDataList.length) {
-            insertDataList = [{title: 'no Title'}];
+        if (!insertDataList) {
+            insertDataList = {title: 'no Title'};
         }
 
-        var target = null;
-        if (path && !isNaN(path)) {
+        if (!ne.isArray(insertDataList)) {
+            insertDataList = [insertDataList];
+        }
+
+            var target = null;
+        if (path && isNaN(path)) {
             target = this.findNode(path);
         }
         target = target || this.nodes;
 
         this._makeTree(insertDataList, target);
-
-
-
-
-/*        if (!target && insertData) {
-            target = new ne.Component.TreeNode({
-                id: this._getIdentification(),
-                title: object.title,
-                state: this.nodeDefaultState || 'close'
-            });
-
-            this.nodes.childNodes.push(target);
-            target.set('parent', this.nodes);
-            if (object.children) {
-                this._makeTree(object.children, target);
-            }
-
-            target = this.nodes;
-        } else {
-
-            if (!target.childNodes) {
-                target.childNodes = [];
-            }
-            this._makeTree(object, target);
-        }*/
-
-
-
         this._notify('refresh', target);
     },
     /**
@@ -150,8 +152,8 @@ ne.Component.TreeModel = Class.extend(/** @lends TreeModel.prototype */{
         var removeTarget = this.findNode(path),
             parent = removeTarget.parent;
 
-        parent.childNodes = parent.childNodes.filter(function(element) {
-            return element != removeTarget;
+        parent.childNodes = ne.filter(parent.childNodes, function(element) {
+            return element !== removeTarget;
         });
         removeTarget.parent = null;
 
@@ -166,18 +168,17 @@ ne.Component.TreeModel = Class.extend(/** @lends TreeModel.prototype */{
      *
      **/
     findNode: function(path) {
-
         var result = null,
-            self = this,
             paths = path.split(',');
 
-        paths.forEach(function(index) {
+        ne.forEach(paths, ne.bind(function(index) {
             if (result) {
-                result = result.childNodes[index];
+                result = result.childNodes && result.childNodes[index];
             } else {
-                result = self.nodes.childNodes[index];
+                result = this.nodes.childNodes && this.nodes.childNodes[index];
             }
-        });
+            //console.log(this.nodes.childNodes[0].childNodes)
+        }, this));
         return result;
 
     },
@@ -197,9 +198,8 @@ ne.Component.TreeModel = Class.extend(/** @lends TreeModel.prototype */{
         }
 
         //@Todo 정렬, 추후 조건에 따른 변화 필요(내림, 올림)
-        data.forEach(function(element, index) {
-
-            var newNode = new ne.Component.TreeNode({
+        ne.forEach(data, ne.bind(function(element, index) {
+            var newNode = new ne.component.Tree.TreeNode({
                 id: this._getIdentification(),
                 title: element.title,
                 state: this.nodeDefaultState
@@ -216,7 +216,7 @@ ne.Component.TreeModel = Class.extend(/** @lends TreeModel.prototype */{
                 this._makeTree(element.children, newNode);
             }
 
-        }.bind(this));
+        }, this));
     },
     /**
      *

@@ -2,7 +2,7 @@
  * Created by janeir on 10/23/14.
  */
 describe('TreeModel을 생성한다', function() {
-    var model = new TreeModel({defaultState:'open'});
+    var model = new ne.component.Tree.TreeModel({defaultState:'open'});
     it('TreeModel 객체가 생성되었다', function() {
         expect(model).toBeDefined();
     });
@@ -11,7 +11,7 @@ describe('TreeModel을 생성한다', function() {
     model.setData([
         {
             title: 'A',
-            child: [
+            children: [
                 {title: 'A-1'},
                 {title: 'A-2'}
             ]
@@ -19,7 +19,7 @@ describe('TreeModel을 생성한다', function() {
     ]);
 
     // 모델에 등록하기 위한 뷰 객체를 생성한다
-    var view = new TreeView(null, model.getFirstChildren(), {});
+    var view = new ne.component.Tree.TreeView({defaultState:'open'}, model.getFirstChildren());
     model.listen(view);
 
     it('model.getData로 노드 데이터를 가져온다', function() {
@@ -32,7 +32,6 @@ describe('TreeModel을 생성한다', function() {
         // 0,1 은 A-2노드와 같다
         var path = '0,1',
             target = model.findNode(path);
-
         expect(target.get('title')).toBe('A-2');
     });
 

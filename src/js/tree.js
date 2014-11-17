@@ -1,13 +1,14 @@
-var ne = ne || {};
-ne.Component = ne.Component || {};
+ne = ne || {};
+ne.component = ne.component || {};
 /**
- * @fileoverview 트리컴포넌트의 코어부분<br />트리에 이벤트를 부여하고 이벤트 발생시, 모델을 조작함
+ * @fileoverview 트리컴포넌트의 코어부분
+ * 트리에 이벤트를 부여하고 이벤트 발생시, 모델을 조작함
  *
  * @author FE개발팀 이제인(jein.yi@nhnent.com)
  * @constructor
  */
 
-ne.Component.Tree = Class.extend(/** @lends Tree.prototype */{
+ne.component.Tree = ne.defineClass(/** @lends Tree.prototype */{
     /**
      * 트리의 모델을 생성하고 모델에 데이터를 부여한다.
      * 이름이 변경될 때 사용된 인풋박스를 생성한다.
@@ -15,18 +16,72 @@ ne.Component.Tree = Class.extend(/** @lends Tree.prototype */{
      * 트리의 뷰를 생성하고 이벤트를 부여한다.
      *
      * @param {Object} options 트리의 기본옵션값
+     *      @param {Object} options.data 트리에 사용될 데이터
+     *      @param {Object} options.config 트리에 사용될 세팅값
+     *          @param {String} options.config.viewId 루트 엘리먼트
+     *          @param {String} options.config.defaultState 상태 미지정시 기본상태
+     *          @param {Array} [options.config.depthLabels] 뷰에만 표시 될 기본 레이블
      *
+     * @example
+     * var data = [
+         {title: 'rootA', children:
+                 [
+                     {title: 'root-1A'}, {title: 'root-1B'},{title: 'root-1C'}, {title: 'root-1D'},
+                     {title: 'root-2A', children: [
+                         {title:'sub_1A', children:[{title:'sub_sub_1A'}]}, {title:'sub_2A'}
+                     ]}, {title: 'root-2B'},{title: 'root-2C'}, {title: 'root-2D'},
+                     {title: 'root-3A',
+                         children: [
+                             {title:'sub3_a'}, {title:'sub3_b'}
+                         ]
+                     }, {title: 'root-3B'},{title: 'root-3C'}, {title: 'root-3D'}
+                 ]
+         },
+         {title: 'rootB', children: [
+             {title:'B_sub1'}, {title:'B_sub2'}, {title:'b'}
+         ]}
+     ];
+
+     var tree1 = new Tree({
+        data: data,
+        config: {
+            viewId: 'treeRoot3',
+            defaultState: 'open',
+            depthLabels:['층', '블록', '열']
+        }
+    });
      * **/
     init: function(options) {
 
-        this.model = new ne.Component.TreeModel(options.config);
+        /**
+         * 트리 모델
+         * @type {ne.component.Tree.TreeModel}
+         */
+        this.model = new ne.component.Tree.TreeModel(options.config);
         this.model.setData(options.data);
 
+        /**
+         * 트리 값 변경시 활성화 될 인풋 엘리먼트
+         * @type {HTMLElement}
+         */
         this.inputElement = document.createElement('input');
         this.inputElement.setAttribute('type', 'text');
 
-        this.view = new ne.Component.TreeView(options.config, this.model.getFirstChildren());
-        this.event = new ne.Component.TreeEvent();
+        /**
+         * 트리 뷰
+         * @type {ne.component.Tree.TreeView}
+         */
+        this.view = new ne.component.Tree.TreeView(options.config, this.model.getFirstChildren());
+        /**
+         * 트리 이벤트
+         * @type {ne.component.Tree.TreeEvent}
+         */
+        this.event = new ne.component.Tree.TreeEvent();
+        /**
+         * 이름 변경 모드 활성화 여부
+         * @type {Boolean}
+         */
+        this.isInputEnabled = false;
 
         this.model.listen(this.view);
 
@@ -43,7 +98,7 @@ ne.Component.Tree = Class.extend(/** @lends Tree.prototype */{
      * **/
     _setEvent: function() {
 
-        this.event.add(this.view.root, 'click', function(data) {
+        this.event.add(this.view.root, 'click', ne.bind(function(data) {
 
             if (data.isButton) {
                 this.model.changeState(data.paths);
@@ -51,9 +106,10 @@ ne.Component.Tree = Class.extend(/** @lends Tree.prototype */{
                 this.model.setBuffer(data.paths);
             }
 
-        }.bind(this));
+        },this));
 
-        this.event.add(this.view.root, 'doubleclick', function(data) {
+        // 더블클릭
+        this.event.add(this.view.root, 'doubleclick', ne.bind(function(data) {
 
             this.editableObject = {
                 element: data.target,
@@ -73,7 +129,7 @@ ne.Component.Tree = Class.extend(/** @lends Tree.prototype */{
                 this._openInputEvent();
             }
 
-        }.bind(this));
+        }, this));
 
     },
     /**
@@ -112,7 +168,7 @@ ne.Component.Tree = Class.extend(/** @lends Tree.prototype */{
      * @private
      * **/
     _onClickInputElement: function(e) {
-        ne.Component.treeUtils.stopEvent(e);
+        ne.component.Tree.treeUtils.stopEvent(e);
     },
     /**
      * 이름변경모드 활성화시, 이벤트를 등록한다
@@ -121,16 +177,16 @@ ne.Component.Tree = Class.extend(/** @lends Tree.prototype */{
      * **/
     _openInputEvent: function() {
         this.isInputEnabled = true;
-        ne.Component.treeUtils.addEventListener(this.inputElement, 'keyup', this._onKeyDownInputElement.bind(this));
-        ne.Component.treeUtils.addEventListener(this.inputElement, 'blur', this._onBlurInputElement.bind(this));
-        ne.Component.treeUtils.addEventListener(this.inputElement, 'click', this._onClickInputElement.bind(this));
+        ne.component.Tree.treeUtils.addEventListener(this.inputElement, 'keyup', ne.bind(this._onKeyDownInputElement, this));
+        ne.component.Tree.treeUtils.addEventListener(this.inputElement, 'blur', ne.bind(this._onBlurInputElement, this));
+        ne.component.Tree.treeUtils.addEventListener(this.inputElement, 'click', ne.bind(this._onClickInputElement, this));
     },
     /**
      * 노드에서 활성화 될 엘리먼트와, 비활성화 되리먼트를 처리한다.
      *
      * @param {Object} offElement 보이지 않게 처리할 엘리먼트
      * @param {Object} onElement 보이도록 처리할 엘리먼트
-     * @parivate
+     * @private
      *
      * **/
     _stopEditable: function(offElement, onElement) {
@@ -219,27 +275,15 @@ ne.Component.Tree = Class.extend(/** @lends Tree.prototype */{
 
         var event,
             element,
-            elements,
             eventType;
+
         for (event in events) {
 
             eventType = event.split(' ')[0];
-            element = event.split(' ')[1] || this.view.root;
+            element = this.view.root;
 
-            if (typeof element === 'string') {
-                var className = element.replace('.', '');
-                elements = document.getElementsByClassName(className);
-            }
+            ne.component.Tree.treeUtils.addEventListener(element, eventType, events[event]);
 
-            if (!elements.length) {
-                elements = [elements];
-            }
-
-            for (var i = 0, len = elements.length; i < len; i++) {
-
-                ne.Component.treeUtils.addEventListener(elements[i], eventType, events[event]);
-
-            }
         }
 
     },
@@ -254,7 +298,7 @@ ne.Component.Tree = Class.extend(/** @lends Tree.prototype */{
      * **/
     setDepthLabels: function(depthLabels) {
 
-        if (!depthLabels || !ne.Component.treeUtils.isObject(depthLabels)) {
+        if (!depthLabels || !ne.isObject(depthLabels)) {
             throw new TypeError();
         }
         this.view.setDepthLabels(depthLabels);

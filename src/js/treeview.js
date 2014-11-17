@@ -1,12 +1,10 @@
-var ne = ne || {};
-ne.Component = ne.Component || {};
 /**
  * @fileoverview 화면에 보여지는 트리를 그리고, 갱신한다.
  *
  * @author FE개발팀 이제인(jein.yi@nhnent.com)
  * @constructor
  */
-ne.Component.TreeView = Class.extend(/** @lends TreeView.prototype */{
+ne.component.Tree.TreeView = ne.defineClass(/** @lends TreeView.prototype */{
     /**
      * TreeView 초기화한다.
      *
@@ -16,7 +14,10 @@ ne.Component.TreeView = Class.extend(/** @lends TreeView.prototype */{
      * @param {String} template 트리에사용되는 기본 태그(자식노드가 있을때와 없을때를 오브젝트 형태로 받는)
      * */
     init: function (options, data, template) {
-
+        /**
+         * 노드 기본 템플릿
+         * @type {String}
+         */
         this.template = template || {
             hasChild: '<li class="hasChild {{State}}">\
                             <button type="button">{{StateLabel}}</button>\
@@ -29,12 +30,40 @@ ne.Component.TreeView = Class.extend(/** @lends TreeView.prototype */{
                         <span id="{{NodeID}}" path="{{Path}}" class="depth{{Depth}}">{{Title}}</span><em>{{DepthLabel}}</em>\
                     </li>'
         };
-
+        /**
+         * 노드의 루트 엘리먼트
+         * @type {HTMLElement}
+         */
         this.root = null;
+        /**
+         * 노드 생성시 패스를 만들기 위한 배열
+         *
+         * @type {Array}
+         */
         this.path = [];
+        /**
+         * 트리가 열린 상태일때 부여되는 클래스와, 텍스트
+         *
+         * @type {Array}
+         */
         this.openSet = options.openSet || ['open', '-'];
+        /**
+         * 트리가 닫힘 상태일때 부여되는 클래스와, 텍스트
+         *
+         * @type {Array}
+         */
         this.closeSet = options.closeSet || ['close', '+'];
+        /**
+         * 노드가 선택 되었을때 부여되는 클래스명
+         *
+         * @type {String}
+         */
         this.onSelectClassName = options.onSelectClassName || 'select';
+        /**
+         * 노드의 뎁스에따른 레이블을 관리한다.(화면에는 표시되지만 모델에는 영향을 끼치지 않는다.)
+         *
+         * @type {Array}
+         */
         this.depthLabels = options.depthLabels || [];
 
         if (options.viewId) {
@@ -73,7 +102,7 @@ ne.Component.TreeView = Class.extend(/** @lends TreeView.prototype */{
             beforePath = beforePath || null,
             path = '', html;
 
-        data.forEach(function (element, index) {
+        ne.forEach(data, function (element, index) {
             this.path.push(index);
 
             if (beforePath !== null) {
