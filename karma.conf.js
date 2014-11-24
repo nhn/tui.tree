@@ -9,7 +9,7 @@ module.exports = function(config) {
 
         // base path that will be used to resolve all patterns (eg. files, exclude)
         // karma runner 의 웹 서버 root를 변경할 수 있음
-        basePath: '',
+        basePath: './',
 
 
         // frameworks to use
@@ -31,10 +31,16 @@ module.exports = function(config) {
          ]
          */
         files: [
+            'bower_components/jquery/jquery.js',
+            'node_modules/jasmine-jquery/lib/jasmine-jquery.js',
             'src/js/common.js',
             'src/js/tree.js',
             'src/**/*.js',
-            'test/*Test.js'
+            'test/*Test.js',
+            {
+                pattern: 'test/fixture/**/*.html',
+                included: false
+            }
         ],
 
 
@@ -80,11 +86,11 @@ module.exports = function(config) {
         // start these browsers
         // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
         browsers: [
-            'IE7',
-            'IE8',
-            'IE9',
-            'IE10',
-            'IE11',
+            //'IE7',
+            //'IE8',
+            //'IE9',
+            //'IE10',
+            //'IE11',
             'Chrome-WebDriver',
             'Firefox-WebDriver'
         ],
@@ -136,6 +142,6 @@ module.exports = function(config) {
 
         // Continuous Integration mode
         // if true, Karma captures browsers, runs the tests and exits
-        singleRun: false
+        singleRun: true
     });
 };
