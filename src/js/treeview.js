@@ -240,7 +240,6 @@ ne.component.Tree.TreeView = ne.defineClass(/** @lends TreeView.prototype */{
      *
      * */
     _refresh: function(target) {
-
         this._changeTargetClass(target);
 
         var drawData = target.childNodes,
@@ -264,22 +263,28 @@ ne.component.Tree.TreeView = ne.defineClass(/** @lends TreeView.prototype */{
         var targetId = target.get('id'),
             targetElement = document.getElementById(targetId),
             parent = target.parent,
-            parentID = (parent.get && parent.get('id')) || this.root.getAttribute('id'),
-            childWrapper = targetElement.lastChild,
-            hasChildWrapper = childWrapper.nodeType === 1 && childWrapper.tagName === 'UL',
-            /** 부분 갱신에 필요한 상위 path 정보 */
-            prePath,
-            drawData;
+            parentId = parent.get('id'),
+            childWrapper = targetElement.getElementsByTagName('ul') && targetElement.getElementsByTagName('ul')[0],
+            hasChildWrapper = !!childWrapper,
+            drawData,
+            prePath;
 
-        if (hasChildWrapper && parentID) {
-            drawData = parent.childNodes;
-            targetElement = document.getElementById(parentID);
-            prePath = targetElement.getAttribute('path');
-                childWrapper = targetElement.lastChild;
-                this._draw(this._makeHTML(drawData, prePath), childWrapper);
+        // 갱신 대상으로 지정된 타겟이 자식노드를 가지고 있는지에 따라 갱신대상을 바꾼다.
+        if (hasChildWrapper) {
+            drawData = target.childNodes;
         } else {
+            // 갱신대상이 자식노드를 가지고 있지 않으면 더 윗노드로 이동하여 갱신한다.
+            targetElement = document.getElementById(parentId);
+            childWrapper = targetElement.parentNode.getElementsByTagName('ul')[0];
             drawData = parent.childNodes;
+        }
+
+        // 더위의 노드가 최상위 노드일경우 prePath를 갖지 않는다.
+        prePath = targetElement.getAttribute('path');
+        if (!prePath) {
             this._draw(this._makeHTML(drawData));
+        } else {
+            this._draw(this._makeHTML(drawData, prePath), childWrapper);
         }
     },
     /**
@@ -293,7 +298,6 @@ ne.component.Tree.TreeView = ne.defineClass(/** @lends TreeView.prototype */{
         var targetId = target.get('id'),
             targetElement = document.getElementById(targetId);
         targetElement.innerHTML = target.title;
-
     },
     /**
      * 노드 여닫기 상태를 갱신한다.

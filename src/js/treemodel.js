@@ -128,12 +128,12 @@ ne.component.Tree.TreeModel = ne.defineClass(/** @lends TreeModel.prototype */{
             insertDataList = [insertDataList];
         }
 
-            var target = null;
-        if (path && isNaN(path)) {
+        var target = null;
+
+        if (path) {
             target = this.findNode(path);
         }
         target = target || this.nodes;
-
         this._makeTree(insertDataList, target);
         this._notify('refresh', target);
     },

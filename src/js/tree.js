@@ -82,6 +82,12 @@ ne.component.Tree = ne.defineClass(/** @lends Tree.prototype */{
          * @type {Boolean}
          */
         this.isInputEnabled = false;
+        /**
+         * 에디팅 모드일때 활성화된 엘리먼트 정보 저장
+         *
+         * @type {Object}
+         */
+        this.editableObject = null;
 
         this.model.listen(this.view);
 
@@ -98,38 +104,42 @@ ne.component.Tree = ne.defineClass(/** @lends Tree.prototype */{
      * **/
     _setEvent: function() {
 
-        this.event.add(this.view.root, 'click', ne.bind(function(data) {
+        this.event.add(this.view.root, 'click', ne.bind(this._onClickEvent, this));
+        this.event.add(this.view.root, 'doubleclick', ne.bind(this._onDoubleClick, this));
 
-            if (data.isButton) {
-                this.model.changeState(data.paths);
-            } else if (data.paths) {
-                this.model.setBuffer(data.paths);
-            }
+    },
+    /**
+     * 트리 클릭시 이벤트
+     *
+     * @param data
+     * @private
+     */
+    _onClickEvent: function(data) {
+        if (data.isButton) {
+            this.model.changeState(data.paths);
+        } else if (data.paths) {
+            this.model.setBuffer(data.paths);
+        }
+    },
+    _onDoubleClick: function(data) {
 
-        },this));
+        this.editableObject = {
+            element: data.target,
+            path: data.path
+        };
 
-        // 더블클릭
-        this.event.add(this.view.root, 'doubleclick', ne.bind(function(data) {
+        var targetParent = this.editableObject.element.parentNode;
+        targetParent.insertBefore(this.inputElement, this.editableObject.element);
 
-            this.editableObject = {
-                element: data.target,
-                path: data.path
-            };
+        this.editableObject.element.style.display = 'none';
 
-            var targetParent = this.editableObject.element.parentNode;
-            targetParent.insertBefore(this.inputElement, this.editableObject.element);
+        this.inputElement.style.display = '';
+        this.inputElement.value = this.model.findNode(data.path).title;
+        this.inputElement.focus();
 
-            this.editableObject.element.style.display = 'none';
-
-            this.inputElement.style.display = '';
-            this.inputElement.value = this.model.findNode(data.path).title;
-            this.inputElement.focus();
-
-            if (!this.isInputEnabled) {
-                this._openInputEvent();
-            }
-
-        }, this));
+        if (!this.isInputEnabled) {
+            this._openInputEvent();
+        }
 
     },
     /**
@@ -208,7 +218,10 @@ ne.component.Tree = ne.defineClass(/** @lends Tree.prototype */{
      *
      * **/
     insert: function(path, insertObject) {
-
+        var isCanceled = this.fire('insert', { path: path, value: insertObject });
+        if (isCanceled) {
+            return;
+        }
         if (!insertObject) {
             insertObject = path;
             this.model.insertNode(null, insertObject);
@@ -216,7 +229,6 @@ ne.component.Tree = ne.defineClass(/** @lends Tree.prototype */{
             path = path.toString();
             this.model.insertNode(path, insertObject);
         }
-
     },
     /**
      * 노드를 제거한다.
@@ -228,9 +240,11 @@ ne.component.Tree = ne.defineClass(/** @lends Tree.prototype */{
      *
      * **/
     remove: function(path) {
-
+        var isCanceled = this.fire('remove', { path: path });
+        if (isCanceled) {
+            return;
+        }
         this.model.removeNode(path);
-
     },
     /**
      * 노드의 이름을 변경한다.
@@ -243,9 +257,11 @@ ne.component.Tree = ne.defineClass(/** @lends Tree.prototype */{
      *
      * **/
     rename: function(path, value) {
-
+        var isCanceled = this.fire('rename', { path: path, value: value });
+        if (isCanceled) {
+            return;
+        }
         this.model.renameNode(path, value);
-
     },
     /**
      * 모델의 데이터를 가져온다
@@ -253,39 +269,6 @@ ne.component.Tree = ne.defineClass(/** @lends Tree.prototype */{
      * **/
     getModelData: function() {
         return this.model.getData();
-    },
-    /**
-     * 트리에 이벤트를 추가한다
-     *
-     * @example
-     * treeInstance.attach({
-     *      'click': function(data) {
-     *          console.log(data);
-     *      }
-     * });
-     *
-     * @param {Object} events 추가될 이벤트 정보
-     *
-     * **/
-    attach: function(events) {
-
-        if (!events) {
-            throw new Error('attach method must be used with events object.');
-        }
-
-        var event,
-            element,
-            eventType;
-
-        for (event in events) {
-
-            eventType = event.split(' ')[0];
-            element = this.view.root;
-
-            ne.component.Tree.treeUtils.addEventListener(element, eventType, events[event]);
-
-        }
-
     },
     /**
      * 단위값을 추가한다.
@@ -306,3 +289,4 @@ ne.component.Tree = ne.defineClass(/** @lends Tree.prototype */{
 
     }
 });
+ne.CustomEvents.mixin(ne.component.Tree);

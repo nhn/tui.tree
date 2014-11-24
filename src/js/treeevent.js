@@ -44,7 +44,16 @@ ne.component.Tree.TreeEvent = ne.defineClass(/** @lends Event.prototype */{
      * **/
     _addEventListener: function(target, type, callback) {
 
-        ne.component.Tree.treeUtils.addEventListener(target, type, ne.bind(function(e) {
+        ne.component.Tree.treeUtils.addEventListener(target, type, ne.bind(this._onClick, this, callback, type));
+
+    },
+    /**
+     * 일반 클릭에 대한 핸들러 추가
+     *
+     * @param {Object} e 이벤트 객체
+     * @private
+     */
+    _onClick: function(e, callback, type) {
 
             var e = e || window.event,
                 eventTarget = e.target || e.srcElement,
@@ -72,9 +81,6 @@ ne.component.Tree.TreeEvent = ne.defineClass(/** @lends Event.prototype */{
                 paths: paths
             });
             callback(e);
-
-        }, this));
-
     },
     /**
      * 더블클릭 이벤트를 추가한다.
@@ -86,41 +92,41 @@ ne.component.Tree.TreeEvent = ne.defineClass(/** @lends Event.prototype */{
      *
      * **/
     _addDoubleClickEvent: function(target, type, callback) {
-        ne.component.Tree.treeUtils.addEventListener(target, 'click', ne.bind(function(e) {
+        ne.component.Tree.treeUtils.addEventListener(target, 'click', ne.bind(this._onDeobleClick, this, callback, type));
 
-            var e = e || window.event,
-                eventTarget = e.target || e.srcElement,
-                path = eventTarget.getAttribute('path'),
-                text = eventTarget.innerText;
+    },
+    _onDeobleClick: function(e, callback, type) {
+
+        var e = e || window.event,
+            eventTarget = e.target || e.srcElement,
+            path = eventTarget.getAttribute('path'),
+            text = eventTarget.innerText;
 
 
-            if (this._checkRightButton(e.which || e.button)) {
+        if (this._checkRightButton(e.which || e.button)) {
+            this.doubleClickTimer = null;
+            ne.component.Tree.treeUtils.stopEvent(e);
+            return;
+        }
+
+        if (!(path || isNaN(path))) {
+            this.doubleClickTimer = null;
+            return;
+        }
+
+        if (this.doubleClickTimer) {
+            callback({
+                eventType: type,
+                target: eventTarget,
+                path: path,
+                text: text
+            });
+            this.doubleClickTimer = null;
+        } else {
+            this.doubleClickTimer = setTimeout(ne.bind(function() {
                 this.doubleClickTimer = null;
-                ne.component.Tree.treeUtils.stopEvent(e);
-                return;
-            }
-
-            if (!(path || isNaN(path))) {
-                this.doubleClickTimer = null;
-                return;
-            }
-
-            if (this.doubleClickTimer) {
-                callback({
-                    eventType: type,
-                    target: eventTarget,
-                    path: path,
-                    text: text
-                });
-                this.doubleClickTimer = null;
-            } else {
-                this.doubleClickTimer = setTimeout(ne.bind(function() {
-                    this.doubleClickTimer = null;
-                }, this), 500);
-            }
-
-        }, this));
-
+            }, this), 500);
+        }
     },
     /**
      * 마우스 우클릭인지 확인한다.

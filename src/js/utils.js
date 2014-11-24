@@ -31,7 +31,7 @@ ne.component.Tree.treeUtils = {
         if (element.removeEventListener) {
             element.removeEventListener(eventName, handler, false);
         } else {
-            element.detachEvent(ieeventName, handler);
+            element.detachEvent('on' + eventName, handler);
         }
     },
     /**
@@ -40,15 +40,12 @@ ne.component.Tree.treeUtils = {
      * @param {Object} event 전파를 방지할 이벤트객체
      */
     stopEvent: function(event) {
-        if (!event.stopPropagation) {
-            event.stopPropagation = function () {
-                event.cancelBubble = true;
-            };
-            event.preventDefault = function () {
-                event.returnValue = false;
-            };
+        if (event.stopPropagation) {
+            event.stopPropagation();
         }
-        event.preventDefault();
-        event.stopPropagation();
+        //IE8 and Lower
+        else {
+            event.cancelBubble = true;
+        }
     }
 };
