@@ -50,12 +50,12 @@ describe('treeEvent 를 생성한다', function() {
                 button: 3
             };
 
-            event._onClick(evt1, callback);
-            event._onClick(evt2, callback);
-            event._onClick(evt3, callback);
-            event._onClick(evt4, callback);
-            event._onClick(evt5, callback);
-            event._onClick(evt6, callback);
+            event._onClick(callback, 'click', evt1);
+            event._onClick(callback, 'click', evt2);
+            event._onClick(callback, 'click', evt3);
+            event._onClick(callback, 'click', evt4);
+            event._onClick(callback, 'click', evt5);
+            event._onClick(callback, 'click', evt6);
 
             expect(num).toEqual(5);
         });
@@ -91,15 +91,15 @@ describe('treeEvent 를 생성한다', function() {
                 button: 3
             };
 
-            event._onDeobleClick(evt1, callback);
-            event._onDeobleClick(evt2, callback); // 증가
-            event._onDeobleClick(evt3, callback);
+            event._onDeobleClick(callback, 'click', evt1);
+            event._onDeobleClick(callback, 'click', evt2); // 증가
+            event._onDeobleClick(callback, 'click', evt3);
             event.doubleClickTimer = true;
-            event._onDeobleClick(evt4, callback); // 증가
+            event._onDeobleClick(callback, 'click', evt4); // 증가
             event.doubleClickTimer = true;
-            event._onDeobleClick(evt5, callback); // 마우스 우측버튼이라 증가 x
+            event._onDeobleClick(callback, 'click', evt5); // 마우스 우측버튼이라 증가 x
             event.doubleClickTimer = true;
-            event._onDeobleClick(evt6, callback); // 마우스 우측버튼으로 인식 증가 x
+            event._onDeobleClick(callback, 'click', evt6); // 마우스 우측버튼으로 인식 증가 x
             expect(num).toEqual(3);
         });
     });

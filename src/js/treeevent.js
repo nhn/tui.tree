@@ -53,34 +53,33 @@ ne.component.Tree.TreeEvent = ne.defineClass(/** @lends Event.prototype */{
      * @param {Object} e 이벤트 객체
      * @private
      */
-    _onClick: function(e, callback, type) {
+    _onClick: function(callback, type, e) {
+        var e = e || window.event,
+            eventTarget = e.target || e.srcElement,
+            targetTag = eventTarget.tagName.toLowerCase(),
+            paths = null;
 
-            var e = e || window.event,
-                eventTarget = e.target || e.srcElement,
-                targetTag = eventTarget.tagName.toLowerCase(),
-                paths = null;
+        if (this._checkRightButton(e.which || e.button)) {
+            ne.component.Tree.treeUtils.stopEvent(e);
+            return;
+        }
 
-            if (this._checkRightButton(e.which || e.button)) {
-                ne.component.Tree.treeUtils.stopEvent(e);
-                return;
-            }
+        if (targetTag == 'button') {
+            var parent = eventTarget.parentNode;
+            var pathElement = parent.getElementsByTagName('span')[0];
+            paths = pathElement.getAttribute('path');
+        }
+        else {
+            paths = eventTarget.getAttribute('path');
+        }
 
-            if (targetTag == 'button') {
-                var parent = eventTarget.parentNode;
-                var pathElement = parent.getElementsByTagName('span')[0];
-                paths = pathElement.getAttribute('path');
-            }
-            else {
-                paths = eventTarget.getAttribute('path');
-            }
-
-            ne.extend(e, {
-                eventType: type,
-                isButton: targetTag == 'button',
-                target: eventTarget,
-                paths: paths
-            });
-            callback(e);
+        ne.extend(e, {
+            eventType: type,
+            isButton: targetTag == 'button',
+            target: eventTarget,
+            paths: paths
+        });
+        callback(e);
     },
     /**
      * 더블클릭 이벤트를 추가한다.
@@ -95,7 +94,7 @@ ne.component.Tree.TreeEvent = ne.defineClass(/** @lends Event.prototype */{
         ne.component.Tree.treeUtils.addEventListener(target, 'click', ne.bind(this._onDeobleClick, this, callback, type));
 
     },
-    _onDeobleClick: function(e, callback, type) {
+    _onDeobleClick: function(callback, type, e) {
 
         var e = e || window.event,
             eventTarget = e.target || e.srcElement,
