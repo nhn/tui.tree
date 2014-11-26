@@ -33,7 +33,7 @@ module.exports = function(config) {
         files: [
             'bower_components/jquery/jquery.js',
             'node_modules/jasmine-jquery/lib/jasmine-jquery.js',
-            'src/js/common.js',
+            'src/common/common.js',
             'src/js/tree.js',
             'src/**/*.js',
             'test/*Test.js',
@@ -56,7 +56,7 @@ module.exports = function(config) {
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
-            'src/**/*.js': ['coverage']
+            'src/js/*.js': ['coverage']
         },
 
 
@@ -86,11 +86,11 @@ module.exports = function(config) {
         // start these browsers
         // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
         browsers: [
-            //'IE7',
-            //'IE8',
-            //'IE9',
-            //'IE10',
-            //'IE11',
+            'IE7',
+            'IE8',
+            'IE9',
+            'IE10',
+            'IE11',
             'Chrome-WebDriver',
             'Firefox-WebDriver'
         ],

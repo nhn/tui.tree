@@ -59,8 +59,8 @@ ne.component.Tree.TreeEvent = ne.util.defineClass(/** @lends ne.component.Tree.T
      * @private
      */
     _onClick: function(callback, type, e) {
-        var e = e || window.event,
-            eventTarget = e.target || e.srcElement,
+        e = e || window.event;
+        var eventTarget = e.target || e.srcElement,
             targetTag = eventTarget.tagName.toLowerCase(),
             paths = null;
 
@@ -108,8 +108,8 @@ ne.component.Tree.TreeEvent = ne.util.defineClass(/** @lends ne.component.Tree.T
      */
     _onDeobleClick: function(callback, type, e) {
 
-        var e = e || window.event,
-            eventTarget = e.target || e.srcElement,
+        e = e || window.event;
+        var eventTarget = e.target || e.srcElement,
             path = eventTarget.getAttribute('path'),
             text = eventTarget.innerText;
 
