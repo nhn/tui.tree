@@ -2,9 +2,9 @@
  * @fileoverview 화면에 보여지는 트리를 그리고, 갱신한다.
  *
  * @author FE개발팀 이제인(jein.yi@nhnent.com)
- * @constructor
+ * @constructor ne.component.Tree.TreeView
  */
-ne.component.Tree.TreeView = ne.defineClass(/** @lends TreeView.prototype */{
+ne.component.Tree.TreeView = ne.util.defineClass(/** @lends ne.component.Tree.TreeView.prototype */{
     /**
      * TreeView 초기화한다.
      *
@@ -102,7 +102,7 @@ ne.component.Tree.TreeView = ne.defineClass(/** @lends TreeView.prototype */{
             beforePath = beforePath || null,
             path = '', html;
 
-        ne.forEach(data, function (element, index) {
+        ne.util.forEach(data, function (element, index) {
             this.path.push(index);
 
             if (beforePath !== null) {

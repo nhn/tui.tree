@@ -2,10 +2,15 @@
  * @fileoverview 트리에 이벤트를 등록한다
  *
  * @author FE개발팀 이제인(jein.yi@nhnent.com)
- * @constructor
  */
 
-ne.component.Tree.TreeEvent = ne.defineClass(/** @lends Event.prototype */{
+/**
+ * 트리에 이벤트를 붙이는 것을 돕는다.
+ *
+ * @constructor ne.component.Tree.TreeEvent
+ */
+
+ne.component.Tree.TreeEvent = ne.util.defineClass(/** @lends ne.component.Tree.TreeEvent.prototype */{
     /**
      * 더블클릭을 판별하는 필드를 세팅한다.
      *
@@ -44,7 +49,7 @@ ne.component.Tree.TreeEvent = ne.defineClass(/** @lends Event.prototype */{
      * **/
     _addEventListener: function(target, type, callback) {
 
-        ne.component.Tree.treeUtils.addEventListener(target, type, ne.bind(this._onClick, this, callback, type));
+        ne.component.Tree.treeUtils.addEventListener(target, type, ne.util.bind(this._onClick, this, callback, type));
 
     },
     /**
@@ -73,7 +78,7 @@ ne.component.Tree.TreeEvent = ne.defineClass(/** @lends Event.prototype */{
             paths = eventTarget.getAttribute('path');
         }
 
-        ne.extend(e, {
+        ne.util.extend(e, {
             eventType: type,
             isButton: targetTag == 'button',
             target: eventTarget,
@@ -91,9 +96,16 @@ ne.component.Tree.TreeEvent = ne.defineClass(/** @lends Event.prototype */{
      *
      * **/
     _addDoubleClickEvent: function(target, type, callback) {
-        ne.component.Tree.treeUtils.addEventListener(target, 'click', ne.bind(this._onDeobleClick, this, callback, type));
+        ne.component.Tree.treeUtils.addEventListener(target, 'click', ne.util.bind(this._onDeobleClick, this, callback, type));
 
     },
+    /**
+     * 더블클릭 핸들러
+     * @param {Function} callback 이벤트 콜백
+     * @param {String} type 이벤트 타입
+     * @param {Event} e 이벤트객체
+     * @private
+     */
     _onDeobleClick: function(callback, type, e) {
 
         var e = e || window.event,
@@ -122,7 +134,7 @@ ne.component.Tree.TreeEvent = ne.defineClass(/** @lends Event.prototype */{
             });
             this.doubleClickTimer = null;
         } else {
-            this.doubleClickTimer = setTimeout(ne.bind(function() {
+            this.doubleClickTimer = setTimeout(ne.util.bind(function() {
                 this.doubleClickTimer = null;
             }, this), 500);
         }

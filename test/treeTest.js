@@ -60,7 +60,6 @@ describe('tree 통합테스트', function() {
             tree.insert('0,0', {title: 't1'});
             tree.insert('0,0', {title: 't2'});
             tree.insert({title: 't3'});
-
             data1 = tree.model.findNode('0,0,0');
             data2 = tree.model.findNode('0,0,1');
             data3 = tree.model.findNode('1');

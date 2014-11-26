@@ -1,14 +1,14 @@
-ne = ne || {};
-ne.component = ne.component || {};
 /**
  * @fileoverview 트리컴포넌트의 코어부분
  * 트리에 이벤트를 부여하고 이벤트 발생시, 모델을 조작함
- *
+ */
+ne.component = ne.component || {};
+/**
  * @author FE개발팀 이제인(jein.yi@nhnent.com)
- * @constructor
+ * @constructor ne.component.Tree
  */
 
-ne.component.Tree = ne.defineClass(/** @lends Tree.prototype */{
+ne.component.Tree = ne.util.defineClass(/** @lends ne.component.Tree.prototype */{
     /**
      * 트리의 모델을 생성하고 모델에 데이터를 부여한다.
      * 이름이 변경될 때 사용된 인풋박스를 생성한다.
@@ -104,14 +104,14 @@ ne.component.Tree = ne.defineClass(/** @lends Tree.prototype */{
      * **/
     _setEvent: function() {
 
-        this.event.add(this.view.root, 'click', ne.bind(this._onClickEvent, this));
-        this.event.add(this.view.root, 'doubleclick', ne.bind(this._onDoubleClick, this));
+        this.event.add(this.view.root, 'click', ne.util.bind(this._onClickEvent, this));
+        this.event.add(this.view.root, 'doubleclick', ne.util.bind(this._onDoubleClick, this));
 
     },
     /**
-     * 트리 클릭시 이벤트
+     * 트리 클릭시 이벤트핸들
      *
-     * @param data
+     * @param {Object} data
      * @private
      */
     _onClickEvent: function(data) {
@@ -121,6 +121,11 @@ ne.component.Tree = ne.defineClass(/** @lends Tree.prototype */{
             this.model.setBuffer(data.paths);
         }
     },
+    /**
+     * 트리 더블크릭시 이벤트 핸들
+     * @param {Object} data
+     * @private
+     */
     _onDoubleClick: function(data) {
 
         this.editableObject = {
@@ -187,9 +192,9 @@ ne.component.Tree = ne.defineClass(/** @lends Tree.prototype */{
      * **/
     _openInputEvent: function() {
         this.isInputEnabled = true;
-        ne.component.Tree.treeUtils.addEventListener(this.inputElement, 'keyup', ne.bind(this._onKeyDownInputElement, this));
-        ne.component.Tree.treeUtils.addEventListener(this.inputElement, 'blur', ne.bind(this._onBlurInputElement, this));
-        ne.component.Tree.treeUtils.addEventListener(this.inputElement, 'click', ne.bind(this._onClickInputElement, this));
+        ne.component.Tree.treeUtils.addEventListener(this.inputElement, 'keyup', ne.util.bind(this._onKeyDownInputElement, this));
+        ne.component.Tree.treeUtils.addEventListener(this.inputElement, 'blur', ne.util.bind(this._onBlurInputElement, this));
+        ne.component.Tree.treeUtils.addEventListener(this.inputElement, 'click', ne.util.bind(this._onClickInputElement, this));
     },
     /**
      * 노드에서 활성화 될 엘리먼트와, 비활성화 되리먼트를 처리한다.
@@ -218,8 +223,8 @@ ne.component.Tree = ne.defineClass(/** @lends Tree.prototype */{
      *
      * **/
     insert: function(path, insertObject) {
-        var isCanceled = this.fire('insert', { path: path, value: insertObject });
-        if (isCanceled) {
+        var res = this.invoke('insert', { path: path, value: insertObject });
+        if (!res) {
             return;
         }
         if (!insertObject) {
@@ -240,8 +245,8 @@ ne.component.Tree = ne.defineClass(/** @lends Tree.prototype */{
      *
      * **/
     remove: function(path) {
-        var isCanceled = this.fire('remove', { path: path });
-        if (isCanceled) {
+        var res = this.invoke('remove', { path: path });
+        if (!res) {
             return;
         }
         this.model.removeNode(path);
@@ -257,8 +262,8 @@ ne.component.Tree = ne.defineClass(/** @lends Tree.prototype */{
      *
      * **/
     rename: function(path, value) {
-        var isCanceled = this.fire('rename', { path: path, value: value });
-        if (isCanceled) {
+        var res = this.invoke('rename', { path: path, value: value });
+        if (!res) {
             return;
         }
         this.model.renameNode(path, value);
@@ -281,7 +286,7 @@ ne.component.Tree = ne.defineClass(/** @lends Tree.prototype */{
      * **/
     setDepthLabels: function(depthLabels) {
 
-        if (!depthLabels || !ne.isObject(depthLabels)) {
+        if (!depthLabels || !ne.util.isObject(depthLabels)) {
             throw new TypeError();
         }
         this.view.setDepthLabels(depthLabels);
@@ -289,4 +294,4 @@ ne.component.Tree = ne.defineClass(/** @lends Tree.prototype */{
 
     }
 });
-ne.CustomEvents.mixin(ne.component.Tree);
+ne.util.CustomEvents.mixin(ne.component.Tree);

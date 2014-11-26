@@ -2,10 +2,9 @@
  * @fileoverview 트리를 구성하는 데이터를 조작함<br />데이터 변경사한 발생 시 뷰를 갱신함
  *
  * @author FE개발팀 이제인(jein.yi@nhnent.com)
- * @constructor
- *
- * **/
-ne.component.Tree.TreeModel = ne.defineClass(/** @lends TreeModel.prototype */{
+ * @constructor ne.component.Tree.TreeModel
+ **/
+ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends ne.component.Tree.TreeModel.prototype */{
     init: function(options) {
         /**
          * 트리노드
@@ -37,7 +36,7 @@ ne.component.Tree.TreeModel = ne.defineClass(/** @lends TreeModel.prototype */{
         this.nodeDefaultState = options.defaultState || 'close';
         /**
          * 복사및 붙여넣기시에 필요한 노드의 버퍼
-         * @todo 복사및 분여넣기 기능은 구현해야함
+         * @todo 복사및 붙여넣기 기능은 추후구현해야함
          *
          * @type {null}
          */
@@ -92,7 +91,7 @@ ne.component.Tree.TreeModel = ne.defineClass(/** @lends TreeModel.prototype */{
 
     _notify: function(type, target) {
 
-        ne.forEach(this.views, function(view) {
+        ne.util.forEach(this.views, function(view) {
             view.action(type, target);
         });
 
@@ -124,7 +123,7 @@ ne.component.Tree.TreeModel = ne.defineClass(/** @lends TreeModel.prototype */{
             insertDataList = {title: 'no Title'};
         }
 
-        if (!ne.isArray(insertDataList)) {
+        if (!ne.util.isArray(insertDataList)) {
             insertDataList = [insertDataList];
         }
 
@@ -152,7 +151,7 @@ ne.component.Tree.TreeModel = ne.defineClass(/** @lends TreeModel.prototype */{
         var removeTarget = this.findNode(path),
             parent = removeTarget.parent;
 
-        parent.childNodes = ne.filter(parent.childNodes, function(element) {
+        parent.childNodes = ne.util.filter(parent.childNodes, function(element) {
             return element !== removeTarget;
         });
         removeTarget.parent = null;
@@ -171,7 +170,7 @@ ne.component.Tree.TreeModel = ne.defineClass(/** @lends TreeModel.prototype */{
         var result = null,
             paths = path.split(',');
 
-        ne.forEach(paths, ne.bind(function(index) {
+        ne.util.forEach(paths, ne.util.bind(function(index) {
             if (result) {
                 result = result.childNodes && result.childNodes[index];
             } else {
@@ -198,7 +197,7 @@ ne.component.Tree.TreeModel = ne.defineClass(/** @lends TreeModel.prototype */{
         }
 
         //@Todo 정렬, 추후 조건에 따른 변화 필요(내림, 올림)
-        ne.forEach(data, ne.bind(function(element, index) {
+        ne.util.forEach(data, ne.util.bind(function(element, index) {
             var newNode = new ne.component.Tree.TreeNode({
                 id: this._getIdentification(),
                 title: element.title,
@@ -280,7 +279,6 @@ ne.component.Tree.TreeModel = ne.defineClass(/** @lends TreeModel.prototype */{
         this._notify('select', target);
     },
     /**
-     *
      * 버퍼를 비운다
      *
      */
@@ -293,13 +291,17 @@ ne.component.Tree.TreeModel = ne.defineClass(/** @lends TreeModel.prototype */{
         this._notify('unselect', target);
     },
     /**
-     *
-     * 모델의 노드 트리를 데이터를 가져온다
+     *모델의 노드 트리를 데이터를 가져온다
      *
      */
     getData: function() {
         return this.nodes;
     },
+    /**
+     * 노드 정렬에 사용
+     *
+     * @param data
+     */
     sortChild: function(data) {
 
         data.sort(function(a, b) {
