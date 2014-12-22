@@ -2,14 +2,15 @@
  * @fileoverview 트리를 구성하는 데이터를 조작함<br />데이터 변경사한 발생 시 뷰를 갱신함
  *
  * @author FE개발팀 이제인(jein.yi@nhnent.com)
- * @constructor ne.component.Tree.TreeModel
- **/
-ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends ne.component.Tree.TreeModel.prototype */{
+ * @constructor
+ *
+ * **/
+ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends TreeModel.prototype */{
     init: function(options) {
         /**
          * 트리노드
          *
-         * @type {ne.component.Tree.TreeNode}
+         * @type {component.Tree.TreeNode}
          */
         this.nodes = new ne.component.Tree.TreeNode({
             id: options.viewId,
@@ -104,7 +105,7 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends ne.component.Tree.T
      *
      * **/
 
-     getFirstChildren: function() {
+    getFirstChildren: function() {
 
         return this.nodes.childNodes;
 
@@ -150,7 +151,6 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends ne.component.Tree.T
         }
         var removeTarget = this.findNode(path),
             parent = removeTarget.parent;
-
         parent.childNodes = ne.util.filter(parent.childNodes, function(element) {
             return element !== removeTarget;
         });
@@ -176,7 +176,6 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends ne.component.Tree.T
             } else {
                 result = this.nodes.childNodes && this.nodes.childNodes[index];
             }
-            //console.log(this.nodes.childNodes[0].childNodes)
         }, this));
         return result;
 
@@ -284,7 +283,7 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends ne.component.Tree.T
      */
     clearBuffer: function() {
         if (!this.buffer) {
-           return;
+            return;
         }
         var target = this.buffer;
         this.buffer = null;
@@ -296,6 +295,16 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends ne.component.Tree.T
      */
     getData: function() {
         return this.nodes;
+    },
+    /**
+     * 트리 정렬
+     * @param {array} path 정렬할 패스
+     * @param {function} func 정렬 함수
+     */
+    sort: function(path, func) {
+        var target = this.findNode(path) || this.nodes;
+        target.childNodes.sort(func);
+        this._notify('refresh', target);
     },
     /**
      * 노드 정렬에 사용
@@ -314,5 +323,4 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends ne.component.Tree.T
             }
         });
     }
-
 });

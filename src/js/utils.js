@@ -2,9 +2,9 @@
  * 트리 컴포넌트에 쓰이는 헬퍼객체
  *
  * @author FE개발팀 이제인(jein.yi@nhnent.com)
- * @namespace ne.component.Tree.treeUtils
+ * @namespace
  */
-ne.component.Tree.treeUtils = {/** @lends ne.component.Tree.treeUtils */
+ne.component.Tree.treeUtils = {
     /**
      * 엘리먼트에 이벤트를 추가한다
      *

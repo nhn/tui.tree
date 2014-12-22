@@ -2,12 +2,10 @@
  * @fileoverview 트리의 노드를 구성한다
  *
  * @author FE개발팀 이제인(jein.yi@nhnent.com)
- **/
-/**
- * 트리의 노드를 구성하는 단위
- * @constructor ne.component.Tree.TreeNode
- **/
-ne.component.Tree.TreeNode = ne.util.defineClass(/** @lends ne.component.Tree.TreeNode.prototype */{
+ * @constructor
+ *
+ * **/
+ne.component.Tree.TreeNode = ne.util.defineClass(/** @lends Node.prototype */{
     /**
      *
      * 노드의 기본값및 옵션으로 받은 값들을 세팅한다
@@ -44,7 +42,7 @@ ne.component.Tree.TreeNode = ne.util.defineClass(/** @lends ne.component.Tree.Tr
         this.childNodes = null;
         /**
          * 부모 노드
-         * @type {ne.component.Tree.TreeNode}
+         * @type {component.Tree.TreeNode}
          */
         this.parent = null;
         this.siblings = null;

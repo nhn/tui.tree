@@ -2,15 +2,10 @@
  * @fileoverview 트리에 이벤트를 등록한다
  *
  * @author FE개발팀 이제인(jein.yi@nhnent.com)
+ * @constructor
  */
 
-/**
- * 트리에 이벤트를 붙이는 것을 돕는다.
- *
- * @constructor ne.component.Tree.TreeEvent
- */
-
-ne.component.Tree.TreeEvent = ne.util.defineClass(/** @lends ne.component.Tree.TreeEvent.prototype */{
+ne.component.Tree.TreeEvent = ne.util.defineClass(/** @lends Event.prototype */{
     /**
      * 더블클릭을 판별하는 필드를 세팅한다.
      *
@@ -69,18 +64,21 @@ ne.component.Tree.TreeEvent = ne.util.defineClass(/** @lends ne.component.Tree.T
             return;
         }
 
-        if (targetTag == 'button') {
+        if (targetTag === 'button') {
             var parent = eventTarget.parentNode;
-            var pathElement = parent.getElementsByTagName('span')[0];
-            paths = pathElement.getAttribute('path');
+            var valueElement = parent;
+            paths = valueElement.getAttribute('path');
         }
         else {
             paths = eventTarget.getAttribute('path');
+            if (!paths) {
+                paths = eventTarget.parentNode.getAttribute('path');
+            }
         }
 
         ne.util.extend(e, {
             eventType: type,
-            isButton: targetTag == 'button',
+            isButton: targetTag === 'button',
             target: eventTarget,
             paths: paths
         });
@@ -110,9 +108,9 @@ ne.component.Tree.TreeEvent = ne.util.defineClass(/** @lends ne.component.Tree.T
 
         e = e || window.event;
         var eventTarget = e.target || e.srcElement,
-            path = eventTarget.getAttribute('path'),
+            path = eventTarget.getAttribute('path') || eventTarget.parentNode.getAttribute('path'),
+            eventTarget = eventTarget.parentNode.getAttribute('path') ? eventTarget.parentNode : eventTarget,
             text = eventTarget.innerText;
-
 
         if (this._checkRightButton(e.which || e.button)) {
             this.doubleClickTimer = null;
@@ -136,7 +134,7 @@ ne.component.Tree.TreeEvent = ne.util.defineClass(/** @lends ne.component.Tree.T
         } else {
             this.doubleClickTimer = setTimeout(ne.util.bind(function() {
                 this.doubleClickTimer = null;
-            }, this), 500);
+            }, this), 400);
         }
     },
     /**

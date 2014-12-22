@@ -2,9 +2,9 @@
  * @fileoverview 화면에 보여지는 트리를 그리고, 갱신한다.
  *
  * @author FE개발팀 이제인(jein.yi@nhnent.com)
- * @constructor ne.component.Tree.TreeView
+ * @constructor
  */
-ne.component.Tree.TreeView = ne.util.defineClass(/** @lends ne.component.Tree.TreeView.prototype */{
+ne.component.Tree.TreeView = ne.util.defineClass(/** @lends TreeView.prototype */{
     /**
      * TreeView 초기화한다.
      *
@@ -13,21 +13,21 @@ ne.component.Tree.TreeView = ne.util.defineClass(/** @lends ne.component.Tree.Tr
      * @param {Object} options 트리 초기옵션값
      * @param {String} template 트리에사용되는 기본 태그(자식노드가 있을때와 없을때를 오브젝트 형태로 받는)
      * */
-    init: function (options, data, template) {
+    init: function (options, data) {
         /**
          * 노드 기본 템플릿
          * @type {String}
          */
-        this.template = template || {
-            hasChild: '<li class="hasChild {{State}}">\
+        this.template = options.template || {
+            hasChild: '<li class="hasChild {{State}}" path="{{Path}}">\
                             <button type="button">{{StateLabel}}</button>\
-                            <span id="{{NodeID}}" path="{{Path}}" class="depth{{Depth}}">{{Title}}</span><em>{{DepthLabel}}</em>\
+                            <span id="{{NodeID}}" class="depth{{Depth}}">{{Title}}</span><em>{{DepthLabel}}</em>\
                             <ul class="subTree">\
                                 {{ChildNodes}}\
                             </ul>\
                         </li>',
-            leapNode: '<li class="leapNode">\
-                        <span id="{{NodeID}}" path="{{Path}}" class="depth{{Depth}}">{{Title}}</span><em>{{DepthLabel}}</em>\
+            leapNode: '<li class="leapNode" path="{{Path}}">\
+                        <span id="{{NodeID}}" class="depth{{Depth}}">{{Title}}</span><em>{{DepthLabel}}</em>\
                     </li>'
         };
         /**
@@ -100,7 +100,8 @@ ne.component.Tree.TreeView = ne.util.defineClass(/** @lends ne.component.Tree.Tr
 
         var childEl = [],
             beforePath = beforePath || null,
-            path = '', html;
+            path = '', html,
+            len = data.length;
 
         ne.util.forEach(data, function (element, index) {
             this.path.push(index);
@@ -126,16 +127,18 @@ ne.component.Tree.TreeView = ne.util.defineClass(/** @lends ne.component.Tree.Tr
                     DepthLabel: rate
                 };
 
-            if (element.childNodes) {
+            if (ne.util.isNotEmpty(element.childNodes)) {
                 el = this.template.hasChild;
                 replaceMapper.ChildNodes = this._makeHTML(element.childNodes, beforePath);
             } else {
                 el = this.template.leapNode;
             }
-            el = el.replace(/\{\{([^\}]+)\}\}/g, function callback(matchedString, name) {
+            el = el.replace(/\{\{([^\}]+)\}\}/g, function(matchedString, name) {
                 return replaceMapper[name] || '';
             });
-
+            if (index === (len - 1) && depth !== 1) {
+                el = el.replace('class="', 'class="last ');
+            }
             var isChildHide = element.get('state') === 'close';
             if (isChildHide) {
                 el = el.replace('<ul ', '<ul style="display:none"');
@@ -280,7 +283,7 @@ ne.component.Tree.TreeView = ne.util.defineClass(/** @lends ne.component.Tree.Tr
         }
 
         // 더위의 노드가 최상위 노드일경우 prePath를 갖지 않는다.
-        prePath = targetElement.getAttribute('path');
+        prePath = targetElement.parentNode.getAttribute('path');
         if (!prePath) {
             this._draw(this._makeHTML(drawData));
         } else {
@@ -310,14 +313,14 @@ ne.component.Tree.TreeView = ne.util.defineClass(/** @lends ne.component.Tree.Tr
 
         var targetElement = document.getElementById(target.get('id')),
             parent = targetElement.parentNode,
-            childWrap = parent.getElementsByTagName('ul')[0];
+            childWrap = parent.getElementsByTagName('ul')[0],
             button = parent.getElementsByTagName('button')[0];
 
         var state = this[target.state + 'Set'][0],
             label = this[target.state + 'Set'][1],
             isOpen = target.get('state') === 'open';
 
-        parent.className = parent.className.replace(/(close|open)/g, '') + state;
+        parent.className = parent.className.replace(this.openSet[0], '').replace(this.closeSet[0], '') + state;
         childWrap.style.display = isOpen ? '' : 'none';
         button.innerHTML = label;
 

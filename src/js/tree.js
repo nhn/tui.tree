@@ -1,14 +1,14 @@
+ne = ne || {};
+ne.component = ne.component || {};
 /**
  * @fileoverview 트리컴포넌트의 코어부분
  * 트리에 이벤트를 부여하고 이벤트 발생시, 모델을 조작함
- */
-ne.component = ne.component || {};
-/**
+ *
  * @author FE개발팀 이제인(jein.yi@nhnent.com)
- * @constructor ne.component.Tree
+ * @constructor
  */
 
-ne.component.Tree = ne.util.defineClass(/** @lends ne.component.Tree.prototype */{
+ne.component.Tree = ne.util.defineClass(/** @lends Tree.prototype */{
     /**
      * 트리의 모델을 생성하고 모델에 데이터를 부여한다.
      * 이름이 변경될 때 사용된 인풋박스를 생성한다.
@@ -65,6 +65,7 @@ ne.component.Tree = ne.util.defineClass(/** @lends ne.component.Tree.prototype *
          * @type {HTMLElement}
          */
         this.inputElement = document.createElement('input');
+        this.inputElement.className = options.config.inputElementClass || '';
         this.inputElement.setAttribute('type', 'text');
 
         /**
@@ -119,34 +120,51 @@ ne.component.Tree = ne.util.defineClass(/** @lends ne.component.Tree.prototype *
             this.model.changeState(data.paths);
         } else if (data.paths) {
             this.model.setBuffer(data.paths);
+            this.fire('click', data);
         }
     },
     /**
      * 트리 더블크릭시 이벤트 핸들
      * @param {Object} data
+     * @todo 선택 엘리먼트를 바꿔야함
      * @private
      */
     _onDoubleClick: function(data) {
 
+        var target = data.target,
+            valueElement = this._getValueElement(data.path),
+            input = this.inputElement;
+
         this.editableObject = {
-            element: data.target,
-            path: data.path
+            element: target,
+            path: data.path,
+            valueElement: valueElement
         };
 
-        var targetParent = this.editableObject.element.parentNode;
-        targetParent.insertBefore(this.inputElement, this.editableObject.element);
+        target.insertBefore(input, valueElement);
+        valueElement.style.display = 'none';
+        input.style.display = '';
+        input.value = this.model.findNode(data.path).title;
 
-        this.editableObject.element.style.display = 'none';
-
-        this.inputElement.style.display = '';
-        this.inputElement.value = this.model.findNode(data.path).title;
-        this.inputElement.focus();
+        input.focus();
 
         if (!this.isInputEnabled) {
             this._openInputEvent();
         }
 
     },
+
+    /**
+     * 노드의 값을 가지고 있는 엘리먼트를 반환한다.
+     * @private
+     */
+    _getValueElement: function(path) {
+        var targetNode = this.model.findNode(path),
+            targetElement = document.getElementById(targetNode.id);
+
+        return targetElement;
+    },
+
     /**
      * 이름을 업데이트 한다
      *
@@ -165,7 +183,7 @@ ne.component.Tree = ne.util.defineClass(/** @lends ne.component.Tree.prototype *
      * @private
      * **/
     _onKeyDownInputElement: function(e) {
-        if (e.keyCode == '13') {
+        if (e.keyCode === 13) {
             this._updateName();
         }
     },
@@ -191,25 +209,23 @@ ne.component.Tree = ne.util.defineClass(/** @lends ne.component.Tree.prototype *
      * @private
      * **/
     _openInputEvent: function() {
+        var tutil = ne.component.Tree.treeUtils;
         this.isInputEnabled = true;
-        ne.component.Tree.treeUtils.addEventListener(this.inputElement, 'keyup', ne.util.bind(this._onKeyDownInputElement, this));
-        ne.component.Tree.treeUtils.addEventListener(this.inputElement, 'blur', ne.util.bind(this._onBlurInputElement, this));
-        ne.component.Tree.treeUtils.addEventListener(this.inputElement, 'click', ne.util.bind(this._onClickInputElement, this));
+        tutil.addEventListener(this.inputElement, 'keyup', ne.util.bind(this._onKeyDownInputElement, this));
+        tutil.addEventListener(this.inputElement, 'blur', ne.util.bind(this._onBlurInputElement, this));
+        tutil.addEventListener(this.inputElement, 'click', ne.util.bind(this._onClickInputElement, this));
     },
     /**
      * 노드에서 활성화 될 엘리먼트와, 비활성화 되리먼트를 처리한다.
      *
-     * @param {Object} offElement 보이지 않게 처리할 엘리먼트
-     * @param {Object} onElement 보이도록 처리할 엘리먼트
      * @private
      *
      * **/
-    _stopEditable: function(offElement, onElement) {
+    _stopEditable: function() {
 
         this.inputElement.value = '';
-        this.inputElement.className = '';
         this.inputElement.style.display = 'none';
-        this.editableObject.element.style.display = '';
+        this.editableObject.valueElement.style.display = '';
 
     },
     /**
@@ -245,6 +261,9 @@ ne.component.Tree = ne.util.defineClass(/** @lends ne.component.Tree.prototype *
      *
      * **/
     remove: function(path) {
+        if (!path) {
+            return;
+        }
         var res = this.invoke('remove', { path: path });
         if (!res) {
             return;
@@ -267,6 +286,9 @@ ne.component.Tree = ne.util.defineClass(/** @lends ne.component.Tree.prototype *
             return;
         }
         this.model.renameNode(path, value);
+    },
+    sort: function(path, func) {
+        this.model.sort(path, func);
     },
     /**
      * 모델의 데이터를 가져온다
