@@ -91,15 +91,15 @@ describe('treeEvent 를 생성한다', function() {
                 button: 3
             };
 
-            event._onDeobleClick(callback, 'click', evt1);
-            event._onDeobleClick(callback, 'click', evt2); // 증가
-            event._onDeobleClick(callback, 'click', evt3);
+            event._onDoubleClick(callback, 'click', evt1);
+            event._onDoubleClick(callback, 'click', evt2); // 증가
+            event._onDoubleClick(callback, 'click', evt3);
             event.doubleClickTimer = true;
-            event._onDeobleClick(callback, 'click', evt4); // 증가
+            event._onDoubleClick(callback, 'click', evt4); // 증가
             event.doubleClickTimer = true;
-            event._onDeobleClick(callback, 'click', evt5); // 마우스 우측버튼이라 증가 x
+            event._onDoubleClick(callback, 'click', evt5); // 마우스 우측버튼이라 증가 x
             event.doubleClickTimer = true;
-            event._onDeobleClick(callback, 'click', evt6); // 마우스 우측버튼으로 인식 증가 x
+            event._onDoubleClick(callback, 'click', evt6); // 마우스 우측버튼으로 인식 증가 x
             expect(num).toEqual(3);
         });
     });
