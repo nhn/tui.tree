@@ -94,7 +94,7 @@ ne.component.Tree.TreeEvent = ne.util.defineClass(/** @lends Event.prototype */{
      *
      * **/
     _addDoubleClickEvent: function(target, type, callback) {
-        ne.component.Tree.treeUtils.addEventListener(target, 'click', ne.util.bind(this._onDeobleClick, this, callback, type));
+        ne.component.Tree.treeUtils.addEventListener(target, 'click', ne.util.bind(this._onDoubleClick, this, callback, type));
 
     },
     /**
@@ -104,13 +104,19 @@ ne.component.Tree.TreeEvent = ne.util.defineClass(/** @lends Event.prototype */{
      * @param {Event} e 이벤트객체
      * @private
      */
-    _onDeobleClick: function(callback, type, e) {
+    _onDoubleClick: function(callback, type, e) {
 
         e = e || window.event;
         var eventTarget = e.target || e.srcElement,
+            isButton = e.target.tagName.toUpperCase() === 'BUTTON',
             path = eventTarget.getAttribute('path') || eventTarget.parentNode.getAttribute('path'),
             eventTarget = eventTarget.parentNode.getAttribute('path') ? eventTarget.parentNode : eventTarget,
             text = eventTarget.innerText;
+
+        if (isButton) {
+            this.doubleClickTimer = null;
+            return;
+        }
 
         if (this._checkRightButton(e.which || e.button)) {
             this.doubleClickTimer = null;
