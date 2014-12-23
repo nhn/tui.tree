@@ -123,6 +123,10 @@ ne.component.Tree.TreeEvent = ne.util.defineClass(/** @lends Event.prototype */{
             return;
         }
 
+        if (this.targetPath && this.targetPath !== path) {
+            this.doubleClickTimer = null;
+        }
+
         if (this.doubleClickTimer) {
             callback({
                 eventType: type,
@@ -134,8 +138,10 @@ ne.component.Tree.TreeEvent = ne.util.defineClass(/** @lends Event.prototype */{
         } else {
             this.doubleClickTimer = setTimeout(ne.util.bind(function() {
                 this.doubleClickTimer = null;
-            }, this), 400);
+            }, this), 500);
         }
+
+        this.targetPath = path;
     },
     /**
      * 마우스 우클릭인지 확인한다.
