@@ -335,8 +335,9 @@ ne.component.Tree.TreeView = ne.util.defineClass(/** @lends TreeView.prototype *
     _select: function(target) {
 
         var span = document.getElementById(target.id);
-        span.className = span.className.replace(' ' + this.onSelectClassName, '') + ' ' + this.onSelectClassName;
-
+        if (ne.util.isExisty(span)) {
+            span.className = span.className.replace(' ' + this.onSelectClassName, '') + ' ' + this.onSelectClassName;
+        }
     },
     /**
      * 노드 선택해제시 액션
@@ -348,7 +349,9 @@ ne.component.Tree.TreeView = ne.util.defineClass(/** @lends TreeView.prototype *
     _unSelect: function(target) {
 
         var span = document.getElementById(target.id);
-        span.className = span.className.replace(' ' + this.onSelectClassName, '');
+        if (ne.util.isExisty(span, 'className') && span.className.indexOf(this.onSelectClassName) !== -1) {
+            span.className = span.className.replace(' ' + this.onSelectClassName, '');
+        }
 
     }
 });
