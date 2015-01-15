@@ -1,4 +1,4 @@
-describe('treeEvent 를 생성한다', function() {
+xdescribe('treeEvent 를 생성한다', function() {
     var event,
         div,
         button,
@@ -60,7 +60,7 @@ describe('treeEvent 를 생성한다', function() {
             expect(num).toEqual(5);
         });
 
-        it('event._onDoubleClck', function() {
+        xit('event._onDoubleClck', function() {
             var num = 1;
             var callback = function(data) {
                 num++;

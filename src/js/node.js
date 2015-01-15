@@ -4,6 +4,7 @@
  * @author FE개발팀 이제인(jein.yi@nhnent.com)
  * @constructor
  *
+ *
  * **/
 ne.component.Tree.TreeNode = ne.util.defineClass(/** @lends Node.prototype */{
     /**

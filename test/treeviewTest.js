@@ -1,0 +1,156 @@
+/**
+ * Created by janeir on 10/23/14.
+ */
+describe('Tree를 생성한다', function() {
+    var modelOption = {defaultState: 'open'},
+        view,
+        data = [{
+            value: 'nodevalue1',
+            children: [{
+                value: 'nodevalue1-1',
+                children: [{
+                    value: 'nodevalue1-1-1'
+                }]
+            }]
+        }, {
+            value: 'nv2',
+            children: [{
+                value: 'nv2-1'
+            },
+                {
+                    value: 'nv2-2'
+                },
+                {
+                    value: 'nv2-3'
+                }]
+        }];
+    beforeEach(function() {
+
+        view = new ne.component.Tree('', data ,{
+            modelOption: modelOption
+        });
+
+    });
+
+    it('트리 생성, 모델과 연결 된다. 이름변경을 지원하는 input엘리먼트가 생성된다.', function() {
+        var v = view.model.views[0];
+        var input = view.inputElement;
+        expect(view).toBeDefined();
+        expect(v).toBe(view);
+        expect(input).toBeDefined();
+        expect(input.getAttribute('type')).toBeDefined('text');
+    });
+
+    it('앨리먼트의 이름을 변경한다.', function() {
+        var m = view.model,
+            hash = m.treeHash,
+            root = hash.root,
+            keys = root.childKeys,
+            child = view.model.find(keys[0]),
+            value = document.getElementById(child.id).innerHTML,
+            nValue;
+        m.rename(child.id, 'test');
+        nValue = document.getElementById(child.id).innerHTML;
+        expect(nValue).not.toBe(value);
+        expect(nValue).toBe(child.value);
+    });
+
+    it('앨리먼트의 상태를 변경한다.', function() {
+        var hash = view.model.treeHash,
+            root = hash.root,
+            keys = root.childKeys,
+            child = view.model.find(keys[0]),
+            child_child = view.model.find(child.childKeys[0]),
+            leap_child = view.model.find(child_child.childKeys[0]),
+            element = document.getElementById(child.id).parentNode,
+            el_cls;
+
+        // 닫음
+        child.state = 'close';
+        // 엘리먼트정보 잘못 넘어감
+        view._changeNodeState({});
+        el_cls = element.className.split(' ')[1];
+        expect(el_cls).not.toBe(child.state);
+
+        // 엘리먼트정도 제대로 넘어감.
+        view._changeNodeState(child);
+        el_cls = element.className.split(' ')[1];
+        expect(el_cls).toBe(child.state);
+
+        // leapNode 상태 변경
+        leap_child.state = 'close';
+        view._changeNodeState(leap_child);
+        element = document.getElementById(leap_child.id).parentNode;
+        el_cls = element.className.split(' ')[1];
+        expect(el_cls).toBe(leap_child.state);
+
+    });
+
+    it('엘리먼트를 추가한다. 모델에 추가된 노드가 화면에도 그려진다.', function() {
+        var m = view.model,
+            root = m.treeHash.root,
+            keys = root.childKeys,
+            child = m.find(keys[0]),
+            id = m._getId(),
+            node = m.makeNode(child.depth, id, 'test', child.id),
+            element;
+        m.insert(node);
+
+        element = document.getElementById(id);
+        expect(element).toBeDefined();
+    });
+
+    it('엘리먼트를 삭제한다. 모델에서 지워진 노드가 화면에서 제거된다.', function() {
+        var m = view.model,
+            root = m.treeHash.root,
+            keys = root.childKeys,
+            child = view.model.find(keys[0]),
+            childNodes;
+
+        m.remove(child.id);
+        childNodes = view.root.childNodes;
+        expect(childNodes.length).toBe(1);
+    });
+
+    it('노드를 선택하고, 선택 해제 한다.', function() {
+        var m = view.model,
+            root = m.treeHash.root,
+            keys = root.childKeys,
+            child = view.model.find(keys[0]),
+            child2 = view.model.find(keys[1]),
+            element = document.getElementById(child.id),
+            preSelectClass = element.className;
+
+        m.setBuffer(child.id);
+        expect(preSelectClass).not.toBe(element.className);
+        m.clearBuffer();
+        expect(preSelectClass).toBe(element.className);
+
+        m.setBuffer(child.id);
+        expect(preSelectClass).not.toBe(element.className);
+        // 다른 노드를 선택할 시 자동으로 clearBuffer가 이뤄진다.
+        m.setBuffer(child2.id);
+        expect(preSelectClass).toBe(element.className);
+    });
+
+    it('노드를 선택하여 잘라내고(삭제) 저장된 노드를 다른 노드 아래에 붙인다.', function() {
+        var m = view.model,
+            root = m.treeHash.root,
+            keys = root.childKeys,
+            k1 = keys[0],
+            k2 = keys[1],
+            child = m.find(k1),
+            dest = m.find(k2),
+            destLen = dest.childKeys.length;
+
+        // 노드 선택
+        m.setBuffer(k1);
+        m.remove(k1);
+        m.insert(child, k2);
+
+        var resChildNodes = view.root.childNodes;
+        expect(resChildNodes.length).toBe(1);
+        expect(destLen).toBe(3);
+
+    });
+});

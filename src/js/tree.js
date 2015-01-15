@@ -104,10 +104,26 @@ ne.component.Tree = ne.util.defineClass(/** @lends Tree.prototype */{
      *
      * **/
     _setEvent: function() {
-
         this.event.add(this.view.root, 'click', ne.util.bind(this._onClickEvent, this));
         this.event.add(this.view.root, 'doubleclick', ne.util.bind(this._onDoubleClick, this));
-
+        this.event.add(this.view.root, 'mousedown', ne.util.bind(this._onMouseDown, this));
+    },
+    /**
+     * 트리에 마우스 다운시 이벤트 핸들러.
+     * @private
+     */
+    _onMouseDown: function(e) {
+        var tutil = ne.component.Tree.treeUtils;
+        var move = ne.util.bind(function() {
+            // move effect
+        }, this);
+        var up = ne.util.bind(function() {
+            // 대상 타겟에 따른 e.paths 탐색후, 적용(parent 수정으로 할 것인가, 데이터를 복사헤서 새로 생성할 것인가.
+            tutil.removeEventListener(document, 'mousemove', move);
+            tutil.removeEventListener(document, 'mouseup', up);
+        }, this);
+        tutil.addEventListener(document, 'mousemove', move);
+        tutil.addEventListener(document, 'mouseup', up);
     },
     /**
      * 트리 클릭시 이벤트핸들
@@ -291,11 +307,11 @@ ne.component.Tree = ne.util.defineClass(/** @lends Tree.prototype */{
         this.model.sort(path, func);
     },
     /**
-     * 모델의 데이터를 가져온다
+     * 모델에서 추출된 데이터를 가져온다
      *
-     * **/
-    getModelData: function() {
-        return this.model.getData();
+     **/
+    getData: function() {
+        return this.model.extractData();
     },
     /**
      * 단위값을 추가한다.
@@ -316,4 +332,5 @@ ne.component.Tree = ne.util.defineClass(/** @lends Tree.prototype */{
 
     }
 });
+
 ne.util.CustomEvents.mixin(ne.component.Tree);

@@ -34,6 +34,15 @@ ne.component.Tree.TreeEvent = ne.util.defineClass(/** @lends Event.prototype */{
 
     },
     /**
+     * 
+     * @param target
+     * @param type
+     * @param callback
+     */
+    remove: function(target, type, callback) {
+        ne.component.Tree.treeUtils.removeEventListener(target, type, callback);
+    },
+    /**
      * 더블클릭이 아닌 일반적인 이벤트를 추가한다.
      *
      * @param {Object} target 이벤트가 등록되고 이벤트 핸들러의 컨텍스트가 될 객체

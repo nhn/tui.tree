@@ -2,16 +2,15 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-    <script type="text/javascript" src="../src/js/polyfill.js"></script>
-    <script type="text/javascript" src="../src/js/class.js"></script>
-    <script type="text/javascript" src="../src/js/utils.js"></script>
-    <script type="text/javascript" src="../src/js/treeevent.js"></script>
-    <script type="text/javascript" src="../src/js/node.js"></script>
+    <!--<script type="text/javascript" src="../dist/Component-Tree.js"></script>-->
+    <script type="text/javascript" src="../src/common/common.js"></script>
     <script type="text/javascript" src="../src/js/tree.js"></script>
+    <script type="text/javascript" src="../src/js/treeevent.js"></script>
     <script type="text/javascript" src="../src/js/treemodel.js"></script>
     <script type="text/javascript" src="../src/js/treeview.js"></script>
-    <!--<script type="text/javascript" src="../dest/tree.component.js"></script>-->
-    <title>트리컴포넌트</title>
+    <script type="text/javascript" src="../src/js/node.js"></script>
+    <script type="text/javascript" src="../src/js/utils.js"></script>
+    <value>트리컴포넌트</value>
     <style type="text/css">
         body {margin:0;padding:0; font-family: malgun gothic,verdana,consolas; font-size:12px;}
         h3 {margin-left:25px; font-weight: normal;}
@@ -23,24 +22,30 @@
 
 <script>
     var data = [
-        {title: 'rootA', children:
+        {value: 'rootA', children:
                 [
-                    {title: 'root-1A'}, {title: 'root-1B'},{title: 'root-1C'}, {title: 'root-1D'},
-                    {title: 'root-2A', children: [
-                        {title:'sub_1A', children:[{title:'sub_sub_1A'}]}, {title:'sub_2A'}
-                    ]}, {title: 'root-2B'},{title: 'root-2C'}, {title: 'root-2D'},
-                    {title: 'root-3A',
+                    {value: 'root-1A'}, {value: 'root-1B'},{value: 'root-1C'}, {value: 'root-1D'},
+                    {value: 'root-2A', children: [
+                        {value:'sub_1A', children:[{value:'sub_sub_1A'}]}, {value:'sub_2A'}
+                    ]}, {value: 'root-2B'},{value: 'root-2C'}, {value: 'root-2D'},
+                    {value: 'root-3A',
                         children: [
-                            {title:'sub3_a'}, {title:'sub3_b'}
+                            {value:'sub3_a'}, {value:'sub3_b'}
                         ]
-                    }, {title: 'root-3B'},{title: 'root-3C'}, {title: 'root-3D'}
+                    }, {value: 'root-3B'},{value: 'root-3C'}, {value: 'root-3D'}
                 ]
         },
-        {title: 'rootB', children: [
-            {title:'B_sub1'}, {title:'B_sub2'}, {title:'b'}
+        {value: 'rootB', children: [
+            {value:'B_sub1'}, {value:'B_sub2'}, {value:'b'}
         ]}
     ];
-    var tree1 = new ne.Component.Tree({data: data, viewId: 'treeRoot1', config: {defaultState: 'close'}});
+
+
+    var t = new ne.component.TreeView({
+        modelOption: {defaultState: 'open'},
+        data: data
+    });
+    //var tree1 = new ne.component.Tree({data: data, viewId: 'treeRoot1', config: {defaultState: 'close'}});
 
 </script>
 </body>

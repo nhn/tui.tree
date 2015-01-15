@@ -1,4 +1,4 @@
-describe('treeutil', function() {
+xdescribe('treeutil', function() {
     jasmine.getFixtures().fixturesPath = 'base/';
     beforeEach(function() {
         loadFixtures('test/fixture/treeutil.html');

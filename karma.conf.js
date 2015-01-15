@@ -34,14 +34,15 @@ module.exports = function(config) {
             'bower_components/jquery/jquery.js',
             'node_modules/jasmine-jquery/lib/jasmine-jquery.js',
             'src/common/common.js',
-            'src/js/tree.js',
-            'src/**/*.js',
+            'src/js/treeview.js',
+            'src/**/treemodel.js',
             'test/*Test.js',
             {
                 pattern: 'test/fixture/**/*.html',
                 included: false
             }
         ],
+
 
 
         /*

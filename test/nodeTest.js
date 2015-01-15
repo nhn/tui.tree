@@ -1,5 +1,9 @@
-describe('Node 를 생성한다', function() {
-    var node = new ne.component.Tree.TreeNode({title: 'MyTitle', state: 'open', id: 'myId'});
+xdescribe('Node 를 생성한다', function() {
+    var node;
+    beforeEach(function() {
+        node = new ne.component.Tree.TreeNode({title: 'MyTitle', state: 'open', id: 'myId'});
+    });
+
     it('node가 정의되어 있다', function() {
         expect(node).toBeDefined();
     });

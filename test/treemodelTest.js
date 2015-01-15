@@ -1,116 +1,119 @@
 /**
- * Created by janeir on 10/23/14.
+ * @fileoverview 트리모델 생성 및 트리 모델 동작 테스트
+ * @author FE개발팀
  */
 describe('TreeModel을 생성한다', function() {
-    var model = new ne.component.Tree.TreeModel({defaultState:'open'});
-    it('TreeModel 객체가 생성되었다', function() {
+    var modelOption = {defaultState: 'open'},
+        model,
+        data = [{
+            value: 'nodevalue1',
+            children: [{
+                value: 'nodevalue1-1',
+                children: [{
+                    value: 'nodevalue1-1-1'
+                }]
+            }]
+        }, {
+            value: 'nv2',
+            children: [{
+                value: 'nv2-1'
+            },
+            {
+                value: 'nv2-2'
+            },
+            {
+                value: 'nv2-3'
+            }]
+        }];
+    beforeEach(function() {
+        // 트리 모델 생성
+        model = new ne.component.Tree.TreeModel(modelOption);
+        model.setData(data)
+    });
+
+    it('모델이 제대로 생성되었는가?', function() {
         expect(model).toBeDefined();
     });
 
-    // 모델에 데이터를 세팅한다.
-    model.setData([
-        {
-            title: 'A',
-            children: [
-                {title: 'A-1'},
-                {title: 'A-2'}
-            ]
-        }
-    ]);
-
-    // 모델에 등록하기 위한 뷰 객체를 생성한다
-    var view = new ne.component.Tree.TreeView({defaultState:'open'}, model.getFirstChildren());
-    model.listen(view);
-
-    it('model.getData로 노드 데이터를 가져온다', function() {
-        var nodes = model.nodes;
-        expect(model.getData()).toBe(nodes);
+    it('모델의 계층구조가, 해쉬로 생성 되었는가?', function() {
+        var hash = model.treeHash,
+            root = hash.root,
+            ck = root.childKeys,
+            second = hash[ck[0]],
+            second_1 = hash[ck[1]];
+        expect(ck.length).toBe(2);
+        expect(second.childKeys.length).toBe(1);
+        expect(second_1.childKeys.length).toBe(3);
     });
 
-    it('model.findNode로 노드를 탐색한다.', function() {
-        // 임의의 패스를 설정한다. 클릭 이벤트로 선택된 노드의패스로 가정한다.
-        // 0,1 은 A-2노드와 같다
-        var path = '0,1',
-            target = model.findNode(path);
-        expect(target.get('title')).toBe('A-2');
+
+    it('키값에 맞는 노드를 찾아 오는가?', function() {
+        var root = model.treeHash.root,
+            ck = root.childKeys,
+            node1,
+            node2,
+            node3;
+
+        node1 = model.find(ck[0]);
+        node2 = model.find(ck[1]),
+        node3 = model.find(ck[2]);
+
+        expect(node1.value).toBe('nodevalue1');
+        expect(node2.value).toBe('nv2');
+        expect(node3).toBeUndefined();
     });
 
-    it('model.renameNode 로 노드의 이름을 변경한다.', function() {
-        // 임의의 패스를 설정한다. 클릭 이벤트로 선택된 노드의패스로 가정한다.
-        // 0,0 은 A-1노드와 같다
-        var path = '0,0';
-        model.renameNode(path, 'B-1');
-        var target = model.findNode(path);
+    it('노드를 제거한다. 노드의 부모에서도 노드가 제거 된다.', function() {
+        var root = model.treeHash.root,
+            ck = root.childKeys,
+            second = model.find(ck[1]),
+            sck = second.childKeys,
+            node1;
 
-        expect(target.get('title')).toBe('B-1');
-    });
+        node1 = model.find(sck[0]);
 
-    it('model.changeState 로 노드의 상태를 변경한다.', function() {
-        // 임의의 패스를 설정한다. 클릭 이벤트로 선택된 노드의패스로 가정한다.
-        // 0 은 A노드와 같다
-        // 현재 기본값은 open이므로 close가 나오면 정상이다.
-        var path = '0',
-            target = model.findNode(path),
-            open,
-            close;
-        model.changeState(path);
-        open = target.get('state');
-        model.changeState(path);
-        close = target.get('state');
-
-        expect(open).toBe('close');
-        expect(close).toBe('open');
-    });
-
-    it('model.insertNode 로 노드를 삽입한다.', function() {
-        // 임의의 패스를 설정한다. 클릭 이벤트로 선택된 노드의패스로 가정한다.
-        // 0,0 은 A-1노드와 같다
-        // 0,0,0이 제대로 생성 되는지 확인한다.
-        var path = '0,0',
-            expectPath1 = '0,0,0',
-            expectPath2 = '0,0,1',
-            expectTarget1,
-            expectTarget2;
-        model.insertNode(path, {title: 'A-1-1'});
-        model.insertNode(path);
-        var expectTarget1 = model.findNode(expectPath1);
-        var expectTarget2 = model.findNode(expectPath2);
-        expect(expectTarget1.get('title')).toBe('A-1-1');
-        expect(expectTarget2.get('title')).toBe('no Title');
+        model.remove(node1.id);
+        expect(second.childKeys.length).toBe(2);
 
     });
 
-    it('setBuffer 버퍼설정', function() {
-        var path = '0,0',
-            node = model.findNode('0,0'),
-            nodeTitle = node.get('title'),
-            bufferTitle;
-        model.setBuffer('0,0');
-        var bufferTitle = model.buffer.get('title');
-        expect(nodeTitle).toBe(bufferTitle);
+    it('노드를 생성하여 삽입한다.', function() {
+
+        var id = model._getId(),
+            id2 = model._getId(),
+            inode1 = model.makeNode(1, id, 'nv3'),
+            inode2 = model.makeNode(2, id2, 'nv3-1'),
+            node1,
+            node2;
+
+        model.insert(inode1);
+        model.insert(inode2, id);
+
+        node1 = model.find(id);
+        node2 = model.find(id2);
+
+        expect(node1.childKeys.length).toBe(1);
+        expect(node2.value).toBe('nv3-1');
+
     });
 
-    it('clearBuffer 버퍼해제', function() {
-        var buffer = model.buffer;
-        model.clearBuffer();
+    it('노드를 선택하였을 시 호출되는 setBuffer를 사용하여, 버퍼에 저장된다.', function() {
+        var root = model.treeHash.root,
+            ck = root.childKeys,
+            second = model.find(ck[1]),
+            sck = second.childKeys,
+            node1,
+            node2;
 
-        expect(buffer).not.toBe(model.buffer);
+        node1 = model.find(sck[0]);
+        node2 = model.find(sck[1]);
+
+        model.setBuffer(node1.id);
+        expect(node1).toBe(model.buffer);
+
+        model.setBuffer(node2.id);
+        expect(node2).toBe(model.buffer);
+
     });
 
-    it('sort Child ', function() {
-        var arr = [{title:'a'}, {title:'c'}, {title:'b'}, {title:'c'}];
-        model.sortChild(arr);
-
-        expect(arr[1].title).toBe('b');
-    });
-
-    it('removeNode 노드 제거', function() {
-        var beforeNode,
-            nextNode,
-            path = '0,0';
-        beforeNode = model.findNode(path);
-        model.removeNode(path);
-        nextNode = model.findNode(path);
-        expect(beforeNode).not.toBe(nextNode);
-    });
 });
