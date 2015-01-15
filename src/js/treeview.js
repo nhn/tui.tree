@@ -116,7 +116,48 @@
         }
     };
 
+    /**
+     * 트리의 모델을 생성하고 모델에 데이터를 부여한다.
+     * 이름이 변경될 때 사용된 인풋박스를 생성한다.
+     * 모델에 뷰를 등록시킨다.
+     * 트리의 뷰를 생성하고 이벤트를 부여한다.
+     *
+     * @param {Object} options 트리의 기본옵션값
+     *      @param {Object} options.data 트리에 사용될 데이터
+     *      @param {Object} options.config 트리에 사용될 세팅값
+     *          @param {String} options.config.viewId 루트 엘리먼트
+     *          @param {String} options.config.defaultState 상태 미지정시 기본상태
+     *          @param {Array} [options.config.depthLabels] 뷰에만 표시 될 기본 레이블
+     *
+     * @example
+     * var data = [
+     {title: 'rootA', children:
+             [
+                 {title: 'root-1A'}, {title: 'root-1B'},{title: 'root-1C'}, {title: 'root-1D'},
+                 {title: 'root-2A', children: [
+                     {title:'sub_1A', children:[{title:'sub_sub_1A'}]}, {title:'sub_2A'}
+                 ]}, {title: 'root-2B'},{title: 'root-2C'}, {title: 'root-2D'},
+                 {title: 'root-3A',
+                     children: [
+                         {title:'sub3_a'}, {title:'sub3_b'}
+                     ]
+                 }, {title: 'root-3B'},{title: 'root-3C'}, {title: 'root-3D'}
+             ]
+     },
+     {title: 'rootB', children: [
+         {title:'B_sub1'}, {title:'B_sub2'}, {title:'b'}
+     ]}
+     ];
 
+     var tree1 = new Tree({
+        data: data,
+        config: {
+            viewId: 'treeRoot3',
+            defaultState: 'open',
+            depthLabels:['층', '블록', '열']
+        }
+    });
+     * **/
     window.ne = ne = ne || {};
     ne.component = ne.component || {};
 
