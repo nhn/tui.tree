@@ -207,7 +207,19 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends TreeModel.prototype
             return childKey !== key;
         });
     },
+    /**
+     * 노드를 이동시킨다
+     * @param {string} key
+     * @param {object} node
+     * @param {string} targetId
+     */
+    move: function(key, node, targetId) {
+        this.removeKey(key);
+        console.log()
+        this.treeHash[key] = null;
 
+        this.insert(node, targetId);
+    },
     /**
      * 노드를 삽입한다.
      * @param {object} node 삽입될 노드 값
@@ -223,6 +235,7 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends TreeModel.prototype
 
         target.childKeys.push(node.id);
         node.depth = target.depth + 1;
+        node.parentId =targetId;
 
         this.treeHash[node.id] = node;
 
@@ -288,8 +301,7 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends TreeModel.prototype
     },
     /**
      * 버퍼를 비운다
-     *
-     */
+     **/
     clearBuffer: function() {
         if (!this.buffer) {
             return;
@@ -297,259 +309,41 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends TreeModel.prototype
         this.notify('unselect', this.buffer);
         this.buffer = null;
     },
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    ///**
-    // * 모델이 변경이 일어날경우 갱신할 뷰를 등록함
-    // *
-    // * @param {Object} view 트리뷰
-    // *
-    // **/
-    //
-    //listen: function(view) {
-    //
-    //    this.views.push(view);
-    //
-    //},
-    //
-    ///**
-    // *
-    // * 모델이 뷰에 동작을 요청
-    // *
-    // * @private
-    // * @param {String} type 뷰에 전달될 동작타입
-    // * @param {Object} target 갱신대상이 될 타겟
-    // *
-    // * **/
-    //
-    //_notify: function(type, target) {
-    //
-    //    ne.util.forEach(this.views, function(view) {
-    //        view.action(type, target);
-    //    });
-    //
-    //},
-
-    ///**
-    // *
-    // * 초기에 뷰에 요청될 최상단 노드들을 리턴해주는 메소드
-    // *
-    // *
-    // * **/
-    //getFirstChildren: function() {
-    //    return this.nodes.childNodes;
-    //},
-    ///**
-    // *
-    // * 노드추가
-    // *
-    // * @param {String} path 노드가 추가될 부모의 위치값
-    // * @param {Object} insertObject 추가될 노드의 정보
-    // *
-    // * **/
-    //insertNode: function(path, insertDataList) {
-    //
-    //    if (!insertDataList) {
-    //        insertDataList = {title: 'no Title'};
-    //    }
-    //
-    //    if (!ne.util.isArray(insertDataList)) {
-    //        insertDataList = [insertDataList];
-    //    }
-    //
-    //    var target = null;
-    //
-    //    if (path) {
-    //        target = this.findNode(path);
-    //    }
-    //    target = target || this.nodes;
-    //    this._makeTree(insertDataList, target);
-    //    this._notify('refresh', target);
-    //},
-    ///**
-    // *
-    // * 노드제거
-    // *
-    // * @param {String} path 제거될 노드의 위치값
-    // *
-    // * **/
-    //removeNode: function(path) {
-    //
-    //    if (!path) {
-    //        throw new Error('must insert target ID');
-    //    }
-    //    var removeTarget = this.findNode(path),
-    //        parent = removeTarget.parent;
-    //    parent.childNodes = ne.util.filter(parent.childNodes, function(element) {
-    //        return element !== removeTarget;
-    //    });
-    //    removeTarget.parent = null;
-    //
-    //    this._notify('remove', parent);
-    //},
-    ///**
-    // *
-    // * 노드를 찾아서 리턴
-    // *
-    // * @param {String} path 찾아와야 하는 노드의 패스
-    // * @return {Object}
-    // *
-    // **/
-    //findNode: function(path) {
-    //    var result = null,
-    //        paths = path.split(',');
-    //
-    //    ne.util.forEach(paths, ne.util.bind(function(index) {
-    //        if (result) {
-    //            result = result.childNodes && result.childNodes[index];
-    //        } else {
-    //            result = this.nodes.childNodes && this.nodes.childNodes[index];
-    //        }
-    //    }, this));
-    //    return result;
-    //
-    //},
-    ///**
-    // *
-    // * 노드트리 생성
-    // *
-    // * @param {Object} data 트리를 만들 기본 데이터
-    // * @param {Object} parent 이 속성이 있으면 부분트리를 만들어 연결한다.
-    // * @private
-    // *
-    // **/
-    //_makeTree: function(data, parent) {
-    //
-    //    if (!parent.childNodes) {
-    //        parent.childNodes = [];
-    //    }
-    //
-    //    //@Todo 정렬, 추후 조건에 따른 변화 필요(내림, 올림)
-    //    ne.util.forEach(data, ne.util.bind(function(element, index) {
-    //        var newNode = new ne.component.Tree.TreeNode({
-    //            id: this._getId(),
-    //            title: element.title,
-    //            state: this.nodeDefaultState
-    //        });
-    //
-    //        if (parent) {
-    //            newNode.parent = parent;
-    //            parent.childNodes.push(newNode);
-    //        } else {
-    //            newNode.parent = this.nodes;
-    //        }
-    //
-    //        if (element.children) {
-    //            this._makeTree(element.children, newNode);
-    //        }
-    //
-    //    }, this));
-    //},
-    ///**
-    // *
-    // * 노드 이름을 변경한다.
-    // *
-    // * @param {String} path 이름을 변경할 노드의 패스값
-    // * @param {String} value 해당 노드의 타이틀을 변경하기 위한 값
-    // *
-    // **/
-    //renameNode: function(path, value) {
-    //
-    //    var target = this.findNode(path);
-    //    target.set('title', value);
-    //    this._notify('rename', target);
-    //
-    //},
-    ///**
-    // *
-    // * 노드의 상태를 변경한다(여닫힘 상태)
-    // *
-    // * @param {String}  path 상태를 변경할 노드의 패스값
-    // *
-    // **/
-    //changeState: function(path) {
-    //    var target = this.findNode(path);
-    //
-    //    if (target.get('state') === 'open') {
-    //        target.set('state', 'close');
-    //    } else {
-    //        target.set('state', 'open');
-    //    }
-    //    this._notify('toggle', target);
-    //
-    //},
-    /////**
-    //// *
-    //// * 현재 선택된 노드를 버퍼에 저장한다
-    //// *
-    //// * @param {String} path 선택된 노드 패스값
-    //// *
-    //// *
-    //// * **/
-    ////setBuffer: function(path) {
-    ////    this.clearBuffer();
-    ////    var target = this.findNode(path);
-    ////    this.buffer = target;
-    ////    this._notify('select', target);
-    ////},
-    /////**
-    //// * 버퍼를 비운다
-    //// *
-    //// */
-    ////clearBuffer: function() {
-    ////    if (!this.buffer) {
-    ////        return;
-    ////    }
-    ////    var target = this.buffer;
-    ////    this.buffer = null;
-    ////    this._notify('unselect', target);
-    ////},
-    ///**
-    // *모델의 노드 트리를 데이터를 가져온다
-    // *
-    // */
-    //getData: function() {
-    //    return this.nodes;
-    //},
-    ///**
-    // * 타입에 따른 데이터 추출
-    // */
-    //extractData: function() {
-    //    return this.nodes;
-    //},
-    ///**
-    // * 트리 정렬
-    // * @param {array} path 정렬할 패스
-    // * @param {function} func 정렬 함수
-    // */
-    sort: function(path, func) {
-        var target = this.findNode(path) || this.nodes;
-        target.childNodes.sort(func);
-        this._notify('refresh', target);
-    },
     /**
-     * 노드 정렬에 사용
-     *
-     * @param data
+     * 이동할 노드가, 이동할 대상 노드의 부모노드인지 확인한다.
+     * @param {object} dest 이동할 대상 노드
+     * @param {object} node 이동할 노드
      */
-    sortChild: function(data) {
-
-        data.sort(function(a, b) {
-            if (a.title < b.title) {
-                return -1;
-            } else if (a.title > b.title) {
-                return 1;
+    isIrony: function(dest, node) {
+        if(dest.parentId) {
+            if(dest.parentId === node.id) {
+                return true;
             } else {
-                return 0;
+                return this.isIrony(this.find(dest.parentId), node);
             }
-        });
-    }
+        }
+    }//,
+    ////
+    ////sort: function(path, func) {
+    ////    var target = this.findNode(path) || this.nodes;
+    ////    target.childNodes.sort(func);
+    ////    this._notify('refresh', target);
+    ////},
+    ///**
+    // * 노드 정렬에 사용
+    // *
+    // * @param data
+    // */
+    //sortChild: function(data) {
+    //
+    //    data.sort(function(a, b) {
+    //        if (a.title < b.title) {
+    //            return -1;
+    //        } else if (a.title > b.title) {
+    //            return 1;
+    //        } else {
+    //            return 0;
+    //        }
+    //    });
+    //}
 });

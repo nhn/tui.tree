@@ -71,37 +71,58 @@
          *
          * @param {Object} event 전파를 방지할 이벤트객체
          */
-        stopEvent: function(event) {
-            if (event.stopPropagation) {
-                event.stopPropagation();
+        stopEvent: function(e) {
+            if (e.stopPropagation) {
+                e.stopPropagation();
             }
             //IE8 and Lower
             else {
-                event.cancelBubble = true;
+                e.cancelBubble = true;
             }
         },
-        getTarget: function(event) {
-            event = event || window.event;
-            var target = event.target || event.srcElement;
+        /**
+         * 이벤트 객체의 타겟을 반환한다
+         * @param e
+         * @returns {HTMLElement}
+         */
+        getTarget: function(e) {
+            e = e || window.event;
+            var target = e.target || e.srcElement;
             return target;
         },
+        /**
+         * 엘리먼트가 특정 클래스를 가지고 있는지 확인
+         * @param {HTMLElement} element
+         * @param {string} className
+         * @returns {boolean}
+         */
         hasClass: function(element, className) {
             if (!element || !className) {
                 throw new Error('#util.hasClass(element, className) 엘리먼트가 입력되지 않았습니다. \n__element' + element + ',__className' + className);
             }
 
             var cls = element.className;
+
             if (cls.indexOf(className) !== -1) {
                 return true;
             }
             return false;
         },
+        /**
+         * 클래스에 따른 엘리먼트 찾기
+         * @param {HTMLElement} target
+         * @param {string} className
+         * @returns {*}
+         */
         getElementsByClass: function(target, className) {
-            if (target.getElementsByClass) {
-                return target.getElementsByClass(className);
+            if (target.querySelectorAll) {
+                return target.querySelectorAll('.' + className);
             }
             var allChilds = target.getElementsByTagName('*'),
                 filter = [];
+
+            allChilds = ne.util.toArray(allChilds);
+
             ne.util.forEach(allChilds, function(el) {
                 var cls = el.className || '';
                 if (cls.indexOf(className) !== -1) {
@@ -110,12 +131,34 @@
             });
             return filter;
         },
+        /**
+         * 우클릭인지 확인
+         * @param {number} number 버튼 넘버
+         * @returns {boolean}
+         */
         isRightButton: function(number) {
             var isRight = (number === 3 || number === 2);
             return isRight;
+        },
+        testProp: function(props) {
+            var style = document.documentElement.style;
+
+            for (var i = 0; i < props.length; i++) {
+                if (props[i] in style) {
+                    return props[i];
+                }
+            }
+            return false;
+        },
+        preventDefault: function(e) {
+            if (e.preventDefault) {
+                e.preventDefault();
+            } else {
+                e.returnValue = false;
+            }
+            return this;
         }
     };
-
     /**
      * 트리의 모델을 생성하고 모델에 데이터를 부여한다.
      * 이름이 변경될 때 사용된 인풋박스를 생성한다.
@@ -272,9 +315,19 @@
          * #mouseup : 마우스를 떼었을 경우, 마우스 move와 다운을 없앤다.
          */
         setEvents: function() {
-            util.addEventListener(this.root, 'mousedown', ne.util.bind(this._onMouseDown, this));
+            var userSelectProperty = util.testProp(['userSelect', 'WebkitUserSelect', 'OUserSelect', 'MozUserSelect', 'msUserSelect']);
+            var supportSelectStart = 'onselectstart' in document;
+
             util.addEventListener(this.root, 'click', ne.util.bind(this._onClick, this));
             util.addEventListener(this.inputElement, 'blur', ne.util.bind(this._onBlurInput, this));
+            util.addEventListener(this.root, 'mousedown', ne.util.bind(this._onMouseDown, this));
+            if (supportSelectStart) {
+                util.addEventListener(this.root, 'selectstart', util.preventDefault);
+            } else {
+                var style = document.documentElement.style;
+                prevSelectStyle = style[userSelectProperty];
+                style[userSelectProperty] = 'none';
+            }
         },
         /**
          * 노드명 변경 후, 포커스 아웃 될때 발생되는 이벤트 핸들러
@@ -334,6 +387,7 @@
                 valueEl;
 
             parent = target.parentNode;
+
             valueEl = util.getElementsByClass(parent, this.valueClass)[0];
 
             if(tag === 'BUTTON') {
@@ -369,6 +423,9 @@
          * @private
          */
         _onMouseDown: function(e) {
+
+            util.preventDefault(e);
+
             var target = util.getTarget(e),
                 node = this.model.find(target.id);
 
@@ -381,8 +438,8 @@
                 y: e.clientY
             }, target.innerText || target.textContent);
 
-            var move = ne.util.bind(function(me) {
-                // 가이드 이동
+            this.move = ne.util.bind(function(me) {
+                // 가이드 이동'
                 this.setGuideLocation({
                     x: me.clientX,
                     y: me.clientY
@@ -390,22 +447,24 @@
 
             }, this);
 
-            var up = ne.util.bind(function(ue) {
+            this.up = ne.util.bind(function(ue) {
                 // 가이드 감춤
                 this.disableGuide();
 
                 var toEl = util.getTarget(ue),
-                    model = this.model;
+                    model = this.model,
+                    toNode = model.find(toEl.id),
+                    isDisable = model.isIrony(toNode, node);
 
-                if (model.find(toEl.id)) {
-                    model.remove(target.id);
-                    model.insert(node, toEl.id);
+                if (model.find(toEl.id) && toEl.id !== target.id && !isDisable) {
+                    model.move(target.id, node, toEl.id);
                 }
-                util.removeEventListener(document, 'mousemove', move);
-                util.removeEventListener(document, 'mouseup', up);
+                util.removeEventListener(document, 'mousemove', this.move);
+                util.removeEventListener(document, 'mouseup', this.up);
             }, this);
-            util.addEventListener(document, 'mousemove', move);
-            util.addEventListener(document, 'mouseup', up);
+
+            util.addEventListener(document, 'mousemove', this.move);
+            util.addEventListener(document, 'mouseup', this.up);
         },
         /**
          * 트리 드래그 앤 드롭하는 엘리먼트의 value값을 보여주는 가이드 엘리먼트를 활성화 한다.
@@ -416,11 +475,10 @@
             if (!this.guideElement) {
                 this.guideElement = document.createElement('span');
                 this.guideElement.style.position = 'absolute';
+                this.guideElement.style.display = 'none';
                 this.root.parentNode.appendChild(this.guideElement);
             }
             this.guideElement.innerHTML = value;
-            this.setGuideLocation(pos);
-            this.guideElement.style.display = 'block';
         },
         /**
          * 가이드의 위치를 변경한다.
@@ -429,6 +487,7 @@
         setGuideLocation: function(pos) {
             this.guideElement.style.left = pos.x + 10 + 'px';
             this.guideElement.style.top = pos.y + 10 + 'px';
+            this.guideElement.style.display = 'block';
         },
         /**
          * 가이드를 감춘다
@@ -546,6 +605,7 @@
                 node = this.model.find(id),
                 label = node.value,
                 parent = element.parentNode;
+
             //this.current가 존재하면 style none해제
             if(this.current) {
                 this.current.style.display = '';

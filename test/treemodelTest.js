@@ -116,4 +116,17 @@ describe('TreeModel을 생성한다', function() {
 
     });
 
+    it('노드의 계층을 비교한다.', function() {
+        var root = model.treeHash.root,
+            ck = root.childKeys,
+            first = model.find(ck[0]),
+            second = model.find(ck[1]),
+            secondChild = model.find(second.childKeys[0]);
+
+        var result = model.isIrony(first, second),
+            result2 = model.isIrony(secondChild, second);
+        expect(result).toBeFalsy();
+        expect(result2).toBeTruthy();
+    });
+
 });

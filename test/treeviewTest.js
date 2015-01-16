@@ -4,6 +4,7 @@
 describe('Tree를 생성한다', function() {
     var modelOption = {defaultState: 'open'},
         view,
+        view2,
         data = [{
             value: 'nodevalue1',
             children: [{
@@ -27,6 +28,9 @@ describe('Tree를 생성한다', function() {
     beforeEach(function() {
 
         view = new ne.component.Tree('', data ,{
+            modelOption: modelOption
+        });
+        view2 = new ne.component.Tree('', data ,{
             modelOption: modelOption
         });
 
@@ -133,7 +137,7 @@ describe('Tree를 생성한다', function() {
         expect(preSelectClass).toBe(element.className);
     });
 
-    it('노드를 선택하여 잘라내고(삭제) 저장된 노드를 다른 노드 아래에 붙인다.', function() {
+    it('노드를 이동 시킨다.(선택하여 잘라내고(삭제) 저장된 노드를 다른 노드 아래로에 붙인다.)', function() {
         var m = view.model,
             root = m.treeHash.root,
             keys = root.childKeys,
@@ -144,13 +148,116 @@ describe('Tree를 생성한다', function() {
             destLen = dest.childKeys.length;
 
         // 노드 선택
-        m.setBuffer(k1);
-        m.remove(k1);
-        m.insert(child, k2);
+        m.move(k1, child, k2);
 
         var resChildNodes = view.root.childNodes;
         expect(resChildNodes.length).toBe(1);
         expect(destLen).toBe(3);
 
     });
+
+    it('노드를 열고 닫는다.', function() {
+        var m = view.model,
+            root = m.treeHash.root,
+            keys = root.childKeys,
+            child = view.model.find(keys[0]),
+            state = child.state,
+            elClass = document.getElementById(child.id).parentNode.className,
+            cls;
+
+        m.changeState(child.id);
+
+        cls = document.getElementById(child.id).parentNode.className;
+        expect(state).not.toBe(child.state);
+        expect(elClass).not.toBe(cls);
+    });
+
+    it('트리 우클릭 방지', function() {
+        var m = view.model,
+            root = m.treeHash.root,
+            keys = root.childKeys,
+            child = view.model.find(keys[0]),
+            state = child.state,
+            target = document.getElementById(child.id).parentNode.getElementsByTagName('button')[0];
+        var e = {
+            srcElement: target,
+            target: target,
+            which:3,
+            button:2
+        };
+        view._onClick(e);
+        expect(state).toBe(child.state);
+    });
+
+    it('노드의 여닫힘 버튼을 클릭한다.', function() {
+        var m = view.model,
+            root = m.treeHash.root,
+            keys = root.childKeys,
+            child = view.model.find(keys[0]),
+            state = child.state,
+            target = document.getElementById(child.id).parentNode.getElementsByTagName('button')[0];
+        var e = {
+                srcElement: target,
+                target: target,
+                cancelBubble: false
+            };
+        if($.browser.version > 8) {
+            e.stopPropagation = function() {
+
+            };
+        }
+        view._onClick(e);
+        expect(state).not.toBe(child.state);
+    });
+
+    it('클릭으로 모델 버퍼에 선택 노드를 저장시킨다.', function(done) {
+        var m = view2.model,
+            root = m.treeHash.root,
+            keys = root.childKeys,
+            child = view2.model.find(keys[0]),
+            target = document.getElementById(child.id);
+        var e = {
+            srcElement: target,
+            target: target,
+            which:1,
+            button:1
+        };
+
+        view2._onClick(e);
+        setTimeout(function() {
+            expect(child).toBe(m.buffer);
+            done();
+        }, 1000);
+    });
+
+    it('뷰의 모드로 전환한다.', function() {
+        var m = view.model,
+            root = m.treeHash.root,
+            keys = root.childKeys,
+            child = view.model.find(keys[0]),
+            state = view.state,
+            target = document.getElementById(child.id);
+        var e = {
+            srcElement: target,
+            target: target,
+            which:1,
+            button:1
+        };
+
+        // 더블클릭으로 전환
+        view._onClick(e);
+        view._onClick(e);
+
+        expect(state).not.toBe(view.state);
+
+        state = view.state;
+
+        e.target = view.inputElement;
+        e.srcElement = view.inputElement;
+        view._onBlurInput(e);
+
+        expect(state).not.toBe(view.state);
+
+    });
+
 });
