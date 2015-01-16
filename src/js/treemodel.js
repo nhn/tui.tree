@@ -1,46 +1,7 @@
-
 /**
  * @fileoverview 트리를 구성하는 데이터를 조작, 데이터 변경사한 발생 시 뷰를 갱신함
  * @author FE개발팀 이제인(jein.yi@nhnent.com)
  * @constructor
- * @todo 데이터파싱이 현재, 계층적 구조, 수평적 매트릭스 구조도 지원을 해야함.
- * @todo 수평적 매트릭스 구조일 경우, 통째로 갈아 없는 방법이 좋으나, 그 경우 상태 저장이 되지 못함
- * @todo 상태 저장과 함께 데이터 구조를 추출할 수 있는 방법이 필요. -> 고유아이디 구성, 아이디부분의 상태데이터를 저장하는 객체를 따로 둠 -. 단 아이디는 변경되지 말아야함.
- * @todo step1 (즉 제일먼저 데이터를 가져와서 할일은 아이디 부여)
- * @todo step2 아이디를 부여한 모델의 상태 데이터를 저장
- * @todo step3 모델갱신시 -> 모델데이터 갱신
- *
- * 모델을 해시 형태로 가져간다.
- *
- * hashTable { node_1532525: {
- *      value: value,
- *      childKeys: [],
- *      parentId: 'node1523',
- *      id: node_1532525
- * }}
- *
- * 찾기시 ID 바로 탐색.
- * function findNode(key) {
- *      return hashTable[key];
- * }
- *
- * 이동시 부모변경
- * function changeParent(node, parent) {
- *      // 이전 부모노드한테서 아이디를 제거한다.
- *      removeChild(node);
- *      node.parent = parent;
- *      // 새로운 부모한테 아이디를 넣어준다.
- *      parent.childKeys.push(node.id);
- * }
- *
- * 노드 제거
- * function removeChild(node) {
- *      var list = node.parent.childKeys;
- *      ne.util.filter(list, function(n) {
- *          return node.id !== n;
- *      });
- * }
- *
  * **/
 ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends TreeModel.prototype */{
     init: function(options, view) {
@@ -63,9 +24,7 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends TreeModel.prototype
          */
         this.nodeDefaultState = options.defaultState || 'close';
         /**
-         * 복사및 붙여넣기시에 필요한 노드의 버퍼
-         * @todo 복사및 붙여넣기 기능은 추후구현해야함
-         *
+         * 이동시에 필요한 노드의 버퍼
          * @type {null}
          */
         this.buffer = null;
@@ -136,6 +95,8 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends TreeModel.prototype
         }, this);
 
         this.depth = this.depth - 1;
+
+        childKeys.sort(ne.util.bind(this.sort, this));
 
         return childKeys;
     },
@@ -215,9 +176,7 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends TreeModel.prototype
      */
     move: function(key, node, targetId) {
         this.removeKey(key);
-        console.log()
         this.treeHash[key] = null;
-
         this.insert(node, targetId);
     },
     /**
@@ -235,7 +194,9 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends TreeModel.prototype
 
         target.childKeys.push(node.id);
         node.depth = target.depth + 1;
-        node.parentId =targetId;
+        node.parentId = targetId;
+        // 정렬
+        target.childKeys.sort(ne.util.bind(this.sort, this));
 
         this.treeHash[node.id] = node;
 
@@ -286,7 +247,6 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends TreeModel.prototype
     changeState: function(key) {
         var node = this.find(key);
         node.state = node.state === 'open' ? 'close' : 'open';
-
         this.notify('toggle', node);
     },
     /**
@@ -322,28 +282,22 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends TreeModel.prototype
                 return this.isIrony(this.find(dest.parentId), node);
             }
         }
-    }//,
-    ////
-    ////sort: function(path, func) {
-    ////    var target = this.findNode(path) || this.nodes;
-    ////    target.childNodes.sort(func);
-    ////    this._notify('refresh', target);
-    ////},
-    ///**
-    // * 노드 정렬에 사용
-    // *
-    // * @param data
-    // */
-    //sortChild: function(data) {
-    //
-    //    data.sort(function(a, b) {
-    //        if (a.title < b.title) {
-    //            return -1;
-    //        } else if (a.title > b.title) {
-    //            return 1;
-    //        } else {
-    //            return 0;
-    //        }
-    //    });
-    //}
+    },
+    /**
+     * 타이틀에 따른 정렬
+     * @param {string} pid
+     * @param {string} nid
+     * @returns {number}
+     */
+    sort: function(pid, nid) {
+        var p = this.find(pid),
+            n = this.find(nid);
+        if(p.value < n.value) {
+            return -1;
+        } else if(p.value > n.value) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
 });

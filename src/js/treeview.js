@@ -15,13 +15,14 @@
         OPEN: ['open', '-'],
         CLOSE: ['close', '+'],
         SELECT_CLASS: 'selected',
+        SUBTREE_CLASS: 'Subtree',
         VALUE_CLASS: 'valueClass',
         EDITABLE_CLASS: 'editableClass',
         TEMPLATE: {
             ROD_NODE: '<li class="rod_node {{State}}">' +
                         '<button type="button">{{StateLabel}}</button>' +
                         '<span id="{{NodeID}}" class="depth{{Depth}} {{ValueClass}}">{{Title}}</span><em>{{DepthLabel}}</em>' +
-                        '<ul class="subTree">{{Children}}</ul>' +
+                        '<ul class="{{Subtree}}" style="display:{{Display}}">{{Children}}</ul>' +
                     '</li>',
             LEAP_NODE: '<li class="leap_node">' +
                         '<span id="{{NodeID}}" class="depth{{Depth}} {{ValueClass}}">{{Title}}</span><em>{{DepthLabel}}</em>' +
@@ -165,12 +166,18 @@
      * 모델에 뷰를 등록시킨다.
      * 트리의 뷰를 생성하고 이벤트를 부여한다.
      *
-     * @param {Object} options 트리의 기본옵션값
-     *      @param {Object} options.data 트리에 사용될 데이터
-     *      @param {Object} options.config 트리에 사용될 세팅값
-     *          @param {String} options.config.viewId 루트 엘리먼트
-     *          @param {String} options.config.defaultState 상태 미지정시 기본상태
-     *          @param {Array} [options.config.depthLabels] 뷰에만 표시 될 기본 레이블
+     * @param {string} id 트리가 붙을 앨리먼트의 아이디
+     *      @param {Object} data 트리에 사용될 데이터
+     *      @param {Object} options 트리에 사용될 세팅값
+     *          @param {String} options.modelOption 모델이 들어갈 옵션 값
+     *          @param {object} [options.template] 트리에 사용되는 기본 마크업
+     *          @param {Array} [options.openSet] 노드가 열린 상태일때 클래스 명과 버튼 레이블
+     *          @param {Array} [options.closeSet] 노드가 닫힌 상태일때 클래스 명과 버튼 레이블
+     *          @param {string} [options.selectClass] 선택된 노드에 부여되는 클래스 명
+     *          @param {string} [options.valueClass] 더블클릭이 되는 영역에 부여되는 클래스 명
+     *          @param {string} [options.inputClass] input엘리먼트에 부여되는 클래스 명
+     *          @param {string} [options.subtreeClass] 서브트리에 부여되는 클래스 명
+     *          @param {Array} [options.depthLabels] 뷰에만 표시 될 기본 레이블
      *
      * @example
      * var data = [
@@ -192,13 +199,11 @@
      ]}
      ];
 
-     var tree1 = new Tree({
-        data: data,
-        config: {
-            viewId: 'treeRoot3',
-            defaultState: 'open',
-            depthLabels:['층', '블록', '열']
-        }
+     var tree1 = new ne.component.Tree('id', data ,{
+            modelOption: {
+                defaultState: 'open'
+            }
+        });
     });
      * **/
     window.ne = ne = ne || {};
@@ -212,7 +217,7 @@
          * @param {String} id 루트의 아이디 값
          * @param {Object} data 트리 초기데이터 값
          * @param {Object} options 트리 초기옵션값
-         * @param {String} template 트리에사용되는 기본 태그(자식노드가 있을때와 없을때를 오브젝트 형태로 받는)
+         * @param {String} template 트리에 사용되는 기본 태그(자식노드가 있을때와 없을때를 오브젝트 형태로 받는)
          * */
         init: function (id, data, options) {
             /**
@@ -248,7 +253,7 @@
              *
              * @type {String}
              */
-            this.onselectClass = options.onselectClass || DEFAULT.SELECT_CLASS;
+            this.onselectClass = options.selectClass || DEFAULT.SELECT_CLASS;
             /**
              * 더블클릭이 적용되는 영역에 부여되는 클래스
              * @type {string}
@@ -270,6 +275,11 @@
              * @type {number}
              */
             this.state = STATE.NORMAL;
+            /**
+             * 트리 서브 클래스
+             * @type {string|*}
+             */
+            this.subtreeClass = options.subtreeClass || DEFAULT.SUBTREE_CLASS;
 
             if (id) {
                 this.root = document.getElementById(id);
@@ -315,23 +325,24 @@
          * #mouseup : 마우스를 떼었을 경우, 마우스 move와 다운을 없앤다.
          */
         setEvents: function() {
+
             var userSelectProperty = util.testProp(['userSelect', 'WebkitUserSelect', 'OUserSelect', 'MozUserSelect', 'msUserSelect']);
             var supportSelectStart = 'onselectstart' in document;
-
-            util.addEventListener(this.root, 'click', ne.util.bind(this._onClick, this));
-            util.addEventListener(this.inputElement, 'blur', ne.util.bind(this._onBlurInput, this));
-            util.addEventListener(this.root, 'mousedown', ne.util.bind(this._onMouseDown, this));
             if (supportSelectStart) {
                 util.addEventListener(this.root, 'selectstart', util.preventDefault);
             } else {
                 var style = document.documentElement.style;
-                prevSelectStyle = style[userSelectProperty];
                 style[userSelectProperty] = 'none';
             }
+
+            util.addEventListener(this.root, 'click', ne.util.bind(this._onClick, this));
+            util.addEventListener(this.inputElement, 'blur', ne.util.bind(this._onBlurInput, this));
+            util.addEventListener(this.root, 'mousedown', ne.util.bind(this._onMouseDown, this));
+
         },
         /**
          * 노드명 변경 후, 포커스 아웃 될때 발생되는 이벤트 핸들러
-         * @param e
+         * @param {event} e
          * @private
          */
         _onBlurInput: function(e) {
@@ -411,7 +422,7 @@
         },
         /**
          * 더블 클릭 처리
-         * @param e
+         * @param {event} e
          * @private
          */
         _onDoubleClick: function(e) {
@@ -426,45 +437,56 @@
 
             util.preventDefault(e);
 
-            var target = util.getTarget(e),
-                node = this.model.find(target.id);
+            var target = util.getTarget(e);
 
-            if(!target || !node) {
+            if(!target) {
                 return;
             }
-
+            // 가이드를 띄운다.
             this.enableGuide({
                 x: e.clientX,
                 y: e.clientY
             }, target.innerText || target.textContent);
 
-            this.move = ne.util.bind(function(me) {
-                // 가이드 이동'
-                this.setGuideLocation({
-                    x: me.clientX,
-                    y: me.clientY
-                });
-
-            }, this);
-
-            this.up = ne.util.bind(function(ue) {
-                // 가이드 감춤
-                this.disableGuide();
-
-                var toEl = util.getTarget(ue),
-                    model = this.model,
-                    toNode = model.find(toEl.id),
-                    isDisable = model.isIrony(toNode, node);
-
-                if (model.find(toEl.id) && toEl.id !== target.id && !isDisable) {
-                    model.move(target.id, node, toEl.id);
-                }
-                util.removeEventListener(document, 'mousemove', this.move);
-                util.removeEventListener(document, 'mouseup', this.up);
-            }, this);
+            this.move = ne.util.bind(this._onMouseMove, this);
+            this.up = ne.util.bind(this._onMouseUp, this, target);
 
             util.addEventListener(document, 'mousemove', this.move);
             util.addEventListener(document, 'mouseup', this.up);
+        },
+        /**
+         * 마우스 이동
+         * @param {event} me
+         * @private
+         */
+        _onMouseMove: function(me) {
+            // 가이드 이동'
+            this.setGuideLocation({
+                x: me.clientX,
+                y: me.clientY
+            });
+        },
+        /**
+         * 마우스 업 이벤트 핸들러
+         * @param {HTMLElement} target 마우스 다운의 타겟 엘리먼트
+         * @param {event} ue
+         * @private
+         */
+        _onMouseUp: function(target, ue) {
+            // 가이드 감춤
+            this.disableGuide();
+
+            var toEl = util.getTarget(ue),
+                node = this.model.find(target.id),
+                model = this.model,
+                toNode = model.find(toEl.id),
+                isDisable = model.isIrony(toNode, node);
+
+            if (model.find(toEl.id) && toEl.id !== target.id && !isDisable) {
+                model.move(target.id, node, toEl.id);
+            }
+            util.removeEventListener(document, 'mousemove', this.move);
+            util.removeEventListener(document, 'mouseup', this.up);
         },
         /**
          * 트리 드래그 앤 드롭하는 엘리먼트의 value값을 보여주는 가이드 엘리먼트를 활성화 한다.
@@ -492,7 +514,7 @@
         /**
          * 가이드를 감춘다
          */
-        disableGuide: function(pos) {
+        disableGuide: function() {
             this.guideElement.style.display = 'none';
         },
         /**
@@ -525,9 +547,10 @@
                         Depth: depth,
                         Title: node.value,
                         ValueClass: this.valueClass,
+                        SubTree: this.subtreeClass,
+                        Display: node.state == 'open' ? '' : 'none',
                         DepthLabel: rate
                     };
-
                 if(ne.util.isNotEmpty(node.childKeys)) {
                     tmpl = this.template.ROD_NODE;
                     map.Children = this._getHtml(node.childKeys);
@@ -703,7 +726,7 @@
          * 노드 선택해제시 액션
          * @param {Object} node 선택 해제 된 노드정보
          * @private
-         * */
+         **/
         _unSelect: function(node) {
             var valueEl = document.getElementById(node.id);
             if (ne.util.isExisty(valueEl) && util.hasClass(valueEl, this.onselectClass)) {
