@@ -593,7 +593,6 @@
                     state = this[node.state + 'Set'][0],
                     label = this[node.state + 'Set'][1],
                     rate = this.depthLabels[depth - 1] || '',
-                    el = null,
                     map = {
                         State: state,
                         StateLabel: label,
