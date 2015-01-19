@@ -146,6 +146,10 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends TreeModel.prototype
      */
     remove: function(key) {
         // 참조된 값 먼저 제거
+        var res = this.invoke('remove', { id: key});
+        if(!res) {
+            return;
+        }
         this.removeKey(key);
         this.treeHash[key] = null;
 
@@ -229,6 +233,11 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends TreeModel.prototype
      * @param {string} value 변경할 값
      */
     rename: function(key, value) {
+        var res = this.invoke('rename', {id: key, value: value});
+        if(!res) {
+            return;
+        }
+
         var node = this.find(key);
         node.value = value;
 
@@ -252,6 +261,7 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends TreeModel.prototype
         this.clearBuffer();
         var node = this.find(key);
         this.notify('select', node);
+        this.fire('select', {id: key, value: node.value });
         this.buffer = node;
     },
     /**
@@ -308,3 +318,4 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends TreeModel.prototype
         }
     }
 });
+ne.util.CustomEvents.mixin(ne.component.Tree.TreeModel);

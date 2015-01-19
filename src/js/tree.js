@@ -27,7 +27,9 @@
             LEAP_NODE: '<li class="leap_node">' +
                         '<span id="{{NodeID}}" class="depth{{Depth}} {{ValueClass}}">{{Title}}</span><em>{{DepthLabel}}</em>' +
                     '</li>'
-        }
+        },
+        USE_DRAG: false,
+        USE_HELPER: false
     };
 
     /**
@@ -280,6 +282,16 @@
              * @type {string|*}
              */
             this.subtreeClass = options.subtreeClass || DEFAULT.SUBTREE_CLASS;
+            /**
+             * 드래그앤 드롭 기능을 사용할것인지 여부
+             * @type {boolean|*}
+             */
+            this.useDrag = options.useDrag || DEFAULT.USE_DRAG;
+            /**
+             * 드래그앤 드롭 기능 동작시 가이드 엘리먼트 활성화 여부
+             * @type {boolean|*}
+             */
+            this.useHelper = this.useDrag && (options.useHelper || DEFAULT.USE_HELPER);
 
             if (id) {
                 this.root = document.getElementById(id);
@@ -326,6 +338,19 @@
          */
         setEvents: function() {
 
+            util.addEventListener(this.root, 'click', ne.util.bind(this._onClick, this));
+            util.addEventListener(this.inputElement, 'blur', ne.util.bind(this._onBlurInput, this));
+            util.addEventListener(this.inputElement, 'keyup', ne.util.bind(this._onKeyup, this));
+
+            if(this.useDrag) {
+                this._addDragEvent();
+            }
+        },
+        /**
+         * 드래그앤 드롭 이벤트를 건다.
+         * @private
+         */
+        _addDragEvent: function() {
             var userSelectProperty = util.testProp(['userSelect', 'WebkitUserSelect', 'OUserSelect', 'MozUserSelect', 'msUserSelect']);
             var supportSelectStart = 'onselectstart' in document;
             if (supportSelectStart) {
@@ -334,12 +359,7 @@
                 var style = document.documentElement.style;
                 style[userSelectProperty] = 'none';
             }
-
-            util.addEventListener(this.root, 'click', ne.util.bind(this._onClick, this));
-            util.addEventListener(this.inputElement, 'blur', ne.util.bind(this._onBlurInput, this));
-            util.addEventListener(this.inputElement, 'keyup', ne.util.bind(this._onKeyup, this));
             util.addEventListener(this.root, 'mousedown', ne.util.bind(this._onMouseDown, this));
-
         },
         /**
          * 엔터키를 입력 할 시, 모드 변경
@@ -406,9 +426,6 @@
             this.clickTimer = null;
 
             var target = util.getTarget(e);
-            if (!target) {
-                return;
-            }
 
             var tag = target.tagName.toUpperCase(),
                 parent,
@@ -465,21 +482,20 @@
             var target = util.getTarget(e),
                 tag;
 
-            if(!target) {
-                return;
-            }
-
             tag = target.tagName.toUpperCase();
 
             if(tag === 'BUTTON' || tag === 'INPUT') {
                 return;
             }
 
-            // 가이드를 띄운다.
-            this.enableGuide({
-                x: e.clientX,
-                y: e.clientY
-            }, target.innerText || target.textContent);
+            this.pos = this.root.getBoundingClientRect();
+            // 가이드를 사용하면 가이드 엘리먼트를 띄운다.
+            if(this.useHelper) {
+                this.enableHelper({
+                    x: e.clientX - this.pos.left,
+                    y: e.clientY - this.pos.top
+                }, target.innerText || target.textContent);
+            }
 
             this.move = ne.util.bind(this._onMouseMove, this);
             this.up = ne.util.bind(this._onMouseUp, this, target);
@@ -494,9 +510,12 @@
          */
         _onMouseMove: function(me) {
             // 가이드 이동'
-            this.setGuideLocation({
-                x: me.clientX,
-                y: me.clientY
+            if(!this.useHelper) {
+                return;
+            }
+            this.setHelperLocation({
+                x: me.clientX - this.pos.left,
+                y: me.clientY - this.pos.top
             });
         },
         /**
@@ -507,11 +526,11 @@
          */
         _onMouseUp: function(target, ue) {
             // 가이드 감춤
-            this.disableGuide();
+            this.disableHelper();
 
             var toEl = util.getTarget(ue),
-                node = this.model.find(target.id),
                 model = this.model,
+                node = model.find(target.id),
                 toNode = model.find(toEl.id),
                 isDisable = model.isDisable(toNode, node);
 
@@ -526,29 +545,31 @@
          * @param {object} pos 클릭한 좌표 위치
          * @param {string} value 클릭한 앨리먼트 텍스트 값
          */
-        enableGuide: function(pos, value) {
-            if (!this.guideElement) {
-                this.guideElement = document.createElement('span');
-                this.guideElement.style.position = 'absolute';
-                this.guideElement.style.display = 'none';
-                this.root.parentNode.appendChild(this.guideElement);
+        enableHelper: function(pos, value) {
+            if (!this.helperElement) {
+                this.helperElement = document.createElement('span');
+                this.helperElement.style.position = 'absolute';
+                this.helperElement.style.display = 'none';
+                this.root.parentNode.appendChild(this.helperElement);
             }
-            this.guideElement.innerHTML = value;
+            this.helperElement.innerHTML = value;
         },
         /**
          * 가이드의 위치를 변경한다.
          * @param {object} pos 변경할 위치
          */
-        setGuideLocation: function(pos) {
-            this.guideElement.style.left = pos.x + 10 + 'px';
-            this.guideElement.style.top = pos.y + 10 + 'px';
-            this.guideElement.style.display = 'block';
+        setHelperLocation: function(pos) {
+            this.helperElement.style.left = pos.x + 10 + 'px';
+            this.helperElement.style.top = pos.y + 10 + 'px';
+            this.helperElement.style.display = 'block';
         },
         /**
          * 가이드를 감춘다
          */
-        disableGuide: function() {
-            this.guideElement.style.display = 'none';
+        disableHelper: function() {
+            if(this.helperElement) {
+                this.helperElement.style.display = 'none';
+            }
         },
         /**
          * 트리의 전체 혹은 일부 html 을 생성한다.
@@ -770,5 +791,4 @@
         }
     });
 
-    ne.util.CustomEvents.mixin(ne.component.Tree);
 })(ne);

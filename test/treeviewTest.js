@@ -5,6 +5,7 @@ describe('Tree를 생성한다', function() {
     var modelOption = {defaultState: 'open'},
         view,
         view2,
+        view3,
         data = [{
             value: 'nodevalue1',
             children: [{
@@ -31,9 +32,15 @@ describe('Tree를 생성한다', function() {
             modelOption: modelOption
         });
         view2 = new ne.component.Tree('', data ,{
-            modelOption: modelOption
+            modelOption: modelOption,
+            useDrag: true,
+            useHelper: true
         });
-
+        view3 = new ne.component.Tree('', data ,{
+            modelOption: modelOption,
+            useDrag: true,
+            useHelper: false
+        });
     });
 
     it('트리 생성, 모델과 연결 된다. 이름변경을 지원하는 input엘리먼트가 생성된다.', function() {
@@ -257,6 +264,181 @@ describe('Tree를 생성한다', function() {
         view._onBlurInput(e);
 
         expect(state).not.toBe(view.state);
+
+    });
+
+    describe('노드를 드래그앤 드롭 한다.', function() {
+        it('같은 레벨의 노드로 드래그앤 드롭', function() {
+            var m = view2.model,
+                root = m.treeHash.root,
+                keys = root.childKeys,
+                child1 = view2.model.find(keys[1]),
+                target1 = document.getElementById(child1.id),
+                child2 = view2.model.find(keys[0]),
+                target2 = document.getElementById(child2.id);
+            var fromE = {
+                srcElement: target1,
+                target: target1,
+                preventDefault: function() {
+
+                }
+            };
+            var moveE = {
+                clientX: 100,
+                clientY: 100
+            };
+            var endE = {
+                srcElement: target2,
+                target: target2
+            };
+
+
+            view2._onMouseDown(fromE);
+            view2._onMouseMove(moveE);
+            view2._onMouseUp(target1, endE);
+
+            expect(root.childKeys.length).toBe(1);
+        });
+
+        it('자식 노드 밑으로 드래그앤 드롭', function() {
+            var m = view2.model,
+                root = m.treeHash.root,
+                keys = root.childKeys,
+                child1 = view2.model.find(keys[1]),
+                target1 = document.getElementById(child1.id),
+                child2 = view2.model.find(child1.childKeys[0]),
+                target2 = document.getElementById(child2.id);
+            var fromE = {
+                srcElement: target1,
+                target: target1,
+                preventDefault: function() {
+
+                }
+            };
+            var moveE = {
+                clientX: 100,
+                clientY: 100
+            };
+            var endE = {
+                srcElement: target2,
+                target: target2
+            };
+
+
+            view2._onMouseDown(fromE);
+            view2._onMouseMove(moveE);
+            view2._onMouseUp(target1, endE);
+            expect(root.childKeys.length).not.toBe(1);
+            expect(root.childKeys.length).toBe(2);
+        });
+
+        it('자식 노드 밑으로 드래그앤 드롭', function() {
+            var m = view2.model,
+                root = m.treeHash.root,
+                keys = root.childKeys,
+                child1 = view2.model.find(keys[1]),
+                target1 = document.getElementById(child1.id),
+                child2 = view2.model.find(child1.childKeys[0]),
+                target2 = document.getElementById(child2.id);
+            var fromE = {
+                srcElement: target1,
+                target: target1,
+                preventDefault: function() {
+
+                }
+            };
+            var moveE = {
+                clientX: 100,
+                clientY: 100
+            };
+            var endE = {
+                srcElement: target2,
+                target: target2
+            };
+
+
+            view2._onMouseDown(fromE);
+            view2._onMouseMove(moveE);
+            view2._onMouseUp(target1, endE);
+            expect(root.childKeys.length).not.toBe(1);
+            expect(root.childKeys.length).toBe(2);
+        });
+
+        it('버튼을 누르고 드래그앤 드롭 시도', function() {
+            var m = view2.model,
+                root = m.treeHash.root,
+                keys = root.childKeys,
+                child1 = view2.model.find(keys[1]),
+                target1 = document.getElementById(child1.id).previousSibling;
+            var fromE = {
+                srcElement: target1,
+                target: target1,
+                preventDefault: function() {
+
+                }
+            };
+
+            view2._onMouseDown(fromE);
+
+            expect(view2.move).not.toBeDefined();
+            expect(view2.up).not.toBeDefined();
+        });
+
+        it('Editable 상태 일때 드래그앤 드롭 시도', function() {
+            view2.state = 1;
+            var m = view2.model,
+                root = m.treeHash.root,
+                keys = root.childKeys,
+                child1 = view2.model.find(keys[1]),
+                target1 = document.getElementById(child1.id);
+
+            var fromE = {
+                srcElement: target1,
+                target: target1,
+                preventDefault: function() {
+
+                }
+            };
+
+            view2._onMouseDown(fromE);
+
+            expect(view2.move).not.toBeDefined();
+            expect(view2.up).not.toBeDefined();
+        });
+        it('drag helper 엘리먼트 사용을 하지 않을 때, 엘리면트 생성 안됨', function() {
+
+            var m = view3.model,
+                root = m.treeHash.root,
+                keys = root.childKeys,
+                child1 = view3.model.find(keys[1]),
+                target1 = document.getElementById(child1.id),
+                child2 = view3.model.find(child1.childKeys[0]),
+                target2 = document.getElementById(child2.id);
+            var fromE = {
+                srcElement: target1,
+                target: target1,
+                preventDefault: function() {
+
+                }
+            };
+
+            var moveE = {
+                clientX: 100,
+                clientY: 100
+            };
+            var endE = {
+                srcElement: target2,
+                target: target2
+            };
+
+            view3._onMouseDown(fromE);
+            view3._onMouseMove(moveE);
+            view3._onMouseUp(target1, endE);
+
+            expect(view3.helperElement).not.toBeDefined();
+
+        });
+
 
     });
 
