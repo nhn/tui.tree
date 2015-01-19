@@ -119,12 +119,12 @@
             if (target.querySelectorAll) {
                 return target.querySelectorAll('.' + className);
             }
-            var allChilds = target.getElementsByTagName('*'),
+            var all = target.getElementsByTagName('*'),
                 filter = [];
 
-            allChilds = ne.util.toArray(allChilds);
+            all = ne.util.toArray(all);
 
-            ne.util.forEach(allChilds, function(el) {
+            ne.util.forEach(all, function(el) {
                 var cls = el.className || '';
                 if (cls.indexOf(className) !== -1) {
                     filter.push(el);
@@ -298,7 +298,7 @@
              * @type {ne.component.Tree.TreeModel}
              */
             this.model = new ne.component.Tree.TreeModel(options.modelOption, this);
-
+            // 모델 데이터를 생성한다.
             this.model.setData(data);
 
             this._draw(this._getHtml(this.model.treeHash.root.childKeys));
@@ -437,11 +437,19 @@
 
             util.preventDefault(e);
 
-            var target = util.getTarget(e);
+            var target = util.getTarget(e),
+                tag;
 
             if(!target) {
                 return;
             }
+
+            tag = target.tagName.toUpperCase();
+
+            if(tag === 'BUTTON') {
+                return;
+            }
+
             // 가이드를 띄운다.
             this.enableGuide({
                 x: e.clientX,
@@ -480,7 +488,7 @@
                 node = this.model.find(target.id),
                 model = this.model,
                 toNode = model.find(toEl.id),
-                isDisable = model.isIrony(toNode, node);
+                isDisable = model.isEnable(toNode, node);
 
             if (model.find(toEl.id) && toEl.id !== target.id && !isDisable) {
                 model.move(target.id, node, toEl.id);
@@ -488,7 +496,7 @@
             util.removeEventListener(document, 'mousemove', this.move);
             util.removeEventListener(document, 'mouseup', this.up);
         },
-        /**
+        /** 
          * 트리 드래그 앤 드롭하는 엘리먼트의 value값을 보여주는 가이드 엘리먼트를 활성화 한다.
          * @param {object} pos 클릭한 좌표 위치
          * @param {string} value 클릭한 앨리먼트 텍스트 값

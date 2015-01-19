@@ -4,7 +4,7 @@
  * @constructor
  * **/
 ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends TreeModel.prototype */{
-    init: function(options, view) {
+    init: function(options, tree) {
         /**
          * 노드 고유아이디를 붙이기 위한 카운트, 갯수를 세는대 사용되진 않는다.
          *
@@ -14,9 +14,9 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends TreeModel.prototype
         /**
          * 모델의 변화를 구독하는 뷰들
          *
-         * @type {Array}
+         * @type {ne.component.Tree}
          */
-        this.views = [];
+        this.tree = tree;
         /**
          * 노드의 기본상태
          *
@@ -51,7 +51,7 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends TreeModel.prototype
         this.treeHash = {};
         this.treeHash['root'] = this.makeNode(0, 'root', 'root');
 
-        this.connect(view);
+        this.connect(tree);
     },
 
     /**
@@ -204,28 +204,21 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends TreeModel.prototype
     },
 
     /**
-     * 뷰를 갱신한다.
+     * 트리를 갱신한다.
      */
     notify: function(type, target) {
-        if (ne.util.isEmpty(this.views)) {
-            return;
-        }
-
-        ne.util.forEach(this.views, function(view) {
-            view.notify(type, target);
-        });
+        this.tree.notify(type, target);
     },
 
     /**
-     * 뷰와 모델을 연결한다. 모델에 변경이 일어날 경우, view의 notify를 호출하여 뷰를 갱신한다.
-     * @param view
+     * 뷰와 모델을 연결한다. 모델에 변경이 일어날 경우, tree notify를 호출하여 뷰를 갱신한다.
+     * @param {ne.component.Tree} tree
      */
-    connect: function(view) {
-        if (!view) {
+    connect: function(tree) {
+        if (!tree) {
             return;
         }
-        this.views.push(view);
-        view.model = this.model;
+        this.tree = tree;
     },
 
     /**
@@ -274,12 +267,19 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends TreeModel.prototype
      * @param {object} dest 이동할 대상 노드
      * @param {object} node 이동할 노드
      */
-    isIrony: function(dest, node) {
+    isEnable: function(dest, node) {
+        // 뎁스가 같으면 계층 구조에 있을 가능성이 없으니 바로 false를 리턴한다.
+        if(dest.depth === node.depth) {
+            return false;
+        }
         if(dest.parentId) {
+            if(dest.id === node.parentId) {
+                return true;
+            }
             if(dest.parentId === node.id) {
                 return true;
             } else {
-                return this.isIrony(this.find(dest.parentId), node);
+                return this.isEnable(this.find(dest.parentId), node);
             }
         }
     },
@@ -290,8 +290,13 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends TreeModel.prototype
      * @returns {number}
      */
     sort: function(pid, nid) {
+
         var p = this.find(pid),
             n = this.find(nid);
+
+        if(!p || !n) {
+            return 0;
+        }
         if(p.value < n.value) {
             return -1;
         } else if(p.value > n.value) {
