@@ -37,7 +37,7 @@ describe('Tree를 생성한다', function() {
     });
 
     it('트리 생성, 모델과 연결 된다. 이름변경을 지원하는 input엘리먼트가 생성된다.', function() {
-        var v = view.model.views[0];
+        var v = view.model.tree;
         var input = view.inputElement;
         expect(view).toBeDefined();
         expect(v).toBe(view);

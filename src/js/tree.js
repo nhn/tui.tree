@@ -337,8 +337,20 @@
 
             util.addEventListener(this.root, 'click', ne.util.bind(this._onClick, this));
             util.addEventListener(this.inputElement, 'blur', ne.util.bind(this._onBlurInput, this));
+            util.addEventListener(this.inputElement, 'keyup', ne.util.bind(this._onKeyup, this));
             util.addEventListener(this.root, 'mousedown', ne.util.bind(this._onMouseDown, this));
 
+        },
+        /**
+         * 엔터키를 입력 할 시, 모드 변경
+         * @private
+         */
+        _onKeyup: function(e) {
+            if(e.keyCode === 13) {
+                var target = util.getTarget(e);
+                this.model.rename(this.current.id, target.value);
+                this.changeState(this.current);
+            }
         },
         /**
          * 노드명 변경 후, 포커스 아웃 될때 발생되는 이벤트 핸들러
@@ -346,6 +358,9 @@
          * @private
          */
         _onBlurInput: function(e) {
+            if(this.state === STATE.NORMAL) {
+                return;
+            }
             var target = util.getTarget(e);
             this.model.rename(this.current.id, target.value);
             this.changeState(this.current);
@@ -387,7 +402,9 @@
          * @private
          */
         _onSingleClick: function(e) {
+
             this.clickTimer = null;
+
             var target = util.getTarget(e);
             if (!target) {
                 return;
@@ -401,8 +418,12 @@
 
             valueEl = util.getElementsByClass(parent, this.valueClass)[0];
 
+            if(tag === 'INPUT') {
+                return;
+            }
+
             if(tag === 'BUTTON') {
-                this.model.changeState(valueEl.id)
+                this.model.changeState(valueEl.id);
             } else {
                 this.model.setBuffer(valueEl.id);
             }
@@ -435,6 +456,10 @@
          */
         _onMouseDown: function(e) {
 
+            if(this.state === STATE.EDITABLE) {
+                return;
+            }
+
             util.preventDefault(e);
 
             var target = util.getTarget(e),
@@ -446,7 +471,7 @@
 
             tag = target.tagName.toUpperCase();
 
-            if(tag === 'BUTTON') {
+            if(tag === 'BUTTON' || tag === 'INPUT') {
                 return;
             }
 
@@ -488,7 +513,7 @@
                 node = this.model.find(target.id),
                 model = this.model,
                 toNode = model.find(toEl.id),
-                isDisable = model.isEnable(toNode, node);
+                isDisable = model.isDisable(toNode, node);
 
             if (model.find(toEl.id) && toEl.id !== target.id && !isDisable) {
                 model.move(target.id, node, toEl.id);
@@ -646,6 +671,8 @@
             this.inputElement.value = label;
             this.current = element;
             parent.insertBefore(this.inputElement, element);
+
+            this.inputElement.focus();
         },
         /**
          * 변경된 노드의 이름을 적용시킨다.

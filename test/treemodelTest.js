@@ -123,8 +123,8 @@ describe('TreeModel을 생성한다', function() {
             second = model.find(ck[1]),
             secondChild = model.find(second.childKeys[0]);
 
-        var result = model.isIrony(first, second),
-            result2 = model.isIrony(secondChild, second);
+        var result = model.isDisable(first, second),
+            result2 = model.isDisable(secondChild, second);
         expect(result).toBeFalsy();
         expect(result2).toBeTruthy();
     });

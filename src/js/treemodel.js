@@ -207,7 +207,9 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends TreeModel.prototype
      * 트리를 갱신한다.
      */
     notify: function(type, target) {
-        this.tree.notify(type, target);
+        if (this.tree) {
+            this.tree.notify(type, target);
+        }
     },
 
     /**
@@ -267,7 +269,7 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends TreeModel.prototype
      * @param {object} dest 이동할 대상 노드
      * @param {object} node 이동할 노드
      */
-    isEnable: function(dest, node) {
+    isDisable: function(dest, node) {
         // 뎁스가 같으면 계층 구조에 있을 가능성이 없으니 바로 false를 리턴한다.
         if(dest.depth === node.depth) {
             return false;
@@ -279,7 +281,7 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends TreeModel.prototype
             if(dest.parentId === node.id) {
                 return true;
             } else {
-                return this.isEnable(this.find(dest.parentId), node);
+                return this.isDisable(this.find(dest.parentId), node);
             }
         }
     },

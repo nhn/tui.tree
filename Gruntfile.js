@@ -5,6 +5,7 @@ module.exports = function(grunt) {
     grunt.initConfig({
         // You can set arbitrary key-value pairs.
         distFolder: 'dist',
+        name: 'Tree',
         // You can also set the value of a key as parsed JSON.
         // Allows us to reference properties we declared in package.json.
         pkg: grunt.file.readJSON('package.json'),
@@ -18,27 +19,47 @@ module.exports = function(grunt) {
             },
             // 'dist' is what is called a "target."
             // It's a way of specifying different sub-tasks or modes.
-            dist: {
+            normal: {
                 // The files to concatenate:
                 // Notice the wildcard, which is automatically expanded.
                 src: [
-                    'src/common/common.js',
+                    'src/common/*.js',
                     'src/js/tree.js',
-                    'src/**/*.js'
+                    'src/js/*.js'
                 ],
                 // The destination file:
                 // Notice the angle-bracketed ERB-like templating,
                 // which allows you to reference other properties.
                 // This is equivalent to 'dist/main.js'.
-                dest: '<%= distFolder %>/Component-Tree.js'
+                dest: '<%= distFolder %>/Component-<%= name %>.js'
+                // You can reference any grunt config property you want.
+                // Ex: '<%= concat.options.separator %>' instead of ';'
+            },
+            core: {
+                // The files to concatenate:
+                // Notice the wildcard, which is automatically expanded.
+                src: [
+                    'src/js/tree.js',
+                    'src/js/*.js'
+                ],
+                // The destination file:
+                // Notice the angle-bracketed ERB-like templating,
+                // which allows you to reference other properties.
+                // This is equivalent to 'dist/main.js'.
+                dest: '<%= distFolder %>/Component-<%= name %>.core.js'
                 // You can reference any grunt config property you want.
                 // Ex: '<%= concat.options.separator %>' instead of ';'
             }
         },
         uglify: {
-            my_target: {
+            normal: {
                 files: {
-                    '<%= distFolder %>/Component-Tree.min.js' : '<%= distFolder %>/Component-Tree.js'
+                    '<%= distFolder %>/Component-<%= name %>.min.js' : '<%= distFolder %>/Component-<%= name %>.js'
+                }
+            },
+            core: {
+                files: {
+                    '<%= distFolder %>/Component-<%= name %>.core.min.js' : '<%= distFolder %>/Component-<%= name %>.core.js'
                 }
             }
         },
@@ -52,7 +73,7 @@ module.exports = function(grunt) {
         zip: {
             main: {
                 src: ['<%= distFolder %>/*'],
-                dest: '<%= distFolder %>/Component-Tree.zip'
+                dest: '<%= distFolder %>/Component-<%= name %>.zip'
             }
         }
     }); // The end of grunt.initConfig
