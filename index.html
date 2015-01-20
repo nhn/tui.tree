@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Index</title>
+    <link type="text/css" rel="stylesheet" href="styles/prettify-jsdoc.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-fe2.css">
+</head>
+<body>
+
+<div id="wrap">
+
+    <div class="header">
+
+        <div class="container-fluid">
+            <h3><a href="index.html">API Documentation</a> <small>FE개발팀</small></h3>
+        </div>
+
+    </div>
+
+    <div class="body">
+        <div id="navigation" class="navigation"><h3>Classes</h3><ul class="list classes"><li class="item" id="ne.component.Tree"><span class="title"><span class="p-item">ne.component.</span><a href="ne.component.Tree.html">Tree</a></span><span class="icon blue static">static</span><ul class="sublist members ne.component.Tree"><span class="subtitle">Members</span><li><a href="ne.component.Tree.html#closeSet">closeSet</a></li><li><a href="ne.component.Tree.html#depthLabels">depthLabels</a></li><li><a href="ne.component.Tree.html#editClass">editClass</a></li><li><a href="ne.component.Tree.html#inputElement">inputElement</a></li><li><a href="ne.component.Tree.html#model">model</a></li><li><a href="ne.component.Tree.html#onselectClass">onselectClass</a></li><li><a href="ne.component.Tree.html#openSet">openSet</a></li><li><a href="ne.component.Tree.html#path">path</a></li><li><a href="ne.component.Tree.html#root">root</a></li><li><a href="ne.component.Tree.html#state">state</a></li><li><a href="ne.component.Tree.html#subtreeClass">subtreeClass</a></li><li><a href="ne.component.Tree.html#template">template</a></li><li><a href="ne.component.Tree.html#useDrag">useDrag</a></li><li><a href="ne.component.Tree.html#useHelper">useHelper</a></li><li><a href="ne.component.Tree.html#valueClass">valueClass</a></li></ul><ul class="sublist division ne.component.Tree"><li></li></ul><ul class="sublist methods ne.component.Tree"><span class="subtitle">Methods</span><li><a href="ne.component.Tree.html#action">action</a></li><li><a href="ne.component.Tree.html#changeState">changeState</a></li><li><a href="ne.component.Tree.html#disableHelper">disableHelper</a></li><li><a href="ne.component.Tree.html#enableHelper">enableHelper</a></li><li><a href="ne.component.Tree.html#getEditableElement">getEditableElement</a></li><li><a href="ne.component.Tree.html#init">init</a></li><li><a href="ne.component.Tree.html#notify">notify</a></li><li><a href="ne.component.Tree.html#setDepthLabels">setDepthLabels</a></li><li><a href="ne.component.Tree.html#setEvents">setEvents</a></li><li><a href="ne.component.Tree.html#setHelperLocation">setHelperLocation</a></li></ul></li><li class="item" id="ne.component.Tree.TreeModel"><span class="title"><span class="p-item">ne.component.Tree.</span><a href="ne.component.Tree.TreeModel.html">TreeModel</a></span><span class="icon blue static">static</span><ul class="sublist members ne.component.Tree.TreeModel"><span class="subtitle">Members</span><li><a href="ne.component.Tree.TreeModel.html#buffer">buffer</a></li><li><a href="ne.component.Tree.TreeModel.html#count">count</a></li><li><a href="ne.component.Tree.TreeModel.html#date">date</a></li><li><a href="ne.component.Tree.TreeModel.html#depth">depth</a></li><li><a href="ne.component.Tree.TreeModel.html#nodeDefaultState">nodeDefaultState</a></li><li><a href="ne.component.Tree.TreeModel.html#tree">tree</a></li><li><a href="ne.component.Tree.TreeModel.html#treeHash">treeHash</a></li></ul><ul class="sublist division ne.component.Tree.TreeModel"><li></li></ul><ul class="sublist methods ne.component.Tree.TreeModel"><span class="subtitle">Methods</span><li><a href="ne.component.Tree.TreeModel.html#changeState">changeState</a></li><li><a href="ne.component.Tree.TreeModel.html#clearBuffer">clearBuffer</a></li><li><a href="ne.component.Tree.TreeModel.html#connect">connect</a></li><li><a href="ne.component.Tree.TreeModel.html#find">find</a></li><li><a href="ne.component.Tree.TreeModel.html#insert">insert</a></li><li><a href="ne.component.Tree.TreeModel.html#isDisable">isDisable</a></li><li><a href="ne.component.Tree.TreeModel.html#makeNode">makeNode</a></li><li><a href="ne.component.Tree.TreeModel.html#move">move</a></li><li><a href="ne.component.Tree.TreeModel.html#notify">notify</a></li><li><a href="ne.component.Tree.TreeModel.html#remove">remove</a></li><li><a href="ne.component.Tree.TreeModel.html#removeKey">removeKey</a></li><li><a href="ne.component.Tree.TreeModel.html#rename">rename</a></li><li><a href="ne.component.Tree.TreeModel.html#setBuffer">setBuffer</a></li><li><a href="ne.component.Tree.TreeModel.html#setData">setData</a></li><li><a href="ne.component.Tree.TreeModel.html#sort">sort</a></li></ul></li></ul></div>
+        <div id="main" class="main">
+
+
+
+    
+
+
+    <h3> </h3>
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+    <section>
+        <article><div class="readme"><h2>개발 날짜</h2><p>2014-11-17</p>
+<h2>담당자</h2><p>FE 개발팀 이제인 <a href="&#x6d;&#x61;&#x69;&#108;&#116;&#x6f;&#x3a;&#106;&#x65;&#105;&#x6e;&#x2e;&#121;&#105;&#x40;&#x6e;&#104;&#110;&#101;&#x6e;&#116;&#x2e;&#99;&#x6f;&#109;">&#106;&#x65;&#105;&#x6e;&#x2e;&#121;&#105;&#x40;&#x6e;&#104;&#110;&#101;&#x6e;&#116;&#x2e;&#99;&#x6f;&#109;</a></p>
+<h2>설명</h2><ul>
+<li>트리 기능을 지원하기 위한 컴포넌트</li>
+</ul>
+<h2>기능 정의</h2><ul>
+<li>트리구조 데이터 뷰</li>
+<li>노드의 여닫힘</li>
+<li>노드의 추가/삭제</li>
+<li>노드 더블클릭시 이름 변경가능</li>
+<li>커스텀이벤트(특정 클래스의 노드 클릭시 이벤트 발생)</li>
+</ul>
+<h2>샘플 페이지</h2><p>http://fetech.nhnent.com/svnrun/fetech/components/tree/sample/index.html</p>
+<h2>다운로드</h2><p>http://fetech.nhnent.com/svnrun/fetech/components/tree/dist/</p>
+<h2>API 문서</h2><p>http://fetech.nhnent.com/svnrun/fetech/components/tree/doc/index.html</p></div></article>
+    </section>
+
+
+
+
+
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+        
+        tree.js
+        
+        
+        </h2>
+        
+    
+</header>
+
+<article>
+    
+    <div class="container-overview">
+    
+        
+            <div class="description"><p>화면에 보여지는 트리를 그리고, 갱신한다</p></div>
+        
+
+        
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li>FE개발팀 이제인(jein.yi@nhnent.com)</li>
+        </ul>
+    </dd>
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+        <dd class="tag-source"><ul class="dummy"><li>
+            <a href="tree.js.html">tree.js</a>, <a href="tree.js.html#line1">line 1</a>
+        </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+        
+    
+    </div>
+    
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+        
+        treemodel.js
+        
+        
+        </h2>
+        
+    
+</header>
+
+<article>
+    
+    <div class="container-overview">
+    
+        
+            <div class="description"><p>트리를 구성하는 데이터를 조작, 데이터 변경사한 발생 시 뷰를 갱신함</p></div>
+        
+
+        
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li>FE개발팀 이제인(jein.yi@nhnent.com)</li>
+        </ul>
+    </dd>
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+        <dd class="tag-source"><ul class="dummy"><li>
+            <a href="treemodel.js.html">treemodel.js</a>, <a href="treemodel.js.html#line1">line 1</a>
+        </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+        
+    
+    </div>
+    
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+</div>
+        <div class="clearfix"></div>
+    </div>
+
+</div>
+<script>
+(function() {
+// 영역 height 설정
+var height = (window.innerHeight || document.documentElement.clientHeight || document.getElementByTagName('body')[0].clientHeight) - 50;
+var navigation = document.getElementById('navigation');
+var main = document.getElementById('main');
+navigation.style.height = height + 'px';
+main.style.height = height + 'px';
+
+// IE 7,8을 위한 getElementsByClassName 구현
+var getElementsByClassName = function(className, parentElement) {
+	if(document.getElementsByClassName) {
+		return (parentElement || document).getElementsByClassName(className);
+	}
+
+    var regEx = new RegExp('(^| )'+className+'( |$)');
+	var nodes = new Array();
+    var elements = (parentElement || document.body).getElementsByTagName("*");
+    for(var i = 0, len = elements.length; i < len ; i++) {
+        if(regEx.test(elements[i].className)) {
+			nodes.push(elements[i]);
+		}
+	}
+	elements = null;
+    return nodes;
+}
+
+// url 파싱후 해당 카테고리만 display:block 처리
+var url = location.href;
+var path = url.lastIndexOf('/');
+var fileName = url.substring(path+1);
+var fullName = fileName.split('.');
+fullName.length -= 1;
+fullName = fullName.join('.');
+fullName = fullName.split('-');
+fullName = fullName[fullName.length - 1];
+var lnbList = getElementsByClassName(fullName);
+if(lnbList.length && lnbList.length > 0) {
+    for(var i = 0, len = lnbList.length; i < len; i++) {
+        lnbList[i].className += ' selected';
+    }
+}
+
+var title = document.getElementById(fullName);
+if(title) {
+    title.className += ' selected';
+    title.innerHTML = '<span class="arrow">▶</span>' + title.innerHTML;
+
+    var static = getElementsByClassName('static', title);
+    if(static) {
+        static[0].className += ' selected';
+    }
+}
+})();
+</script>
+<script type="text/javascript" src="scripts/prettify/prettify.js"></script>
+<script type="text/javascript" src="scripts/prettify/lang-css.js"></script>
+<script type="text/javascript">prettyPrint();</script>
+<script type="text/javascript" src="scripts/linenumber.js"></script>
+</body>
+</html>
