@@ -1,7 +1,7 @@
 {
-  "name": "FIXME",
-  "version": "0.0.1",
-  "description": "FIXME",
+  "name": "Component-Tree",
+  "version": "0.0.2",
+  "description": "트리 컴포넌트",
   "private": true,
   "devDependencies": {
     "fedoc-template": "git+http://14bfd38a036366f7ca90355d202038126127bd01:x-oauth-basic@github.nhnent.com/FE/Share-FEDocTemplate.git",

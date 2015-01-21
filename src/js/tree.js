@@ -484,7 +484,7 @@
 
             tag = target.tagName.toUpperCase();
 
-            if(tag === 'BUTTON' || tag === 'INPUT') {
+            if(tag === 'BUTTON' || tag === 'INPUT' || !util.hasClass(target, this.valueClass)) {
                 return;
             }
 
