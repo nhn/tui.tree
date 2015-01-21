@@ -59,7 +59,7 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends TreeModel.prototype
      * 모델에 트리형태의 데이터를 세팅함
      * 모델은 데이터를 받아 노드의 트리형태로 변경
      *
-     * @param {Object} data 트리 입력데이터
+     * @param {array} data 트리 입력데이터
      *
      * **/
 
@@ -146,10 +146,12 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends TreeModel.prototype
      */
     remove: function(key) {
         // 참조된 값 먼저 제거
-        var res = this.invoke('remove', { id: key});
-        if(!res) {
+        var res = this.invoke('remove', { id: key });
+
+        if (!res) {
             return;
         }
+
         this.removeKey(key);
         this.treeHash[key] = null;
 
@@ -168,9 +170,11 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends TreeModel.prototype
 
         // 자식 키 값을 제거한다.
         var parent = this.find(node.parentId);
+
         parent.childKeys = ne.util.filter(parent.childKeys, function(childKey) {
             return childKey !== key;
         });
+
     },
     /**
      * 노드를 이동시킨다
@@ -179,9 +183,11 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends TreeModel.prototype
      * @param {string} targetId
      */
     move: function(key, node, targetId) {
+
         this.removeKey(key);
         this.treeHash[key] = null;
         this.insert(node, targetId);
+
     },
     /**
      * 노드를 삽입한다.
@@ -234,7 +240,7 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends TreeModel.prototype
      */
     rename: function(key, value) {
         var res = this.invoke('rename', {id: key, value: value});
-        if(!res) {
+        if (!res) {
             return;
         }
 
@@ -258,21 +264,28 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends TreeModel.prototype
      * @param {String} key 선택된 노드 패스값
      **/
     setBuffer: function(key) {
+
         this.clearBuffer();
+
         var node = this.find(key);
+
         this.notify('select', node);
         this.fire('select', {id: key, value: node.value });
+
         this.buffer = node;
     },
     /**
      * 버퍼를 비운다
      **/
     clearBuffer: function() {
+
         if (!this.buffer) {
             return;
         }
+
         this.notify('unselect', this.buffer);
         this.buffer = null;
+
     },
     /**
      * 이동할 노드가, 이동할 대상 노드의 부모노드인지 확인한다.
@@ -281,14 +294,14 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends TreeModel.prototype
      */
     isDisable: function(dest, node) {
         // 뎁스가 같으면 계층 구조에 있을 가능성이 없으니 바로 false를 리턴한다.
-        if(dest.depth === node.depth) {
+        if (dest.depth === node.depth) {
             return false;
         }
-        if(dest.parentId) {
-            if(dest.id === node.parentId) {
+        if (dest.parentId) {
+            if (dest.id === node.parentId) {
                 return true;
             }
-            if(dest.parentId === node.id) {
+            if (dest.parentId === node.id) {
                 return true;
             } else {
                 return this.isDisable(this.find(dest.parentId), node);
@@ -306,12 +319,13 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends TreeModel.prototype
         var p = this.find(pid),
             n = this.find(nid);
 
-        if(!p || !n) {
+        if (!p || !n) {
             return 0;
         }
-        if(p.value < n.value) {
+
+        if (p.value < n.value) {
             return -1;
-        } else if(p.value > n.value) {
+        } else if (p.value > n.value) {
             return 1;
         } else {
             return 0;

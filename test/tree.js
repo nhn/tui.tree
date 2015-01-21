@@ -245,6 +245,7 @@ describe('Tree를 생성한다', function() {
             child = view.model.find(keys[0]),
             state = view.state,
             target = document.getElementById(child.id);
+
         var e = {
             srcElement: target,
             target: target,
@@ -255,7 +256,6 @@ describe('Tree를 생성한다', function() {
         // 더블클릭으로 전환
         view._onClick(e);
         view._onClick(e);
-
         expect(state).not.toBe(view.state);
 
         state = view.state;

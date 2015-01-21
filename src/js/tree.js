@@ -29,7 +29,11 @@
                     '</li>'
         },
         USE_DRAG: false,
-        USE_HELPER: false
+        USE_HELPER: false,
+        HELPER_POS : {
+            x: 10,
+            y: 10
+        }
     };
 
     /**
@@ -38,7 +42,6 @@
      * @author FE개발팀 이제인(jein.yi@nhnent.com)
      * @namespace
      */
-
     var util = {
         /**
          * 엘리먼트에 이벤트를 추가한다
@@ -50,7 +53,6 @@
         addEventListener: function(element, eventName, handler) {
             if (element.addEventListener) {
                 element.addEventListener(eventName, handler, false);
-
             } else {
                 element.attachEvent('on' + eventName, handler);
             }
@@ -67,20 +69,6 @@
                 element.removeEventListener(eventName, handler, false);
             } else {
                 element.detachEvent('on' + eventName, handler);
-            }
-        },
-        /**
-         * 이벤트 전파를 막는다
-         *
-         * @param {Object} event 전파를 방지할 이벤트객체
-         */
-        stopEvent: function(e) {
-            if (e.stopPropagation) {
-                e.stopPropagation();
-            }
-            //IE8 and Lower
-            else {
-                e.cancelBubble = true;
             }
         },
         /**
@@ -136,23 +124,34 @@
         },
         /**
          * 우클릭인지 확인
-         * @param {number} number 버튼 넘버
+         * @param {event} e 확인 이벤트
          * @returns {boolean}
          */
-        isRightButton: function(number) {
-            var isRight = (number === 3 || number === 2);
+        isRightButton: function(e) {
+            var isRight = util._getButton(e) === 2;
             return isRight;
         },
+        /**
+         * 속성 존재 여부 테스트
+         * @param props
+         * @returns {*}
+         */
         testProp: function(props) {
-            var style = document.documentElement.style;
+            var style = document.documentElement.style,
+                i = 0;
 
-            for (var i = 0; i < props.length; i++) {
+            for (; i < props.length; i++) {
                 if (props[i] in style) {
                     return props[i];
                 }
             }
             return false;
         },
+        /**
+         * 이벤트 기본 동작 방
+         * @param e
+         * @returns {util}
+         */
         preventDefault: function(e) {
             if (e.preventDefault) {
                 e.preventDefault();
@@ -160,6 +159,32 @@
                 e.returnValue = false;
             }
             return this;
+        },
+        /**
+         * 마우스 이벤트에서 버튼 클릭 속성을 정규화한다
+         * 0: 우선적 마우스 버튼, 2: 두 번째 마우스 버튼, 1: 가운데 버튼
+         * @param {MouseEvent} event
+         * @returns {*}
+         * @private
+         */
+        _getButton: function(e) {
+            var button,
+                primary = '0,1,3,5,7',
+                secondary = '2,6',
+                wheel = '4';
+
+            if (document.implementation.hasFeature('MouseEvents', '2.0')) {
+                return e.button;
+            } else {
+                button = e.button + '';
+                if (primary.indexOf(button) > -1) {
+                    return 0;
+                } else if (secondary.indexOf(button) > -1) {
+                    return 2;
+                } else if (wheel.indexOf(button) > -1) {
+                    return 1;
+                }
+            }
         }
     };
     /**
@@ -180,6 +205,7 @@
      *          @param {string} [options.inputClass] input엘리먼트에 부여되는 클래스 명
      *          @param {string} [options.subtreeClass] 서브트리에 부여되는 클래스 명
      *          @param {Array} [options.depthLabels] 뷰에만 표시 될 기본 레이블
+     *          @param {object} [options.helperPos] 헬퍼객체가 표시되는 위치의 상대값 좌표
      *
      * @example
      * var data = [
@@ -232,12 +258,6 @@
              * @type {HTMLElement}
              */
             this.root = null;
-            /**
-             * 노드 생성시 패스를 만들기 위한 배열
-             *
-             * @type {Array}
-             */
-            this.path = [];
             /**
              * 트리가 열린 상태일때 부여되는 클래스와, 텍스트
              *
@@ -292,6 +312,11 @@
              * @type {boolean|*}
              */
             this.useHelper = this.useDrag && (options.useHelper || DEFAULT.USE_HELPER);
+            /**
+             * 헬퍼객체의 기준 위치를 설정한다.
+             * @type {object}
+             */
+            this.helperPos = options.helperPos || DEFAULT.HELPER_POS;
 
             if (id) {
                 this.root = document.getElementById(id);
@@ -342,7 +367,7 @@
             util.addEventListener(this.inputElement, 'blur', ne.util.bind(this._onBlurInput, this));
             util.addEventListener(this.inputElement, 'keyup', ne.util.bind(this._onKeyup, this));
 
-            if(this.useDrag) {
+            if (this.useDrag) {
                 this._addDragEvent();
             }
         },
@@ -366,7 +391,7 @@
          * @private
          */
         _onKeyup: function(e) {
-            if(e.keyCode === 13) {
+            if (e.keyCode === 13) {
                 var target = util.getTarget(e);
                 this.model.rename(this.current.id, target.value);
                 this.changeState(this.current);
@@ -378,7 +403,7 @@
          * @private
          */
         _onBlurInput: function(e) {
-            if(this.state === STATE.NORMAL) {
+            if (this.state === STATE.NORMAL) {
                 return;
             }
             var target = util.getTarget(e);
@@ -394,9 +419,8 @@
             var target = util.getTarget(e);
 
             // 우클릭은 막는다.
-            if (util.isRightButton(e.which || e.button)) {
+            if (util.isRightButton(e)) {
                 this.clickTimer = null;
-                util.stopEvent(e);
                 return;
             }
 
@@ -425,21 +449,19 @@
 
             this.clickTimer = null;
 
-            var target = util.getTarget(e);
-
-            var tag = target.tagName.toUpperCase(),
+            var target = util.getTarget(e),
+                tag = target.tagName.toUpperCase(),
                 parent,
                 valueEl;
 
             parent = target.parentNode;
-
             valueEl = util.getElementsByClass(parent, this.valueClass)[0];
 
-            if(tag === 'INPUT') {
+            if (tag === 'INPUT') {
                 return;
             }
 
-            if(tag === 'BUTTON') {
+            if (tag === 'BUTTON') {
                 this.model.changeState(valueEl.id);
             } else {
                 this.model.setBuffer(valueEl.id);
@@ -451,12 +473,15 @@
          * @param {HTMLelement} target 엘리먼트
          */
         changeState: function(target) {
-            this.state = (this.state + 1) % 2;
-            if(this.state === STATE.NORMAL) {
+
+            if (this.state === STATE.EDITABLE) {
+                this.state = STATE.NORMAL;
                 this.action('restore', target);
             } else {
+                this.state = STATE.EDITABLE;
                 this.action('convert', target);
             }
+
         },
         /**
          * 더블 클릭 처리
@@ -473,7 +498,7 @@
          */
         _onMouseDown: function(e) {
 
-            if(this.state === STATE.EDITABLE) {
+            if (this.state === STATE.EDITABLE || util.isRightButton(e)) {
                 return;
             }
 
@@ -484,13 +509,14 @@
 
             tag = target.tagName.toUpperCase();
 
-            if(tag === 'BUTTON' || tag === 'INPUT' || !util.hasClass(target, this.valueClass)) {
+            if (tag === 'BUTTON' || tag === 'INPUT' || !util.hasClass(target, this.valueClass)) {
                 return;
             }
 
             this.pos = this.root.getBoundingClientRect();
+
             // 가이드를 사용하면 가이드 엘리먼트를 띄운다.
-            if(this.useHelper) {
+            if (this.useHelper) {
                 this.enableHelper({
                     x: e.clientX - this.pos.left,
                     y: e.clientY - this.pos.top
@@ -510,7 +536,7 @@
          */
         _onMouseMove: function(me) {
             // 가이드 이동'
-            if(!this.useHelper) {
+            if (!this.useHelper) {
                 return;
             }
             this.setHelperLocation({
@@ -537,6 +563,7 @@
             if (model.find(toEl.id) && toEl.id !== target.id && !isDisable) {
                 model.move(target.id, node, toEl.id);
             }
+
             util.removeEventListener(document, 'mousemove', this.move);
             util.removeEventListener(document, 'mouseup', this.up);
         },
@@ -546,12 +573,14 @@
          * @param {string} value 클릭한 앨리먼트 텍스트 값
          */
         enableHelper: function(pos, value) {
+
             if (!this.helperElement) {
                 this.helperElement = document.createElement('span');
                 this.helperElement.style.position = 'absolute';
                 this.helperElement.style.display = 'none';
                 this.root.parentNode.appendChild(this.helperElement);
             }
+
             this.helperElement.innerHTML = value;
         },
         /**
@@ -559,17 +588,21 @@
          * @param {object} pos 변경할 위치
          */
         setHelperLocation: function(pos) {
-            this.helperElement.style.left = pos.x + 10 + 'px';
-            this.helperElement.style.top = pos.y + 10 + 'px';
+
+            this.helperElement.style.left = pos.x + this.helperPos.x + 'px';
+            this.helperElement.style.top = pos.y + this.helperPos.y + 'px';
             this.helperElement.style.display = 'block';
+
         },
         /**
          * 가이드를 감춘다
          */
         disableHelper: function() {
-            if(this.helperElement) {
+
+            if (this.helperElement) {
                 this.helperElement.style.display = 'none';
             }
+
         },
         /**
          * 트리의 전체 혹은 일부 html 을 생성한다.
@@ -604,7 +637,8 @@
                         Display: node.state == 'open' ? '' : 'none',
                         DepthLabel: rate
                     };
-                if(ne.util.isNotEmpty(node.childKeys)) {
+
+                if (ne.util.isNotEmpty(node.childKeys)) {
                     tmpl = this.template.ROD_NODE;
                     map.Children = this._getHtml(node.childKeys);
                 } else {
@@ -663,7 +697,7 @@
             var parent = element.parentNode,
                 cls = parent.className;
 
-            if (!ne.util.isNotEmpty(node.childKeys)) {
+            if (ne.util.isEmpty(node.childKeys)) {
                 cls = 'leap_node ' + this[node.state + 'Set'][0];
             } else {
                 cls = 'rod_node ' + this[node.state + 'Set'][0];
@@ -683,7 +717,7 @@
                 parent = element.parentNode;
 
             //this.current가 존재하면 style none해제
-            if(this.current) {
+            if (this.current) {
                 this.current.style.display = '';
             }
 
@@ -702,10 +736,13 @@
         _restore: function(element) {
 
             var parent = element.parentNode;
-            if(this.current) {
+
+            if (this.current) {
                 this.current.style.display = '';
             }
+
             this.inputElement.value = '';
+
             parent.removeChild(this.inputElement);
         },
         /**
@@ -756,9 +793,8 @@
             var element = document.getElementById(node.id),
                 parent = element.parentNode,
                 childWrap = parent.getElementsByTagName('ul')[0],
-                button = parent.getElementsByTagName('button')[0];
-
-            var state = this[node.state + 'Set'][0],
+                button = parent.getElementsByTagName('button')[0],
+                state = this[node.state + 'Set'][0],
                 label = this[node.state + 'Set'][1],
                 isOpen = node.state === 'open';
 
@@ -773,6 +809,7 @@
          * */
         _select: function(node) {
             var valueEl = document.getElementById(node.id);
+
             if (ne.util.isExisty(valueEl)) {
                 valueEl.className = valueEl.className.replace(' ' + this.onselectClass, '') + ' ' + this.onselectClass;
             }
@@ -784,6 +821,7 @@
          **/
         _unSelect: function(node) {
             var valueEl = document.getElementById(node.id);
+
             if (ne.util.isExisty(valueEl) && util.hasClass(valueEl, this.onselectClass)) {
                 valueEl.className = valueEl.className.replace(' ' + this.onselectClass, '');
             }
