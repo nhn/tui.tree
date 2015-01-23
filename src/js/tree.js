@@ -57,6 +57,7 @@
                 element.attachEvent('on' + eventName, handler);
             }
         },
+
         /**
          * 엘리먼트에 이벤트를 제거한다
          *
@@ -71,6 +72,7 @@
                 element.detachEvent('on' + eventName, handler);
             }
         },
+
         /**
          * 이벤트 객체의 타겟을 반환한다
          * @param {event} e 이벤트객체
@@ -81,6 +83,7 @@
             var target = e.target || e.srcElement;
             return target;
         },
+
         /**
          * 엘리먼트가 특정 클래스를 가지고 있는지 확인
          * @param {HTMLElement} element 확인할 엘리먼트
@@ -100,6 +103,7 @@
 
             return false;
         },
+
         /**
          * 클래스에 따른 엘리먼트 찾기
          * @param {HTMLElement} target 대상 엘리먼트
@@ -124,6 +128,7 @@
 
             return filter;
         },
+
         /**
          * 우클릭인지 확인
          * @param {event} e 확인 이벤트
@@ -133,6 +138,7 @@
             var isRight = util._getButton(e) === 2;
             return isRight;
         },
+
         /**
          * 속성 존재 여부 테스트
          * @param {array} props 속성 리스트
@@ -149,6 +155,7 @@
             }
             return false;
         },
+
         /**
          * 이벤트 기본 동작 방해
          * @param {event} e 이벤트
@@ -160,6 +167,7 @@
                 e.returnValue = false;
             }
         },
+
         /**
          * 마우스 이벤트에서 버튼 클릭 속성을 정규화한다
          * 0: 우선적 마우스 버튼, 2: 두 번째 마우스 버튼, 1: 가운데 버튼
@@ -187,12 +195,12 @@
             }
         }
     };
+
     /**
      * 트리의 모델을 생성하고 모델에 데이터를 부여한다.
      * 이름이 변경될 때 사용된 인풋박스를 생성한다.
      * 모델에 뷰를 등록시킨다.
      * 트리의 뷰를 생성하고 이벤트를 부여한다.
-     *
      * @param {string} id 트리가 붙을 앨리먼트의 아이디
      *      @param {Object} data 트리에 사용될 데이터
      *      @param {Object} options 트리에 사용될 세팅값
@@ -206,7 +214,6 @@
      *          @param {string} [options.subtreeClass] 서브트리에 부여되는 클래스 명
      *          @param {Array} [options.depthLabels] 뷰에만 표시 될 기본 레이블
      *          @param {object} [options.helperPos] 헬퍼객체가 표시되는 위치의 상대값 좌표
-     *
      * @example
      * var data = [
      {title: 'rootA', children:
@@ -353,6 +360,7 @@
             this.setEvents();
 
         },
+
         /**
          * STATE.EDITABLE 일때 사용되는  inputElement를 만든다.
          * @return {HTMLElement} input 생성된 input 앨리먼트
@@ -364,6 +372,7 @@
 
             return input;
         },
+
         /**
          * 트리에 걸리는 이벤트 핸들러를 할당한다.
          * #click-버튼 : 트리의 상태를 변경한다.
@@ -383,6 +392,7 @@
                 this._addDragEvent();
             }
         },
+
         /**
          * 드래그앤 드롭 이벤트를 건다.
          * @private
@@ -398,6 +408,7 @@
             }
             util.addEventListener(this.root, 'mousedown', ne.util.bind(this._onMouseDown, this));
         },
+
         /**
          * 엔터키를 입력 할 시, 모드 변경
          * @private
@@ -409,6 +420,7 @@
                 this.changeState(this.current);
             }
         },
+
         /**
          * 노드명 변경 후, 포커스 아웃 될때 발생되는 이벤트 핸들러
          * @param {event} e
@@ -422,6 +434,7 @@
             this.model.rename(this.current.id, target.value);
             this.changeState(this.current);
         },
+
         /**
          * 클릭 이벤트가 발생 할 경우, 더블클릭을 발생 시킬지, 클릭을 발생 시킬지 판단한다.
          * @param {event} e
@@ -452,6 +465,7 @@
                 }, this), 400);
             }
         },
+
         /**
          * 단일 클릭 처리, 버튼일 경우와 노드일 경우처리를 따로한다.
          * @param {event} e
@@ -492,6 +506,7 @@
             }
 
         },
+
         /**
          * 더블 클릭 처리
          * @param {event} e
@@ -501,6 +516,7 @@
             var target = util.getTarget(e);
             this.changeState(target);
         },
+
         /**
          * 트리에 마우스 다운시 이벤트 핸들러.
          * @private
@@ -536,6 +552,7 @@
             util.addEventListener(document, 'mousemove', this.move);
             util.addEventListener(document, 'mouseup', this.up);
         },
+
         /**
          * 마우스 이동
          * @param {event} me
@@ -551,6 +568,7 @@
                 y: me.clientY - this.pos.top
             });
         },
+
         /**
          * 마우스 업 이벤트 핸들러
          * @param {HTMLElement} target 마우스 다운의 타겟 엘리먼트
@@ -574,13 +592,13 @@
             util.removeEventListener(document, 'mousemove', this.move);
             util.removeEventListener(document, 'mouseup', this.up);
         },
+
         /** 
          * 트리 드래그 앤 드롭하는 엘리먼트의 value값을 보여주는 가이드 엘리먼트를 활성화 한다.
          * @param {object} pos 클릭한 좌표 위치
          * @param {string} value 클릭한 앨리먼트 텍스트 값
          */
         enableHelper: function(pos, value) {
-
             if (!this.helperElement) {
                 this.helperElement = document.createElement('span');
                 this.helperElement.style.position = 'absolute';
@@ -590,6 +608,7 @@
 
             this.helperElement.innerHTML = value;
         },
+
         /**
          * 가이드의 위치를 변경한다.
          * @param {object} pos 변경할 위치
@@ -601,16 +620,16 @@
             this.helperElement.style.display = 'block';
 
         },
+
         /**
          * 가이드를 감춘다
          */
         disableHelper: function() {
-
             if (this.helperElement) {
                 this.helperElement.style.display = 'none';
             }
-
         },
+
         /**
          * 트리의 전체 혹은 일부 html 을 생성한다.
          * @param {Object} data 화면에 그릴 데이터
@@ -820,6 +839,7 @@
             childWrap.style.display = isOpen ? '' : 'none';
             button.innerHTML = label;
         },
+
         /**
          * 노드 선택시 표시변경
          * @param {Object} node 선택된 노드정보

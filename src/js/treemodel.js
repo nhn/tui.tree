@@ -108,7 +108,7 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends TreeModel.prototype
      * @param {string} id 노드의 아이디 값
      * @param {string} value 노드의 값
      * @param {string} parentId 부모 노드의 아이디
-     * @returns {{value: *, parentId: (*|string), id: *}}
+     * @return {{value: *, parentId: (*|string), id: *}}
      */
     makeNode: function(depth, id, value, parentId) {
         return {
@@ -129,14 +129,16 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends TreeModel.prototype
         this.count = this.count + 1;
         return 'node_' + this.date + '_' + this.count;
     },
+
     /**
      * 노드를 찾아서 리턴한다.
      * @param {string} key 찾을 노드의 키 값
-     * @returns {object|undefined}
+     * @return {object|undefined}
      */
     find: function(key) {
         return this.treeHash[key];
     },
+
     /**
      * 노드를 제거한다, 노드를 참조하고있는 부모의 자식목록에서도 제거한다.
      * @param {string} key 모델에서 제거할 노드의 키 값
@@ -154,6 +156,7 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends TreeModel.prototype
 
         this.notify();
     },
+
     /**
      * 노드의 키값을 제거한다.
      * @param {string} key 제거할 노드의 키 값
@@ -173,6 +176,7 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends TreeModel.prototype
         });
 
     },
+
     /**
      * 노드를 이동시킨다
      * @param {string} key
@@ -186,13 +190,13 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends TreeModel.prototype
         this.insert(node, targetId);
 
     },
+
     /**
      * 노드를 삽입한다.
      * @param {object} node 삽입될 노드 값
      * @param {string} [targetId] 삽입할 노드의 부모가 될 타겟 아이디, 없으면 루트
      */
     insert: function(node, targetId) {
-
         var target = this.find(targetId || 'root');
 
         if (!target.childKeys) {
@@ -274,7 +278,7 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends TreeModel.prototype
 
     /**
      * 버퍼를 비운다
-     **/
+     */
     clearBuffer: function() {
 
         if (!this.buffer) {
@@ -312,10 +316,9 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends TreeModel.prototype
      * 타이틀에 따른 정렬
      * @param {string} pid
      * @param {string} nid
-     * @returns {number}
+     * @return {number}
      */
     sort: function(pid, nid) {
-
         var p = this.find(pid),
             n = this.find(nid);
 
