@@ -19,7 +19,7 @@
         VALUE_CLASS: 'valueClass',
         EDITABLE_CLASS: 'editableClass',
         TEMPLATE: {
-            EDGE_NODE: '<li class="EDGE_node {{State}}">' +
+            EDGE_NODE: '<li class="edge_node {{State}}">' +
                         '<button type="button">{{StateLabel}}</button>' +
                         '<span id="{{NodeID}}" class="depth{{Depth}} {{ValueClass}}">{{Title}}</span><em>{{DepthLabel}}</em>' +
                         '<ul class="{{Subtree}}" style="display:{{Display}}">{{Children}}</ul>' +
@@ -712,7 +712,7 @@
             if (ne.util.isEmpty(node.childKeys)) {
                 cls = 'leap_node ' + this[node.state + 'Set'][0];
             } else {
-                cls = 'EDGE_node ' + this[node.state + 'Set'][0];
+                cls = 'edge_node ' + this[node.state + 'Set'][0];
             }
 
             parent.className = cls;
