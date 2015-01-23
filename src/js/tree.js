@@ -645,7 +645,7 @@
                     Title: node.value,
                     ValueClass: this.valueClass,
                     SubTree: this.subtreeClass,
-                    Display: node.state == 'open' ? '' : 'none',
+                    Display: (node.state === 'open') ? '' : 'none',
                     DepthLabel: rate
                 };
 
@@ -656,6 +656,7 @@
                     tmpl = this.template.LEAP_NODE;
                 }
 
+                // {{}} 로 감싸진 내용 변경
                 el = tmpl.replace(/\{\{([^\}]+)\}\}/g, function(matchedString, name) {
                     return map[name] || '';
                 });

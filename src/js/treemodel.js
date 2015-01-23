@@ -88,7 +88,7 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends TreeModel.prototype
             this.treeHash[id] = this.makeNode(this.depth, id, element.value, parentId);
 
             // 자식노드가 있을 경우 재귀적으로 호출하여, 자식노드의 아이디리스트를 저장
-            if (element.children) {
+            if (element.children && ne.util.isNotEmpty(element.children)) {
                 this.treeHash[id].childKeys = this._makeTreeHash(element.children, id);
             }
 
@@ -114,7 +114,7 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends TreeModel.prototype
         return {
             depth: depth,
             value: value,
-            parentId: depth === 0 ? null : (parentId || 'root'),
+            parentId: (depth === 0) ? null : (parentId || 'root'),
             state: this.nodeDefaultState,
             id: id
         };
@@ -253,7 +253,7 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends TreeModel.prototype
      */
     changeState: function(key) {
         var node = this.find(key);
-        node.state = node.state === 'open' ? 'close' : 'open';
+        node.state = (node.state === 'open') ? 'close' : 'open';
         this.notify('toggle', node);
     },
     /**
