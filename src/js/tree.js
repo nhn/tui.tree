@@ -19,7 +19,7 @@
         VALUE_CLASS: 'valueClass',
         EDITABLE_CLASS: 'editableClass',
         TEMPLATE: {
-            ROD_NODE: '<li class="rod_node {{State}}">' +
+            EDGE_NODE: '<li class="EDGE_node {{State}}">' +
                         '<button type="button">{{StateLabel}}</button>' +
                         '<span id="{{NodeID}}" class="depth{{Depth}} {{ValueClass}}">{{Title}}</span><em>{{DepthLabel}}</em>' +
                         '<ul class="{{Subtree}}" style="display:{{Display}}">{{Children}}</ul>' +
@@ -73,8 +73,8 @@
         },
         /**
          * 이벤트 객체의 타겟을 반환한다
-         * @param e
-         * @returns {HTMLElement}
+         * @param {event} e 이벤트객체
+         * @return {HTMLElement} 타겟 엘리먼트
          */
         getTarget: function(e) {
             e = e || window.event;
@@ -83,9 +83,9 @@
         },
         /**
          * 엘리먼트가 특정 클래스를 가지고 있는지 확인
-         * @param {HTMLElement} element
-         * @param {string} className
-         * @returns {boolean}
+         * @param {HTMLElement} element 확인할 엘리먼트
+         * @param {string} className 확인할 클래스 명
+         * @return {boolean} 클래스 포함 여부
          */
         hasClass: function(element, className) {
             if (!element || !className) {
@@ -97,13 +97,14 @@
             if (cls.indexOf(className) !== -1) {
                 return true;
             }
+
             return false;
         },
         /**
          * 클래스에 따른 엘리먼트 찾기
-         * @param {HTMLElement} target
+         * @param {HTMLElement} target 대상 엘리먼트
          * @param {string} className
-         * @returns {*}
+         * @return {array} 클래스를 가진 앨리먼트
          */
         getElementsByClass: function(target, className) {
             if (target.querySelectorAll) {
@@ -120,12 +121,13 @@
                     filter.push(el);
                 }
             });
+
             return filter;
         },
         /**
          * 우클릭인지 확인
          * @param {event} e 확인 이벤트
-         * @returns {boolean}
+         * @return {boolean} 우클릭 여부
          */
         isRightButton: function(e) {
             var isRight = util._getButton(e) === 2;
@@ -133,8 +135,8 @@
         },
         /**
          * 속성 존재 여부 테스트
-         * @param props
-         * @returns {*}
+         * @param {array} props 속성 리스트
+         * @return {boolean} 속성 존재여부
          */
         testProp: function(props) {
             var style = document.documentElement.style,
@@ -148,9 +150,8 @@
             return false;
         },
         /**
-         * 이벤트 기본 동작 방
-         * @param e
-         * @returns {util}
+         * 이벤트 기본 동작 방해
+         * @param {event} e 이벤트
          */
         preventDefault: function(e) {
             if (e.preventDefault) {
@@ -158,13 +159,12 @@
             } else {
                 e.returnValue = false;
             }
-            return this;
         },
         /**
          * 마우스 이벤트에서 버튼 클릭 속성을 정규화한다
          * 0: 우선적 마우스 버튼, 2: 두 번째 마우스 버튼, 1: 가운데 버튼
-         * @param {MouseEvent} event
-         * @returns {*}
+         * @param {MouseEvent} event 이벤트 객체
+         * @return {number|undefined} 넘버 객체
          * @private
          */
         _getButton: function(e) {
@@ -233,7 +233,7 @@
             }
         });
     });
-     * **/
+     **/
     window.ne = ne = ne || {};
     ne.component = ne.component || {};
 
@@ -246,77 +246,101 @@
          * @param {Object} data 트리 초기데이터 값
          * @param {Object} options 트리 초기옵션값
          * @param {String} template 트리에 사용되는 기본 태그(자식노드가 있을때와 없을때를 오브젝트 형태로 받는)
-         * */
+         */
         init: function (id, data, options) {
+
             /**
              * 노드 기본 템플릿
              * @type {String}
              */
             this.template = options.template || DEFAULT.TEMPLATE;
+
             /**
              * 노드의 루트 엘리먼트
              * @type {HTMLElement}
              */
             this.root = null;
+
             /**
              * 트리가 열린 상태일때 부여되는 클래스와, 텍스트
-             *
              * @type {Array}
              */
             this.openSet = options.openSet || DEFAULT.OPEN;
+
             /**
              * 트리가 닫힘 상태일때 부여되는 클래스와, 텍스트
-             *
              * @type {Array}
              */
             this.closeSet = options.closeSet || DEFAULT.CLOSE;
+
             /**
              * 노드가 선택 되었을때 부여되는 클래스명
-             *
              * @type {String}
              */
             this.onselectClass = options.selectClass || DEFAULT.SELECT_CLASS;
+
             /**
              * 더블클릭이 적용되는 영역에 부여되는 클래스
              * @type {string}
              */
             this.valueClass = options.valueClass || DEFAULT.VALUE_CLASS;
+
             /**
              * input엘리먼트에 부여되는 클래스
              * @type {string}
              */
             this.editClass = options.inputClass || DEFAULT.EDITABLE_CLASS;
+
             /**
              * 노드의 뎁스에따른 레이블을 관리한다.(화면에는 표시되지만 모델에는 영향을 끼치지 않는다.)
-             *
              * @type {Array}
              */
             this.depthLabels = options.depthLabels || [];
+
             /**
              * 트리 상태, 일반 출력 상태와 수정가능 상태가 있음.
              * @type {number}
              */
             this.state = STATE.NORMAL;
+
             /**
              * 트리 서브 클래스
              * @type {string|*}
              */
             this.subtreeClass = options.subtreeClass || DEFAULT.SUBTREE_CLASS;
+
             /**
              * 드래그앤 드롭 기능을 사용할것인지 여부
              * @type {boolean|*}
              */
             this.useDrag = options.useDrag || DEFAULT.USE_DRAG;
+
             /**
              * 드래그앤 드롭 기능 동작시 가이드 엘리먼트 활성화 여부
              * @type {boolean|*}
              */
             this.useHelper = this.useDrag && (options.useHelper || DEFAULT.USE_HELPER);
+
             /**
              * 헬퍼객체의 기준 위치를 설정한다.
              * @type {object}
              */
             this.helperPos = options.helperPos || DEFAULT.HELPER_POS;
+
+            /**
+             * 트리의 상태가 STATE.EDITABLE 일때, 노드에 붙는 input엘리먼트
+             * @type {HTMLElement}
+             */
+            this.inputElement = this.getEditableElement();
+
+            /**
+             * 트리 모델을 생성한다.
+             * @type {ne.component.Tree.TreeModel}
+             */
+            this.model = new ne.component.Tree.TreeModel(options.modelOption, this);
+
+            // 모델 데이터를 생성한다.
+            this.model.setData(data);
 
             if (id) {
                 this.root = document.getElementById(id);
@@ -325,31 +349,19 @@
                 document.body.appendChild(this.root);
             }
 
-            /**
-             * 트리의 상태가 STATE.EDITABLE 일때, 노드에 붙는 input엘리먼트
-             * @type {HTMLElement}
-             */
-            this.inputElement = this.getEditableElement();
-            /**
-             * 트리 모델을 생성한다.
-             * @type {ne.component.Tree.TreeModel}
-             */
-            this.model = new ne.component.Tree.TreeModel(options.modelOption, this);
-            // 모델 데이터를 생성한다.
-            this.model.setData(data);
-
             this._draw(this._getHtml(this.model.treeHash.root.childKeys));
-
             this.setEvents();
 
         },
         /**
          * STATE.EDITABLE 일때 사용되는  inputElement를 만든다.
+         * @return {HTMLElement} input 생성된 input 앨리먼트
          */
         getEditableElement: function() {
             var input = document.createElement('input');
             input.className = this.editClass;
             input.setAttribute('type', 'text');
+
             return input;
         },
         /**
@@ -377,8 +389,8 @@
          */
         _addDragEvent: function() {
             var userSelectProperty = util.testProp(['userSelect', 'WebkitUserSelect', 'OUserSelect', 'MozUserSelect', 'msUserSelect']);
-            var supportSelectStart = 'onselectstart' in document;
-            if (supportSelectStart) {
+            var isSupportSelectStart = 'onselectstart' in document;
+            if (isSupportSelectStart) {
                 util.addEventListener(this.root, 'selectstart', util.preventDefault);
             } else {
                 var style = document.documentElement.style;
@@ -451,11 +463,8 @@
 
             var target = util.getTarget(e),
                 tag = target.tagName.toUpperCase(),
-                parent,
-                valueEl;
-
-            parent = target.parentNode;
-            valueEl = util.getElementsByClass(parent, this.valueClass)[0];
+                parent = target.parentNode,
+                valueEl = util.getElementsByClass(parent, this.valueClass)[0];
 
             if (tag === 'INPUT') {
                 return;
@@ -505,9 +514,7 @@
             util.preventDefault(e);
 
             var target = util.getTarget(e),
-                tag;
-
-            tag = target.tagName.toUpperCase();
+                tag = target.tagName.toUpperCase();
 
             if (tag === 'BUTTON' || tag === 'INPUT' || !util.hasClass(target, this.valueClass)) {
                 return;
@@ -606,13 +613,11 @@
         },
         /**
          * 트리의 전체 혹은 일부 html 을 생성한다.
-         *
          * @param {Object} data 화면에 그릴 데이터
          * @param {Path} beforePath 부분트리를 그릴때 상위 패스정보
-         * @private
-         *
          * @return {String} html
-         * */
+         * @private
+         */
         _getHtml: function(keys) {
 
             var model = this.model,
@@ -639,7 +644,7 @@
                     };
 
                 if (ne.util.isNotEmpty(node.childKeys)) {
-                    tmpl = this.template.ROD_NODE;
+                    tmpl = this.template.EDGE_NODE;
                     map.Children = this._getHtml(node.childKeys);
                 } else {
                     tmpl = this.template.LEAP_NODE;
@@ -666,11 +671,9 @@
         },
         /**
          * 액션을 수행해 트리를 갱신한다.
-         *
          * @param {String} type 액션 타입
          * @param {Object} target 부분갱신이라면 그 타겟
-         *
-         * */
+         */
         action: function(type, target) {
             this._actionMap = this._actionMap || {
                 refresh: this._refresh,
@@ -687,7 +690,7 @@
          * 노드의 상태를 변경한다.
          * @param {Object} node 상태변경될 노드의 정보
          * @private
-         * */
+         */
         _changeNodeState: function(node) {
             var element = document.getElementById(node.id);
             if (!element) {
@@ -700,7 +703,7 @@
             if (ne.util.isEmpty(node.childKeys)) {
                 cls = 'leap_node ' + this[node.state + 'Set'][0];
             } else {
-                cls = 'rod_node ' + this[node.state + 'Set'][0];
+                cls = 'EDGE_node ' + this[node.state + 'Set'][0];
             }
 
             parent.className = cls;
@@ -747,12 +750,11 @@
         },
         /**
          * 생성된 html을 붙인다
-         *
          * @param {String} html 데이터에 의해 생성된 html
          * @param {Object} parent 타겟으로 설정된 부모요소, 없을시 내부에서 최상단 노드로 설정
          * @private
          *
-         * */
+         */
         _draw: function(html, parent) {
             var root = parent || this.root;
             root.innerHTML = html;
@@ -760,9 +762,8 @@
         /**
          * 깊이(depth)에 따른 레이블을 설정한다
          * (실제 모델에는 영향을 주지 않으므로, 뷰에서 설정한다.)
-         *
          * @param {Array} depthLabels 깊이에 따라 노드 뒤에 붙을 레이블
-         * */
+         */
         setDepthLabels: function(depthLabels) {
             this.depthLabels = depthLabels;
         },
@@ -806,7 +807,7 @@
          * 노드 선택시 표시변경
          * @param {Object} node 선택된 노드정보
          * @private
-         * */
+         */
         _select: function(node) {
             var valueEl = document.getElementById(node.id);
 
