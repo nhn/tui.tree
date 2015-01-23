@@ -622,26 +622,32 @@
 
             var model = this.model,
                 html,
-                childEl = [];
+                childEl = [],
+                node,
+                tmpl,
+                depth,
+                state,
+                label,
+                rate,
+                map;
 
             ne.util.forEach(keys, function(el) {
-                var node = model.find(el),
-                    tmpl,
-                    depth = node.depth,
-                    state = this[node.state + 'Set'][0],
-                    label = this[node.state + 'Set'][1],
-                    rate = this.depthLabels[depth - 1] || '',
-                    map = {
-                        State: state,
-                        StateLabel: label,
-                        NodeID: node.id,
-                        Depth: depth,
-                        Title: node.value,
-                        ValueClass: this.valueClass,
-                        SubTree: this.subtreeClass,
-                        Display: node.state == 'open' ? '' : 'none',
-                        DepthLabel: rate
-                    };
+                node = model.find(el);
+                depth = node.depth;
+                state = this[node.state + 'Set'][0];
+                label = this[node.state + 'Set'][1];
+                rate = this.depthLabels[depth - 1] || '';
+                map = {
+                    State: state,
+                    StateLabel: label,
+                    NodeID: node.id,
+                    Depth: depth,
+                    Title: node.value,
+                    ValueClass: this.valueClass,
+                    SubTree: this.subtreeClass,
+                    Display: node.state == 'open' ? '' : 'none',
+                    DepthLabel: rate
+                };
 
                 if (ne.util.isNotEmpty(node.childKeys)) {
                     tmpl = this.template.EDGE_NODE;
@@ -661,6 +667,7 @@
 
             return html;
         },
+
         /**
          * 뷰를 갱신한다.
          * @param {string} act
@@ -669,6 +676,7 @@
         notify: function(act, target) {
             this.action(act, target);
         },
+
         /**
          * 액션을 수행해 트리를 갱신한다.
          * @param {String} type 액션 타입
@@ -686,6 +694,7 @@
             };
             this._actionMap[type || 'refresh'].call(this, target);
         },
+
         /**
          * 노드의 상태를 변경한다.
          * @param {Object} node 상태변경될 노드의 정보
@@ -708,6 +717,7 @@
 
             parent.className = cls;
         },
+
         /**
          * 노드의 이름을 변경 할수 있는 상태로 전환시킨다.
          * @param {HTMLElement} element 이름을 변경할 대상 엘리먼트
@@ -731,6 +741,7 @@
 
             this.inputElement.focus();
         },
+
         /**
          * 변경된 노드의 이름을 적용시킨다.
          * @param {HTMLElement} element 이름이 변경되는 대상 엘리먼트
@@ -748,6 +759,7 @@
 
             parent.removeChild(this.inputElement);
         },
+
         /**
          * 생성된 html을 붙인다
          * @param {String} html 데이터에 의해 생성된 html
@@ -759,6 +771,7 @@
             var root = parent || this.root;
             root.innerHTML = html;
         },
+
         /**
          * 깊이(depth)에 따른 레이블을 설정한다
          * (실제 모델에는 영향을 주지 않으므로, 뷰에서 설정한다.)
@@ -767,6 +780,7 @@
         setDepthLabels: function(depthLabels) {
             this.depthLabels = depthLabels;
         },
+
         /**
          * 노드 갱신 - 타겟 노드 기준으로 노드를 다시 만들어서 붙여줌
          * @private
@@ -775,6 +789,7 @@
             var data = this.model.treeHash.root.childKeys;
             this._draw(this._getHtml(data));
         },
+
         /**
          * 엘리먼트 타이틀을 변경한다.
          * @param {object} node 변경할 엘리먼트에 해당하는 모델정보
@@ -784,6 +799,7 @@
             var element = document.getElementById(node.id);
             element.innerHTML = node.value;
         },
+
         /**
         * 노드 여닫기 상태를 갱신한다.
         * @param {Object} node 갱신할 노드 정보
@@ -815,6 +831,7 @@
                 valueEl.className = valueEl.className.replace(' ' + this.onselectClass, '') + ' ' + this.onselectClass;
             }
         },
+
         /**
          * 노드 선택해제시 액션
          * @param {Object} node 선택 해제 된 노드정보
