@@ -2,7 +2,7 @@
  * Created by janeir on 10/23/14.
  * @todo 커스텀 이벤트 핸들러 테스트를 해야함
  */
-describe('Tree를 생성한다', function() {
+describe('Tree를 생성한하고 동작을 테스트 한다.', function() {
     var modelOption = {defaultState: 'open'},
         view,
         view2,
