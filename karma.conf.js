@@ -40,7 +40,7 @@ module.exports = function(config) {
             'src/common/common.js',
             'src/js/tree.js',
             'src/**/treemodel.js',
-            'test/*Test.js',
+            'test/*.js',
             {
                 pattern: 'test/fixture/**/*.html',
                 included: false
