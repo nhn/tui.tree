@@ -35,13 +35,14 @@ module.exports = function(config) {
             'node_modules/jasmine-jquery/lib/jasmine-jquery.js',
             'src/common/common.js',
             'src/js/tree.js',
-            'src/**/*.js',
+            'src/**/treemodel.js',
             'test/*Test.js',
             {
                 pattern: 'test/fixture/**/*.html',
                 included: false
             }
         ],
+
 
 
         /*
