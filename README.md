@@ -15,7 +15,6 @@ Component-Tree
 ## Documentation
 * **API** - <https://github.nhnent.com/pages/FE/Component-Tree/>
 * **Sample** - <https://github.nhnent.com/pages/FE/Component-Tree/sample/>
-* **Tutorial** - <https://github.nhnent.com/FE/tutorial/blob/master/Component-MouseGesture/MouseGestureTutorial.md>
 * **CI** - <http://fe.nhnent.com:8080/jenkins/job/Component-Tree/>
 
 ## Download/Install
