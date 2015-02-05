@@ -19,14 +19,14 @@ Component-Tree
 * **CI** - <http://fe.nhnent.com:8080/jenkins/job/Component-Tree/>
 
 ## Download/Install
-* Bower: `bower install "git+http://3c672057a1ac16c4e6f1baaba73e24d5270ef453:x-oauth-basic@github.nhnent.com/FE/Component-Tree.git#dist"`
+* Bower: `bower install "git+http://3c672057a1ac16c4e6f1baaba73e24d5270ef453:x-oauth-basic@github.nhnent.com/FE/Component-Tree.git#version"`
 * Download: <https://github.nhnent.com/FE/Component-Tree/tree/dist>
 
 ## History
 | Version | Description | Date | Developer |
 | ---- | ---- | ---- | ---- |
-| v0.2 | 리팩토링 | 2015.01 | FE 개발팀 이제인 <jein.yi@nhnent.com> |
-| v0.1 | 최초개발 | 2014.11 | FE 개발팀 이제인 <jein.yi@nhnent.com> |
+| 1.0.0 | 리팩토링 | 2015.01 | FE 개발팀 이제인 <jein.yi@nhnent.com> |
+| 1.0.0 | 최초개발 | 2014.11 | FE 개발팀 이제인 <jein.yi@nhnent.com> |
 
 
 
