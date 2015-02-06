@@ -24,8 +24,8 @@ Component-Tree
 ## History
 | Version | Description | Date | Developer |
 | ---- | ---- | ---- | ---- |
-| 1.0.0 | 리팩토링 | 2015.01 | FE 개발팀 이제인 <jein.yi@nhnent.com> |
-| 1.0.0 | 최초개발 | 2014.11 | FE 개발팀 이제인 <jein.yi@nhnent.com> |
+| 0.0.1 | 리팩토링 | 2015.01 | FE 개발팀 이제인 <jein.yi@nhnent.com> |
+| 0.0.1 | 최초개발 | 2014.11 | FE 개발팀 이제인 <jein.yi@nhnent.com> |
 
 
 
