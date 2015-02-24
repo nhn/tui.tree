@@ -13,13 +13,13 @@ Component-Tree
 
 
 ## Documentation
-* **API** - <https://github.nhnent.com/pages/FE/Component-Tree/>
-* **Sample** - <https://github.nhnent.com/pages/FE/Component-Tree/sample/>
+* **API** - <https://github.nhnent.com/pages/fe/Component-Tree/>
+* **Sample** - <https://github.nhnent.com/pages/fe/Component-Tree/sample/>
 * **CI** - <http://fe.nhnent.com:8080/jenkins/job/Component-Tree/>
 
 ## Download/Install
-* Bower: `bower install "git+http://3c672057a1ac16c4e6f1baaba73e24d5270ef453:x-oauth-basic@github.nhnent.com/FE/Component-Tree.git#version"`
-* Download: <https://github.nhnent.com/FE/Component-Tree/tree/dist>
+* Bower: `bower install "git+http://3c672057a1ac16c4e6f1baaba73e24d5270ef453:x-oauth-basic@github.nhnent.com/fe/Component-Tree.git#version"`
+* Download: <https://github.nhnent.com/fe/Component-Tree/tree/dist>
 
 ## History
 | Version | Description | Date | Developer |
