@@ -14,18 +14,17 @@ Tree
 * 커스텀 이벤트(특정 클래스의 노드 클릭시 이벤트 발생)를 제공
 
 ## Documentation
-* **API** - <https://github.nhnent.com/pages/fe/Component-Tree/>
-* **Sample** - <https://github.nhnent.com/pages/fe/Component-Tree/sample/>
-* **CI** - <http://fe.nhnent.com:8080/jenkins/job/Component-Tree/>
+* **API** - https://github.nhnent.com/pages/fe/Component-Tree/
+* **Sample** - https://github.nhnent.com/pages/fe/component-tree/tutorial-index_default.html
+* **CI** - http://fe.nhnent.com:8080/jenkins/job/Component-Tree/
 
 ## Download/Install
 * Bower: `bower install "git+http://3c672057a1ac16c4e6f1baaba73e24d5270ef453:x-oauth-basic@github.nhnent.com/fe/Component-Tree.git#version"`
-* Download: <https://github.nhnent.com/fe/Component-Tree/tree/dist>
+* Download: https://github.nhnent.com/fe/Component-Tree
 
 ## History
 | Version | Description | Date | Developer |
 | ---- | ---- | ---- | ---- |
-| 0.0.1 | 리팩토링 | 2015.01 | FE 개발팀 이제인 <jein.yi@nhnent.com> |
 | 0.0.1 | 최초개발 | 2014.11 | FE 개발팀 이제인 <jein.yi@nhnent.com> |
 
 
