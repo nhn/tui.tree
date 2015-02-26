@@ -1,8 +1,6 @@
 /**
  * @fileoverview 화면에 보여지는 트리를 그리고, 갱신한다.
- *
  * @author FE개발팀 이제인(jein.yi@nhnent.com)
- * @constructor
  */
 (function(ne) {
 
@@ -40,7 +38,6 @@
      * 트리 컴포넌트에 쓰이는 헬퍼객체
      *
      * @author FE개발팀 이제인(jein.yi@nhnent.com)
-     * @namespace
      */
     var util = {
         /**
@@ -201,6 +198,7 @@
      * 이름이 변경될 때 사용된 인풋박스를 생성한다.
      * 모델에 뷰를 등록시킨다.
      * 트리의 뷰를 생성하고 이벤트를 부여한다.
+     * @constructor ne.component.Tree
      * @param {string} id 트리가 붙을 앨리먼트의 아이디
      *      @param {Object} data 트리에 사용될 데이터
      *      @param {Object} options 트리에 사용될 세팅값
@@ -244,7 +242,7 @@
     window.ne = ne = ne || {};
     ne.component = ne.component || {};
 
-    ne.component.Tree = ne.util.defineClass(/** @lends TreeView.prototype */{
+    ne.component.Tree = ne.util.defineClass(/** @lends ne.component.Tree.prototype */{
 
         /**
          * TreeView 초기화한다.

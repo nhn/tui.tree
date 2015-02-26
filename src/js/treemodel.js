@@ -1,9 +1,12 @@
 /**
  * @fileoverview 트리를 구성하는 데이터를 조작, 데이터 변경사한 발생 시 뷰를 갱신함
  * @author FE개발팀 이제인(jein.yi@nhnent.com)
- * @constructor
+ */
+
+/**
+ * @constructor ne.component.TreeModel
  * **/
-ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends TreeModel.prototype */{
+ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends ne.component.TreeModel.prototype */{
     init: function(options, tree) {
 
         /**
