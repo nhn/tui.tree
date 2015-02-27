@@ -22,5 +22,6 @@
         "package.json"
     ],
     "dependencies": {
+        "jquery": "~1.8.3"
     }
 }
