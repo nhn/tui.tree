@@ -1,6 +1,6 @@
 {
     "name": "Component-Tree",
-    "version": "1.0.0",
+    "version": "0.0.1",
     "authors": [
         "FE개발팀 이제인 <jein.yi@nhnent.com>"
     ],
@@ -22,6 +22,5 @@
         "package.json"
     ],
     "dependencies": {
-        "jquery": "~1.8.3"
     }
 }
