@@ -31,10 +31,17 @@
 
 <article>
 	
-    <a href="tutorials/index_depthLabel.html" target="_blank">새창으로 열기</a>
-    <iframe id="exampleFrame" width="500" height="700" frameborder="0" src=tutorials/index_depthLabel.html onload="autoResize()"></iframe>
+    <a href="tutorials/index_depthLabel.html" target="_blank">새창으로 열기</a><br/>
+    <iframe id="exampleFrame" width="500" height="700" frameborder="0" src=tutorials/index_depthLabel.html onload="onIframeLoad()"></iframe>
+    <br/>
+    <div id='codeArea'>
 </article>
 <script>
+function onIframeLoad() {
+	generateCode();
+	autoResize();
+}
+
 function autoResize() {
     var ef = document.getElementById('exampleFrame'),
     doc;
@@ -47,6 +54,26 @@ function autoResize() {
     ef.width = document.getElementById('main').clientWidth - 40;
     ef.height = doc.body.clientHeight + 40;
 }
+
+function generateCode() {
+	var ef = document.getElementById('exampleFrame'),
+		codeArea = document.getElementById('codeArea'),
+        doc = ef.contentDocument || ef.contentWindow.document,
+        scripts;
+
+	if (doc) {
+		scripts = doc.getElementsByTagName('script');
+		console.log(scripts[scripts.length-1].innerText);
+		codeArea.innerHTML = '<pre>' + encodeHTMLEntity(scripts[scripts.length-1].innerText) + '</pre>';
+	}
+}
+
+function encodeHTMLEntity(html) {
+	 var entities = {'"': 'quot', '&': 'amp', '<': 'lt', '>': 'gt', '\'': '#39'};
+	 return html.replace(/[<>&"']/g, function(m0) {
+		 return entities[m0] ? '&' + entities[m0] + ';' : m0;
+	 });
+ }
 </script>
 
 </section></div>
