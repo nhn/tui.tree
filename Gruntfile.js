@@ -42,9 +42,7 @@ module.exports = function(grunt) {
                 },
                 options: {
                     banner: '/*!<%= pkg.name %> v<%=pkg.version%> | NHN Entertainment*/',
-                    preserveComments: false,
-                    sourceMap: true,
-                    sourceMapName: "<%= name %>.min.map"
+                    preserveComments: false
                 }
             }
         },
