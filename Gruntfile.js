@@ -22,9 +22,8 @@ module.exports = function(grunt) {
                 // The files to concatenate:
                 // Notice the wildcard, which is automatically expanded.
                 src: [
-                    'src/common/common.js',
                     'src/js/tree.js',
-                    'src/**/*.js'
+                    'src/js/*.js'
                 ],
                 // The destination file:
                 // Notice the angle-bracketed ERB-like templating,
