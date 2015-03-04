@@ -1,6 +1,6 @@
 {
   "name": "Component-Tree",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "트리 컴포넌트",
   "private": true,
   "devDependencies": {
