@@ -34,46 +34,60 @@
     <a href="tutorials/index_default.html" target="_blank">새창으로 열기</a><br/>
     <iframe id="exampleFrame" width="500" height="700" frameborder="0" src=tutorials/index_default.html onload="onIframeLoad()"></iframe>
     <br/>
-    <div id='codeArea'>
+    <div id='codeArea'></div>
 </article>
 <script>
+/**
+ * iframe load 이벤트 핸들러
+ */
 function onIframeLoad() {
-	generateCode();
-	autoResize();
+    generateCode();
+    autoResize();
 }
 
+/**
+ * iframe 의 너비/높이를 resize 한다.
+ */
 function autoResize() {
-    var ef = document.getElementById('exampleFrame'),
-    doc;
-
-    if(ef.contentDocument) {
-        doc = ef.contentDocument;
-    } else {
-        doc = ef.contentWindow.document;
-    }
+    var ef = document.getElementById('exampleFrame');
     ef.width = document.getElementById('main').clientWidth - 40;
-    ef.height = doc.body.clientHeight + 40;
+    ef.height = getIframeDocument().body.clientHeight + 40;
 }
 
+/**
+ * iframe 의 document 를 반환한다.
+ * @returns {HTMLDocument|Document}
+ */
+function getIframeDocument() {
+    var ef = document.getElementById('exampleFrame');
+    return ef.contentDocument || ef.contentWindow.document;
+}
+
+/**
+ * iframe 마지막 script code 를 div 에 할당한다.
+ */
 function generateCode() {
-	var ef = document.getElementById('exampleFrame'),
-		codeArea = document.getElementById('codeArea'),
-        doc = ef.contentDocument || ef.contentWindow.document,
+    var codeArea = document.getElementById('codeArea'),
+        doc = getIframeDocument(),
         scripts;
 
-	if (doc) {
-		scripts = doc.getElementsByTagName('script');
-		console.log(scripts[scripts.length-1].innerText);
-		codeArea.innerHTML = '<pre>' + encodeHTMLEntity(scripts[scripts.length-1].innerText) + '</pre>';
-	}
+    if (doc) {
+        scripts = doc.getElementsByTagName('script');
+        codeArea.innerHTML = '<pre>' + encodeHTMLEntity(scripts[scripts.length-1].innerText) + '</pre>';
+    }
 }
 
+/**
+ * html entity 로 인코딩한다.
+ * @param html
+ * @returns {XML|string|void}
+ */
 function encodeHTMLEntity(html) {
-	 var entities = {'"': 'quot', '&': 'amp', '<': 'lt', '>': 'gt', '\'': '#39'};
-	 return html.replace(/[<>&"']/g, function(m0) {
-		 return entities[m0] ? '&' + entities[m0] + ';' : m0;
-	 });
- }
+    var entities = {'"': 'quot', '&': 'amp', '<': 'lt', '>': 'gt', '\'': '#39'};
+    return html.replace(/[<>&"']/g, function(m0) {
+        return entities[m0] ? '&' + entities[m0] + ';' : m0;
+    });
+}
 </script>
 
 </section></div>
