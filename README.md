@@ -24,6 +24,8 @@ Tree
 ## Download/Install
 * Bower: `bower install "git+http://3c672057a1ac16c4e6f1baaba73e24d5270ef453:x-oauth-basic@github.nhnent.com/fe/component-tree.git#version"`
 * Download: https://github.nhnent.com/fe/component-tree
+  * Component-Tree.js(FE common code snippets 포함)
+  * Component-Tree.core.js(FE common code snippets 미포함)
 
 ## History
 | Version | Description | Date | Developer |
