@@ -15,6 +15,7 @@ Tree
 
 ## Sample Image
 ![alt tag](https://github.nhnent.com/pages/fe/component-tree/tree.png)<br><br>
+![alt tag](https://github.nhnent.com/pages/fe/component-tree/tree_edit.png)
 
 ## Documentation
 * **API** - https://github.nhnent.com/pages/fe/component-tree/
