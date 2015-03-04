@@ -18,6 +18,9 @@ Tree
 * **Sample** - https://github.nhnent.com/pages/fe/component-tree/tutorial-index_default.html
 * **CI** - http://fe.nhnent.com:8080/jenkins/job/component-tree/
 
+## Dependency
+* code-snippet - https://github.nhnent.com/fe/share-code-snippet
+
 ## Download/Install
 * Bower: `bower install "git+http://3c672057a1ac16c4e6f1baaba73e24d5270ef453:x-oauth-basic@github.nhnent.com/fe/component-tree.git#version"`
 * Download: https://github.nhnent.com/fe/component-tree
@@ -25,6 +28,7 @@ Tree
 ## History
 | Version | Description | Date | Developer |
 | ---- | ---- | ---- | ---- |
+| 1.0.0 | 배포 | 2015.03 | FE 개발팀 이제인 <jein.yi@nhnent.com> |
 | 0.0.1 | 최초개발 | 2014.11 | FE 개발팀 이제인 <jein.yi@nhnent.com> |
 
 
