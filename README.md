@@ -13,6 +13,9 @@ Tree
 * 드래그앤드랍으로 노드 이동 가능
 * 커스텀 이벤트(특정 클래스의 노드 클릭시 이벤트 발생)를 제공
 
+## Sample Image
+![alt tag](https://github.nhnent.com/pages/fe/component-tree/tree.png)<br><br>
+
 ## Documentation
 * **API** - https://github.nhnent.com/pages/fe/component-tree/
 * **Sample** - https://github.nhnent.com/pages/fe/component-tree/tutorial-index_default.html
