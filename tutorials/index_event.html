@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="css/tree.css" />
 </head>
 <body>
-<h3>이벤트 부여 예제</h3>
+<h3>이벤트 부여 예제 - 노도의 이름 변경 및, 노드 선택시 콜백 실행</h3>
 <div class="treeWrap" style="position:relative; border:1px solid #eaeaea;">
     <ul id="treeRoot1" class="tree"></ul>
 </div>
@@ -41,9 +41,14 @@
         useHelper: true,
         depthLabels: ['층', '열', '구역', '블록']
     });
+
+    // 노드를 선택시 발생
+
     t.model.on('select', function(object) {
         document.getElementById('selectValue').value = object.value;
     });
+
+    // 노드 이름 변경시 발생
 
     t.model.on('rename', function(object) {
         document.getElementById('selectValue').value = object.value + '노드 이름 변경';
