@@ -42,7 +42,9 @@ module.exports = function(grunt) {
                 },
                 options: {
                     banner: '/*!<%= pkg.name %> v<%=pkg.version%> | NHN Entertainment*/',
-                    preserveComments: false
+                    preserveComments: false,
+                    sourceMap: true,
+                    sourceMapName: "<%= name %>.min.map"
                 }
             }
         },
@@ -56,7 +58,7 @@ module.exports = function(grunt) {
         zip: {
             main: {
                 src: ['<%= distFolder %>/*'],
-                dest: '<%= pkg.name %>.zip'
+                dest: '<%= distFolder %>/<%= pkg.name %>.zip'
             }
         }
     }); // The end of grunt.initConfig

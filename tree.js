@@ -1,4 +1,4 @@
-/*!Component-Tree v0.0.1 | NHN Entertainment*/
+/*!Component-Tree v1.0.0 | NHN Entertainment*/
 (function() {
 /**
  * @fileoverview 화면에 보여지는 트리를 그리고, 갱신한다.
