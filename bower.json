@@ -11,7 +11,9 @@
         "node_modules",
         "bower_components",
         "test",
-        "tests"
+        "tests",
+        "src",
+        "sample"
     ],
     "dependencies": {
         "jquery": "~1.8.3",

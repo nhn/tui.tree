@@ -27,8 +27,7 @@ node_modules
 # idea
 .idea
 
-# compress
-dist
+doc
 
 @ sample
 sample
