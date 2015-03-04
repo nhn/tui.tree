@@ -14,6 +14,7 @@
     "grunt-contrib-watch": "^0.6.1",
     "grunt-template": "^0.2.3",
     "grunt-zip": "^0.16.0",
+    "jquery": "~1.8.3",
     "jasmine-jquery": "^2.0.5",
     "jsdoc": "git+https://github.com/jsdoc3/jsdoc.git",
     "karma": "^0.12.22",
