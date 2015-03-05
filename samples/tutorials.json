@@ -1,11 +1,11 @@
 {
   "index_default": {
-    "title": "기본"
+    "title": "기본 예제"
   },
   "index_depthLabel": {
-    "title": "레이블추가"
+    "title": "레이블추가 예제"
   },
   "index_event": {
-    "title": "커스텀이벤트"
+    "title": "커스텀이벤트 예제"
   }
 }
