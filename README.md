@@ -16,7 +16,7 @@ Tree
 ## Sample Image
 * 기본 트리<br>
 ![alt tag](https://github.nhnent.com/pages/fe/component-tree/tree.png)
-* 레이블이 있는 트리<br>
+* Label이 적용된 트리<br>
 ![alt tag](https://github.nhnent.com/pages/fe/component-tree/tree_edit.png)
 
 ## Documentation
