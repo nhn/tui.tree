@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Tutorial: 레이블추가</title>
+    <link type="text/css" rel="stylesheet" href="styles/prettify-jsdoc.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-fe2.css">
+</head>
+<body>
+
+<div id="wrap">
+
+    <div class="header">
+
+        <div class="container-fluid">
+            <h3><a href="index.html">API Documentation</a> <small>FE개발팀</small></h3>
+        </div>
+
+    </div>
+
+    <div class="body">
+        <div id="navigation" class="navigation"><h3>Samples</h3><ul class="list samples"><li class="item"><a href="tutorial-index_default.html">기본트리</a></li><li class="item"><a href="tutorial-index_depthLabel.html">레이블추가</a></li><li class="item"><a href="tutorial-index_event.html">커스텀이벤트</a></li></ul><h3>Classes</h3><ul class="list classes"><li class="item" id="ne.component.Tree"><span class="title"><span class="p-item">ne.component.</span><a href="ne.component.Tree.html">Tree</a></span><span class="icon blue static">static</span><ul class="sublist methods ne.component.Tree"><span class="subtitle">Methods</span><li><a href="ne.component.Tree.html#action">action</a></li><li><a href="ne.component.Tree.html#changeState">changeState</a></li><li><a href="ne.component.Tree.html#disableHelper">disableHelper</a></li><li><a href="ne.component.Tree.html#enableHelper">enableHelper</a></li><li><a href="ne.component.Tree.html#getEditableElement">getEditableElement</a></li><li><a href="ne.component.Tree.html#init">init</a></li><li><a href="ne.component.Tree.html#notify">notify</a></li><li><a href="ne.component.Tree.html#setDepthLabels">setDepthLabels</a></li><li><a href="ne.component.Tree.html#setEvents">setEvents</a></li><li><a href="ne.component.Tree.html#setHelperLocation">setHelperLocation</a></li></ul></li><li class="item" id="ne.component.TreeModel"><span class="title"><span class="p-item">ne.component.</span><a href="ne.component.TreeModel.html">TreeModel</a></span><span class="icon blue static">static</span><ul class="sublist methods ne.component.TreeModel"><span class="subtitle">Methods</span><li><a href="ne.component.TreeModel.html#changeState">changeState</a></li><li><a href="ne.component.TreeModel.html#clearBuffer">clearBuffer</a></li><li><a href="ne.component.TreeModel.html#connect">connect</a></li><li><a href="ne.component.TreeModel.html#find">find</a></li><li><a href="ne.component.TreeModel.html#insert">insert</a></li><li><a href="ne.component.TreeModel.html#isDisable">isDisable</a></li><li><a href="ne.component.TreeModel.html#makeNode">makeNode</a></li><li><a href="ne.component.TreeModel.html#move">move</a></li><li><a href="ne.component.TreeModel.html#notify">notify</a></li><li><a href="ne.component.TreeModel.html#remove">remove</a></li><li><a href="ne.component.TreeModel.html#removeKey">removeKey</a></li><li><a href="ne.component.TreeModel.html#rename">rename</a></li><li><a href="ne.component.TreeModel.html#setBuffer">setBuffer</a></li><li><a href="ne.component.TreeModel.html#setData">setData</a></li><li><a href="ne.component.TreeModel.html#sort">sort</a></li></ul></li></ul></div>
+        <div id="main" class="main"><section>
+<header>
+    
+
+    <h2>레이블추가</h2>
+</header>
+
+<article>
+	
+    <a href="tutorials/index_depthLabel.html" target="_blank">새창으로 열기</a><br/>
+    <iframe id="exampleFrame" width="500" height="700" frameborder="0" src=tutorials/index_depthLabel.html onload="onIframeLoad()"></iframe>
+    <br/>
+    <div id='codeArea'></div>
+</article>
+<script>
+/**
+ * iframe load 이벤트 핸들러
+ */
+function onIframeLoad() {
+    generateCode();
+    autoResize();
+}
+
+/**
+ * iframe 의 너비/높이를 resize 한다.
+ */
+function autoResize() {
+    var ef = document.getElementById('exampleFrame');
+    ef.width = document.getElementById('main').clientWidth - 40;
+    ef.height = getIframeDocument().body.clientHeight + 40;
+}
+
+/**
+ * iframe 의 document 를 반환한다.
+ * @returns {HTMLDocument|Document}
+ */
+function getIframeDocument() {
+    var ef = document.getElementById('exampleFrame');
+    return ef.contentDocument || ef.contentWindow.document;
+}
+
+/**
+ * iframe 마지막 script code 를 div 에 할당한다.
+ */
+function generateCode() {
+    var codeArea = document.getElementById('codeArea'),
+        doc = getIframeDocument(),
+        scripts;
+
+    if (doc) {
+        scripts = doc.getElementsByTagName('script');
+        codeArea.innerHTML = '<pre>' + encodeHTMLEntity(scripts[scripts.length-1].innerText) + '</pre>';
+    }
+}
+
+/**
+ * html entity 로 인코딩한다.
+ * @param html
+ * @returns {XML|string|void}
+ */
+function encodeHTMLEntity(html) {
+    var entities = {'"': 'quot', '&': 'amp', '<': 'lt', '>': 'gt', '\'': '#39'};
+    return html.replace(/[<>&"']/g, function(m0) {
+        return entities[m0] ? '&' + entities[m0] + ';' : m0;
+    });
+}
+</script>
+
+</section></div>
+        <div class="clearfix"></div>
+    </div>
+
+</div>
+<script>
+(function() {
+// 영역 height 설정
+var height = (window.innerHeight || document.documentElement.clientHeight || document.getElementByTagName('body')[0].clientHeight) - 50;
+var navigation = document.getElementById('navigation');
+var main = document.getElementById('main');
+navigation.style.height = height + 'px';
+main.style.height = height + 'px';
+
+// IE 7,8을 위한 getElementsByClassName 구현
+var getElementsByClassName = function(className, parentElement) {
+	if(document.getElementsByClassName) {
+		return (parentElement || document).getElementsByClassName(className);
+	}
+
+    var regEx = new RegExp('(^| )'+className+'( |$)');
+	var nodes = new Array();
+    var elements = (parentElement || document.body).getElementsByTagName("*");
+    for(var i = 0, len = elements.length; i < len ; i++) {
+        if(regEx.test(elements[i].className)) {
+			nodes.push(elements[i]);
+		}
+	}
+	elements = null;
+    return nodes;
+}
+
+// url 파싱후 해당 카테고리만 display:block 처리
+var url = location.href;
+var path = url.lastIndexOf('/');
+var fileName = url.substring(path+1);
+var fullName = fileName.split('.');
+fullName.length -= 1;
+fullName = fullName.join('.');
+fullName = fullName.split('-');
+fullName = fullName[fullName.length - 1];
+var lnbList = getElementsByClassName(fullName);
+if(lnbList.length && lnbList.length > 0) {
+    for(var i = 0, len = lnbList.length; i < len; i++) {
+        lnbList[i].className += ' selected';
+    }
+}
+
+var title = document.getElementById(fullName);
+if(title) {
+    title.className += ' selected';
+    title.innerHTML = '<span class="arrow">▶</span>' + title.innerHTML;
+
+    var static = getElementsByClassName('static', title);
+    if(static) {
+        static[0].className += ' selected';
+    }
+}
+})();
+</script>
+<script type="text/javascript" src="scripts/prettify/prettify.js"></script>
+<script type="text/javascript" src="scripts/prettify/lang-css.js"></script>
+<script type="text/javascript">prettyPrint();</script>
+<script type="text/javascript" src="scripts/linenumber.js"></script>
+</body>
+</html>
