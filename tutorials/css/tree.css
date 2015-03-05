@@ -1,6 +1,6 @@
-body {margin:0;padding:0; font-family: malgun gothic,verdana,consolas; font-size:12px; font-size:11px; }
+body {margin:0;padding:0; font-family: malgun gothic,verdana,consolas; font-size:12px; height:500px;}
 h3 {margin-left:25px; font-weight: normal;}
-.treeWrap { width: 500px; height:500px; overflow:auto; }
+.treeWrap { width: 500px; height:500px; overflow:auto;float:left; font-size:11px; }
 .treeWrap ul li { list-style: none; padding:3px 0;  }
 .treeWrap ul li em { font-weight: bold; font-style: normal}
 .treeWrap ul li.leap_node { padding-left:17px; }
@@ -9,4 +9,9 @@ h3 {margin-left:25px; font-weight: normal;}
 .treeWrap .open button {background-position: -107px 0; }
 .treeWrap .close button {background-position: -92px 0; }
 
+.explain {float:left; width:400px; height:500px; margin-left:15px; border:1px solid #eee; }
+.explain p {margin-left:15px; }
+.imagewrap { border:1px solid #eee; padding:10px; float:left; width:165px; height:171px; overflow:hidden; margin-left:8px; }
+
 .selected { background-color:#efefef; }
+#selectValue {padding:10px; border-radius: 5px;}

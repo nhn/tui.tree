@@ -8,14 +8,14 @@
     <link rel="stylesheet" href="css/tree.css" />
 </head>
 <body>
-<h3>이벤트 부여 예제</h3>
-<p>클릭시, input에 클릭한 요소의 value표시</p>
-<p>이름 변경시, input에 변경 내역 표시</p>
 <div class="treeWrap" style="position:relative; border:1px solid #eaeaea;">
     <ul id="treeRoot1" class="tree"></ul>
 </div>
+<div class="explain">
 <input type="text" id="selectValue" style="border:1px solid #eaeaea;margin:10px 0 0 10px; font-size:11px;" />
-
+<p>클릭시, input에 클릭한 요소의 value표시된다.</p>
+<p>이름 변경시, input에 변경 내역 표시된다.</p>
+</div>
 <script>
     var data = [
         {value: 'rootA', children:
@@ -40,8 +40,7 @@
     var t = new ne.component.Tree('treeRoot1', data, {
         modelOption: {defaultState: 'open'},
         useDrag: true,
-        useHelper: true,
-        depthLabels: ['층', '열', '구역', '블록']
+        useHelper: true
     });
 
     // 노드를 선택시 발생
