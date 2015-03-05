@@ -14,7 +14,9 @@ Tree
 * 커스텀 이벤트(특정 클래스의 노드 클릭시 이벤트 발생)를 제공
 
 ## Sample Image
-![alt tag](https://github.nhnent.com/pages/fe/component-tree/tree.png)<br><br>
+* 기본 트리<br>
+![alt tag](https://github.nhnent.com/pages/fe/component-tree/tree.png)
+* Label이 적용된 트리<br>
 ![alt tag](https://github.nhnent.com/pages/fe/component-tree/tree_edit.png)
 
 ## Documentation
