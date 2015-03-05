@@ -11,5 +11,7 @@ h3 {margin-left:25px; font-weight: normal;}
 
 .explain {float:left; width:400px; height:500px; margin-left:15px; border:1px solid #eee; }
 .explain p {margin-left:15px; }
+.imagewrap { border:1px solid #eee; padding:10px; float:left; width:165px; height:171px; overflow:hidden; margin-left:8px; }
+
 .selected { background-color:#efefef; }
 #selectValue {padding:10px; border-radius: 5px;}
