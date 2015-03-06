@@ -37,7 +37,7 @@ module.exports = function(config) {
         files: [
             'node_modules/jquery/tmp/jquery.js',
             'node_modules/jasmine-jquery/lib/jasmine-jquery.js',
-            'src/common/common.js',
+            'src/common/*.js',
             'src/js/tree.js',
             'src/**/treemodel.js',
             'test/*.js',
