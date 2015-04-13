@@ -1,10 +1,10 @@
 {
-    "name": "Component-Tree",
+    "name": "component-tree",
     "version": "1.0.0",
     "authors": [
         "FE개발팀 이제인 <jein.yi@nhnent.com>"
     ],
-    "main": "Component-Tree.js",
+    "main": "component-tree.js",
     "license": "MIT",
     "private": true,
     "ignore": [
