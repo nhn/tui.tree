@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: treemodel.js</title>
+    <link type="text/css" rel="stylesheet" href="styles/prettify-jsdoc.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-fe2.css">
+</head>
+<body>
+
+<div id="wrap">
+
+    <div class="header">
+
+        <div class="container-fluid">
+            <h3><a href="index.html">API Documentation</a> <small>FE개발팀</small></h3>
+        </div>
+
+    </div>
+
+    <div class="body">
+        <div id="navigation" class="navigation"><h3>Samples</h3><ul class="list samples"><li class="item"><a href="tutorial-index_default.html">기본 예제</a></li><li class="item"><a href="tutorial-index_depthLabel.html">레이블추가 예제</a></li><li class="item"><a href="tutorial-index_event.html">커스텀이벤트 예제</a></li></ul><h3>Classes</h3><ul class="list classes"><li class="item" id="ne.component.Tree"><span class="title"><span class="p-item">ne.component.</span><a href="ne.component.Tree.html">Tree</a></span><span class="icon blue static">static</span><ul class="sublist methods ne.component.Tree"><span class="subtitle">Methods</span><li><a href="ne.component.Tree.html#action">action</a></li><li><a href="ne.component.Tree.html#changeState">changeState</a></li><li><a href="ne.component.Tree.html#disableHelper">disableHelper</a></li><li><a href="ne.component.Tree.html#enableHelper">enableHelper</a></li><li><a href="ne.component.Tree.html#getEditableElement">getEditableElement</a></li><li><a href="ne.component.Tree.html#init">init</a></li><li><a href="ne.component.Tree.html#notify">notify</a></li><li><a href="ne.component.Tree.html#setDepthLabels">setDepthLabels</a></li><li><a href="ne.component.Tree.html#setEvents">setEvents</a></li><li><a href="ne.component.Tree.html#setHelperLocation">setHelperLocation</a></li></ul></li><li class="item" id="ne.component.TreeModel"><span class="title"><span class="p-item">ne.component.</span><a href="ne.component.TreeModel.html">TreeModel</a></span><span class="icon blue static">static</span><ul class="sublist methods ne.component.TreeModel"><span class="subtitle">Methods</span><li><a href="ne.component.TreeModel.html#changeState">changeState</a></li><li><a href="ne.component.TreeModel.html#clearBuffer">clearBuffer</a></li><li><a href="ne.component.TreeModel.html#connect">connect</a></li><li><a href="ne.component.TreeModel.html#find">find</a></li><li><a href="ne.component.TreeModel.html#insert">insert</a></li><li><a href="ne.component.TreeModel.html#isDisable">isDisable</a></li><li><a href="ne.component.TreeModel.html#makeNode">makeNode</a></li><li><a href="ne.component.TreeModel.html#move">move</a></li><li><a href="ne.component.TreeModel.html#notify">notify</a></li><li><a href="ne.component.TreeModel.html#remove">remove</a></li><li><a href="ne.component.TreeModel.html#removeKey">removeKey</a></li><li><a href="ne.component.TreeModel.html#rename">rename</a></li><li><a href="ne.component.TreeModel.html#setBuffer">setBuffer</a></li><li><a href="ne.component.TreeModel.html#setData">setData</a></li><li><a href="ne.component.TreeModel.html#sort">sort</a></li></ul></li></ul></div>
+        <div id="main" class="main">
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @fileoverview 트리를 구성하는 데이터를 조작, 데이터 변경사한 발생 시 뷰를 갱신함
+ * @author FE개발팀 이제인(jein.yi@nhnent.com)
+ */
+
+/**
+ * @constructor ne.component.TreeModel
+ * **/
+ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends ne.component.TreeModel.prototype */{
+    init: function(options, tree) {
+
+        /**
+         * 노드 고유아이디를 붙이기 위한 카운트, 갯수를 세는대 사용되진 않는다.
+         * @type {number}
+         */
+        this.count = 0;
+
+        /**
+         * 모델의 변화를 구독하는 뷰들
+         * @type {ne.component.Tree}
+         */
+        this.tree = tree;
+
+        /**
+         * 노드의 기본상태
+         * @type {String}
+         */
+        this.nodeDefaultState = options.defaultState || 'close';
+
+        /**
+         * 이동시에 필요한 노드의 버퍼
+         * @type {null}
+         */
+        this.buffer = null;
+
+        /**
+         * 노드의 깊이를 저장하기 위한 변수
+         * @type {number}
+         */
+        this.depth = 0;
+
+        /**
+         * 아이디 생성을 위한 date
+         * @type {number}
+         */
+        this.date = new Date().getTime();
+
+        /**
+         * 트리해시
+         * @type {object}
+         * { node_1532525: {
+         *      value: value,
+         *      childKeys: [],
+         *      parentId: 'node1523',
+         *      id: node_1532525
+         * }}
+         */
+        this.treeHash = {};
+
+        this.treeHash['root'] = this.makeNode(0, 'root', 'root');
+        this.connect(tree);
+    },
+
+    /**
+     * 모델에 트리형태의 데이터를 세팅함
+     * 모델은 데이터를 받아 노드의 트리형태로 변경
+     * @param {array} data 트리 입력데이터
+     */
+    setData: function(data) {
+        this.treeHash.root.childKeys = this._makeTreeHash(data);
+    },
+
+    /**
+     * 계층적 데이터 구조를, 해쉬리스트 형태로 변경한다.
+     * @param {array} data 해쉬리스트형태로 변경시킬 트리 데이터
+     * @param {string} parentId 새로운 해쉬값으로 입력되는 노드의 부모노드의 id
+     * @private
+     */
+    _makeTreeHash: function(data, parentId) {
+
+        var childKeys = [],
+            id;
+
+        this.depth = this.depth + 1;
+
+        ne.util.forEach(data, function(element) {
+
+            // 아이디를 키값으로 가지는 해쉬 추
+            id = this._getId();
+
+            this.treeHash[id] = this.makeNode(this.depth, id, element.value, parentId);
+
+            // 자식노드가 있을 경우 재귀적으로 호출하여, 자식노드의 아이디리스트를 저장
+            if (element.children &amp;&amp; ne.util.isNotEmpty(element.children)) {
+                this.treeHash[id].childKeys = this._makeTreeHash(element.children, id);
+            }
+
+            childKeys.push(id);
+        }, this);
+
+        this.depth = this.depth - 1;
+
+        childKeys.sort(ne.util.bind(this.sort, this));
+
+        return childKeys;
+    },
+
+    /**
+     * 노드를 생성한다.
+     * @param {number} depth 노드의 깊이
+     * @param {string} id 노드의 아이디 값
+     * @param {string} value 노드의 값
+     * @param {string} parentId 부모 노드의 아이디
+     * @return {{value: *, parentId: (*|string), id: *}}
+     */
+    makeNode: function(depth, id, value, parentId) {
+        return {
+            depth: depth,
+            value: value,
+            parentId: (depth === 0) ? null : (parentId || 'root'),
+            state: this.nodeDefaultState,
+            id: id
+        };
+    },
+
+    /**
+     * 트리에 부여 될 고유아이디를 만들어 리턴한다
+     * @private
+     * @return {String}
+     */
+    _getId: function() {
+        this.count = this.count + 1;
+        return 'node_' + this.date + '_' + this.count;
+    },
+
+    /**
+     * 노드를 찾아서 리턴한다.
+     * @param {string} key 찾을 노드의 키 값
+     * @return {object|undefined}
+     */
+    find: function(key) {
+        return this.treeHash[key];
+    },
+
+    /**
+     * 노드를 제거한다, 노드를 참조하고있는 부모의 자식목록에서도 제거한다.
+     * @param {string} key 모델에서 제거할 노드의 키 값
+     */
+    remove: function(key) {
+        // 참조된 값 먼저 제거
+        var res = this.invoke('remove', { id: key });
+
+        if (!res) {
+            return;
+        }
+
+        this.removeKey(key);
+        this.treeHash[key] = null;
+
+        this.notify();
+    },
+
+    /**
+     * 노드의 키값을 제거한다.
+     * @param {string} key 제거할 노드의 키 값
+     */
+    removeKey: function(key) {
+        var node = this.find(key);
+
+        if (!node) {
+            return;
+        }
+
+        // 자식 키 값을 제거한다.
+        var parent = this.find(node.parentId);
+
+        parent.childKeys = ne.util.filter(parent.childKeys, function(childKey) {
+            return childKey !== key;
+        });
+
+    },
+
+    /**
+     * 노드를 이동시킨다
+     * @param {string} key
+     * @param {object} node
+     * @param {string} targetId
+     */
+    move: function(key, node, targetId) {
+
+        this.removeKey(key);
+        this.treeHash[key] = null;
+        this.insert(node, targetId);
+
+    },
+
+    /**
+     * 노드를 삽입한다.
+     * @param {object} node 삽입될 노드 값
+     * @param {string} [targetId] 삽입할 노드의 부모가 될 타겟 아이디, 없으면 루트
+     */
+    insert: function(node, targetId) {
+        var target = this.find(targetId || 'root');
+
+        if (!target.childKeys) {
+            target.childKeys = [];
+        }
+
+        target.childKeys.push(node.id);
+        node.depth = target.depth + 1;
+        node.parentId = targetId;
+        // 정렬
+        target.childKeys.sort(ne.util.bind(this.sort, this));
+
+        this.treeHash[node.id] = node;
+
+        this.notify();
+    },
+
+    /**
+     * 트리를 갱신한다.
+     */
+    notify: function(type, target) {
+        if (this.tree) {
+            this.tree.notify(type, target);
+        }
+    },
+
+    /**
+     * 뷰와 모델을 연결한다. 모델에 변경이 일어날 경우, tree notify를 호출하여 뷰를 갱신한다.
+     * @param {ne.component.Tree} tree
+     */
+    connect: function(tree) {
+        if (!tree) {
+            return;
+        }
+        this.tree = tree;
+    },
+
+    /**
+     * 노드의 value를 변경한다.
+     * @param {stirng} key 변경할 노드의 키값
+     * @param {string} value 변경할 값
+     */
+    rename: function(key, value) {
+        var res = this.invoke('rename', {id: key, value: value});
+        if (!res) {
+            return;
+        }
+
+        var node = this.find(key);
+        node.value = value;
+
+        this.notify('rename', node);
+    },
+
+    /**
+     * 노드의 상태(여닫힘)을 갱신한다.
+     * @param {string} key 상태를 변경할 노드의 키값
+     */
+    changeState: function(key) {
+        var node = this.find(key);
+        node.state = (node.state === 'open') ? 'close' : 'open';
+        this.notify('toggle', node);
+    },
+    /**
+     * 현재 선택된 노드를 버퍼에 저장한다
+     * @param {String} key 선택된 노드 패스값
+     **/
+    setBuffer: function(key) {
+
+        this.clearBuffer();
+
+        var node = this.find(key);
+
+        this.notify('select', node);
+        this.fire('select', {id: key, value: node.value });
+
+        this.buffer = node;
+    },
+
+    /**
+     * 버퍼를 비운다
+     */
+    clearBuffer: function() {
+
+        if (!this.buffer) {
+            return;
+        }
+
+        this.notify('unselect', this.buffer);
+        this.buffer = null;
+
+    },
+
+    /**
+     * 이동할 노드가, 이동할 대상 노드의 부모노드인지 확인한다.
+     * @param {object} dest 이동할 대상 노드
+     * @param {object} node 이동할 노드
+     */
+    isDisable: function(dest, node) {
+        // 뎁스가 같으면 계층 구조에 있을 가능성이 없으니 바로 false를 리턴한다.
+        if (dest.depth === node.depth) {
+            return false;
+        }
+        if (dest.parentId) {
+            if (dest.id === node.parentId) {
+                return true;
+            }
+            if (dest.parentId === node.id) {
+                return true;
+            } else {
+                return this.isDisable(this.find(dest.parentId), node);
+            }
+        }
+    },
+
+    /**
+     * 타이틀에 따른 정렬
+     * @param {string} pid
+     * @param {string} nid
+     * @return {number}
+     */
+    sort: function(pid, nid) {
+        var p = this.find(pid),
+            n = this.find(nid);
+
+        if (!p || !n) {
+            return 0;
+        }
+
+        if (p.value &lt; n.value) {
+            return -1;
+        } else if (p.value > n.value) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+});
+ne.util.CustomEvents.mixin(ne.component.Tree.TreeModel);
+</code></pre>
+        </article>
+    </section>
+
+
+
+</div>
+        <div class="clearfix"></div>
+    </div>
+
+</div>
+<script>
+(function() {
+// 영역 height 설정
+var height = (window.innerHeight || document.documentElement.clientHeight || document.getElementByTagName('body')[0].clientHeight) - 50;
+var navigation = document.getElementById('navigation');
+var main = document.getElementById('main');
+navigation.style.height = height + 'px';
+main.style.height = height + 'px';
+
+// IE 7,8을 위한 getElementsByClassName 구현
+var getElementsByClassName = function(className, parentElement) {
+	if(document.getElementsByClassName) {
+		return (parentElement || document).getElementsByClassName(className);
+	}
+
+    var regEx = new RegExp('(^| )'+className+'( |$)');
+	var nodes = new Array();
+    var elements = (parentElement || document.body).getElementsByTagName("*");
+    for(var i = 0, len = elements.length; i < len ; i++) {
+        if(regEx.test(elements[i].className)) {
+			nodes.push(elements[i]);
+		}
+	}
+	elements = null;
+    return nodes;
+}
+
+// url 파싱후 해당 카테고리만 display:block 처리
+var url = location.href;
+var path = url.lastIndexOf('/');
+var fileName = url.substring(path+1);
+var fullName = fileName.split('.');
+fullName.length -= 1;
+fullName = fullName.join('.');
+fullName = fullName.split('-');
+fullName = fullName[fullName.length - 1];
+var lnbList = getElementsByClassName(fullName);
+if(lnbList.length && lnbList.length > 0) {
+    for(var i = 0, len = lnbList.length; i < len; i++) {
+        lnbList[i].className += ' selected';
+    }
+}
+
+var title = document.getElementById(fullName);
+if(title) {
+    title.className += ' selected';
+    title.innerHTML = '<span class="arrow">▶</span>' + title.innerHTML;
+
+    var static = getElementsByClassName('static', title);
+    if(static) {
+        static[0].className += ' selected';
+    }
+}
+})();
+</script>
+<script type="text/javascript" src="scripts/prettify/prettify.js"></script>
+<script type="text/javascript" src="scripts/prettify/lang-css.js"></script>
+<script type="text/javascript">prettyPrint();</script>
+<script type="text/javascript" src="scripts/linenumber.js"></script>
+</body>
+</html>
