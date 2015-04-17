@@ -20,8 +20,8 @@ Tree
 ![alt tag](https://github.nhnent.com/pages/fe/component-tree/tree_edit.png)
 
 ## Documentation
-* **API** - https://github.nhnent.com/pages/fe/component-tree/api_list_index.html
-* **Sample** - https://github.nhnent.com/pages/fe/component-tree/tutorial-index_default.html
+* **API** - https://github.nhnent.com/pages/fe/component-tree/1.0.0/index.html
+* **Sample** - https://github.nhnent.com/pages/fe/component-tree/1.0.0/tutorial-index_default.html
 * **CI** - http://fe.nhnent.com:8080/jenkins/job/component-tree/
 
 ## Dependency
