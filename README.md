@@ -20,7 +20,7 @@ Tree
 ![alt tag](https://github.nhnent.com/pages/fe/component-tree/tree_edit.png)
 
 ## Documentation
-* **API** - https://github.nhnent.com/pages/fe/component-tree/1.0.0/index.html
+* **API** - https://github.nhnent.com/pages/fe/component-tree/1.0.0/
 * **Sample** - https://github.nhnent.com/pages/fe/component-tree/1.0.0/tutorial-index_default.html
 * **CI** - http://fe.nhnent.com:8080/jenkins/job/component-tree/
 
