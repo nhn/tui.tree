@@ -20,15 +20,15 @@ Tree
 ![alt tag](https://github.nhnent.com/pages/fe/component-tree/tree_edit.png)
 
 ## Documentation
-* **API** - https://github.nhnent.com/pages/fe/component-tree/1.0.0
-* **Sample** - https://github.nhnent.com/pages/fe/component-tree/1.0.0/tutorial-index_default.html
+* **API** - https://github.nhnent.com/pages/fe/component-tree/list.html
+* **Sample** - https://github.nhnent.com/pages/fe/component-tree/tutorial-index_default.html
 * **CI** - http://fe.nhnent.com:8080/jenkins/job/component-tree/
 
 ## Dependency
 * code-snippet - https://github.nhnent.com/fe/share-code-snippet
 
 ## Download/Install
-* Bower: `bower install "git+http://3c672057a1ac16c4e6f1baaba73e24d5270ef453:x-oauth-basic@github.nhnent.com/fe/component-tree.git#master"`
+* Bower: `bower install "git+http://3c672057a1ac16c4e6f1baaba73e24d5270ef453:x-oauth-basic@github.nhnent.com/fe/component-tree.git#version"`
 * Download: https://github.nhnent.com/fe/component-tree
 
 ## History
