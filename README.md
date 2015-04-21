@@ -36,8 +36,8 @@ Tree
 
 ## Download/Install
 * Bower: 
-   * 최신버전 :  `bower install "git+http://3c672057a1ac16c4e6f1baaba73e24d5270ef453:x-oauth-basic@github.nhnent.com/fe/component-tree.git#master"`
-   * 특정버전 : `bower install "git+http://3c672057a1ac16c4e6f1baaba73e24d5270ef453:x-oauth-basic@github.nhnent.com/fe/component-tree.git[#tag]"`
+   * 최신버전 :  `bower install "git+http://70327b4564c7a80eb61724056876b960290946dd:x-oauth-basic@github.nhnent.com/fe/component-tree.git#master"`
+   * 특정버전 : `bower install "git+http://70327b4564c7a80eb61724056876b960290946dd:x-oauth-basic@github.nhnent.com/fe/component-tree.git[#tag]"`
 * Download: https://github.nhnent.com/fe/component-tree
 
 ## History
