@@ -1,24 +1,31 @@
 {
-    "name": "FIXME",
-    "version": "0.0.1",
+    "name": "component-tree",
+    "version": "0.9.0",
     "authors": [
-        "FIXME"
+        "FE개발팀 이제인 <jein.yi@nhnent.com>"
     ],
+    "main": "component-tree.js",
     "license": "MIT",
     "private": true,
     "ignore": [
         "**/.*",
+        ".*",
+        "src",
+        "bin",
         "node_modules",
         "bower_components",
         "test",
-        "tests",
-        "src",
-        "sample"
+        "bower.json",
+        "conf.json",
+        "Gruntfile.js",
+        "karma.conf.js",
+        "package.json",
+        "samples"
     ],
     "dependencies": {
-        "jquery": "~1.8.3",
-        "json2": "*",
-        "requirejs": "~2.1.14",
-        "almond": "~0.3.0"
+        "code-snippet": "git+http://70327b4564c7a80eb61724056876b960290946dd:x-oauth-basic@github.nhnent.com/fe/code-snippet.git#1.0.0"
+    },
+    "devDependencies": {
+        "jquery": "~1.8.3"
     }
 }
