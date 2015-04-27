@@ -23,7 +23,7 @@
         "samples"
     ],
     "dependencies": {
-        "code-snippet": "git+http://3c672057a1ac16c4e6f1baaba73e24d5270ef453:x-oauth-basic@github.nhnent.com/fe/share-code-snippet.git#1.0.0"
+        "code-snippet": "git+http://70327b4564c7a80eb61724056876b960290946dd:x-oauth-basic@github.nhnent.com/fe/code-snippet.git#1.0.0"
     },
     "devDependencies": {
         "jquery": "~1.8.3"
