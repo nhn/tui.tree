@@ -22,7 +22,7 @@
         "samples"
     ],
     "dependencies": {
-        "code-snippet": "~1.0.0"
+        "ne-code-snippet": "~1.0.0"
     },
     "devDependencies": {
         "jquery": "~1.8.3"
