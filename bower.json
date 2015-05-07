@@ -1,12 +1,11 @@
 {
-    "name": "component-tree",
+    "name": "ne-component-tree",
     "version": "1.0.0",
     "authors": [
         "FE개발팀 이제인 <jein.yi@nhnent.com>"
     ],
     "main": "component-tree.js",
     "license": "MIT",
-    "private": true,
     "ignore": [
         "**/.*",
         ".*",
@@ -23,7 +22,7 @@
         "samples"
     ],
     "dependencies": {
-        "code-snippet": "git+http://70327b4564c7a80eb61724056876b960290946dd:x-oauth-basic@github.nhnent.com/fe/code-snippet.git#1.0.0"
+        "code-snippet": "~1.0.0"
     },
     "devDependencies": {
         "jquery": "~1.8.3"
