@@ -1,7 +1,32 @@
 {
-  "name": "Component-Tree",
+  "name": "component-tree",
   "version": "1.0.0",
-  "description": "트리 컴포넌트",
+  "description": "트리 컴포넌트<br>뎁스가 있는 데이터를 트리 UI로 보여주는 컴포넌트 입니다.<br>각 노드는 드래그앤드랍으로 이동이 가능합니다.",
+  "featureList": [
+    "트리 UI로 데이터를 보여줌",
+    "클릭으로 부모노드 접고/펼침 기능 제공",
+    "부모노드를 펼칠 때 동적으로 자식노드를 구성할 수 있는 기능 제공",
+    "노드의 추가/삭제 기능 제공",
+    "더블클릭으로 이름 수정 가능",
+    "드래그앤드랍으로 노드 이동 가능",
+    "커스텀 이벤트(특정 클래스의 노드 클릭시 이벤트 발생)를 제공"
+  ],
+  "tutorial": "트리",
+  "samplePage": "index_default.html",
+  "sample": {
+    "기본트리" : "![alt tag](https://nhnent.github.io/fe.component-tree/tree.png)<br>",
+    "Label 적용 트리": "![alt tag](https://nhnent.github.io/fe.component-tree/tree_edit.png)"
+  },
+  "test": {
+    "PC": [
+      "IE7~11",
+      "Chrome",
+      "Firefox"
+    ]
+  },
+  "dependency": [
+    "ne-code-snippet#1.0.2"
+  ],
   "private": true,
   "devDependencies": {
     "fedoc-template": "git+http://14bfd38a036366f7ca90355d202038126127bd01:x-oauth-basic@github.nhnent.com/fe/Share-FEDocTemplate.git",
@@ -24,7 +49,26 @@
     "karma-phantomjs-launcher": "^0.1.4",
     "karma-requirejs": "^0.2.2",
     "karma-webdriver-launcher": "git+https://github.com/everedifice/karma-webdriver-launcher.git",
-    "requirejs": "^2.1.14"
+    "requirejs": "^2.1.14",
+    "readme-builder": "git+https://github.com/jein-yi/readme-builder.git"
+  },
+  "history": {
+    "1.0.0a": {
+      "content": "defineNamespace 적용",
+      "date": "2015.05",
+      "author": "이제인 <jein.yi@nhnent.com>"
+    },
+    "1.0.0": {
+      "content": "배포",
+      "date": "2015.03",
+      "author": "이제인 <jein.yi@nhnent.com>",
+      "hasAPI": true
+    },
+    "0.9.0": {
+      "content": "티켓링크 적용",
+      "date": "2015.01",
+      "author": "이제인 <jein.yi@nhnent.com>"
+    }
   },
   "scripts": {
     "doc": "./node_modules/.bin/jsdoc -c conf.json"
