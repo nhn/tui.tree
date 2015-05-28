@@ -14,7 +14,7 @@
   "tutorial": "트리",
   "samplePage": "index_default.html",
   "sample": {
-    "기본트리" : "![alt tag](https://nhnent.github.io/fe.component-tree/tree.png)<br>",
+    "기본트리": "![alt tag](https://nhnent.github.io/fe.component-tree/tree.png)<br>",
     "Label 적용 트리": "![alt tag](https://nhnent.github.io/fe.component-tree/tree_edit.png)"
   },
   "test": {
@@ -39,8 +39,8 @@
     "grunt-contrib-watch": "^0.6.1",
     "grunt-template": "^0.2.3",
     "grunt-zip": "^0.16.0",
-    "jquery": "~1.8.3",
     "jasmine-jquery": "^2.0.5",
+    "jquery": "~1.8.3",
     "jsdoc": "git+https://github.com/jsdoc3/jsdoc.git",
     "karma": "^0.12.22",
     "karma-coverage": "^0.2.6",
@@ -49,8 +49,8 @@
     "karma-phantomjs-launcher": "^0.1.4",
     "karma-requirejs": "^0.2.2",
     "karma-webdriver-launcher": "git+https://github.com/everedifice/karma-webdriver-launcher.git",
-    "requirejs": "^2.1.14",
-    "readme-builder": "git+https://github.com/jein-yi/readme-builder.git"
+    "readme-builder": "git+https://github.com/jein-yi/readme-builder.git",
+    "requirejs": "^2.1.14"
   },
   "history": {
     "1.0.0a": {
