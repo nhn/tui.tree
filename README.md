@@ -12,10 +12,10 @@ Tree
 * 커스텀 이벤트(특정 클래스의 노드 클릭시 이벤트 발생)를 제공
 
 ## Documentation
-* **API** : https://github.nhnent.com/pages/fe/component-tree/1.0.0
-* **Tutorial** : https://github.nhnent.com/fe/component-tree/wiki/트리-컴포넌트-적용방법
-* **Sample** - https://github.nhnent.com/pages/fe/component-tree/1.0.0/tutorial-index_default.html
-* **CI** : http://fe.nhnent.com:8080/jenkins/job/component-tree/
+* **API** : https://nhnent.github.io/fe.component-tree/1.0.0
+* **Tutorial** : https://github.com/nhnent/fe.component-tree/wiki/트리-컴포넌트-적용방법
+* **Sample** - https://nhnent.github.io/fe.component-tree/1.0.0/tutorial-index_default.html
+
 
 ## Sample Image
 * 기본트리<br>
@@ -35,9 +35,9 @@ Tree
 
 ## Download/Install
 * Bower:
-   * 최신버전 : `bower install "git+http://70327b4564c7a80eb61724056876b960290946dd:x-oauth-basic@github.nhnent.com/fe/component-tree.git#master"`
-   * 특정버전 : `bower install "git+http://70327b4564c7a80eb61724056876b960290946dd:x-oauth-basic@github.nhnent.com/fe/component-tree.git[#tag]"`
-* Download: https://github.nhnent.com/fe/component-tree
+   * 최신버전 : `bower install ne-component-tree#master`
+   * 특정버전 : `bower install ne-component-tree[#tag]`
+* Download: https://github.com/nhnent/fe.component-tree
 
 ## History
 | Version | Description | Date | Developer |
