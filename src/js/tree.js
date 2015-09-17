@@ -1,219 +1,28 @@
 /**
- * @fileoverview 화면에 보여지는 트리를 그리고, 갱신한다.
- * @author FE개발팀 이제인(jein.yi@nhnent.com)
+ * @fileoverview Render tree and update tree.
+ * @author NHN Ent. FE dev team.<dl_javascript@nhnent.com>
  */
 
-
-ne.util.defineNamespace('ne.component');
-
-var STATE = {
-    NORMAL: 0,
-    EDITABLE: 1
-};
-
-var DEFAULT = {
-    OPEN: ['open', '-'],
-    CLOSE: ['close', '+'],
-    SELECT_CLASS: 'selected',
-    SUBTREE_CLASS: 'Subtree',
-    VALUE_CLASS: 'valueClass',
-    EDITABLE_CLASS: 'editableClass',
-    TEMPLATE: {
-        EDGE_NODE: '<li class="edge_node {{State}}">' +
-                    '<button type="button">{{StateLabel}}</button>' +
-                    '<span id="{{NodeID}}" class="depth{{Depth}} {{ValueClass}}">{{Title}}</span><em>{{DepthLabel}}</em>' +
-                    '<ul class="{{Subtree}}" style="display:{{Display}}">{{Children}}</ul>' +
-                '</li>',
-        LEAP_NODE: '<li class="leap_node">' +
-                    '<span id="{{NodeID}}" class="depth{{Depth}} {{ValueClass}}">{{Title}}</span><em>{{DepthLabel}}</em>' +
-                '</li>'
-    },
-    USE_DRAG: false,
-    USE_HELPER: false,
-    HELPER_POS : {
-        x: 10,
-        y: 10
-    }
-};
+var statics = require('./statics');
+var util = require('./utils');
+var TreeModel = require('./treemodel');
 
 /**
- * 트리 컴포넌트에 쓰이는 헬퍼객체
- *
- * @author FE개발팀 이제인(jein.yi@nhnent.com)
- */
-var util = {
-    /**
-     * 엘리먼트에 이벤트를 추가한다
-     *
-     * @param {Object} element 이벤트를 추가할 엘리먼트
-     * @param {String} eventName 추가할 이벤트 명
-     * @param {Function} handler 추가할 이벤트 콜백함수
-     */
-    addEventListener: function(element, eventName, handler) {
-        if (element.addEventListener) {
-            element.addEventListener(eventName, handler, false);
-        } else {
-            element.attachEvent('on' + eventName, handler);
-        }
-    },
-
-    /**
-     * 엘리먼트에 이벤트를 제거한다
-     *
-     * @param {Object} element 이벤트를 제거할 엘리먼트
-     * @param {String} eventName 제거할 이벤트 명
-     * @param {Function} handler 제거할 이벤트 콜백함수
-     */
-    removeEventListener: function(element, eventName, handler) {
-        if (element.removeEventListener) {
-            element.removeEventListener(eventName, handler, false);
-        } else {
-            element.detachEvent('on' + eventName, handler);
-        }
-    },
-
-    /**
-     * 이벤트 객체의 타겟을 반환한다
-     * @param {event} e 이벤트객체
-     * @return {HTMLElement} 타겟 엘리먼트
-     */
-    getTarget: function(e) {
-        e = e || window.event;
-        var target = e.target || e.srcElement;
-        return target;
-    },
-
-    /**
-     * 엘리먼트가 특정 클래스를 가지고 있는지 확인
-     * @param {HTMLElement} element 확인할 엘리먼트
-     * @param {string} className 확인할 클래스 명
-     * @return {boolean} 클래스 포함 여부
-     */
-    hasClass: function(element, className) {
-        if (!element || !className) {
-            throw new Error('#util.hasClass(element, className) 엘리먼트가 입력되지 않았습니다. \n__element' + element + ',__className' + className);
-        }
-
-        var cls = element.className;
-
-        if (cls.indexOf(className) !== -1) {
-            return true;
-        }
-
-        return false;
-    },
-
-    /**
-     * 클래스에 따른 엘리먼트 찾기
-     * @param {HTMLElement} target 대상 엘리먼트
-     * @param {string} className
-     * @return {array} 클래스를 가진 앨리먼트
-     */
-    getElementsByClass: function(target, className) {
-        if (target.querySelectorAll) {
-            return target.querySelectorAll('.' + className);
-        }
-        var all = target.getElementsByTagName('*'),
-            filter = [];
-
-        all = ne.util.toArray(all);
-
-        ne.util.forEach(all, function(el) {
-            var cls = el.className || '';
-            if (cls.indexOf(className) !== -1) {
-                filter.push(el);
-            }
-        });
-
-        return filter;
-    },
-
-    /**
-     * 우클릭인지 확인
-     * @param {event} e 확인 이벤트
-     * @return {boolean} 우클릭 여부
-     */
-    isRightButton: function(e) {
-        var isRight = util._getButton(e) === 2;
-        return isRight;
-    },
-
-    /**
-     * 속성 존재 여부 테스트
-     * @param {array} props 속성 리스트
-     * @return {boolean} 속성 존재여부
-     */
-    testProp: function(props) {
-        var style = document.documentElement.style,
-            i = 0;
-
-        for (; i < props.length; i++) {
-            if (props[i] in style) {
-                return props[i];
-            }
-        }
-        return false;
-    },
-
-    /**
-     * 이벤트 기본 동작 방해
-     * @param {event} e 이벤트
-     */
-    preventDefault: function(e) {
-        if (e.preventDefault) {
-            e.preventDefault();
-        } else {
-            e.returnValue = false;
-        }
-    },
-
-    /**
-     * 마우스 이벤트에서 버튼 클릭 속성을 정규화한다
-     * 0: 우선적 마우스 버튼, 2: 두 번째 마우스 버튼, 1: 가운데 버튼
-     * @param {MouseEvent} event 이벤트 객체
-     * @return {number|undefined} 넘버 객체
-     * @private
-     */
-    _getButton: function(e) {
-        var button,
-            primary = '0,1,3,5,7',
-            secondary = '2,6',
-            wheel = '4';
-
-        if (document.implementation.hasFeature('MouseEvents', '2.0')) {
-            return e.button;
-        } else {
-            button = e.button + '';
-            if (primary.indexOf(button) > -1) {
-                return 0;
-            } else if (secondary.indexOf(button) > -1) {
-                return 2;
-            } else if (wheel.indexOf(button) > -1) {
-                return 1;
-            }
-        }
-    }
-};
-
-/**
- * 트리의 모델을 생성하고 모델에 데이터를 부여한다.
- * 이름이 변경될 때 사용된 인풋박스를 생성한다.
- * 모델에 뷰를 등록시킨다.
- * 트리의 뷰를 생성하고 이벤트를 부여한다.
- * @constructor ne.component.Tree
- * @param {string} id 트리가 붙을 앨리먼트의 아이디
- *      @param {Object} data 트리에 사용될 데이터
- *      @param {Object} options 트리에 사용될 세팅값
- *          @param {String} options.modelOption 모델이 들어갈 옵션 값
- *          @param {object} [options.template] 트리에 사용되는 기본 마크업
- *          @param {Array} [options.openSet] 노드가 열린 상태일때 클래스 명과 버튼 레이블
- *          @param {Array} [options.closeSet] 노드가 닫힌 상태일때 클래스 명과 버튼 레이블
- *          @param {string} [options.selectClass] 선택된 노드에 부여되는 클래스 명
- *          @param {string} [options.valueClass] 더블클릭이 되는 영역에 부여되는 클래스 명
- *          @param {string} [options.inputClass] input엘리먼트에 부여되는 클래스 명
- *          @param {string} [options.subtreeClass] 서브트리에 부여되는 클래스 명
- *          @param {Array} [options.depthLabels] 뷰에만 표시 될 기본 레이블
- *          @param {object} [options.helperPos] 헬퍼객체가 표시되는 위치의 상대값 좌표
+ * Create tree model and inject data to model
+ * @constructor 
+ * @param {string} id A id for tree root element
+ *      @param {Object} data A data to be used on tree
+ *      @param {Object} options The options
+ *          @param {String} options.modelOption A inner option for model
+ *          @param {object} [options.template] A markup set to make element
+ *          @param {Array} [options.openSet] A class name and button label to open state
+ *          @param {Array} [options.closeSet] A class name and button label to close state
+ *          @param {string} [options.selectClass] A class name to selected node
+ *          @param {string} [options.valueClass] A class name that for selected zone
+ *          @param {string} [options.inputClass] A class name for input element
+ *          @param {string} [options.subtreeClass] A class name for sub tree
+ *          @param {Array} [options.depthLabels] A default label  each depth's nodes
+ *          @param {object} [options.helperPos] A related position for helper object
  * @example
  * var data = [
  {title: 'rootA', children:
@@ -242,109 +51,106 @@ var util = {
 });
  **/
 
-ne.component.Tree = ne.util.defineClass(/** @lends ne.component.Tree.prototype */{
+var Tree = ne.util.defineClass(/** @lends Tree.prototype */{
 
     /**
-     * TreeView 초기화한다.
-     *
-     * @param {String} id 루트의 아이디 값
-     * @param {Object} data 트리 초기데이터 값
-     * @param {Object} options 트리 초기옵션값
-     * @param {String} template 트리에 사용되는 기본 태그(자식노드가 있을때와 없을때를 오브젝트 형태로 받는)
+     * Initialize
+     * @param {String} id A id for root 
+     * @param {Object} data A initialize data
+     * @param {Object} options The options 
      */
     init: function (id, data, options) {
 
         /**
-         * 노드 기본 템플릿
+         * A default template
          * @type {String}
          */
-        this.template = options.template || DEFAULT.TEMPLATE;
+        this.template = options.template || statics.DEFAULT.TEMPLATE;
 
         /**
-         * 노드의 루트 엘리먼트
+         * A root element
          * @type {HTMLElement}
          */
         this.root = null;
 
         /**
-         * 트리가 열린 상태일때 부여되는 클래스와, 텍스트
+         * A class name and lebel text for open state
          * @type {Array}
          */
-        this.openSet = options.openSet || DEFAULT.OPEN;
+        this.openSet = options.openSet || statics.DEFAULT.OPEN;
 
         /**
-         * 트리가 닫힘 상태일때 부여되는 클래스와, 텍스트
+         * A class name and label text for close state
          * @type {Array}
          */
-        this.closeSet = options.closeSet || DEFAULT.CLOSE;
+        this.closeSet = options.closeSet || statics.DEFAULT.CLOSE;
 
         /**
-         * 노드가 선택 되었을때 부여되는 클래스명
+         * A class name for selected node 
          * @type {String}
          */
-        this.onselectClass = options.selectClass || DEFAULT.SELECT_CLASS;
+        this.onselectClass = options.selectClass || statics.DEFAULT.SELECT_CLASS;
 
         /**
-         * 더블클릭이 적용되는 영역에 부여되는 클래스
+         * A class name for double click area
          * @type {string}
          */
-        this.valueClass = options.valueClass || DEFAULT.VALUE_CLASS;
+        this.valueClass = options.valueClass || statics.DEFAULT.VALUE_CLASS;
 
         /**
-         * input엘리먼트에 부여되는 클래스
+         * A class name for input element
          * @type {string}
          */
-        this.editClass = options.inputClass || DEFAULT.EDITABLE_CLASS;
+        this.editClass = options.inputClass || statics.DEFAULT.EDITABLE_CLASS;
 
         /**
-         * 노드의 뎁스에따른 레이블을 관리한다.(화면에는 표시되지만 모델에는 영향을 끼치지 않는다.)
+         * A label for each depth
          * @type {Array}
          */
         this.depthLabels = options.depthLabels || [];
 
         /**
-         * 트리 상태, 일반 출력 상태와 수정가능 상태가 있음.
+         * A state of tree
          * @type {number}
          */
-        this.state = STATE.NORMAL;
+        this.state = statics.STATE.NORMAL;
 
         /**
-         * 트리 서브 클래스
+         * A class name for subtree
          * @type {string|*}
          */
-        this.subtreeClass = options.subtreeClass || DEFAULT.SUBTREE_CLASS;
+        this.subtreeClass = options.subtreeClass || statics.DEFAULT.SUBTREE_CLASS;
 
         /**
-         * 드래그앤 드롭 기능을 사용할것인지 여부
+         * Whether drag and drop use or not
          * @type {boolean|*}
          */
-        this.useDrag = options.useDrag || DEFAULT.USE_DRAG;
+        this.useDrag = options.useDrag || statics.DEFAULT.USE_DRAG;
 
         /**
-         * 드래그앤 드롭 기능 동작시 가이드 엘리먼트 활성화 여부
+         * Whether helper element use or not
          * @type {boolean|*}
          */
-        this.useHelper = this.useDrag && (options.useHelper || DEFAULT.USE_HELPER);
+        this.useHelper = this.useDrag && (options.useHelper || statics.DEFAULT.USE_HELPER);
 
         /**
-         * 헬퍼객체의 기준 위치를 설정한다.
+         * Set relative position for helper object
          * @type {object}
          */
-        this.helperPos = options.helperPos || DEFAULT.HELPER_POS;
+        this.helperPos = options.helperPos || statics.DEFAULT.HELPER_POS;
 
         /**
-         * 트리의 상태가 STATE.EDITABLE 일때, 노드에 붙는 input엘리먼트
+         * Input element 
          * @type {HTMLElement}
          */
         this.inputElement = this.getEditableElement();
 
         /**
-         * 트리 모델을 생성한다.
-         * @type {ne.component.Tree.TreeModel}
+         * Make tree model
+         * @type {TreeModel}
          */
-        this.model = new ne.component.Tree.TreeModel(options.modelOption, this);
+        this.model = new TreeModel(options.modelOption, this);
 
-        // 모델 데이터를 생성한다.
         this.model.setData(data);
 
         if (id) {
@@ -360,8 +166,8 @@ ne.component.Tree = ne.util.defineClass(/** @lends ne.component.Tree.prototype *
     },
 
     /**
-     * STATE.EDITABLE 일때 사용되는  inputElement를 만든다.
-     * @return {HTMLElement} input 생성된 input 앨리먼트
+     * Make input element
+     * @return {HTMLElement}
      */
     getEditableElement: function() {
         var input = document.createElement('input');
@@ -372,13 +178,7 @@ ne.component.Tree = ne.util.defineClass(/** @lends ne.component.Tree.prototype *
     },
 
     /**
-     * 트리에 걸리는 이벤트 핸들러를 할당한다.
-     * #click-버튼 : 트리의 상태를 변경한다.
-     * #click-노드 : 노드를 선택한다
-     * #doubleclick-노드 : 노드의 이름변경을 활성화 한다.
-     * #mousedown : 마우스 무브와 업을 건다
-     * #mousemove : 마우스 이동을 체크
-     * #mouseup : 마우스를 떼었을 경우, 마우스 move와 다운을 없앤다.
+     * Set event handler 
      */
     setEvents: function() {
 
@@ -392,7 +192,7 @@ ne.component.Tree = ne.util.defineClass(/** @lends ne.component.Tree.prototype *
     },
 
     /**
-     * 드래그앤 드롭 이벤트를 건다.
+     * Set drag and drop event 
      * @private
      */
     _addDragEvent: function() {
@@ -408,7 +208,7 @@ ne.component.Tree = ne.util.defineClass(/** @lends ne.component.Tree.prototype *
     },
 
     /**
-     * 엔터키를 입력 할 시, 모드 변경
+     * On key up event handler
      * @private
      */
     _onKeyup: function(e) {
@@ -420,7 +220,7 @@ ne.component.Tree = ne.util.defineClass(/** @lends ne.component.Tree.prototype *
     },
 
     /**
-     * 노드명 변경 후, 포커스 아웃 될때 발생되는 이벤트 핸들러
+     * On input blur event handler
      * @param {event} e
      * @private
      */
@@ -434,14 +234,13 @@ ne.component.Tree = ne.util.defineClass(/** @lends ne.component.Tree.prototype *
     },
 
     /**
-     * 클릭 이벤트가 발생 할 경우, 더블클릭을 발생 시킬지, 클릭을 발생 시킬지 판단한다.
+     * On click event handler
      * @param {event} e
      * @private
      */
     _onClick: function(e) {
         var target = util.getTarget(e);
 
-        // 우클릭은 막는다.
         if (util.isRightButton(e)) {
             this.clickTimer = null;
             return;
@@ -457,7 +256,6 @@ ne.component.Tree = ne.util.defineClass(/** @lends ne.component.Tree.prototype *
             window.clearTimeout(this.clickTimer);
             this.clickTimer = null;
         } else {
-            // value 부분을 클릭 했을시, 더블클릭 타이머를 돌린다.
             this.clickTimer = setTimeout(ne.util.bind(function() {
                 this._onSingleClick(e);
             }, this), 400);
@@ -465,7 +263,7 @@ ne.component.Tree = ne.util.defineClass(/** @lends ne.component.Tree.prototype *
     },
 
     /**
-     * 단일 클릭 처리, 버튼일 경우와 노드일 경우처리를 따로한다.
+     * handle single click event 
      * @param {event} e
      * @private
      */
@@ -490,7 +288,7 @@ ne.component.Tree = ne.util.defineClass(/** @lends ne.component.Tree.prototype *
     },
 
     /**
-     * 상태를 변경한다. STATE.NORMAL | STATE.EDITABLE
+     * Change state (STATE.NORMAL | STATE.EDITABLE)
      * @param {HTMLelement} target 엘리먼트
      */
     changeState: function(target) {
@@ -506,7 +304,7 @@ ne.component.Tree = ne.util.defineClass(/** @lends ne.component.Tree.prototype *
     },
 
     /**
-     * 더블 클릭 처리
+     * handle Double click 
      * @param {event} e
      * @private
      */
@@ -516,7 +314,7 @@ ne.component.Tree = ne.util.defineClass(/** @lends ne.component.Tree.prototype *
     },
 
     /**
-     * 트리에 마우스 다운시 이벤트 핸들러.
+     * handle mouse down
      * @private
      */
     _onMouseDown: function(e) {
@@ -536,7 +334,6 @@ ne.component.Tree = ne.util.defineClass(/** @lends ne.component.Tree.prototype *
 
         this.pos = this.root.getBoundingClientRect();
 
-        // 가이드를 사용하면 가이드 엘리먼트를 띄운다.
         if (this.useHelper) {
             this.enableHelper({
                 x: e.clientX - this.pos.left,
@@ -552,12 +349,11 @@ ne.component.Tree = ne.util.defineClass(/** @lends ne.component.Tree.prototype *
     },
 
     /**
-     * 마우스 이동
+     * Handle mouse move 
      * @param {event} me
      * @private
      */
     _onMouseMove: function(me) {
-        // 가이드 이동'
         if (!this.useHelper) {
             return;
         }
@@ -568,13 +364,12 @@ ne.component.Tree = ne.util.defineClass(/** @lends ne.component.Tree.prototype *
     },
 
     /**
-     * 마우스 업 이벤트 핸들러
-     * @param {HTMLElement} target 마우스 다운의 타겟 엘리먼트
+     * Handle mouse up
+     * @param {HTMLElement} target A target 
      * @param {event} ue
      * @private
      */
     _onMouseUp: function(target, ue) {
-        // 가이드 감춤
         this.disableHelper();
 
         var toEl = util.getTarget(ue),
@@ -592,9 +387,9 @@ ne.component.Tree = ne.util.defineClass(/** @lends ne.component.Tree.prototype *
     },
 
     /**
-     * 트리 드래그 앤 드롭하는 엘리먼트의 value값을 보여주는 가이드 엘리먼트를 활성화 한다.
-     * @param {object} pos 클릭한 좌표 위치
-     * @param {string} value 클릭한 앨리먼트 텍스트 값
+     * Show up guide element
+     * @param {object} pos A element position
+     * @param {string} value A element text value
      */
     enableHelper: function(pos, value) {
         if (!this.helperElement) {
@@ -608,8 +403,8 @@ ne.component.Tree = ne.util.defineClass(/** @lends ne.component.Tree.prototype *
     },
 
     /**
-     * 가이드의 위치를 변경한다.
-     * @param {object} pos 변경할 위치
+     * Set guide elmeent location
+     * @param {object} pos A position to move
      */
     setHelperLocation: function(pos) {
 
@@ -620,7 +415,7 @@ ne.component.Tree = ne.util.defineClass(/** @lends ne.component.Tree.prototype *
     },
 
     /**
-     * 가이드를 감춘다
+     * Hide guide element
      */
     disableHelper: function() {
         if (this.helperElement) {
@@ -629,9 +424,9 @@ ne.component.Tree = ne.util.defineClass(/** @lends ne.component.Tree.prototype *
     },
 
     /**
-     * 트리의 전체 혹은 일부 html 을 생성한다.
-     * @param {Object} data 화면에 그릴 데이터
-     * @param {Path} beforePath 부분트리를 그릴때 상위 패스정보
+     * make html 
+     * @param {Object} data A draw data
+     * @param {Path} beforePath A path of subtree
      * @return {String} html
      * @private
      */
@@ -673,7 +468,6 @@ ne.component.Tree = ne.util.defineClass(/** @lends ne.component.Tree.prototype *
                 tmpl = this.template.LEAP_NODE;
             }
 
-            // {{}} 로 감싸진 내용 변경
             el = tmpl.replace(/\{\{([^\}]+)\}\}/g, function(matchedString, name) {
                 return map[name] || '';
             });
@@ -687,7 +481,7 @@ ne.component.Tree = ne.util.defineClass(/** @lends ne.component.Tree.prototype *
     },
 
     /**
-     * 뷰를 갱신한다.
+     * Update view.
      * @param {string} act
      * @param {object} target
      */
@@ -696,9 +490,9 @@ ne.component.Tree = ne.util.defineClass(/** @lends ne.component.Tree.prototype *
     },
 
     /**
-     * 액션을 수행해 트리를 갱신한다.
-     * @param {String} type 액션 타입
-     * @param {Object} target 부분갱신이라면 그 타겟
+     * Action 
+     * @param {String} type A type of action 
+     * @param {Object} target A target
      */
     action: function(type, target) {
         this._actionMap = this._actionMap || {
@@ -714,8 +508,8 @@ ne.component.Tree = ne.util.defineClass(/** @lends ne.component.Tree.prototype *
     },
 
     /**
-     * 노드의 상태를 변경한다.
-     * @param {Object} node 상태변경될 노드의 정보
+     * Change node state
+     * @param {Object} node A informtion to node
      * @private
      */
     _changeNodeState: function(node) {
@@ -737,8 +531,8 @@ ne.component.Tree = ne.util.defineClass(/** @lends ne.component.Tree.prototype *
     },
 
     /**
-     * 노드의 이름을 변경 할수 있는 상태로 전환시킨다.
-     * @param {HTMLElement} element 이름을 변경할 대상 엘리먼트
+     * Change state to edit 
+     * @param {HTMLElement} element A target element
      * @private
      */
     _convert: function(element) {
@@ -747,7 +541,6 @@ ne.component.Tree = ne.util.defineClass(/** @lends ne.component.Tree.prototype *
             label = node.value,
             parent = element.parentNode;
 
-        //this.current가 존재하면 style none해제
         if (this.current) {
             this.current.style.display = '';
         }
@@ -761,8 +554,8 @@ ne.component.Tree = ne.util.defineClass(/** @lends ne.component.Tree.prototype *
     },
 
     /**
-     * 변경된 노드의 이름을 적용시킨다.
-     * @param {HTMLElement} element 이름이 변경되는 대상 엘리먼트
+     * Apply node name
+     * @param {HTMLElement} element A target element
      * @private
      */
     _restore: function(element) {
@@ -779,9 +572,9 @@ ne.component.Tree = ne.util.defineClass(/** @lends ne.component.Tree.prototype *
     },
 
     /**
-     * 생성된 html을 붙인다
-     * @param {String} html 데이터에 의해 생성된 html
-     * @param {Object} parent 타겟으로 설정된 부모요소, 없을시 내부에서 최상단 노드로 설정
+     * Draw element
+     * @param {String} html A html made by data
+     * @param {Object} parent A parent element
      * @private
      *
      */
@@ -791,16 +584,15 @@ ne.component.Tree = ne.util.defineClass(/** @lends ne.component.Tree.prototype *
     },
 
     /**
-     * 깊이(depth)에 따른 레이블을 설정한다
-     * (실제 모델에는 영향을 주지 않으므로, 뷰에서 설정한다.)
-     * @param {Array} depthLabels 깊이에 따라 노드 뒤에 붙을 레이블
+     * Set label by depth
+     * @param {Array} depthLabels A depth label array
      */
     setDepthLabels: function(depthLabels) {
         this.depthLabels = depthLabels;
     },
 
     /**
-     * 노드 갱신 - 타겟 노드 기준으로 노드를 다시 만들어서 붙여줌
+     * Refresh node
      * @private
      **/
     _refresh: function() {
@@ -809,8 +601,8 @@ ne.component.Tree = ne.util.defineClass(/** @lends ne.component.Tree.prototype *
     },
 
     /**
-     * 엘리먼트 타이틀을 변경한다.
-     * @param {object} node 변경할 엘리먼트에 해당하는 모델정보
+     * Rename node
+     * @param {object} node A model information 
      * @private
      */
     _rename: function(node) {
@@ -819,8 +611,8 @@ ne.component.Tree = ne.util.defineClass(/** @lends ne.component.Tree.prototype *
     },
 
     /**
-    * 노드 여닫기 상태를 갱신한다.
-    * @param {Object} node 갱신할 노드 정보
+    * Toggle model
+    * @param {Object} node A node information
     * @private
     **/
     _toggleNode: function(node) {
@@ -839,8 +631,8 @@ ne.component.Tree = ne.util.defineClass(/** @lends ne.component.Tree.prototype *
     },
 
     /**
-     * 노드 선택시 표시변경
-     * @param {Object} node 선택된 노드정보
+     * Select node
+     * @param {Object} node A target node
      * @private
      */
     _select: function(node) {
@@ -852,8 +644,8 @@ ne.component.Tree = ne.util.defineClass(/** @lends ne.component.Tree.prototype *
     },
 
     /**
-     * 노드 선택해제시 액션
-     * @param {Object} node 선택 해제 된 노드정보
+     * Unselect node
+     * @param {Object} node A target node
      * @private
      **/
     _unSelect: function(node) {
@@ -865,3 +657,4 @@ ne.component.Tree = ne.util.defineClass(/** @lends ne.component.Tree.prototype *
     }
 });
 
+module.exports = Tree;

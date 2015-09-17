@@ -1,77 +1,39 @@
 {
   "name": "component-tree",
-  "version": "1.0.0",
-  "description": "트리 컴포넌트<br>뎁스가 있는 데이터를 트리 UI로 보여준다.<br>각 노드는 드래그앤드랍으로 이동시킬 수 있다.",
-  "featureList": [
-    "트리 UI로 데이터를 보여줌",
-    "클릭으로 부모노드 접고/펼침 기능 제공",
-    "부모노드를 펼칠 때 동적으로 자식노드를 구성할 수 있는 기능 제공",
-    "노드의 추가/삭제 기능 제공",
-    "더블클릭으로 이름 수정 가능",
-    "드래그앤드랍으로 노드 이동 가능",
-    "커스텀 이벤트(특정 클래스의 노드 클릭시 이벤트 발생)를 제공"
-  ],
-  "tutorial": "트리",
-  "samplePage": "index_default.html",
-  "sample": {
-    "기본트리": "![alt tag](https://nhnent.github.io/fe.component-tree/tree.png)<br>",
-    "Label 적용 트리": "![alt tag](https://nhnent.github.io/fe.component-tree/tree_edit.png)"
-  },
-  "test": {
-    "PC": [
-      "IE7~11",
-      "Chrome",
-      "Firefox"
-    ]
-  },
-  "dependency": [
-    "ne-code-snippet#1.0.2"
-  ],
-  "private": true,
+  "version": "1.0.0a",
+  "description": "",
   "devDependencies": {
-    "fedoc-template": "git+http://14bfd38a036366f7ca90355d202038126127bd01:x-oauth-basic@github.nhnent.com/fe/Share-FEDocTemplate.git",
-    "grunt": "^0.4.5",
-    "grunt-contrib-concat": "^0.5.0",
-    "grunt-contrib-copy": "^0.6.0",
-    "grunt-contrib-cssmin": "^0.10.0",
-    "grunt-contrib-requirejs": "^0.4.4",
-    "grunt-contrib-uglify": "^0.6.0",
-    "grunt-contrib-watch": "^0.6.1",
-    "grunt-template": "^0.2.3",
-    "grunt-zip": "^0.16.0",
-    "jasmine-jquery": "^2.0.5",
-    "jquery": "~1.8.3",
-    "jsdoc": "git+https://github.com/jsdoc3/jsdoc.git",
-    "karma": "^0.12.22",
-    "karma-coverage": "^0.2.6",
-    "karma-jasmine": "~0.2.0",
-    "karma-junit-reporter": "^0.2.2",
-    "karma-phantomjs-launcher": "^0.1.4",
-    "karma-requirejs": "^0.2.2",
+    "browserify": "latest",
+    "browserify-istanbul": "^0.2.1",
+    "code-snippet": "git+http://4316b69ceef56267d69d733515f0f6ef3651ca7f:x-oauth-basic@github.nhnent.com/fe/code-snippet.git",
+    "fedoc-template": "git+http://70327b4564c7a80eb61724056876b960290946dd:x-oauth-basic@github.nhnent.com/fe/share-fedoc-template.git#develop",
+    "gulp": "latest",
+    "gulp-concat": "^2.6.0",
+    "gulp-connect": "latest",
+    "gulp-sourcemaps": "^1.5.2",
+    "gulp-uglify": "^1.2.0",
+    "gulp-util": "^3.0.6",
+    "handlebars": "^3.0.3",
+    "hbsfy": "^2.2.1",
+    "jasmine-core": "latest",
+    "jasmine-jquery": "^2.1.0",
+    "karma": "^0.12.37",
+    "karma-browserify": "latest",
+    "karma-coverage": "latest",
+    "karma-firefox-launcher": "^0.1.6",
+    "karma-jasmine": "^0.3.5",
+    "karma-junit-reporter": "^0.3.0",
+    "karma-mocha-reporter": "latest",
+    "karma-phantomjs-launcher": "^0.2.1",
     "karma-webdriver-launcher": "git+https://github.com/everedifice/karma-webdriver-launcher.git",
-    "readme-builder": "git+https://github.com/jein-yi/readme-builder.git",
-    "requirejs": "^2.1.14"
-  },
-  "history": {
-    "1.0.0a": {
-      "content": "defineNamespace 적용",
-      "date": "2015.05",
-      "author": "이제인 <jein.yi@nhnent.com>"
-    },
-    "1.0.0": {
-      "content": "배포",
-      "date": "2015.03",
-      "author": "이제인 <jein.yi@nhnent.com>",
-      "hasAPI": true
-    },
-    "0.9.0": {
-      "content": "티켓링크 적용",
-      "date": "2015.01",
-      "author": "이제인 <jein.yi@nhnent.com>"
-    }
+    "moment": "^2.10.3",
+    "phantomjs": "^1.9.18",
+    "underscore": "^1.8.3",
+    "vinyl-buffer": "latest",
+    "vinyl-source-stream": "latest"
   },
   "scripts": {
-    "doc": "./node_modules/.bin/jsdoc -c conf.json"
+    "doc": "./node_modules/.bin/jsdoc -c jsdoc-conf.json"
   },
-  "author": "FE"
+  "author": "NHNEnt FE Development Team <dl_javascript@nhnent.com>"
 }

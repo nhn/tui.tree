@@ -2,10 +2,9 @@
   "name": "component-tree",
   "version": "1.0.0a",
   "authors": [
-    "이제인 <jein.yi@nhnent.com>"
+    "NHN ent. FE dev team.<dl_javascript@nhnent.com>"
   ],
   "license": "MIT",
-	"private" : true,
   "ignore": [
     "**/.*",
     "node_modules",
@@ -23,6 +22,6 @@
     "samples"
   ],
   "dependencies": {
-    "ne-code-snippet" : "1.0.2"
+    "ne-code-snippet" : "1.0.4"
   }
 }

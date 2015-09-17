@@ -1,59 +1,53 @@
 /**
- * @fileoverview 트리를 구성하는 데이터를 조작, 데이터 변경사한 발생 시 뷰를 갱신함
- * @author FE개발팀 이제인(jein.yi@nhnent.com)
+ * @fileoverview Update view and control tree data
+ * @author NHN Ent. FE dev team.<dl_javascript@nhnent.com>
  */
 
 /**
- * @constructor ne.component.TreeModel
+ * @constructor TreeModel
  * **/
-ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends ne.component.TreeModel.prototype */{
+var TreeModel = ne.util.defineClass(/** @lends TreeModel.prototype */{
     init: function(options, tree) {
 
         /**
-         * 노드 고유아이디를 붙이기 위한 카운트, 갯수를 세는대 사용되진 않는다.
+         * A count for node identity number
          * @type {number}
          */
         this.count = 0;
 
         /**
-         * 모델의 변화를 구독하는 뷰들
+         * A view that observe model change
          * @type {ne.component.Tree}
          */
         this.tree = tree;
 
         /**
-         * 노드의 기본상태
+         * Default state of node
          * @type {String}
          */
         this.nodeDefaultState = options.defaultState || 'close';
 
         /**
-         * 이동시에 필요한 노드의 버퍼
+         * A buffer 
          * @type {null}
          */
         this.buffer = null;
 
         /**
-         * 노드의 깊이를 저장하기 위한 변수
+         * A depth
          * @type {number}
          */
         this.depth = 0;
 
         /**
-         * 아이디 생성을 위한 date
+         * A milisecon time to make node ID
          * @type {number}
          */
         this.date = new Date().getTime();
 
         /**
-         * 트리해시
+         * Tree hash
          * @type {object}
-         * { node_1532525: {
-         *      value: value,
-         *      childKeys: [],
-         *      parentId: 'node1523',
-         *      id: node_1532525
-         * }}
          */
         this.treeHash = {};
 
@@ -62,18 +56,17 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends ne.component.TreeMo
     },
 
     /**
-     * 모델에 트리형태의 데이터를 세팅함
-     * 모델은 데이터를 받아 노드의 트리형태로 변경
-     * @param {array} data 트리 입력데이터
+     * Set model with tree data
+     * @param {array} data  A tree data
      */
     setData: function(data) {
         this.treeHash.root.childKeys = this._makeTreeHash(data);
     },
 
     /**
-     * 계층적 데이터 구조를, 해쉬리스트 형태로 변경한다.
-     * @param {array} data 해쉬리스트형태로 변경시킬 트리 데이터
-     * @param {string} parentId 새로운 해쉬값으로 입력되는 노드의 부모노드의 id
+     * Change hierarchy data to hash list.
+     * @param {array} data A tree data 
+     * @param {string} parentId A parent node id
      * @private
      */
     _makeTreeHash: function(data, parentId) {
@@ -85,12 +78,10 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends ne.component.TreeMo
 
         ne.util.forEach(data, function(element) {
 
-            // 아이디를 키값으로 가지는 해쉬 추
             id = this._getId();
 
             this.treeHash[id] = this.makeNode(this.depth, id, element.value, parentId);
 
-            // 자식노드가 있을 경우 재귀적으로 호출하여, 자식노드의 아이디리스트를 저장
             if (element.children && ne.util.isNotEmpty(element.children)) {
                 this.treeHash[id].childKeys = this._makeTreeHash(element.children, id);
             }
@@ -106,11 +97,11 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends ne.component.TreeMo
     },
 
     /**
-     * 노드를 생성한다.
-     * @param {number} depth 노드의 깊이
-     * @param {string} id 노드의 아이디 값
-     * @param {string} value 노드의 값
-     * @param {string} parentId 부모 노드의 아이디
+     * Create node
+     * @param {number} depth A depth of node
+     * @param {string} id A node ID
+     * @param {string} value A value of node
+     * @param {string} parentId A parent node ID
      * @return {{value: *, parentId: (*|string), id: *}}
      */
     makeNode: function(depth, id, value, parentId) {
@@ -124,7 +115,7 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends ne.component.TreeMo
     },
 
     /**
-     * 트리에 부여 될 고유아이디를 만들어 리턴한다
+     * Make and return node ID
      * @private
      * @return {String}
      */
@@ -134,8 +125,8 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends ne.component.TreeMo
     },
 
     /**
-     * 노드를 찾아서 리턴한다.
-     * @param {string} key 찾을 노드의 키 값
+     * Find node 
+     * @param {string} key A key to find node
      * @return {object|undefined}
      */
     find: function(key) {
@@ -143,11 +134,10 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends ne.component.TreeMo
     },
 
     /**
-     * 노드를 제거한다, 노드를 참조하고있는 부모의 자식목록에서도 제거한다.
-     * @param {string} key 모델에서 제거할 노드의 키 값
+     * Remove node and child nodes
+     * @param {string} key A key to remove
      */
     remove: function(key) {
-        // 참조된 값 먼저 제거
         var res = this.invoke('remove', { id: key });
 
         if (!res) {
@@ -161,8 +151,8 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends ne.component.TreeMo
     },
 
     /**
-     * 노드의 키값을 제거한다.
-     * @param {string} key 제거할 노드의 키 값
+     * Remove node key
+     * @param {string} key A key to remove
      */
     removeKey: function(key) {
         var node = this.find(key);
@@ -171,7 +161,6 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends ne.component.TreeMo
             return;
         }
 
-        // 자식 키 값을 제거한다.
         var parent = this.find(node.parentId);
 
         parent.childKeys = ne.util.filter(parent.childKeys, function(childKey) {
@@ -181,10 +170,10 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends ne.component.TreeMo
     },
 
     /**
-     * 노드를 이동시킨다
-     * @param {string} key
-     * @param {object} node
-     * @param {string} targetId
+     * Move node
+     * @param {string} key A key to move node
+     * @param {object} node A node object to move
+     * @param {string} targetId A target ID to insert
      */
     move: function(key, node, targetId) {
 
@@ -195,9 +184,9 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends ne.component.TreeMo
     },
 
     /**
-     * 노드를 삽입한다.
-     * @param {object} node 삽입될 노드 값
-     * @param {string} [targetId] 삽입할 노드의 부모가 될 타겟 아이디, 없으면 루트
+     * Insert node
+     * @param {object} node A node object to insert
+     * @param {string} [targetId] A target ID to insert
      */
     insert: function(node, targetId) {
         var target = this.find(targetId || 'root');
@@ -209,7 +198,6 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends ne.component.TreeMo
         target.childKeys.push(node.id);
         node.depth = target.depth + 1;
         node.parentId = targetId;
-        // 정렬
         target.childKeys.sort(ne.util.bind(this.sort, this));
 
         this.treeHash[node.id] = node;
@@ -218,7 +206,7 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends ne.component.TreeMo
     },
 
     /**
-     * 트리를 갱신한다.
+     * A notify tree
      */
     notify: function(type, target) {
         if (this.tree) {
@@ -227,8 +215,8 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends ne.component.TreeMo
     },
 
     /**
-     * 뷰와 모델을 연결한다. 모델에 변경이 일어날 경우, tree notify를 호출하여 뷰를 갱신한다.
-     * @param {ne.component.Tree} tree
+     * Connect view and model
+     * @param {Tree} tree
      */
     connect: function(tree) {
         if (!tree) {
@@ -238,9 +226,9 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends ne.component.TreeMo
     },
 
     /**
-     * 노드의 value를 변경한다.
-     * @param {stirng} key 변경할 노드의 키값
-     * @param {string} value 변경할 값
+     * Rename node
+     * @param {stirng} key A key to rename
+     * @param {string} value A value to change
      */
     rename: function(key, value) {
         var res = this.invoke('rename', {id: key, value: value});
@@ -255,8 +243,8 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends ne.component.TreeMo
     },
 
     /**
-     * 노드의 상태(여닫힘)을 갱신한다.
-     * @param {string} key 상태를 변경할 노드의 키값
+     * Change node state
+     * @param {string} key The key value to change
      */
     changeState: function(key) {
         var node = this.find(key);
@@ -264,8 +252,8 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends ne.component.TreeMo
         this.notify('toggle', node);
     },
     /**
-     * 현재 선택된 노드를 버퍼에 저장한다
-     * @param {String} key 선택된 노드 패스값
+     * Set buffer to save selected node
+     * @param {String} key The key of selected node
      **/
     setBuffer: function(key) {
 
@@ -280,7 +268,7 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends ne.component.TreeMo
     },
 
     /**
-     * 버퍼를 비운다
+     * Empty buffer
      */
     clearBuffer: function() {
 
@@ -294,12 +282,11 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends ne.component.TreeMo
     },
 
     /**
-     * 이동할 노드가, 이동할 대상 노드의 부모노드인지 확인한다.
-     * @param {object} dest 이동할 대상 노드
-     * @param {object} node 이동할 노드
+     * Check movable positon
+     * @param {object} dest A destination node
+     * @param {object} node A target node
      */
     isDisable: function(dest, node) {
-        // 뎁스가 같으면 계층 구조에 있을 가능성이 없으니 바로 false를 리턴한다.
         if (dest.depth === node.depth) {
             return false;
         }
@@ -316,7 +303,7 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends ne.component.TreeMo
     },
 
     /**
-     * 타이틀에 따른 정렬
+     * Sort by title
      * @param {string} pid
      * @param {string} nid
      * @return {number}
@@ -338,4 +325,6 @@ ne.component.Tree.TreeModel = ne.util.defineClass(/** @lends ne.component.TreeMo
         }
     }
 });
-ne.util.CustomEvents.mixin(ne.component.Tree.TreeModel);
+ne.util.CustomEvents.mixin(TreeModel);
+
+module.exports = TreeModel;
