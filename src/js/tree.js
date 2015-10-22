@@ -43,7 +43,7 @@ var TreeModel = require('./treemodel');
  ]}
  ];
 
- var tree1 = new ne.component.Tree('id', data ,{
+ var tree1 = new tui.component.Tree('id', data ,{
         modelOption: {
             defaultState: 'open'
         }
@@ -51,7 +51,7 @@ var TreeModel = require('./treemodel');
 });
  **/
 
-var Tree = ne.util.defineClass(/** @lends Tree.prototype */{
+var Tree = tui.util.defineClass(/** @lends Tree.prototype */{
 
     /**
      * Initialize
@@ -182,9 +182,9 @@ var Tree = ne.util.defineClass(/** @lends Tree.prototype */{
      */
     setEvents: function() {
 
-        util.addEventListener(this.root, 'click', ne.util.bind(this._onClick, this));
-        util.addEventListener(this.inputElement, 'blur', ne.util.bind(this._onBlurInput, this));
-        util.addEventListener(this.inputElement, 'keyup', ne.util.bind(this._onKeyup, this));
+        util.addEventListener(this.root, 'click', tui.util.bind(this._onClick, this));
+        util.addEventListener(this.inputElement, 'blur', tui.util.bind(this._onBlurInput, this));
+        util.addEventListener(this.inputElement, 'keyup', tui.util.bind(this._onKeyup, this));
 
         if (this.useDrag) {
             this._addDragEvent();
@@ -204,7 +204,7 @@ var Tree = ne.util.defineClass(/** @lends Tree.prototype */{
             var style = document.documentElement.style;
             style[userSelectProperty] = 'none';
         }
-        util.addEventListener(this.root, 'mousedown', ne.util.bind(this._onMouseDown, this));
+        util.addEventListener(this.root, 'mousedown', tui.util.bind(this._onMouseDown, this));
     },
 
     /**
@@ -256,7 +256,7 @@ var Tree = ne.util.defineClass(/** @lends Tree.prototype */{
             window.clearTimeout(this.clickTimer);
             this.clickTimer = null;
         } else {
-            this.clickTimer = setTimeout(ne.util.bind(function() {
+            this.clickTimer = setTimeout(tui.util.bind(function() {
                 this._onSingleClick(e);
             }, this), 400);
         }
@@ -341,8 +341,8 @@ var Tree = ne.util.defineClass(/** @lends Tree.prototype */{
             }, target.innerText || target.textContent);
         }
 
-        this.move = ne.util.bind(this._onMouseMove, this);
-        this.up = ne.util.bind(this._onMouseUp, this, target);
+        this.move = tui.util.bind(this._onMouseMove, this);
+        this.up = tui.util.bind(this._onMouseUp, this, target);
 
         util.addEventListener(document, 'mousemove', this.move);
         util.addEventListener(document, 'mouseup', this.up);
@@ -443,7 +443,7 @@ var Tree = ne.util.defineClass(/** @lends Tree.prototype */{
             rate,
             map;
 
-        ne.util.forEach(keys, function(el) {
+        tui.util.forEach(keys, function(el) {
             node = model.find(el);
             depth = node.depth;
             state = this[node.state + 'Set'][0];
@@ -461,7 +461,7 @@ var Tree = ne.util.defineClass(/** @lends Tree.prototype */{
                 DepthLabel: rate
             };
 
-            if (ne.util.isNotEmpty(node.childKeys)) {
+            if (tui.util.isNotEmpty(node.childKeys)) {
                 tmpl = this.template.EDGE_NODE;
                 map.Children = this._getHtml(node.childKeys);
             } else {
@@ -521,7 +521,7 @@ var Tree = ne.util.defineClass(/** @lends Tree.prototype */{
         var parent = element.parentNode,
             cls = parent.className;
 
-        if (ne.util.isEmpty(node.childKeys)) {
+        if (tui.util.isEmpty(node.childKeys)) {
             cls = 'leap_node ' + this[node.state + 'Set'][0];
         } else {
             cls = 'edge_node ' + this[node.state + 'Set'][0];
@@ -638,7 +638,7 @@ var Tree = ne.util.defineClass(/** @lends Tree.prototype */{
     _select: function(node) {
         var valueEl = document.getElementById(node.id);
 
-        if (ne.util.isExisty(valueEl)) {
+        if (tui.util.isExisty(valueEl)) {
             valueEl.className = valueEl.className.replace(' ' + this.onselectClass, '') + ' ' + this.onselectClass;
         }
     },
@@ -651,7 +651,7 @@ var Tree = ne.util.defineClass(/** @lends Tree.prototype */{
     _unSelect: function(node) {
         var valueEl = document.getElementById(node.id);
 
-        if (ne.util.isExisty(valueEl) && util.hasClass(valueEl, this.onselectClass)) {
+        if (tui.util.isExisty(valueEl) && util.hasClass(valueEl, this.onselectClass)) {
             valueEl.className = valueEl.className.replace(' ' + this.onselectClass, '');
         }
     }

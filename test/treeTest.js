@@ -29,15 +29,15 @@ describe('Tree를 생성한하고 동작을 테스트 한다.', function() {
         }];
     beforeEach(function() {
 
-        view = new ne.component.Tree('', data ,{
+        view = new tui.component.Tree('', data ,{
             modelOption: modelOption
         });
-        view2 = new ne.component.Tree('', data ,{
+        view2 = new tui.component.Tree('', data ,{
             modelOption: modelOption,
             useDrag: true,
             useHelper: true
         });
-        view3 = new ne.component.Tree('', data ,{
+        view3 = new tui.component.Tree('', data ,{
             modelOption: modelOption,
             useDrag: true,
             useHelper: false

@@ -6,7 +6,7 @@
 /**
  * @constructor TreeModel
  * **/
-var TreeModel = ne.util.defineClass(/** @lends TreeModel.prototype */{
+var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{
     init: function(options, tree) {
 
         /**
@@ -17,7 +17,7 @@ var TreeModel = ne.util.defineClass(/** @lends TreeModel.prototype */{
 
         /**
          * A view that observe model change
-         * @type {ne.component.Tree}
+         * @type {tui.component.Tree}
          */
         this.tree = tree;
 
@@ -76,13 +76,13 @@ var TreeModel = ne.util.defineClass(/** @lends TreeModel.prototype */{
 
         this.depth = this.depth + 1;
 
-        ne.util.forEach(data, function(element) {
+        tui.util.forEach(data, function(element) {
 
             id = this._getId();
 
             this.treeHash[id] = this.makeNode(this.depth, id, element.value, parentId);
 
-            if (element.children && ne.util.isNotEmpty(element.children)) {
+            if (element.children && tui.util.isNotEmpty(element.children)) {
                 this.treeHash[id].childKeys = this._makeTreeHash(element.children, id);
             }
 
@@ -91,7 +91,7 @@ var TreeModel = ne.util.defineClass(/** @lends TreeModel.prototype */{
 
         this.depth = this.depth - 1;
 
-        childKeys.sort(ne.util.bind(this.sort, this));
+        childKeys.sort(tui.util.bind(this.sort, this));
 
         return childKeys;
     },
@@ -163,7 +163,7 @@ var TreeModel = ne.util.defineClass(/** @lends TreeModel.prototype */{
 
         var parent = this.find(node.parentId);
 
-        parent.childKeys = ne.util.filter(parent.childKeys, function(childKey) {
+        parent.childKeys = tui.util.filter(parent.childKeys, function(childKey) {
             return childKey !== key;
         });
 
@@ -198,7 +198,7 @@ var TreeModel = ne.util.defineClass(/** @lends TreeModel.prototype */{
         target.childKeys.push(node.id);
         node.depth = target.depth + 1;
         node.parentId = targetId;
-        target.childKeys.sort(ne.util.bind(this.sort, this));
+        target.childKeys.sort(tui.util.bind(this.sort, this));
 
         this.treeHash[node.id] = node;
 
@@ -325,6 +325,6 @@ var TreeModel = ne.util.defineClass(/** @lends TreeModel.prototype */{
         }
     }
 });
-ne.util.CustomEvents.mixin(TreeModel);
+tui.util.CustomEvents.mixin(TreeModel);
 
 module.exports = TreeModel;

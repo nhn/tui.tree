@@ -27,7 +27,7 @@ describe('TreeModel을 생성한다', function() {
         }];
     beforeEach(function() {
         // 트리 모델 생성
-        model = new ne.component.Tree.TreeModel(modelOption);
+        model = new tui.component.Tree.TreeModel(modelOption);
         model.setData(data)
     });
 

@@ -2,7 +2,7 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-    <script type="text/javascript" src="js/common.js"></script>
+    <script type="text/javascript" src="js/code-snippet.js"></script>
     <script type="text/javascript" src="js/tree.js"></script>
     <title>트리컴포넌트</title>
     <link rel="stylesheet" href="css/tree.css" />
@@ -33,7 +33,7 @@
     ];
 
 
-    var t = new ne.component.Tree('treeRoot1', data, {
+    var t = new tui.component.Tree('treeRoot1', data, {
         modelOption: {defaultState: 'open'},
         useDrag: true,
         useHelper: true

@@ -79,9 +79,9 @@ var util = {
         var all = target.getElementsByTagName('*'),
             filter = [];
 
-        all = ne.util.toArray(all);
+        all = tui.util.toArray(all);
 
-        ne.util.forEach(all, function(el) {
+        tui.util.forEach(all, function(el) {
             var cls = el.className || '';
             if (cls.indexOf(className) !== -1) {
                 filter.push(el);

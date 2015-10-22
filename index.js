@@ -1,1 +1,1 @@
-ne.util.defineNamespace('ne.component.Tree', require('./src/js/tree'));
+tui.util.defineNamespace('tui.component.Tree', require('./src/js/tree'));
