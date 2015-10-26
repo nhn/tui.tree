@@ -35,8 +35,8 @@ Each node can be moved by drag and drop.
 
 ## Download/Install
 * Bower:
-   * latest : `bower install ne-component-tree#master`
-   * each version : `bower install ne-component-tree[#tag]`
+   * latest : `bower install tui-component-tree#master`
+   * each version : `bower install tui-component-tree[#tag]`
 * Download: https://github.com/nhnent/tui.component.tree
 
 ## History
@@ -44,7 +44,7 @@ Each node can be moved by drag and drop.
 | ---- | ---- | ---- | ---- |
 | 1.0.0a | Namespace changed | 2015.10 | NHN Ent. FE dev team.<dl_javascript@nhnent.com> |
 | 1.0.0a | defineNamespace Apply | 2015.05 | NHN Ent. FE dev team.<dl_javascript@nhnent.com> |
-| <a href="https://github.nhnent.com/pages/tui.component.tree/1.0.0">1.0.0</a> | Release | 2015.03 | NHN Ent. FE dev team.<dl_javascript@nhnent.com> |
+| <a href="https://nhnent.github.io/tui.component.tree/1.0.0">1.0.0</a> | Release | 2015.03 | NHN Ent. FE dev team.<dl_javascript@nhnent.com> |
 | 0.9.0 | Ticklink apply | 2015.01 | NHN Ent. FE dev team. <dl_javascript@nhnent.com> |
 
 ## LICENSE
