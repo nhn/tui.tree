@@ -24,7 +24,7 @@ Each node can be moved by drag and drop.
 ![alt tag](https://nhnent.github.io/tui.component.tree/tree_edit.png)
 
 ## Dependency
-* ne-code-snippet: 1.0.2
+* tui-code-snippet: 1.0.2
 
 ## Test environment
 * PC

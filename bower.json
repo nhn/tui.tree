@@ -22,6 +22,6 @@
     "samples"
   ],
   "dependencies": {
-    "ne-code-snippet" : "1.0.4"
+    "tui-code-snippet" : "1.0.4"
   }
 }
