@@ -77,22 +77,16 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{
         this.depth = this.depth + 1;
 
         tui.util.forEach(data, function(element) {
-
             id = this._getId();
-
             this.treeHash[id] = this.makeNode(this.depth, id, element.value, parentId);
-
             if (element.children && tui.util.isNotEmpty(element.children)) {
                 this.treeHash[id].childKeys = this._makeTreeHash(element.children, id);
             }
-
             childKeys.push(id);
         }, this);
 
         this.depth = this.depth - 1;
-
         childKeys.sort(tui.util.bind(this.sort, this));
-
         return childKeys;
     },
 
@@ -138,6 +132,15 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{
      * @param {string} key A key to remove
      */
     remove: function(key) {
+        /**
+         * @api
+         * @event TreeModel#remove
+         * @param {{id: string}} removed - id
+         * @example
+         * tree.model.on('remove', function(data) {
+         *     alert('removed -' +  data.id );
+         * });
+         */
         var res = this.invoke('remove', { id: key });
 
         if (!res) {
@@ -231,6 +234,18 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{
      * @param {string} value A value to change
      */
     rename: function(key, value) {
+
+        /**
+         * @api
+         * @event TreeModel#rename
+         * @param {{id: string, value: string}} eventData
+         * @example
+         * // 노드 이름 변경시 발생
+         * tree.model.on('rename', function(object) {
+         *     document.getElementById('selectValue').value = object.value + '노드 이름 변경';
+         *     return true;
+         * });
+         */
         var res = this.invoke('rename', {id: key, value: value});
         if (!res) {
             return;
@@ -262,6 +277,17 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{
         var node = this.find(key);
 
         this.notify('select', node);
+
+        /**
+         * @api
+         * @event TreeModel#select
+         * @param {{id: string, value: string}} eventData
+         * @example
+         * // 노드를 선택시 발생
+         * tree.model.on('select', function(object) {
+         *     document.getElementById('selectValue').value = object.value;
+         * });
+         */
         this.fire('select', {id: key, value: node.value });
 
         this.buffer = node;

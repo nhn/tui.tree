@@ -14,7 +14,7 @@ Each node can be moved by drag and drop.
 ## Documentation
 * **API** : https://nhnent.github.io/tui.component.tree/latest
 * **Tutorial** : https://github.com/nhnent/tui.component.tree/wiki/Tree-Tutorial
-* **Sample** - https://nhnent.github.io/tui.component.tree/latest/tutorial-index_default.html
+* **Sample** - https://nhnent.github.io/tui.component.tree/latest/tutorial.html
 
 
 ## Sample Image

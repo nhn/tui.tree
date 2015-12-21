@@ -7,6 +7,7 @@ var statics = require('./statics');
 var util = require('./utils');
 var TreeModel = require('./treemodel');
 
+var STATE = statics.STATE;
 /**
  * Create tree model and inject data to model
  * @constructor 
@@ -431,7 +432,6 @@ var Tree = tui.util.defineClass(/** @lends Tree.prototype */{
      * @private
      */
     _getHtml: function(keys) {
-
         var model = this.model,
             html,
             childEl = [],
@@ -585,6 +585,7 @@ var Tree = tui.util.defineClass(/** @lends Tree.prototype */{
 
     /**
      * Set label by depth
+     * @api
      * @param {Array} depthLabels A depth label array
      */
     setDepthLabels: function(depthLabels) {

@@ -14,7 +14,7 @@ module.exports = function(config) {
 
         // frameworks to use
         // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-        frameworks: ['jasmine'],
+        frameworks: ['browserify', 'jasmine'],
 
         reporters: [
             'dots',
@@ -35,12 +35,11 @@ module.exports = function(config) {
          ]
          */
         files: [
-            'node_modules/jquery/tmp/jquery.js',
+            'bower_components/jquery/jquery.min.js',
             'node_modules/jasmine-jquery/lib/jasmine-jquery.js',
-            'src/common/*.js',
-            'src/js/tree.js',
-            'src/**/treemodel.js',
-            'test/*.js',
+            'bower_components/tui-code-snippet/code-snippet.min.js',
+            'test/**/*.js',
+            'src/**/*.js',
             {
                 pattern: 'test/fixture/**/*.html',
                 included: false
@@ -61,7 +60,8 @@ module.exports = function(config) {
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
-            'src/js/*.js': ['coverage']
+            'src/js/*.js': ['browserify', 'coverage'],
+            'test/**/*.js': ['browserify']
         },
 
 
@@ -88,6 +88,7 @@ module.exports = function(config) {
         },
 
         junitReporter: {
+            outputDir: 'report',
             outputFile: 'report/junit-result.xml',
             suite: ''
         },
@@ -111,6 +112,8 @@ module.exports = function(config) {
 
         // start these browsers
         // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
+        // start these browsers
+        // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
         browsers: [
             'IE7',
             'IE8',
@@ -118,40 +121,40 @@ module.exports = function(config) {
             'IE10',
             'IE11',
             'Chrome-WebDriver',
-            'Firefox-WebDriver'
+            'Firefox-WebDriver',
+            'PhantomJS'
         ],
 
-
-        /*
-         사용가능한 테스트 브라우저 목록
-
-         추가를 원하시면 말씀주세요
-         */
         customLaunchers: {
             'IE7': {
                 base: 'WebDriver',
                 config: webdriverConfig,
-                browserName: 'IE7'
+                browserName: 'internet explorer',
+                version: 7
             },
             'IE8': {
                 base: 'WebDriver',
                 config: webdriverConfig,
-                browserName: 'IE8'
+                browserName: 'internet explorer',
+                version: 8
             },
             'IE9': {
                 base: 'WebDriver',
                 config: webdriverConfig,
-                browserName: 'IE9'
+                browserName: 'internet explorer',
+                version: 9
             },
             'IE10': {
                 base: 'WebDriver',
                 config: webdriverConfig,
-                browserName: 'IE10'
+                browserName: 'internet explorer',
+                version: 10
             },
             'IE11': {
                 base: 'WebDriver',
                 config: webdriverConfig,
-                browserName: 'IE11'
+                browserName: 'internet explorer',
+                version: 11
             },
             'Chrome-WebDriver': {
                 base: 'WebDriver',

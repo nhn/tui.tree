@@ -1,3 +1,6 @@
+#DS_STORE
+.DS_Store
+
 # Logs
 logs
 *.log
@@ -31,6 +34,10 @@ bower_components
 # compress
 dist
 doc
+latest
 
-@ sample
+# sample
 sample
+
+#report
+report

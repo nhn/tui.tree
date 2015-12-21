@@ -35,8 +35,8 @@
     },
     "opts": {
         "recurse": true,
-        "private": true,
         "destination": "doc",
-        "tutorials": "samples"
+        "tutorials": "samples",
+        "name": "Tree"
     }
 }

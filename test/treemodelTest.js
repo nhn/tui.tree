@@ -1,3 +1,6 @@
+tui.util.defineNamespace('tui.component.Tree');
+tui.component.Tree.TreeModel = require('../src/js/treemodel');
+
 /**
  * @fileoverview 트리모델 생성 및 트리 모델 동작 테스트
  * @author FE개발팀
