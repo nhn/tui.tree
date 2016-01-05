@@ -46,6 +46,10 @@ var util = {
         return target;
     },
 
+    getClass: function(elem) {
+        return elem.getAttribute && elem.getAttribute( "class" ) || "";
+    },
+
     /**
      * Check the element has specific class or not
      * @param {HTMLElement} element A target element
@@ -53,17 +57,9 @@ var util = {
      * @return {boolean}
      */
     hasClass: function(element, className) {
-        if (!element || !className) {
-            throw new Error('#util.hasClass(element, className) 엘리먼트가 입력되지 않았습니다. \n__element' + element + ',__className' + className);
-        }
+        var elClassName = util.getClass(element);
 
-        var cls = element.className;
-
-        if (cls.indexOf(className) !== -1) {
-            return true;
-        }
-
-        return false;
+        return elClassName.indexOf(className) > -1;
     },
 
     /**

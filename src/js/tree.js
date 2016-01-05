@@ -3,142 +3,170 @@
  * @author NHN Ent. FE dev team.<dl_javascript@nhnent.com>
  */
 
-var statics = require('./statics');
-var util = require('./utils');
-var TreeModel = require('./treemodel');
+var defaults = require('./defaults'),
+    util = require('./utils'),
+    states = require('./states'),
+    TreeModel = require('./treemodel');
 
-var STATE = statics.STATE;
+var treeStates = states.tree,
+    nodeStates = states.node;
 /**
  * Create tree model and inject data to model
- * @constructor 
- * @param {string} id A id for tree root element
- *      @param {Object} data A data to be used on tree
- *      @param {Object} options The options
- *          @param {String} options.modelOption A inner option for model
- *          @param {object} [options.template] A markup set to make element
- *          @param {Array} [options.openSet] A class name and button label to open state
- *          @param {Array} [options.closeSet] A class name and button label to close state
- *          @param {string} [options.selectClass] A class name to selected node
- *          @param {string} [options.valueClass] A class name that for selected zone
- *          @param {string} [options.inputClass] A class name for input element
- *          @param {string} [options.subtreeClass] A class name for sub tree
- *          @param {Array} [options.depthLabels] A default label  each depth's nodes
- *          @param {object} [options.helperPos] A related position for helper object
+ * @constructor
+ * @param {object} data A data to be used on tree
+ * @param {object} options The options
+ *     @param {HTMLElement} [options.rootElement] Root element (It should be 'UL' element)
+ *     @param {object} [options.defaultState] A default state of a node
+ *     @param {object} [options.template] A markup set to make element
+ *         @param {string} [options.template.internalNode] HTML template
+ *         @param {string} [options.template.leafNode] HTML template
+ *     @param {object} [options.stateLabel] Toggle button state label
+ *         @param {string} [options.stateLabel.opened] State-'opened' label (Text or HTML)
+ *         @param {string} [options.stateLabel.closed] State-'closed' label (Text or HTML)
+ *     @param {object} [options.classNames] Class names for tree
+ *         @param {string} [options.classNames.openedClass] A class name for opened node
+ *         @param {string} [options.classNames.closedClass] A class name for closed node
+ *         @param {string} [options.classNames.selectedClass] A class name to selected node
+ *         @param {string} [options.classNames.titleClass] A class name that for title element in node
+ *         @param {string} [options.classNames.inputClass] A class input element in a node
+ *         @param {string} [options.classNames.subtreeClass] A class name for subtree in internal node
+ *         @param {string} [options.classNames.toggleClass] A class name for toggle button in internal node
+ *     @param {object} [options.helperPos] A related position for helper object
  * @example
+ * //Default options
+ * // {
+ * //     rootElement: document.createElement('UL'),
+ * //     useDrag: false,
+ * //     useHelper: false,
+ * //     defaultState: 'closed',
+ * //     stateLabel: {
+ * //         opened: '-',
+ * //         closed: '+'
+ * //     },
+ * //     helperPos: {
+ * //         y: 10,
+ * //         x: 10
+ * //     },
+ * //     classNames: {
+ * //         openedClass: 'tui-tree-opened',
+ * //         closedClass: 'tui-tree-closed',
+ * //         selectedClass: 'tui-tree-selected',
+ * //         subtreeClass: 'tui-tree-subtree',
+ * //         toggleClass: 'tui-tree-toggle',
+ * //         titleClass: 'tui-tree-title',
+ * //         iuputClass: 'tui-tree-input'
+ * //     },
+ * //
+ * // HTML TEMPLATE
+ * // - The prefix "d_" represents the data of each node.
+ * // - The "d_children" will be converted to HTML-template
+ * //     template: {
+ * //         internalNode:
+ * //         '<li id="{{id}}" class="tui-tree-node {{stateClass}}" data-depth="{{depth}}">' +
+ * //             '<button type="button" class="{{toggleClass}}">{{stateLabel}}</button>' +
+ * //             '<span class="{{titleClass}}">{{d_title}}</span>' +
+ * //             '<ul class="{{subtreeClass}}">{{d_children}}</ul>' +
+ * //         '</li>',
+ * //         leafNode:
+ * //         '<li id="{{id}}" class="tui-tree-node tui-tree-leaf" data-depth="{{depth}}">' +
+ * //             '<span class="{{titleClass}}">{{d_title}}</span>' +
+ * //         '</li>'
+ * //     }
+ * // }
+ * //
+ *
  * var data = [
- {title: 'rootA', children:
-         [
-             {title: 'root-1A'}, {title: 'root-1B'},{title: 'root-1C'}, {title: 'root-1D'},
-             {title: 'root-2A', children: [
-                 {title:'sub_1A', children:[{title:'sub_sub_1A'}]}, {title:'sub_2A'}
-             ]}, {title: 'root-2B'},{title: 'root-2C'}, {title: 'root-2D'},
-             {title: 'root-3A',
-                 children: [
-                     {title:'sub3_a'}, {title:'sub3_b'}
-                 ]
-             }, {title: 'root-3B'},{title: 'root-3C'}, {title: 'root-3D'}
-         ]
- },
- {title: 'rootB', children: [
-     {title:'B_sub1'}, {title:'B_sub2'}, {title:'b'}
- ]}
- ];
-
- var tree1 = new tui.component.Tree('id', data ,{
-        modelOption: {
-            defaultState: 'open'
-        }
-    });
-});
+ *     {title: 'rootA', children: [
+ *         {title: 'root-1A'},
+ *         {title: 'root-1B'},
+ *         {title: 'root-1C'},
+ *         {title: 'root-1D'},
+ *         {title: 'root-2A', children: [
+ *             {title:'sub_1A', children:[
+ *                 {title:'sub_sub_1A'}
+ *             ]},
+ *             {title:'sub_2A'}
+ *         ]},
+ *         {title: 'root-2B'},
+ *         {title: 'root-2C'},
+ *         {title: 'root-2D'},
+ *         {title: 'root-3A', children: [
+ *             {title:'sub3_a'},
+ *             {title:'sub3_b'}
+ *         ]},
+ *         {title: 'root-3B'},
+ *         {title: 'root-3C'},
+ *         {title: 'root-3D'}
+ *     ]},
+ *     {title: 'rootB', children: [
+ *         {title:'B_sub1'},
+ *         {title:'B_sub2'},
+ *         {title:'b'}
+ *     ]}
+ * ];
+ *
+ * var tree1 = new tui.component.Tree(data, {
+ *     defaultState: 'opened'
+ * });
  **/
-
 var Tree = tui.util.defineClass(/** @lends Tree.prototype */{
 
     /**
      * Initialize
-     * @param {String} id A id for root 
-     * @param {Object} data A initialize data
-     * @param {Object} options The options 
+     * @param {object} data - Data of nodes
+     * @param {object} options - The options
      */
-    init: function (id, data, options) {
-
-        /**
-         * A default template
-         * @type {String}
-         */
-        this.template = options.template || statics.DEFAULT.TEMPLATE;
-
-        /**
-         * A root element
-         * @type {HTMLElement}
-         */
-        this.root = null;
-
-        /**
-         * A class name and lebel text for open state
-         * @type {Array}
-         */
-        this.openSet = options.openSet || statics.DEFAULT.OPEN;
-
-        /**
-         * A class name and label text for close state
-         * @type {Array}
-         */
-        this.closeSet = options.closeSet || statics.DEFAULT.CLOSE;
-
-        /**
-         * A class name for selected node 
-         * @type {String}
-         */
-        this.onselectClass = options.selectClass || statics.DEFAULT.SELECT_CLASS;
-
-        /**
-         * A class name for double click area
-         * @type {string}
-         */
-        this.valueClass = options.valueClass || statics.DEFAULT.VALUE_CLASS;
-
-        /**
-         * A class name for input element
-         * @type {string}
-         */
-        this.editClass = options.inputClass || statics.DEFAULT.EDITABLE_CLASS;
-
-        /**
-         * A label for each depth
-         * @type {Array}
-         */
-        this.depthLabels = options.depthLabels || [];
+    init: function (data, options) {
+        var extend = tui.util.extend;
+        options = extend({}, defaults, options);
 
         /**
          * A state of tree
          * @type {number}
          */
-        this.state = statics.STATE.NORMAL;
+        this.state = treeStates.NORMAL;
 
         /**
-         * A class name for subtree
-         * @type {string|*}
+         * Default class names
+         * @type {object.<string, string>}
          */
-        this.subtreeClass = options.subtreeClass || statics.DEFAULT.SUBTREE_CLASS;
+        this.classNames = extend({}, defaults.classNames, options.classNames);
+
+        /**
+         * Default template
+         * @type {{internalNode: string, leafNode: string}}
+         */
+        this.template = extend({}, defaults.template, options.template);
+
+        /**
+         * Root element
+         * @type {HTMLElement}
+         */
+        this.rootElement = options.rootElement;
+
+        /**
+         * Toggle button state label
+         * @type {{opened: string, closed: string}}
+         */
+        this.stateLabel = options.stateLabel;
 
         /**
          * Whether drag and drop use or not
-         * @type {boolean|*}
+         * @type {boolean}
          */
-        this.useDrag = options.useDrag || statics.DEFAULT.USE_DRAG;
+        this.useDrag = options.useDrag;
 
         /**
          * Whether helper element use or not
-         * @type {boolean|*}
+         * @type {boolean}
          */
-        this.useHelper = this.useDrag && (options.useHelper || statics.DEFAULT.USE_HELPER);
+        this.useHelper = this.useDrag && options.useHelper;
 
         /**
          * Set relative position for helper object
          * @type {object}
          */
-        this.helperPos = options.helperPos || statics.DEFAULT.HELPER_POS;
+        this.helperPos = options.helperPos;
 
         /**
          * Input element 
@@ -150,20 +178,17 @@ var Tree = tui.util.defineClass(/** @lends Tree.prototype */{
          * Make tree model
          * @type {TreeModel}
          */
-        this.model = new TreeModel(options.modelOption, this);
-
+        this.model = new TreeModel(options.defaultState, this);
         this.model.setData(data);
 
-        if (id) {
-            this.root = document.getElementById(id);
-        } else {
-            this.root = document.createElement('ul');
+        if (!tui.util.isHTMLNode(this.rootElement)) {
+            this.root = document.createElement('UL');
             document.body.appendChild(this.root);
         }
 
         this._draw(this._getHtml(this.model.treeHash.root.childKeys));
-        this.setEvents();
 
+        this.setEvents();
     },
 
     /**
@@ -171,7 +196,7 @@ var Tree = tui.util.defineClass(/** @lends Tree.prototype */{
      * @return {HTMLElement}
      */
     getEditableElement: function() {
-        var input = document.createElement('input');
+        var input = document.createElement('INPUT');
         input.className = this.editClass;
         input.setAttribute('type', 'text');
 
@@ -408,11 +433,9 @@ var Tree = tui.util.defineClass(/** @lends Tree.prototype */{
      * @param {object} pos A position to move
      */
     setHelperLocation: function(pos) {
-
         this.helperElement.style.left = pos.x + this.helperPos.x + 'px';
         this.helperElement.style.top = pos.y + this.helperPos.y + 'px';
         this.helperElement.style.display = 'block';
-
     },
 
     /**
@@ -433,6 +456,11 @@ var Tree = tui.util.defineClass(/** @lends Tree.prototype */{
      */
     _getHtml: function(keys) {
         var model = this.model,
+            template = this.template,
+            display = {
+                opend: 'block',
+                closed: 'none'
+            },
             html,
             childEl = [],
             node,
@@ -451,21 +479,20 @@ var Tree = tui.util.defineClass(/** @lends Tree.prototype */{
             rate = this.depthLabels[depth - 1] || '';
             map = {
                 State: state,
-                StateLabel: label,
-                NodeID: node.id,
-                Depth: depth,
-                Title: node.value,
-                ValueClass: this.valueClass,
-                SubTree: this.subtreeClass,
-                Display: (node.state === 'open') ? '' : 'none',
-                DepthLabel: rate
+                //NodeID: node.id,
+                //Depth: depth,
+                //title: node.title,
+                titleClass: this.titleClass,
+                subtreeClass: this.subtreeClass,
+                stateLabel: this.stateLabel[node.state],
+                display: display[node.state]
             };
 
             if (tui.util.isNotEmpty(node.childKeys)) {
-                tmpl = this.template.EDGE_NODE;
+                tmpl = template.internalNode;
                 map.Children = this._getHtml(node.childKeys);
             } else {
-                tmpl = this.template.LEAP_NODE;
+                tmpl = template.leafNode;
             }
 
             el = tmpl.replace(/\{\{([^\}]+)\}\}/g, function(matchedString, name) {
@@ -509,7 +536,7 @@ var Tree = tui.util.defineClass(/** @lends Tree.prototype */{
 
     /**
      * Change node state
-     * @param {Object} node A informtion to node
+     * @param {Object} node A information to node
      * @private
      */
     _changeNodeState: function(node) {
@@ -524,7 +551,7 @@ var Tree = tui.util.defineClass(/** @lends Tree.prototype */{
         if (tui.util.isEmpty(node.childKeys)) {
             cls = 'leap_node ' + this[node.state + 'Set'][0];
         } else {
-            cls = 'edge_node ' + this[node.state + 'Set'][0];
+            cls = 'internal_node ' + this[node.state + 'Set'][0];
         }
 
         parent.className = cls;

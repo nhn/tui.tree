@@ -25,7 +25,7 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{
          * Default state of node
          * @type {String}
          */
-        this.nodeDefaultState = options.defaultState || 'close';
+        this.nodeDefaultState = options.defaultState || 'closed';
 
         /**
          * A buffer 
