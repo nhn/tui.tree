@@ -1,5 +1,53 @@
+'use strict';
 tui.util.defineNamespace('tui.component.Tree');
 tui.component.Tree.TreeModel = require('../src/js/treemodel');
+
+fdescribe('TreeModel', function() {
+    var treeModel,
+        data = [
+            {title: 'A', children: [
+                {title: '1'},
+                {title: '2'},
+                {title: '3'},
+                {title: '4'},
+                {title: '5', children: [
+                    {title:'가', children:[
+                        {title:'*'}
+                    ]},
+                    {title:'나'}
+                ]},
+                {title: '6'},
+                {title: '7'},
+                {title: '8'},
+                {title: '9', children: [
+                    {title:'가'},
+                    {title:'나'}
+                ]},
+                {title: '10'},
+                {title: '11'},
+                {title: '12'}
+            ]},
+            {title: 'B', children: [
+                {title:'1'},
+                {title:'2'},
+                {title:'3'}
+            ]}
+        ];
+
+    beforeEach(function() {
+        treeModel = new tui.component.Tree.TreeModel('closed', data);
+    });
+
+    it('Instance should have the rootNode', function() {
+        expect(treeModel.rootNode).toEqual(jasmine.objectContaining({
+            id: jasmine.any(Number),
+            parentId: null,
+            state: 'opened',
+            depth: 0,
+            childIds: jasmine.any(Array)
+        }));
+    });
+});
 
 /**
  * @fileoverview 트리모델 생성 및 트리 모델 동작 테스트

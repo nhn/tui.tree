@@ -1,16 +1,21 @@
 {
   "name": "component-tree",
-  "version": "1.0.0a",
+  "version": "1.1.0",
+  "license": "MIT",
   "description": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nhnent/fe.component-tree.git"
+  },
   "devDependencies": {
     "browserify": "latest",
     "browserify-istanbul": "^0.2.1",
-    "fedoc-template": "git+http://70327b4564c7a80eb61724056876b960290946dd:x-oauth-basic@github.nhnent.com/fe/share-fedoc-template.git#develop",
+    "fedoc-template": "git+https://github.nhnent.com/fe/share-fedoc-template.git#develop",
     "gulp": "latest",
     "gulp-concat": "^2.6.0",
     "gulp-connect": "latest",
     "gulp-sourcemaps": "^1.5.2",
-    "gulp-uglify": "^1.2.0",
+    "gulp-uglify": "^1.5.1",
     "gulp-util": "^3.0.6",
     "handlebars": "^3.0.3",
     "hbsfy": "^2.2.1",
@@ -20,7 +25,7 @@
     "karma-browserify": "^4.4.2",
     "karma-coverage": "latest",
     "karma-firefox-launcher": "^0.1.6",
-    "karma-jasmine": "^0.3.5",
+    "karma-jasmine": "latest",
     "karma-junit-reporter": "^0.3.0",
     "karma-mocha-reporter": "latest",
     "karma-phantomjs-launcher": "^0.2.1",

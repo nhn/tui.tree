@@ -2,10 +2,7 @@
  * @fileoverview Helper object to make easy tree elements
  * @author NHN Ent. FE dev team.<dl_javascript@nhnent.com>
  */
-'use strict'
-/**
- * @namespace util
- */
+'use strict';
 var util = {
     /**
      * Remove first specified item from array, if it exists
@@ -97,7 +94,7 @@ var util = {
             });
         }
 
-        return tui.tuil.toArray(filtered);
+        return tui.util.toArray(filtered);
     },
 
     /**
@@ -162,15 +159,15 @@ var util = {
 
         if (document.implementation.hasFeature('MouseEvents', '2.0')) {
             return event.button;
-        } else {
-            button = event.button + '';
-            if (primary.indexOf(button) > -1) {
-                return 0;
-            } else if (secondary.indexOf(button) > -1) {
-                return 2;
-            } else if (wheel.indexOf(button) > -1) {
-                return 1;
-            }
+        }
+
+        button = event.button + '';
+        if (primary.indexOf(button) > -1) {
+            return 0;
+        } else if (secondary.indexOf(button) > -1) {
+            return 2;
+        } else if (wheel.indexOf(button) > -1) {
+            return 1;
         }
     }
 };
