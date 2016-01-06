@@ -93,6 +93,10 @@ module.exports = function(config) {
             suite: ''
         },
 
+        browserify: {
+            debug: true
+        },
+
         // web server port
         port: 9876,
 
