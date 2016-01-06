@@ -2,6 +2,8 @@
  * @fileoverview States in tree
  */
 
+'use strict';
+
 /**
  * States in tree
  * @module states

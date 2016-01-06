@@ -2,12 +2,13 @@
  * A default values for tree
  * @module defaults
  */
+'use strict';
 
 /**
  * Make class names
  * @param {string} prefix - Prefix of class name
- * @param {string} keys - Keys of class names
- * @returns {object.<string, string>}
+ * @param {Array.<string>} keys - Keys of class names
+ * @returns {object.<string, string>} Classnames map
  */
 function makeClassNames(prefix, keys) {
     var obj = {};
