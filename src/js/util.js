@@ -2,13 +2,19 @@
  * @fileoverview Helper object to make easy tree elements
  * @author NHN Ent. FE dev team.<dl_javascript@nhnent.com>
  */
-
+'use strict'
 /**
  * @namespace util
  */
 var util = {
+    /**
+     * Remove first specified item from array, if it exists
+     * @param {Array} arr Array to query
+     * @param {*} item Item to look for
+     */
     removeItemFromArray: function(arr, item) {
-        arr.splice(arr.indexOf(item), 1);
+        var index = tui.util.inArray(arr, item);
+        arr.splice(index, 1);
     },
 
     /**
@@ -42,28 +48,29 @@ var util = {
     /**
      * Get target element
      * @param {event} e Event object
-     * @return {HTMLElement} 
+     * @return {HTMLElement} Event target
      */
     getTarget: function(e) {
+        var target;
         e = e || window.event;
-        var target = e.target || e.srcElement;
+        target = e.target || e.srcElement;
         return target;
     },
 
     /**
-     *
-     * @param elem
-     * @returns {*|string|string}
+     * Get class name
+     * @param {HTMLElement} element HTMLElement
+     * @returns {string} Class name
      */
-    getClass: function(elem) {
-        return elem.getAttribute && elem.getAttribute( "class" ) || "";
+    getClass: function(element) {
+        return element && element.getAttribute && (element.getAttribute('class') || '');
     },
 
     /**
      * Check the element has specific class or not
      * @param {HTMLElement} element A target element
      * @param {string} className A name of class to find
-     * @return {boolean}
+     * @return {boolean} Whether the element has the class
      */
     hasClass: function(element, className) {
         var elClassName = util.getClass(element);
@@ -75,63 +82,68 @@ var util = {
      * Find element by class name
      * @param {HTMLElement} target A target element
      * @param {string} className A name of class
-     * @return {array}
+     * @return {Array.<HTMLElement>} Elements
      */
     getElementsByClass: function(target, className) {
+        var all, filtered;
+
         if (target.querySelectorAll) {
-            return target.querySelectorAll('.' + className);
+            filtered = target.querySelectorAll('.' + className);
+        } else {
+            all = target.getElementsByTagName('*');
+            filtered = tui.util.filter(all, function(el) {
+                var classNames = el.className || '';
+                return (classNames.indexOf(className) !== -1)
+            });
         }
-        var all = target.getElementsByTagName('*'),
-            filter = [];
 
-        all = tui.util.toArray(all);
-
-        tui.util.forEach(all, function(el) {
-            var cls = el.className || '';
-            if (cls.indexOf(className) !== -1) {
-                filter.push(el);
-            }
-        });
-
-        return filter;
+        return tui.tuil.toArray(filtered);
     },
 
     /**
-     * Check whether the click event by right button or not
-     * @param {event} e Event object
-     * @return {boolean} 
+     * Check whether the click event by right button
+     * @param {MouseEvent} event Event object
+     * @return {boolean} Whether the click event by right button
      */
-    isRightButton: function(e) {
-        var isRight = util._getButton(e) === 2;
-        return isRight;
+    isRightButton: function(event) {
+        return util._getButton(event) === 2;
     },
 
     /**
      * Whether the property exist or not
-     * @param {array} props A property 
-     * @return {boolean}
+     * @param {Array} props A property
+     * @return {string|boolean} Property name or false
+     * @example
+     * var userSelectProperty = util.testProp([
+     *     'userSelect',
+     *     'WebkitUserSelect',
+     *     'OUserSelect',
+     *     'MozUserSelect',
+     *     'msUserSelect'
+     * ]);
      */
     testProp: function(props) {
         var style = document.documentElement.style,
-            i = 0;
+            propertyName = false;
 
-        for (; i < props.length; i++) {
-            if (props[i] in style) {
-                return props[i];
+        tui.util.forEach(props, function(prop) {
+            if (prop in style) {
+                propertyName = prop;
+                return false;
             }
-        }
-        return false;
+        });
+        return propertyName;
     },
 
     /**
      * Prevent default event 
-     * @param {event} e Event object
+     * @param {Event} event Event object
      */
-    preventDefault: function(e) {
-        if (e.preventDefault) {
-            e.preventDefault();
+    preventDefault: function(event) {
+        if (event.preventDefault) {
+            event.preventDefault();
         } else {
-            e.returnValue = false;
+            event.returnValue = false;
         }
     },
 
@@ -139,19 +151,19 @@ var util = {
      * Normalization for event button property 
      * 0: First mouse button, 2: Second mouse button, 1: Center button
      * @param {MouseEvent} event Event object
-     * @return {number|undefined} 
+     * @return {number|undefined} button type
      * @private
      */
-    _getButton: function(e) {
+    _getButton: function(event) {
         var button,
             primary = '0,1,3,5,7',
             secondary = '2,6',
             wheel = '4';
 
         if (document.implementation.hasFeature('MouseEvents', '2.0')) {
-            return e.button;
+            return event.button;
         } else {
-            button = e.button + '';
+            button = event.button + '';
             if (primary.indexOf(button) > -1) {
                 return 0;
             } else if (secondary.indexOf(button) > -1) {

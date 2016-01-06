@@ -61,13 +61,13 @@ module.exports = {
     template: {
         template: {
             internalNode:
-            '<li id="{{id}}" class="tui-tree-node {{stateClass}}" data-depth="{{depth}}">' +
+            '<li id="tui-tree-node-{{nodeId}}" class="tui-tree-node {{stateClass}}" data-depth="{{depth}}">' +
                 '<button type="button" class="{{toggleClass}}">{{stateLabel}}</button>' +
                 '<span class="{{titleClass}}">{{d_title}}</span>' +
                 '<ul class="{{subtreeClass}}">{{d_children}}</ul>' +
             '</li>',
             leafNode:
-            '<li id="{{id}}" class="tui-tree-node tui-tree-leaf" data-depth="{{depth}}">' +
+            '<li id="tui-tree-node-{{nodeId}}" class="tui-tree-node tui-tree-leaf" data-depth="{{depth}}">' +
                 '<span class="{{titleClass}}">{{d_title}}</span>' +
             '</li>'
         }
