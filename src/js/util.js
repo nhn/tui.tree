@@ -7,6 +7,10 @@
  * @namespace util
  */
 var util = {
+    removeItemFromArray: function(arr, item) {
+        arr.splice(arr.indexOf(item), 1);
+    },
+
     /**
      * Add event to element
      * @param {Object} element A target element
@@ -46,6 +50,11 @@ var util = {
         return target;
     },
 
+    /**
+     *
+     * @param elem
+     * @returns {*|string|string}
+     */
     getClass: function(elem) {
         return elem.getAttribute && elem.getAttribute( "class" ) || "";
     },
