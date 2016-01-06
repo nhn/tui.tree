@@ -2,30 +2,38 @@
  * @fileoverview Update view and control tree data
  * @author NHN Ent. FE dev team.<dl_javascript@nhnent.com>
  */
+'use strict';
+
+var util = require('./util'),
+    nodeStates = require('./states').node;
+
+var lastId = 0,
+    extend = tui.util.extend,
+    keys = tui.util.keys;
 
 /**
+ * @typedef node
+ * @type {object}
+ * @property {number} id - Node id
+ * @property {number} depth - Node depth
+ * @property {number} parentId - Parent id
+ * @property {number} state - opened or closed
+ * @property {Array.<number>} childIds - Ids of children
+ */
+
+/**
+ * Tree model
  * @constructor TreeModel
- * **/
-var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{
-    init: function(options, tree) {
-
-        /**
-         * A count for node identity number
-         * @type {number}
-         */
-        this.count = 0;
-
-        /**
-         * A view that observe model change
-         * @type {tui.component.Tree}
-         */
-        this.tree = tree;
-
+ * @param {string} defaultState - Default state of node
+ * @param {Array} data - Data
+ **/
+var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslint-disable */
+    init: function(nodeDefaultState, data) {/*eslint-enable*/
         /**
          * Default state of node
          * @type {String}
          */
-        this.nodeDefaultState = options.defaultState || 'closed';
+        this.nodeDefaultState = nodeDefaultState;
 
         /**
          * A buffer 
@@ -34,144 +42,148 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{
         this.buffer = null;
 
         /**
-         * A depth
-         * @type {number}
-         */
-        this.depth = 0;
-
-        /**
-         * A milisecon time to make node ID
-         * @type {number}
-         */
-        this.date = new Date().getTime();
-
-        /**
          * Tree hash
-         * @type {object}
+         * @type {object.<number, node>}
          */
         this.treeHash = {};
 
-        this.treeHash['root'] = this.makeNode(0, 'root', 'root');
-        this.connect(tree);
+        /**
+         * Root node
+         * @type {node}
+         */
+        this.rootNode = this._makeNode();
+
+        this._setData(data);
     },
 
     /**
      * Set model with tree data
-     * @param {array} data  A tree data
+     * @param {Array} data  A tree data
      */
-    setData: function(data) {
-        this.treeHash.root.childKeys = this._makeTreeHash(data);
+    _setData: function(data) {
+        var root = this.rootNode;
+
+        root.state = nodeStates.OPENED;
+
+        this.treeHash[root.id] = root;
+        this._makeTreeHash(data, root);
     },
 
     /**
      * Change hierarchy data to hash list.
-     * @param {array} data A tree data 
-     * @param {string} parentId A parent node id
+     * @param {Array} data - Tree data
+     * @param {node} parent - Parent node
      * @private
+     * @todo stack over flow
      */
-    _makeTreeHash: function(data, parentId) {
+    _makeTreeHash: function(data, parent) {
+        var parentChildIds = parent.childIds,
+            parentId = parent.id,
+            depth = parent.depth + 1;
 
-        var childKeys = [],
-            id;
+        tui.util.forEach(data, function(datum) {
+            var node = this._makeNode(datum, parentId, depth),
+                id = node.id;
 
-        this.depth = this.depth + 1;
+            this.treeHash[id] = node;
+            parentChildIds.push(id);
+            this._makeTreeHash(node.children, node);
 
-        tui.util.forEach(data, function(element) {
-            id = this._getId();
-            this.treeHash[id] = this.makeNode(this.depth, id, element.value, parentId);
-            if (element.children && tui.util.isNotEmpty(element.children)) {
-                this.treeHash[id].childKeys = this._makeTreeHash(element.children, id);
-            }
-            childKeys.push(id);
+            delete node.children;
         }, this);
-
-        this.depth = this.depth - 1;
-        childKeys.sort(tui.util.bind(this.sort, this));
-        return childKeys;
     },
 
     /**
      * Create node
-     * @param {number} depth A depth of node
-     * @param {string} id A node ID
-     * @param {string} value A value of node
-     * @param {string} parentId A parent node ID
-     * @return {{value: *, parentId: (*|string), id: *}}
+     * @param {object} [datum] A datum of node
+     * @param {string|undefined} [parentId] A parent id
+     * @param {number} [depth] A depth of node
+     * @return {object} A node
      */
-    makeNode: function(depth, id, value, parentId) {
-        return {
+    _makeNode: function(datum, parentId, depth) {
+        parentId = parentId || null;
+        depth = depth || tui.util.pick(this.treeHash, parentId, 'depth') || 0;
+
+        return extend({
             depth: depth,
-            value: value,
-            parentId: (depth === 0) ? null : (parentId || 'root'),
             state: this.nodeDefaultState,
-            id: id
-        };
+            id: this._makeId(),
+            parentId: parentId,
+            childIds: []
+        }, datum);
     },
 
     /**
      * Make and return node ID
      * @private
-     * @return {String}
+     * @return {number} id
      */
-    _getId: function() {
-        this.count = this.count + 1;
-        return 'node_' + this.date + '_' + this.count;
+    _makeId: function() {
+        lastId += 1;
+        return lastId;
+    },
+
+    /**
+     * Get the number of nodes
+     * @returns {number} The number of nodes
+     */
+    getCount: function() {
+        return keys(this.treeHash).length;
     },
 
     /**
      * Find node 
-     * @param {string} key A key to find node
-     * @return {object|undefined}
+     * @param {number} id - A node id to find
+     * @return {node|undefined} node
      */
-    find: function(key) {
-        return this.treeHash[key];
+    find: function(id) {
+        return this.treeHash[id];
     },
 
     /**
-     * Remove node and child nodes
-     * @param {string} key A key to remove
+     * Remove a node with children
+     * @param {string} id A node id to remove
      */
-    remove: function(key) {
-        /**
-         * @api
-         * @event TreeModel#remove
-         * @param {{id: string}} removed - id
-         * @example
-         * tree.model.on('remove', function(data) {
-         *     alert('removed -' +  data.id );
-         * });
-         */
-        var res = this.invoke('remove', { id: key });
+    remove: function(id) {
+        var node = this.find(id),
+            parent = this.find(node.parentId);
 
-        if (!res) {
-            return;
-        }
+        tui.util.forEach(node.childIds, function(childId) {
+            this.remove(childId);
+        }, this);
 
-        this.removeKey(key);
-        this.treeHash[key] = null;
-
-        this.notify();
+        util.removeItemFromArray(parent.childIds, id);
+        delete this.treeHash[id];
     },
 
     /**
-     * Remove node key
-     * @param {string} key A key to remove
+     * Add node(s)
+     * - If the parentId is falsy, the node will be appended to rootNode.
+     * - This method will force to overwrite the data having same id in tree.
+     * @param {Array|object} data Raw-data
+     * @param {*} parentId Parent id
      */
-    removeKey: function(key) {
-        var node = this.find(key);
+    add: function(data, parentId) {
+        var parent = this.find(parentId) || this.rootNode;
+        data = [].concat(data);
+        this._makeTreeHash(data, parent);
+    },
 
-        if (!node) {
-            return;
-        }
-
-        var parent = this.find(node.parentId);
-
-        parent.childKeys = tui.util.filter(parent.childKeys, function(childKey) {
-            return childKey !== key;
+    /**
+     * Traverse this tree iterating over all nodes.
+     * @param {Function} iteratee - Iteratee function
+     */
+    each: function(iteratee) {
+        tui.util.forEach(this.treeHash, function(node) {
+            iteratee(node);
         });
-
     },
 
+    /*********************************************************
+     *
+     * @todo
+     *
+     *********************************************************/
     /**
      * Move node
      * @param {string} key A key to move node
@@ -179,53 +191,32 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{
      * @param {string} targetId A target ID to insert
      */
     move: function(key, node, targetId) {
-
         this.removeKey(key);
         this.treeHash[key] = null;
         this.insert(node, targetId);
-
     },
 
     /**
      * Insert node
      * @param {object} node A node object to insert
      * @param {string} [targetId] A target ID to insert
+     * @todo
      */
     insert: function(node, targetId) {
         var target = this.find(targetId || 'root');
 
-        if (!target.childKeys) {
-            target.childKeys = [];
+        if (!target.childIds) {
+            target.childIds = [];
         }
 
-        target.childKeys.push(node.id);
+        target.childIds.push(node.id);
         node.depth = target.depth + 1;
         node.parentId = targetId;
-        target.childKeys.sort(tui.util.bind(this.sort, this));
+        target.childIds.sort(tui.util.bind(this.sort, this));
 
         this.treeHash[node.id] = node;
 
         this.notify();
-    },
-
-    /**
-     * A notify tree
-     */
-    notify: function(type, target) {
-        if (this.tree) {
-            this.tree.notify(type, target);
-        }
-    },
-
-    /**
-     * Connect view and model
-     * @param {Tree} tree
-     */
-    connect: function(tree) {
-        if (!tree) {
-            return;
-        }
-        this.tree = tree;
     },
 
     /**
@@ -234,7 +225,6 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{
      * @param {string} value A value to change
      */
     rename: function(key, value) {
-
         /**
          * @api
          * @event TreeModel#rename
@@ -266,16 +256,14 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{
         node.state = (node.state === 'open') ? 'close' : 'open';
         this.notify('toggle', node);
     },
+
     /**
      * Set buffer to save selected node
      * @param {String} key The key of selected node
      **/
     setBuffer: function(key) {
-
-        this.clearBuffer();
-
         var node = this.find(key);
-
+        this.clearBuffer();
         this.notify('select', node);
 
         /**
@@ -297,14 +285,12 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{
      * Empty buffer
      */
     clearBuffer: function() {
-
         if (!this.buffer) {
             return;
         }
 
         this.notify('unselect', this.buffer);
         this.buffer = null;
-
     },
 
     /**
@@ -326,31 +312,8 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{
                 return this.isDisable(this.find(dest.parentId), node);
             }
         }
-    },
-
-    /**
-     * Sort by title
-     * @param {string} pid
-     * @param {string} nid
-     * @return {number}
-     */
-    sort: function(pid, nid) {
-        var p = this.find(pid),
-            n = this.find(nid);
-
-        if (!p || !n) {
-            return 0;
-        }
-
-        if (p.value < n.value) {
-            return -1;
-        } else if (p.value > n.value) {
-            return 1;
-        } else {
-            return 0;
-        }
     }
 });
-tui.util.CustomEvents.mixin(TreeModel);
 
+tui.util.CustomEvents.mixin(TreeModel);
 module.exports = TreeModel;

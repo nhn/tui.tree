@@ -1,4 +1,7 @@
 'use strict';
+
+var nodeStates = require('../src/js/states').node;
+
 tui.util.defineNamespace('tui.component.Tree');
 tui.component.Tree.TreeModel = require('../src/js/treemodel');
 
@@ -31,29 +34,84 @@ fdescribe('TreeModel', function() {
                 {title:'1'},
                 {title:'2'},
                 {title:'3'}
+            ]},
+            {title:'This node has the customId', id: 'customId', children: [
+                {title: 'This node is child of the node having customId', id: 'customIdChild'}
             ]}
         ];
 
     beforeEach(function() {
-        treeModel = new tui.component.Tree.TreeModel('closed', data);
+        treeModel = new tui.component.Tree.TreeModel(nodeStates.CLOSED, data);
     });
 
     it('Instance should have the rootNode', function() {
         expect(treeModel.rootNode).toEqual(jasmine.objectContaining({
             id: jasmine.any(Number),
             parentId: null,
-            state: 'opened',
+            state: nodeStates.OPENED,
             depth: 0,
             childIds: jasmine.any(Array)
         }));
     });
+
+    it('Instance should have the length of all nodes with rootNode', function() {
+        expect(treeModel.getCount()).toEqual(25);
+    });
+
+    it('Find method should return a node', function() {
+        var searched = treeModel.find('customId');
+
+        expect(searched.title).toEqual('This node has the customId');
+    });
+
+    it('Add method should append a node to a specific parent node', function() {
+        var data = {
+                title: 'This node will be added to "customId Node"',
+                id: 'addedNode'
+            },
+            searched;
+
+        treeModel.add(data, 'customId');
+        searched = treeModel.find('addedNode');
+
+        expect(searched.id).toEqual('addedNode');
+        expect(searched.title).toEqual('This node will be added to "customId Node"');
+        expect(searched.parentId).toEqual('customId');
+    });
+
+    it('Remove method should remove a node in treeModel', function() {
+        var searched;
+
+        treeModel.remove('customId');
+
+        searched = treeModel.find('customId');
+        expect(searched).toBeFalsy();
+
+        searched = treeModel.find('customIdChild');
+        expect(searched).toBeFalsy();
+    });
+
+    it('Each method', function() {
+        var iteratee = jasmine.createSpy(),
+            callCount = treeModel.getCount();
+
+        treeModel.each(iteratee);
+
+        expect(iteratee.calls.mostRecent().args[0]).toEqual(jasmine.objectContaining({
+            id: jasmine.anything(),
+            parentId: jasmine.anything(),
+            state: jasmine.anything(),
+            depth: jasmine.anything(),
+            childIds: jasmine.any(Array)
+        }));
+        expect(iteratee.calls.count()).toEqual(callCount);
+    })
 });
 
 /**
- * @fileoverview 트리모델 생성 및 트리 모델 동작 테스트
- * @author FE개발팀
+ * Legacy test cases
  */
-describe('TreeModel을 생성한다', function() {
+xdescribe('TreeModel을 생성한다', function() {
     var modelOption = {defaultState: 'open'},
         model,
         data = [{
