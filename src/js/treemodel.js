@@ -112,7 +112,7 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
      */
     _createNode: function(nodeData, parentId) {
         return extend({
-            id: this._makeId(),
+            id: this._createId(),
             parentId: parentId,
             childIds: [],
             state: this.nodeDefaultState
@@ -132,11 +132,11 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
     },
 
     /**
-     * Make and return node ID
+     * Return new node ID
      * @private
      * @return {number} id
      */
-    _makeId: function() {
+    _createId: function() {
         lastId += 1;
         return lastId;
     },
