@@ -60,17 +60,15 @@ module.exports = {
         'input'
     ]),
     template: {
-        template: {
-            internalNode:
-            '<li id="tui-tree-node-{{nodeId}}" class="tui-tree-node {{stateClass}}" data-depth="{{depth}}">' +
-                '<button type="button" class="{{toggleClass}}">{{stateLabel}}</button>' +
-                '<span class="{{titleClass}}">{{d_title}}</span>' +
-                '<ul class="{{subtreeClass}}">{{d_children}}</ul>' +
-            '</li>',
-            leafNode:
-            '<li id="tui-tree-node-{{nodeId}}" class="tui-tree-node tui-tree-leaf" data-depth="{{depth}}">' +
-                '<span class="{{titleClass}}">{{d_title}}</span>' +
-            '</li>'
-        }
+        internalNode:
+        '<li id="tui-tree-node-{{nodeId}}" class="tui-tree-node {{stateClass}}" data-nodeId="{{nodeId}}">' +
+            '<button type="button" class="{{toggleClass}}">{{stateLabel}}</button>' +
+            '<span class="{{titleClass}}">{{title}}</span>' +
+            '<ul class="{{subtreeClass}}">{{children}}</ul>' +
+        '</li>',
+        leafNode:
+        '<li id="tui-tree-node-{{nodeId}}" class="tui-tree-node tui-tree-leaf" data-nodeId="{{nodeId}}">' +
+            '<span class="{{titleClass}}">{{title}}</span>' +
+        '</li>'
     }
 };

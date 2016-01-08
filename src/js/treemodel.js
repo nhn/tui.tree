@@ -8,14 +8,18 @@ var util = require('./util'),
     nodeStates = require('./states').node;
 
 var lastId = 0,
-    extend = tui.util.extend,
-    keys = tui.util.keys,
-    forEach = tui.util.forEach,
-    map = tui.util.map,
+    snippet = tui.util,
+    extend = snippet.extend,
+    keys = snippet.keys,
+    forEach = snippet.forEach,
+    map = snippet.map,
+    filter = snippet.filter,
+    inArray = snippet.inArray,
     RESERVED_PROPERTIES = [
         'id',
         'parentId',
-        'childIds'
+        'childIds',
+        'state'
     ];
 
 /**
@@ -24,7 +28,8 @@ var lastId = 0,
  * @property {*} id - Node id
  * @property {*} parentId - Parent id
  * @property {Array.<*>} childIds - Child Ids
- * @property {number} state - opened or closed
+ * @property {number} state - OPENED or CLOSED
+ * @property {object} data - Node data
  */
 
 /**
@@ -35,11 +40,12 @@ var lastId = 0,
  **/
 var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslint-disable */
     init: function(nodeDefaultState, data) {/*eslint-enable*/
+        nodeDefaultState = nodeDefaultState + '';
         /**
          * Default state of node
          * @type {String}
          */
-        this.nodeDefaultState = nodeDefaultState;
+        this.nodeDefaultState = nodeStates[nodeDefaultState.toUpperCase()] || nodeStates.CLOSED;
 
         /**
          * A buffer 
@@ -70,10 +76,9 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
      * @param {Array} data - Tree data
      */
     _setData: function(data) {
-        var root = this.rootNode,
-            rootId = root.id;
+        var root = this.rootNode;
 
-        this.treeHash[rootId] = root;
+        this.treeHash[root.id] = root;
         this._makeTreeHash(data, root);
     },
 
@@ -101,17 +106,23 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
 
     /**
      * Create node
-     * @param {object} datum - Datum of node
+     * @param {object} nodeData - Datum of node
      * @param {*} parentId - Parent id
      * @return {node} Node
      */
-    _makeNode: function(datum, parentId) {
+    _makeNode: function(nodeData, parentId) {
         return extend({
             id: this._makeId(),
             parentId: parentId,
             childIds: [],
             state: this.nodeDefaultState
-        }, datum);
+        }, nodeData);
+    },
+
+    _ruleOutReservedProperties: function(props) {
+        return filter(props, function(prop, key) {
+            return inArray(key, RESERVED_PROPERTIES) === -1;
+        });
     },
 
     /**
@@ -176,9 +187,14 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
      */
     getDepth: function(id) {
         var node = this.getNode(id),
-            parent = this.getNode(node.parentId),
-            depth = 0;
+            depth = 0,
+            parent;
 
+        if (!node) {
+            return;
+        }
+
+        parent = this.getNode(node.parentId);
         while (parent) {
             depth += 1;
             parent = this.getNode(parent.parentId);
@@ -237,13 +253,10 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
     set: function(id, props) {
         var node = this.getNode(id);
 
-        if (!node || !props) {
+        props = this._ruleOutReservedProperties(props);
+        if (!node || !props || snippet.isEmpty(props)) {
             return;
         }
-
-        forEach(RESERVED_PROPERTIES, function(propName) { // Delete properties in props
-            delete props[propName];
-        });
 
         extend(node, props); // Update properties
         this.fire('update', node);
