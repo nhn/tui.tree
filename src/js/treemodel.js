@@ -57,13 +57,12 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
          * Root node
          * @type {node}
          */
-        this.rootNode = this._makeNode({
+        this.rootNode = this._createNode({
             state: nodeStates.OPENED
         }, null);
 
         /**
-         * Node container
-         * - Nodes are grouped by depth same as index in this container.
+         * Tree hash having all nodes
          * @type {object.<*, node>}
          */
         this.treeHash = {};
@@ -83,7 +82,7 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
     },
 
     /**
-     * Change hierarchy data to hash list.
+     * Make tree hash from data and parentNode
      * @param {Array} data - Tree data
      * @param {node} parent - Parent node id
      * @private
@@ -93,7 +92,7 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
             childIds = parent.childIds;
 
         forEach(data, function(datum) {
-            var node = this._makeNode(datum, parentId),
+            var node = this._createNode(datum, parentId),
                 nodeId = node.id;
 
             childIds.push(nodeId);
@@ -109,8 +108,9 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
      * @param {object} nodeData - Datum of node
      * @param {*} parentId - Parent id
      * @return {node} Node
+     * @todo : return new Node(nodeData, parentId)
      */
-    _makeNode: function(nodeData, parentId) {
+    _createNode: function(nodeData, parentId) {
         return extend({
             id: this._makeId(),
             parentId: parentId,
@@ -119,6 +119,12 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
         }, nodeData);
     },
 
+    /**
+     * Rule out reserved properties
+     * @param {object} props - Raw properties
+     * @returns {Object} Properties without reserved properties
+     * @private
+     */
     _ruleOutReservedProperties: function(props) {
         return filter(props, function(prop, key) {
             return inArray(key, RESERVED_PROPERTIES) === -1;
@@ -143,7 +149,7 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
     getChildren: function(nodeId) {
         var node = this.getNode(nodeId);
         if (!node) {
-            return;
+            return [];
         }
 
         return map(node.childIds, function(childId) {
@@ -184,6 +190,7 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
      * Get depth from node id
      * @param {*} id - A node id to find
      * @return {number|undefined} Depth
+     * //@todo : default return value?
      */
     getDepth: function(id) {
         var node = this.getNode(id),
@@ -204,8 +211,8 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
     },
 
     /**
-     * Remove a node with children
-     * - The update event will be fired.
+     * Remove a node with children.
+     * - The update event will be fired with parent node.
      * @param {*} id - Node id to remove
      * @param {boolean} [isSilent] - If true, it doesn't trigger the 'update' event
      */
@@ -231,11 +238,11 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
     },
 
     /**
-     * Add node(s)
+     * Add node(s).
      * - If the parentId is falsy, the node will be appended to rootNode.
-     * - The update event will be fired
-     * @param {Array|object} data Raw-data
-     * @param {*} parentId Parent id
+     * - The update event will be fired with parent node.
+     * @param {Array|object} data - Raw-data
+     * @param {*} parentId - Parent id
      */
     add: function(data, parentId) {
         var parent = this.getNode(parentId) || this.rootNode;
