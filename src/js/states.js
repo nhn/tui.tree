@@ -23,7 +23,7 @@ module.exports = {
      * @enum {{OPENED: number, CLOSED: number}}
      */
     node: {
-        OPENED: 3,
-        CLOSED: 4
+        OPENED: 'opened',
+        CLOSED: 'closed'
     }
 };
