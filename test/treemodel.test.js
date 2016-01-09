@@ -1,6 +1,6 @@
 'use strict';
 
-var TreeModel = require('../src/js/treemodel');
+var TreeModel = require('../src/js/treeModel');
 
 describe('TreeModel', function() {
     var treeModel,

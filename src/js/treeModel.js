@@ -4,7 +4,7 @@
  */
 'use strict';
 
-var TreeNode = require('./node'),
+var TreeNode = require('./treeNode'),
     util = require('./util');
 
 var snippet = tui.util,
@@ -133,7 +133,7 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
     },
 
     /**
-     * Find node 
+     * Find node
      * @param {*} id - A node id to find
      * @return {TreeNode|undefined} Node
      */

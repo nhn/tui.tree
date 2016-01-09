@@ -1,7 +1,7 @@
 
 'use strict';
 
-var TreeNode = require('../src/js/node');
+var TreeNode = require('../src/js/treeNode');
 
 describe('Node', function() {
     var node,

@@ -16,7 +16,7 @@ var lastId = 0,
  * @param {number} parentId - Parent node id
  * @param {string} state - State of node
  */
-var TreeNode = tui.util.defineClass(/** @lends Node.prototype */{ /*eslint-disable*/
+var TreeNode = tui.util.defineClass(/** @lends TreeNode.prototype */{ /*eslint-disable*/
     init: function(nodeData, parentId, state) { /*eslint-enable*/
         /**
          * Node id
