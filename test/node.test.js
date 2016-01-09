@@ -1,9 +1,9 @@
 
 'use strict';
 
-var Node = require('../src/js/node');
+var TreeNode = require('../src/js/node');
 
-fdescribe('Node', function() {
+describe('Node', function() {
     var node,
         parentId = 0,
         state = 'closed',
@@ -12,7 +12,7 @@ fdescribe('Node', function() {
         };
 
     beforeEach(function() {
-        node = new Node(data, parentId, state);
+        node = new TreeNode(data, parentId, state);
     });
 
     it('Methods about state', function() {
@@ -36,13 +36,13 @@ fdescribe('Node', function() {
         node.setParentId(-1);
         expect(node.getParentId()).toEqual(-1);
 
-        node.addChild(4);
+        node.addChildId(4);
         expect(node.getChildIds()).toContain(4);
 
-        node.removeChild(4);
+        node.removeChildId(4);
         expect(node.getChildIds()).not.toContain(4);
 
-        node.setChildIds([4, 5, 6]);
+        node.replaceChildIds([4, 5, 6]);
         expect(node.getChildIds()).toEqual([4, 5, 6]);
     });
 

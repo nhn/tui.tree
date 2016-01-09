@@ -4,66 +4,46 @@
  */
 'use strict';
 
-var util = require('./util'),
-    nodeStates = require('./states').node;
+var TreeNode = require('./node'),
+    util = require('./util');
 
-var lastId = 0,
-    snippet = tui.util,
+var snippet = tui.util,
     extend = snippet.extend,
     keys = snippet.keys,
     forEach = snippet.forEach,
     map = snippet.map,
     filter = snippet.filter,
-    inArray = snippet.inArray,
-    RESERVED_PROPERTIES = [
-        'id',
-        'parentId',
-        'childIds',
-        'state'
-    ];
-
-/**
- * @typedef node
- * @type {object}
- * @property {*} id - Node id
- * @property {*} parentId - Parent id
- * @property {Array.<*>} childIds - Child Ids
- * @property {number} state - OPENED or CLOSED
- * @property {object} data - Node data
- */
+    inArray = snippet.inArray;
 
 /**
  * Tree model
  * @constructor TreeModel
- * @param {string} defaultState - Default state of node
  * @param {Array} data - Data
+ * @param {string} defaultState - Default state of node
  **/
 var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslint-disable */
-    init: function(nodeDefaultState, data) {/*eslint-enable*/
-        nodeDefaultState = nodeDefaultState + '';
+    init: function(data, nodeDefaultState) {/*eslint-enable*/
         /**
          * Default state of node
          * @type {String}
          */
-        this.nodeDefaultState = nodeStates[nodeDefaultState.toUpperCase()] || nodeStates.CLOSED;
+        this.nodeDefaultState = nodeDefaultState;
 
         /**
-         * A buffer 
+         * A buffer
          * @type {null}
          */
         this.buffer = null;
 
         /**
          * Root node
-         * @type {node}
+         * @type {TreeNode}
          */
-        this.rootNode = this._createNode({
-            state: nodeStates.OPENED
-        }, null);
+        this.rootNode = new TreeNode({}, null, 'opened');
 
         /**
          * Tree hash having all nodes
-         * @type {object.<*, node>}
+         * @type {object.<*, TreeNode>}
          */
         this.treeHash = {};
 
@@ -75,31 +55,30 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
      * @param {Array} data - Tree data
      */
     _setData: function(data) {
-        var root = this.rootNode;
+        var root = this.rootNode,
+            rootId = root.getId();
 
-        this.treeHash[root.id] = root;
+        this.treeHash[rootId] = root;
         this._makeTreeHash(data, root);
     },
 
     /**
      * Make tree hash from data and parentNode
      * @param {Array} data - Tree data
-     * @param {node} parent - Parent node id
+     * @param {TreeNode} parent - Parent node id
      * @private
      */
     _makeTreeHash: function(data, parent) {
-        var parentId = parent.id,
-            childIds = parent.childIds;
+        var parentId = parent.getId();
 
         forEach(data, function(datum) {
-            var node = this._createNode(datum, parentId),
-                nodeId = node.id;
+            var childrenData = datum.children,
+                node = this._createNode(datum, parentId),
+                nodeId = node.getId();
 
-            childIds.push(nodeId);
             this.treeHash[nodeId] = node;
-
-            this._makeTreeHash(node.children, node);
-            delete node.children;
+            parent.addChildId(nodeId);
+            this._makeTreeHash(childrenData, node);
         }, this);
     },
 
@@ -107,44 +86,20 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
      * Create node
      * @param {object} nodeData - Datum of node
      * @param {*} parentId - Parent id
-     * @return {node} Node
-     * @todo : return new Node(nodeData, parentId)
+     * @return {TreeNode} TreeNode
      */
     _createNode: function(nodeData, parentId) {
-        return extend({
-            id: this._createId(),
-            parentId: parentId,
-            childIds: [],
-            state: this.nodeDefaultState
-        }, nodeData);
-    },
+        var node = new TreeNode(nodeData, parentId, this.nodeDefaultState);
 
-    /**
-     * Rule out reserved properties
-     * @param {object} props - Raw properties
-     * @returns {Object} Properties without reserved properties
-     * @private
-     */
-    _ruleOutReservedProperties: function(props) {
-        return filter(props, function(prop, key) {
-            return inArray(key, RESERVED_PROPERTIES) === -1;
-        });
-    },
+        node.removeData('children');
 
-    /**
-     * Return new node ID
-     * @private
-     * @return {number} id
-     */
-    _createId: function() {
-        lastId += 1;
-        return lastId;
+        return node;
     },
 
     /**
      * Get children
      * @param {*} nodeId - Node id
-     * @return {Array.<node>} children
+     * @return {Array.<TreeNode>} children
      */
     getChildren: function(nodeId) {
         var node = this.getNode(nodeId);
@@ -152,7 +107,7 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
             return [];
         }
 
-        return map(node.childIds, function(childId) {
+        return map(node.getChildIds(), function(childId) {
             return this.getNode(childId);
         }, this);
     },
@@ -171,7 +126,7 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
      */
     getLastDepth: function() {
         var depths = map(this.treeHash, function(node) {
-            return this.getDepth(node.id);
+            return this.getDepth(node.getId());
         }, this);
 
         return Math.max.apply(null, depths);
@@ -180,7 +135,7 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
     /**
      * Find node 
      * @param {*} id - A node id to find
-     * @return {node|undefined} Node
+     * @return {TreeNode|undefined} Node
      */
     getNode: function(id) {
         return this.treeHash[id];
@@ -190,7 +145,6 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
      * Get depth from node id
      * @param {*} id - A node id to find
      * @return {number|undefined} Depth
-     * //@todo : default return value?
      */
     getDepth: function(id) {
         var node = this.getNode(id),
@@ -201,10 +155,10 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
             return;
         }
 
-        parent = this.getNode(node.parentId);
+        parent = this.getNode(node.getParentId());
         while (parent) {
             depth += 1;
-            parent = this.getNode(parent.parentId);
+            parent = this.getNode(parent.getParentId());
         }
 
         return depth;
@@ -224,12 +178,13 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
             return;
         }
 
-        parent = this.getNode(node.parentId);
-        forEach(node.childIds, function(childId) {
+        parent = this.getNode(node.getParentId());
+
+        forEach(node.getChildIds(), function(childId) {
             this.remove(childId, true);
         }, this);
 
-        util.removeItemFromArray(parent.childIds, id);
+        parent.removeChildId(id);
         delete this.treeHash[id];
 
         if (!isSilent) {
@@ -260,12 +215,11 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
     set: function(id, props) {
         var node = this.getNode(id);
 
-        props = this._ruleOutReservedProperties(props);
-        if (!node || !props || snippet.isEmpty(props)) {
+        if (!node || !props) {
             return;
         }
 
-        extend(node, props); // Update properties
+        node.addData(props);
         this.fire('update', node);
     },
 
@@ -276,16 +230,17 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
      */
     move: function(nodeId, newParentId) {
         var getNode = this.getNode,
-            node = getNode(id),
-            originalParent = getNode(node.parentId),
-            newParent = getNode(newParentId) || this.rootNode;
+            node = getNode(nodeId),
+            originalParent, newParent;
 
         if (!node) {
             return;
         }
 
-        util.removeItemFromArray(originalParent.childIds, nodeId);
-        newParent.childIds.push(nodeId);
+        originalParent = getNode(node.getParentId());
+        newParent = getNode(newParentId) || this.rootNode;
+        originalParent.removeChildId(nodeId);
+        newParent.addChildId(nodeId);
 
         this.fire('move', node, originalParent, newParent);
     },
@@ -295,15 +250,17 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
      * @param {Function} comparator - Comparator function
      */
     sort: function(comparator) {
-        this.each(function(node) {
-            var children = this.getChildren(node.id);
+        this.each(function(node, nodeId) {
+            var children = this.getChildren(nodeId),
+                childIds;
 
             if (children.length > 1) {
                 children.sort(comparator);
 
-                node.childIds = map(children, function(child) {
-                    return child.id;
+                childIds = map(children, function(child) {
+                    return child.getId();
                 });
+                node.replaceChildIds(childIds);
             }
         });
     },

@@ -1,9 +1,6 @@
 'use strict';
 
-var nodeStates = require('../src/js/states').node;
-
-tui.util.defineNamespace('tui.component.Tree');
-tui.component.Tree.TreeModel = require('../src/js/treemodel');
+var TreeModel = require('../src/js/treemodel');
 
 describe('TreeModel', function() {
     var treeModel,
@@ -34,62 +31,57 @@ describe('TreeModel', function() {
                 {title:'1'},
                 {title:'2'},
                 {title:'3'}
-            ]},
-            {title:'This node has the customId', id: 'customId', children: [
-                {title: 'This node is child of the node having customId', id: 'customIdChild'},
-                {title: 'This node is sechod child of the node having customId', id: 'a_customIdChild'}
             ]}
         ];
 
     beforeEach(function() {
-        treeModel = new tui.component.Tree.TreeModel('closed', data);
+        treeModel = new TreeModel(data, 'closed');
     });
 
     it('Instance should have the rootNode', function() {
-        expect(treeModel.rootNode).toEqual(jasmine.objectContaining({
-            id: jasmine.any(Number),
-            parentId: null,
-            state: nodeStates.OPENED,
-            childIds: jasmine.any(Array)
-        }));
+        expect(treeModel.rootNode).toBeDefined();
     });
 
     it('Instance should have the length of all nodes with rootNode', function() {
-        expect(treeModel.getCount()).toEqual(26);
+        expect(treeModel.getCount()).toEqual(23);
     });
 
     it('Find method should return a node', function() {
-        var searched = treeModel.getNode('customId');
+        var id = treeModel.rootNode.getChildIds()[0],
+            node = treeModel.getNode(id);
 
-        expect(searched.title).toEqual('This node has the customId');
+        expect(node.getData().title).toEqual('A');
     });
 
     it('Add method should append a node to a specific parent node', function() {
         var data = {
-                title: 'This node will be added to "customId Node"',
-                id: 'addedNode'
+                title: 'This node will be added to the first node'
             },
-            searched;
+            parentId = treeModel.rootNode.getChildIds()[0],
+            parentNode = treeModel.getNode(parentId),
+            id, node;
 
-        treeModel.add(data, 'customId');
-        searched = treeModel.getNode('addedNode');
+        treeModel.add(data, parentId);
+        id = parentNode.getChildIds()[12];
+        node = treeModel.getNode(id);
 
-        expect(searched.id).toEqual('addedNode');
-        expect(searched.title).toEqual('This node will be added to "customId Node"');
-        expect(searched.parentId).toEqual('customId');
+        expect(node.getData().title).toEqual('This node will be added to the first node');
+        expect(node.getParentId()).toEqual(parentId);
     });
 
     it('Remove method should remove a node in treeModel', function() {
-        var searched;
+        var id = treeModel.rootNode.getChildIds()[0],
+            childIds = treeModel.getNode(id).getChildIds(),
+            searched;
 
-        treeModel.remove('customId');
+        treeModel.remove(id);
 
-        expect(treeModel.rootNode.childIds).not.toContain('customId');
+        expect(treeModel.rootNode.getChildIds()).not.toContain(id);
 
-        searched = treeModel.getNode('customId');
+        searched = treeModel.getNode(childIds[0]);
         expect(searched).toBeFalsy();
 
-        searched = treeModel.getNode('customIdChild');
+        searched = treeModel.getNode(childIds[11]);
         expect(searched).toBeFalsy();
     });
 
@@ -102,14 +94,13 @@ describe('TreeModel', function() {
     });
 
     it('Sort method', function() {
-        var comparator = function(nodeA, nodeB) {
-            var aId = nodeA.id + '',
-                bId = nodeB.id + '';
+        var childIds = treeModel.rootNode.getChildIds(),
+            comparator = function() {
+                return -1;
+            };
 
-            return aId.localeCompare(bId);
-        };
         treeModel.sort(comparator);
-        expect(treeModel.getNode('customId').childIds[0]).toEqual('a_customIdChild')
+        expect(childIds.reverse()).toEqual(treeModel.rootNode.getChildIds());
     });
 });
 

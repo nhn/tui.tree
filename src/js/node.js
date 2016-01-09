@@ -10,13 +10,13 @@ var lastId = 0,
     };
 
 /**
- * Node
- * @Constructor Node
+ * TreeNode
+ * @Constructor TreeNode
  * @param {Object} nodeData - Node data
  * @param {number} parentId - Parent node id
  * @param {string} state - State of node
  */
-var Node = tui.util.defineClass(/** @lends Node.prototype */{ /*eslint-disable*/
+var TreeNode = tui.util.defineClass(/** @lends Node.prototype */{ /*eslint-disable*/
     init: function(nodeData, parentId, state) { /*eslint-enable*/
         /**
          * Node id
@@ -44,7 +44,7 @@ var Node = tui.util.defineClass(/** @lends Node.prototype */{ /*eslint-disable*/
          * @type {object}
          * @private
          */
-        this._data = nodeData || {};
+        this._data = {};
 
         /**
          * Node state
@@ -52,6 +52,8 @@ var Node = tui.util.defineClass(/** @lends Node.prototype */{ /*eslint-disable*/
          * @private
          */
         this._state = states.CLOSED;
+
+        this.addData(nodeData);
         this.setState(state);
     },
 
@@ -108,10 +110,10 @@ var Node = tui.util.defineClass(/** @lends Node.prototype */{ /*eslint-disable*/
     },
 
     /**
-     * Set childIds
+     * Replace childIds
      * @param {Array.<number>} childIds - Id list of children
      */
-    setChildIds: function(childIds) {
+    replaceChildIds: function(childIds) {
         this._childIds = childIds;
     },
 
@@ -120,14 +122,14 @@ var Node = tui.util.defineClass(/** @lends Node.prototype */{ /*eslint-disable*/
      * @returns {Array.<number>} Id list of children
      */
     getChildIds: function() {
-        return this._childIds.slice(0);
+        return this._childIds.slice();
     },
 
     /**
      * Add child id
      * @param {number} id - Child node id
      */
-    addChild: function(id) {
+    addChildId: function(id) {
         var childIds = this._childIds;
 
         if (tui.util.inArray(childIds, id) === -1) {
@@ -139,7 +141,7 @@ var Node = tui.util.defineClass(/** @lends Node.prototype */{ /*eslint-disable*/
      * Remove child id
      * @param {number} id - Child node id
      */
-    removeChild: function(id) {
+    removeChildId: function(id) {
         util.removeItemFromArray(id, this._childIds);
     },
 
@@ -148,7 +150,7 @@ var Node = tui.util.defineClass(/** @lends Node.prototype */{ /*eslint-disable*/
      * @returns {Object} Data
      */
     getData: function() {
-        return tui.util.extend({}, this._data);
+        return this._data;
     },
 
     /**
@@ -170,4 +172,4 @@ var Node = tui.util.defineClass(/** @lends Node.prototype */{ /*eslint-disable*/
         }, this);
     }
 });
-module.exports = Node;
+module.exports = TreeNode;
