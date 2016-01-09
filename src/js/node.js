@@ -34,7 +34,7 @@ var Node = tui.util.defineClass(/** @lends Node.prototype */{ /*eslint-disable*/
 
         /**
          * Id list of children
-         * @type {Array}
+         * @type {Array.<number>}
          * @private
          */
         this._childIds = [];
@@ -105,6 +105,14 @@ var Node = tui.util.defineClass(/** @lends Node.prototype */{ /*eslint-disable*/
      */
     setParentId: function(parentId) {
         this._parentId = parentId;
+    },
+
+    /**
+     * Set childIds
+     * @param {Array.<number>} childIds - Id list of children
+     */
+    setChildIds: function(childIds) {
+        this._childIds = childIds;
     },
 
     /**

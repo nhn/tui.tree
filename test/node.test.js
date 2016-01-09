@@ -3,7 +3,7 @@
 
 var Node = require('../src/js/node');
 
-describe('Node', function() {
+fdescribe('Node', function() {
     var node,
         parentId = 0,
         state = 'closed',
@@ -41,6 +41,9 @@ describe('Node', function() {
 
         node.removeChild(4);
         expect(node.getChildIds()).not.toContain(4);
+
+        node.setChildIds([4, 5, 6]);
+        expect(node.getChildIds()).toEqual([4, 5, 6]);
     });
 
     it('Methods about data', function() {
