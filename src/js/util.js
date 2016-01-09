@@ -3,15 +3,20 @@
  * @author NHN Ent. FE dev team.<dl_javascript@nhnent.com>
  */
 'use strict';
+var div = document.createElement('div');
+
 var util = {
     /**
      * Remove first specified item from array, if it exists
-     * @param {Array} arr Array to query
      * @param {*} item Item to look for
+     * @param {Array} arr Array to query
      */
-    removeItemFromArray: function(arr, item) {
-        var index = tui.util.inArray(arr, item);
-        arr.splice(index, 1);
+    removeItemFromArray: function(item, arr) {
+        var index = tui.util.inArray(item, arr);
+
+        if (index > -1) {
+            arr.splice(index, 1);
+        }
     },
 
     /**
@@ -142,6 +147,32 @@ var util = {
         } else {
             event.returnValue = false;
         }
+    },
+
+    /**
+     * Make html from template
+     * @param {string} source - Template html
+     * @param {Object} props - Template data
+     * @returns {string} html
+     */
+    template: function(source, props) {
+        return source.replace(/\{\{(\w+)}}/gi, function(match, name) {
+            var value = props[name];
+            if (tui.util.isFalsy(value)) {
+                return '';
+            }
+            return value;
+        });
+    },
+
+    /**
+     * Create element from html
+     * @param {string} html - Html
+     * @returns {Array.<HTMLElement>} HTMLElements list
+     */
+    createElementFromHTML: function(html) {
+        div.innerHTML = html;
+        return tui.util.toArray(div.childNodes);
     },
 
     /**
