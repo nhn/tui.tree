@@ -39,7 +39,9 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
          * Root node
          * @type {TreeNode}
          */
-        this.rootNode = new TreeNode({}, null, 'opened');
+        this.rootNode = new TreeNode({
+            state: 'opened'
+        }, null);
 
         /**
          * Tree hash having all nodes

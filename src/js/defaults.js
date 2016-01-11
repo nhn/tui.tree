@@ -42,7 +42,7 @@ module.exports = {
     useDrag: false,
     useHelper: false,
     defaultState: 'closed',
-    stateLabel: {
+    stateLabels: {
         opened: '-',
         closed: '+'
     },
@@ -55,20 +55,20 @@ module.exports = {
         'closed',
         'selected',
         'subtree',
-        'toggle',
-        'title',
+        'toggleBtn',
+        'text',
         'input'
     ]),
     template: {
         internalNode:
-        '<li id="tui-tree-node-{{nodeId}}" class="tui-tree-node {{stateClass}}" data-nodeId="{{nodeId}}">' +
-            '<button type="button" class="{{toggleClass}}">{{stateLabel}}</button>' +
-            '<span class="{{titleClass}}">{{title}}</span>' +
+        '<li id="tui-tree-node-{{id}}" class="tui-tree-node {{stateClass}}" data-node-id="{{id}}">' +
+            '<button type="button" class="{{toggleBtnClass}}">{{stateLabel}}</button>' +
+            '<span class="{{textClass}}">{{text}}</span>' +
             '<ul class="{{subtreeClass}}">{{children}}</ul>' +
         '</li>',
         leafNode:
-        '<li id="tui-tree-node-{{nodeId}}" class="tui-tree-node tui-tree-leaf" data-nodeId="{{nodeId}}">' +
-            '<span class="{{titleClass}}">{{title}}</span>' +
+        '<li id="tui-tree-node-{{id}}" class="tui-tree-node tui-tree-leaf" data-node-id="{{id}}">' +
+            '<span class="{{textClass}}">{{text}}</span>' +
         '</li>'
     }
 };

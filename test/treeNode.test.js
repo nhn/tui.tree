@@ -6,17 +6,17 @@ var TreeNode = require('../src/js/treeNode');
 describe('Node', function() {
     var node,
         parentId = 0,
-        state = 'closed',
         data = {
-            title: 'My node'
+            title: 'My node',
+            state: 'closed'
         };
 
     beforeEach(function() {
-        node = new TreeNode(data, parentId, state);
+        node = new TreeNode(data, parentId);
     });
 
-    it('State', function() {
-        expect(node.getState()).toEqual(state);
+    it('Set/Get/Toggle state', function() {
+        expect(node.getState()).toEqual('closed');
 
         node.setState('opened');
         expect(node.getState()).toEqual('opened');
@@ -28,13 +28,8 @@ describe('Node', function() {
         expect(node.getState()).toEqual('closed');
     });
 
-    it('Id', function() {
+    it('Add/Remove/Replace childId(s)', function() {
         expect(node.getId()).toEqual(jasmine.any(Number));
-
-        expect(node.getParentId()).toEqual(0);
-
-        node.setParentId(-1);
-        expect(node.getParentId()).toEqual(-1);
 
         node.addChildId(4);
         expect(node.getChildIds()).toContain(4);
@@ -46,20 +41,20 @@ describe('Node', function() {
         expect(node.getChildIds()).toEqual([4, 5, 6]);
     });
 
-    it('Data', function() {
-        expect(node.getData()).toEqual(jasmine.objectContaining({
+    fit('Add/Remove node data', function() {
+        expect(node.getAllData()).toEqual(jasmine.objectContaining({
             title: 'My node'
         }));
 
         node.addData({newData: 'data2'});
-        expect(node.getData()).toEqual(jasmine.objectContaining({
+        expect(node.getAllData()).toEqual(jasmine.objectContaining({
             title: 'My node',
             newData: 'data2'
         }));
 
         node.removeData('title', 'newData');
-        expect(node.getData().title).toBeUndefined();
-        expect(node.getData().newData).toBeUndefined();
+        expect(node.getAllData().title).toBeUndefined();
+        expect(node.getAllData().newData).toBeUndefined();
     });
 
     it('IsLeaf', function() {
