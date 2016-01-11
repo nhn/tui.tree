@@ -19,15 +19,17 @@ var snippet = tui.util,
  * Tree model
  * @constructor TreeModel
  * @param {Array} data - Data
- * @param {string} defaultState - Default state of node
+ * @param {Object} options - Options for defaultState and nodeIdPrefix
  **/
 var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslint-disable */
-    init: function(data, nodeDefaultState) {/*eslint-enable*/
+    init: function(data, options) {/*eslint-enable*/
+        TreeNode.setIdPrefix(options.nodeIdPrefix);
+
         /**
          * Default state of node
          * @type {String}
          */
-        this.nodeDefaultState = nodeDefaultState;
+        this.nodeDefaultState = options.nodeDefaultState;
 
         /**
          * A buffer
@@ -50,6 +52,10 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
         this.treeHash = {};
 
         this._setData(data);
+    },
+
+    getNodeIdPrefix: function() {
+        return TreeNode.idPrefix;
     },
 
     /**
@@ -91,8 +97,10 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
      * @return {TreeNode} TreeNode
      */
     _createNode: function(nodeData, parentId) {
-        var node = new TreeNode(nodeData, parentId, this.nodeDefaultState);
+        var node;
+        nodeData.state = nodeData.state || this.nodeDefaultState;
 
+        node = new TreeNode(nodeData, parentId);
         node.removeData('children');
 
         return node;
@@ -169,7 +177,7 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
     /**
      * Remove a node with children.
      * - The update event will be fired with parent node.
-     * @param {*} id - Node id to remove
+     * @param {string} id - Node id to remove
      * @param {boolean} [isSilent] - If true, it doesn't trigger the 'update' event
      */
     remove: function(id, isSilent) {
@@ -190,7 +198,7 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
         delete this.treeHash[id];
 
         if (!isSilent) {
-            this.fire('update', parent);
+            this.fire('update', parent.getId());
         }
     },
 
@@ -206,7 +214,7 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
 
         data = [].concat(data);
         this._makeTreeHash(data, parent);
-        this.fire('update', parent);
+        this.fire('update', parentId);
     },
 
     /**
@@ -222,7 +230,7 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
         }
 
         node.addData(props);
-        this.fire('update', node);
+        this.fire('update', node.getParentId());
     },
 
     /**

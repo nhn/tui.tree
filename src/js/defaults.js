@@ -41,11 +41,12 @@ function makeClassNames(prefix, keys) {
 module.exports = {
     useDrag: false,
     useHelper: false,
-    defaultState: 'closed',
+    nodeDefaultState: 'closed',
     stateLabels: {
         opened: '-',
         closed: '+'
     },
+    nodeIdPrefix: 'tui-tree-node-',
     helperPos: {
         y: 10,
         x: 10
@@ -61,13 +62,13 @@ module.exports = {
     ]),
     template: {
         internalNode:
-        '<li id="tui-tree-node-{{id}}" class="tui-tree-node {{stateClass}}" data-node-id="{{id}}">' +
+        '<li id="{{id}}" class="tui-tree-node {{stateClass}}">' +
             '<button type="button" class="{{toggleBtnClass}}">{{stateLabel}}</button>' +
             '<span class="{{textClass}}">{{text}}</span>' +
             '<ul class="{{subtreeClass}}">{{children}}</ul>' +
         '</li>',
         leafNode:
-        '<li id="tui-tree-node-{{id}}" class="tui-tree-node tui-tree-leaf" data-node-id="{{id}}">' +
+        '<li id="{{id}}" class="tui-tree-node tui-tree-leaf">' +
             '<span class="{{textClass}}">{{text}}</span>' +
         '</li>'
     }

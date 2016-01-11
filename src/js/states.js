@@ -11,7 +11,7 @@
 module.exports = {
     /**
      * States of tree
-     * @enum {{NORMAL: number, EDITABLE: number}}
+     * @type {{NORMAL: number, EDITABLE: number}}
      */
     tree: {
         NORMAL: 1,
@@ -20,7 +20,7 @@ module.exports = {
 
     /**
      * States of node
-     * @enum {{OPENED: number, CLOSED: number}}
+     * @type {{OPENED: string, CLOSED: string}}
      */
     node: {
         OPENED: 'opened',

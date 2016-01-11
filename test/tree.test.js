@@ -1,6 +1,5 @@
 'use strict';
-tui.util.defineNamespace('tui.component');
-tui.component.Tree = require('../src/js/tree');
+var Tree = require('../src/js/tree');
 
 describe('Tree', function() {
     var data = [
@@ -39,7 +38,7 @@ describe('Tree', function() {
         tree;
 
     beforeEach(function() {
-        tree = new tui.component.Tree(data);
+        tree = new Tree(data);
     });
 
     it('Tree should have a root element', function() {
@@ -73,15 +72,15 @@ describe('Tree', function() {
 //                }]
 //        }];
 //    beforeEach(function() {
-//        view = new tui.component.Tree('', data ,{
+//        view = new Tree('', data ,{
 //            modelOption: modelOption
 //        });
-//        view2 = new tui.component.Tree('', data ,{
+//        view2 = new Tree('', data ,{
 //            modelOption: modelOption,
 //            useDrag: true,
 //            useHelper: true
 //        });
-//        view3 = new tui.component.Tree('', data ,{
+//        view3 = new Tree('', data ,{
 //            modelOption: modelOption,
 //            useDrag: true,
 //            useHelper: false

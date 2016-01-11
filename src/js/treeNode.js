@@ -3,13 +3,13 @@
 var states = require('./states').node,
     util = require('./util');
 
-var lastId = 0,
-    createId = function() {
-        lastId += 1;
-        return lastId;
+var lastIndex = 0,
+    getNextIndex = function() {
+        lastIndex += 1;
+        return lastIndex;
     },
     RESERVED_PROPERTIES = {
-        id: 'setId',
+        id: '',
         state: 'setState'
     };
 
@@ -20,13 +20,19 @@ var lastId = 0,
  * @param {number} [parentId] - Parent node id
  */
 var TreeNode = tui.util.defineClass(/** @lends TreeNode.prototype */{ /*eslint-disable*/
+    static: {
+        setIdPrefix: function(prefix) {
+            this.idPrefix = prefix || this.idPrefix;
+        },
+        idPrefix: ''
+    },
     init: function(nodeData, parentId) { /*eslint-enable*/
         /**
          * Node id
-         * @type {number}
+         * @type {string}
          * @private
          */
-        this._id = createId();
+        this._id = null;
 
         /**
          * Parent node id
@@ -56,24 +62,29 @@ var TreeNode = tui.util.defineClass(/** @lends TreeNode.prototype */{ /*eslint-d
          */
         this._state = states.CLOSED;
 
+        this._stampId();
         this.addData(nodeData);
     },
 
-    _setReservedProperties: function(data) {
-        tui.util.forEachArray(RESERVED_PROPERTIES, function(setter, name) {
-            var value = data[name];
-
-            if (value) {
-                this[setter](value);
-                delete data[name];
-            }
-        }, this);
+    /**
+     * Stamp node id
+     * @private
+     */
+    _stampId: function() {
+        this._id = this.constructor.idPrefix + getNextIndex();
     },
 
-    setId: function(id) {
-        if (id === 0 || id) {
-            this._id = id;
-        }
+    _setReservedProperties: function(data) {
+        tui.util.forEachOwnProperties(RESERVED_PROPERTIES, function(setter, name) {
+            var value = data[name];
+
+            if (value && setter) {
+                this[setter](value);
+            }
+            delete data[name];
+        }, this);
+
+        return data;
     },
 
     /**
@@ -186,7 +197,7 @@ var TreeNode = tui.util.defineClass(/** @lends TreeNode.prototype */{ /*eslint-d
      * @param {Object} data - Data for adding
      */
     addData: function(data) {
-        this._setReservedProperties(data);
+        data = this._setReservedProperties(data);
         tui.util.extend(this._data, data)
     },
 

@@ -3,7 +3,7 @@
 
 var TreeNode = require('../src/js/treeNode');
 
-describe('Node', function() {
+describe('TreeNode', function() {
     var node,
         parentId = 0,
         data = {
@@ -29,8 +29,6 @@ describe('Node', function() {
     });
 
     it('Add/Remove/Replace childId(s)', function() {
-        expect(node.getId()).toEqual(jasmine.any(Number));
-
         node.addChildId(4);
         expect(node.getChildIds()).toContain(4);
 
@@ -41,7 +39,7 @@ describe('Node', function() {
         expect(node.getChildIds()).toEqual([4, 5, 6]);
     });
 
-    fit('Add/Remove node data', function() {
+    it('Add/Remove node data', function() {
         expect(node.getAllData()).toEqual(jasmine.objectContaining({
             title: 'My node'
         }));
@@ -57,17 +55,24 @@ describe('Node', function() {
         expect(node.getAllData().newData).toBeUndefined();
     });
 
-    it('IsLeaf', function() {
+    it('"isLeaf" should return true if a node is leaf', function() {
         expect(node.isLeaf()).toBe(true);
 
         node.addChildId(4);
         expect(node.isLeaf()).toBe(false);
     });
 
-    it('IsRoot', function() {
+    it('"isRoot" should return true if a node is root', function() {
         expect(node.isRoot()).toBe(false);
 
         node.setParentId(null);
         expect(node.isRoot()).toBe(true);
+    });
+
+    it('"constructor.setIdPrefix and _stampId" should set node id', function() {
+        TreeNode.setIdPrefix('new-tree-node-');
+        node = new TreeNode(data, parentId);
+
+        expect(node.getId()).toContain('new-tree-node-');
     });
 });

@@ -49,7 +49,7 @@ var util = {
 
     /**
      * Get target element
-     * @param {event} e Event object
+     * @param {Event} e Event object
      * @return {HTMLElement} Event target
      */
     getTarget: function(e) {
@@ -86,7 +86,7 @@ var util = {
      * @param {string} className A name of class
      * @return {Array.<HTMLElement>} Elements
      */
-    getElementsByClass: function(target, className) {
+    getElementsByClassName: function(target, className) {
         var all, filtered;
 
         if (target.querySelectorAll) {
@@ -99,7 +99,7 @@ var util = {
             });
         }
 
-        return tui.util.toArray(filtered);
+        return filtered;
     },
 
     /**
@@ -163,16 +163,6 @@ var util = {
             }
             return value;
         });
-    },
-
-    /**
-     * Create element from html
-     * @param {string} html - Html
-     * @returns {Array.<HTMLElement>} HTMLElements list
-     */
-    createElementFromHTML: function(html) {
-        div.innerHTML = html;
-        return tui.util.toArray(div.childNodes);
     },
 
     /**

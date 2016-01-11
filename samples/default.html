@@ -19,7 +19,7 @@
             {text: 'root-1B'},
             {text: 'root-1C'},
             {text: 'root-1D'},
-            {text: 'root-2A', children: [
+            {text: 'root-2A', state: 'closed', children: [
                 {text:'sub_1A', children:[
                     {text:'sub_sub_1A'}
                 ]},
@@ -28,7 +28,7 @@
             {text: 'root-2B'},
             {text: 'root-2C'},
             {text: 'root-2D'},
-            {text: 'root-3A', children: [
+            {text: 'root-3A', state: 'closed', children: [
                 {text:'sub3_a'},
                 {text:'sub3_b'}
             ]},
@@ -36,7 +36,7 @@
             {text: 'root-3C'},
             {text: 'root-3D'}
         ]},
-        {text: 'rootB', children: [
+        {text: 'rootB', state:'closed', children: [
             {text:'B_sub1'},
             {text:'B_sub2'},
             {text:'b'}
@@ -44,6 +44,9 @@
     ];
 
     var t = new tui.component.Tree(data, {
+        nodeDefaultState: 'opened',
+        useDrag: true,
+        useHelper: true,
         rootElement: document.getElementById('treeRoot1')
     });
 

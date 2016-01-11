@@ -27,18 +27,21 @@ describe('TreeModel', function() {
                 {text: '11'},
                 {text: '12'}
             ]},
-            {text: 'B', children: [
+            {text: 'B', state: 'opened', children: [
                 {text:'1'},
                 {text:'2'},
                 {text:'3'}
             ]},
-            {text: 'C', id: 'customId', children: [
-                {text: '1', id: 'customIdChild', state:'opened'}
+            {text: 'C', children: [
+                {text: '1'}
             ]}
         ];
 
     beforeEach(function() {
-        treeModel = new TreeModel(data, 'closed');
+        treeModel = new TreeModel(data, {
+            defaultState: 'closed',
+            nodeIdPrefix: 'tree-node-'
+        });
     });
 
     it('Should have the rootNode', function() {
@@ -53,7 +56,7 @@ describe('TreeModel', function() {
         var id = treeModel.rootNode.getChildIds()[0],
             node = treeModel.getNode(id);
 
-        expect(node.getData('hiddenVale')).toEqual('Child of root');
+        expect(node.getData('hiddenValue')).toEqual('Child of root');
         expect(node.getData('text')).toEqual('A');
         expect(node.getAllData()).toEqual({
             text: 'A',
@@ -111,11 +114,14 @@ describe('TreeModel', function() {
         expect(childIds.reverse()).toEqual(treeModel.rootNode.getChildIds());
     });
 
-    it('Should support each node a custom id and initial state', function() {
-        var node = treeModel.getNode('customId');
-        expect(node.getData('text')).toEqual('C');
+    it('Support initial state for each node', function() {
+        var openedNodeId = treeModel.rootNode.getChildIds[1],
+            node = treeModel.getNode(openedNodeId);
 
-        node = treeModel.getNode('customIdChild');
         expect(node.getState()).toEqual('opened');
+    });
+
+    it('GetNodeIdPrefix method', function() {
+        expect(treeModel.getNodeIdPrefix()).toEqual('tree-node-');
     });
 });
