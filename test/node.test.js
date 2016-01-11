@@ -15,7 +15,7 @@ describe('Node', function() {
         node = new TreeNode(data, parentId, state);
     });
 
-    it('Methods about state', function() {
+    it('State', function() {
         expect(node.getState()).toEqual(state);
 
         node.setState('opened');
@@ -28,7 +28,7 @@ describe('Node', function() {
         expect(node.getState()).toEqual('closed');
     });
 
-    it('Methods about id', function() {
+    it('Id', function() {
         expect(node.getId()).toEqual(jasmine.any(Number));
 
         expect(node.getParentId()).toEqual(0);
@@ -46,7 +46,7 @@ describe('Node', function() {
         expect(node.getChildIds()).toEqual([4, 5, 6]);
     });
 
-    it('Methods about data', function() {
+    it('Data', function() {
         expect(node.getData()).toEqual(jasmine.objectContaining({
             title: 'My node'
         }));
@@ -60,5 +60,19 @@ describe('Node', function() {
         node.removeData('title', 'newData');
         expect(node.getData().title).toBeUndefined();
         expect(node.getData().newData).toBeUndefined();
+    });
+
+    it('IsLeaf', function() {
+        expect(node.isLeaf()).toBe(true);
+
+        node.addChildId(4);
+        expect(node.isLeaf()).toBe(false);
+    });
+
+    it('IsRoot', function() {
+        expect(node.isRoot()).toBe(false);
+
+        node.setParentId(null);
+        expect(node.isRoot()).toBe(true);
     });
 });

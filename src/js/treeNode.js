@@ -13,8 +13,8 @@ var lastId = 0,
  * TreeNode
  * @Constructor TreeNode
  * @param {Object} nodeData - Node data
- * @param {number} parentId - Parent node id
- * @param {string} state - State of node
+ * @param {number} [parentId] - Parent node id
+ * @param {string} [state] - State of node
  */
 var TreeNode = tui.util.defineClass(/** @lends TreeNode.prototype */{ /*eslint-disable*/
     init: function(nodeData, parentId, state) { /*eslint-enable*/
@@ -170,6 +170,22 @@ var TreeNode = tui.util.defineClass(/** @lends TreeNode.prototype */{ /*eslint-d
         tui.util.forEach(names, function(name) {
             delete this._data[name]
         }, this);
+    },
+
+    /**
+     * Return whether this node is leaf.
+     * @returns {boolean} Node is leaf or not.
+     */
+    isLeaf: function() {
+        return (this._childIds.length === 0);
+    },
+
+    /**
+     * Return whether this node is root.
+     * @returns {boolean} Node is root or not.
+     */
+    isRoot: function() {
+        return tui.util.isFalsy(this._parentId);
     }
 });
 module.exports = TreeNode;
