@@ -44,11 +44,11 @@ describe('TreeModel', function() {
         });
     });
 
-    it('Should have the rootNode', function() {
+    it('should have the rootNode', function() {
         expect(treeModel.rootNode).toBeDefined();
     });
 
-    it('Should have the length of all nodes with rootNode', function() {
+    it('should have the length of all nodes within rootNode', function() {
         expect(treeModel.getCount()).toEqual(25);
     });
 
@@ -64,7 +64,7 @@ describe('TreeModel', function() {
         });
     });
 
-    it('Add method should append a node to a specific parent node', function() {
+    it('- Add method should append a node to a specific parent node', function() {
         var data = {
                 text: 'This node will be added to the first node'
             },
@@ -80,7 +80,7 @@ describe('TreeModel', function() {
         expect(node.getParentId()).toEqual(parentId);
     });
 
-    it('Remove method should remove a node in treeModel', function() {
+    it('- Remove method should remove a node in treeModel', function() {
         var id = treeModel.rootNode.getChildIds()[0],
             childIds = treeModel.getNode(id).getChildIds(),
             searched;
@@ -96,7 +96,7 @@ describe('TreeModel', function() {
         expect(searched).toBeFalsy();
     });
 
-    it('Each(all) method should iterate over all descendants of a (root or specific)node', function() {
+    it('- Each(all) method should iterate over all descendants of a (root or specific)node', function() {
         var iteratee = jasmine.createSpy(),
             firstChildIdOfRoot = treeModel.rootNode.getChildIds()[0];
 
@@ -108,7 +108,7 @@ describe('TreeModel', function() {
         expect(iteratee.calls.count()).toEqual(17);
     });
 
-    it('Sort method', function() {
+    it('- Sort method', function() {
         var childIds = treeModel.rootNode.getChildIds(),
             comparator = function() {
                 return -1;
@@ -118,18 +118,14 @@ describe('TreeModel', function() {
         expect(childIds.reverse()).toEqual(treeModel.rootNode.getChildIds());
     });
 
-    it('GetNodeIdPrefix method', function() {
-        expect(treeModel.getNodeIdPrefix()).toEqual('tree-node-');
-    });
-
-    it('Support initial state for each node', function() {
+    it('should support initial state for each node', function() {
         var openedNodeId = treeModel.rootNode.getChildIds()[1],
             node = treeModel.getNode(openedNodeId);
 
         expect(node.getState()).toEqual('opened');
     });
 
-    it('Should fire update event when a node added', function() {
+    it('should fire update event when a node added', function() {
         var handler = jasmine.createSpy('updateHandler'),
             rootId = treeModel.rootNode.getId();
 
@@ -139,7 +135,7 @@ describe('TreeModel', function() {
         expect(handler).toHaveBeenCalledWith(rootId);
     });
 
-    it('Should fire update event when a node removed', function() {
+    it('should fire update event when a node removed', function() {
         var handler = jasmine.createSpy('updateHandler'),
             rootId = treeModel.rootNode.getId(),
             firstChildId = treeModel.rootNode.getChildIds()[0];
@@ -150,7 +146,7 @@ describe('TreeModel', function() {
         expect(handler).toHaveBeenCalledWith(rootId);
     });
 
-    it('Should fire update event when node data changed', function() {
+    it('should fire update event when node data changed', function() {
         var handler = jasmine.createSpy('updateHandler'),
             rootId = treeModel.rootNode.getId(),
             firstChildId = treeModel.rootNode.getChildIds()[0];
@@ -162,7 +158,7 @@ describe('TreeModel', function() {
         expect(treeModel.getNode(firstChildId).getData('hiddenValue')).toEqual('new hidden');
     });
 
-    it('Should fire move event when a node moved', function() {
+    it('should fire move event when a node moved', function() {
         var handler = jasmine.createSpy('moveHandler'),
             rootId = treeModel.rootNode.getId(),
             firstChildId = treeModel.rootNode.getChildIds()[0],

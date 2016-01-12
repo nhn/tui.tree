@@ -127,7 +127,7 @@ describe('Tree', function() {
         expect(subtreeElement.childNodes.length).toEqual(childCount - 1);
     });
 
-    it('should redraw nodes when nodes are moved', function() {
+    it('should redraw nodes when a node is moved', function() {
         var firstChildId = tree.model.rootNode.getChildIds()[0],
             lastChildId = tree.model.rootNode.getChildIds().slice(-1)[0], // slice(-1) returns a value of last index
             grandChildId = tree.model.getNode(firstChildId).getChildIds()[0],

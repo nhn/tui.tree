@@ -488,6 +488,11 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
         this.model.remove(nodeId);
     },
 
+    /**
+     * Move a node to new parent
+     * @param {string} nodeId - Node id
+     * @param {string} newParentId - New parent id
+     */
     move: function(nodeId, newParentId) {
         this.model.move(nodeId, newParentId);
     },
