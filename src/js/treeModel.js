@@ -191,6 +191,20 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
     },
 
     /**
+     * Return parent id of node
+     * @param {string} id - Node id
+     * @returns {string|undefined} Parent id
+     */
+    getParentId: function(id) {
+        var node = this.getNode(id);
+
+        if (!node) {
+            return;
+        }
+        return node.getParentId();
+    },
+
+    /**
      * Remove a node with children.
      * - The update event will be fired with parent node.
      * @param {string} id - Node id to remove
@@ -286,9 +300,13 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
         originalParentId = node.getParentId();
         originalParent = this.getNode(originalParentId);
 
-        node.setParentId(newParentId);
+        if (node.hasChild(newParentId) || nodeId === newParentId) {
+            return;
+        }
         originalParent.removeChildId(nodeId);
+        node.setParentId(newParentId);
         newParent.addChildId(nodeId);
+
         this.fire('move', nodeId, originalParentId, newParentId);
     },
 

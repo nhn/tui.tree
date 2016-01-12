@@ -12,7 +12,8 @@ var lastIndex = 0,
     RESERVED_PROPERTIES = {
         id: '',
         state: 'setState'
-    };
+    },
+    inArray = tui.util.inArray;
 
 /**
  * TreeNode
@@ -143,6 +144,10 @@ var TreeNode = tui.util.defineClass(/** @lends TreeNode.prototype */{ /*eslint-d
      * @param {number} parentId - Parent node id
      */
     setParentId: function(parentId) {
+        if (parentId === this._id) {
+            return;
+        }
+        util.removeItemFromArray(parentId, this._childIds);
         this._parentId = parentId;
     },
 
@@ -151,6 +156,11 @@ var TreeNode = tui.util.defineClass(/** @lends TreeNode.prototype */{ /*eslint-d
      * @param {Array.<number>} childIds - Id list of children
      */
     replaceChildIds: function(childIds) {
+        var failed = (inArray(this._id, childIds) !== -1) || (inArray(this._parentId, childIds) !== -1)
+
+        if (failed) {
+            return;
+        }
         this._childIds = childIds;
     },
 
@@ -168,6 +178,10 @@ var TreeNode = tui.util.defineClass(/** @lends TreeNode.prototype */{ /*eslint-d
      */
     addChildId: function(id) {
         var childIds = this._childIds;
+
+        if (id === this._parentId || id === this._id) {
+            return;
+        }
 
         if (tui.util.inArray(childIds, id) === -1) {
             childIds.push(id);
@@ -216,6 +230,15 @@ var TreeNode = tui.util.defineClass(/** @lends TreeNode.prototype */{ /*eslint-d
         tui.util.forEachArray(arguments, function(name) {
             delete this._data[name];
         }, this);
+    },
+
+    /**
+     * Return true if this node has a provided child id.
+     * @param {string} id - Node id
+     * @returns {boolean} - Whether this node has a provided child id.
+     */
+    hasChild: function(id) {
+        return inArray(id, this._childIds) !== -1;
     },
 
     /**

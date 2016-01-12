@@ -34,6 +34,20 @@ var util = {
     },
 
     /**
+     * Replace dom node
+     * @param {Node} originallNode - Original dom node
+     * @param {Node} newNode - New dom node
+     */
+    replaceNode: function(originallNode, newNode) {
+        var parentNode = originallNode.parentNode;
+        if (!parentNode) {
+            return;
+        }
+        parentNode.insertBefore(newNode, originallNode);
+        parentNode.removeChild(originallNode);
+    },
+
+    /**
      * Add classname
      * @param {HTMLElement} element - Target element
      * @param {string} className - Classname

@@ -20,6 +20,10 @@
     <button id="enableSelectionBtn">enableSelection</button>
     <button id="disableSelectionBtn">disableSelection</button>
 </div>
+<div>
+    <button id="enableDNDBtn">enableDragAndDrop</button>
+    <button id="disableDNDBtn">disableDragAndDrop</button>
+</div>
 <script>
     var util = {
         addEventListener: function(element, eventName, handler) {
@@ -71,6 +75,8 @@
         sortBtn = document.getElementById('sortBtn'),
         enableSelectionBtn = document.getElementById('enableSelectionBtn'),
         disableSelectionBtn = document.getElementById('disableSelectionBtn'),
+        enableDNDBtn = document.getElementById('enableDNDBtn'),
+        disableDNDBtn = document.getElementById('disableDNDBtn'),
         rootNodeId = tree.getRootNodeId(),
         firstChildId = tree.getChildIds(rootNodeId)[0];
 
@@ -101,6 +107,14 @@
 
     util.addEventListener(disableSelectionBtn, 'click', function() {
         tree.disableFeature('selectable');
+    });
+
+    util.addEventListener(enableDNDBtn, 'click', function() {
+        tree.enableFeature('draggable');
+    });
+
+    util.addEventListener(disableDNDBtn, 'click', function() {
+        tree.disableFeature('draggable');
     });
 
     tree.on('select', function(nodeId) {

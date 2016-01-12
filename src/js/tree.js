@@ -9,11 +9,13 @@ var defaults = require('./defaults'),
     util = require('./util'),
     states = require('./states'),
     TreeModel = require('./treeModel'),
-    selectable = require('./selectable');
+    selectable = require('./selectable'),
+    draggable = require('./draggable');
 
 var nodeStates = states.node,
     features = {
-        selectable: selectable
+        selectable: selectable,
+        draggable: draggable
     },
     snippet = tui.util,
     extend = snippet.extend;
@@ -113,6 +115,24 @@ var nodeStates = states.node,
  * });
  **/
 var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
+    static: {
+        /**
+         * @memberOf Tree
+         * @static
+         * @param {string} moduleName - Module name
+         * @param {object} module - Module
+         */
+        registerFeature: function(moduleName, module) {
+            if (module && module.set && module.unset){
+                this.features[moduleName] = module;
+            }
+        },
+
+        /**
+         * Tree features
+         */
+        features: {}
+    },
     init: function(data, options) { /*eslint-enable*/
         var extend = snippet.extend;
         options = extend({}, defaults, options);
@@ -271,12 +291,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
             classNames = this.classNames,
             stateLabels = this.stateLabels,
             templateSource = this.template,
-            html = '',
-            defaultSet = {
-                textClass: classNames.textClass,
-                subtreeClass: classNames.subtreeClass,
-                toggleBtnClass: classNames.toggleBtnClass
-            };
+            html = '';
 
         snippet.forEach(nodeIds, function(nodeId) {
             var node = model.getNode(nodeId),
@@ -284,7 +299,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
                 nodeData = node.getAllData(),
                 props = extend({
                     id: nodeId
-                }, defaultSet, nodeData),
+                }, classNames, nodeData),
                 nodeTemplate;
 
             if (node.isLeaf()) {
@@ -314,8 +329,12 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
             parentId = node.getId();
         }
         subtreeElement = this._getSubtreeElement(parentId);
-        subtreeElement.innerHTML = this._makeHtml(node.getChildIds());
+        if (!subtreeElement) {
+            this._drawChildren(node.getParentId());
+            return;
+        }
 
+        subtreeElement.innerHTML = this._makeHtml(node.getChildIds());
         this.model.each(function(node, nodeId) {
             if (node.getState() === nodeStates.OPENED) {
                 this.open(nodeId);
@@ -350,7 +369,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
     },
 
     /**
-     * Get root node id
+     * Return root node id
      * @returns {string} Root node id
      */
     getRootNodeId: function() {
@@ -358,12 +377,21 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
     },
 
     /**
-     * Get child ids
+     * Return child ids
      * @param {string} nodeId - Node id
      * @returns {Array.<string>|undefined} Child ids
      */
     getChildIds: function(nodeId) {
         return this.model.getChildIds(nodeId);
+    },
+
+    /**
+     * Return parent id of node
+     * @param {string} nodeId - Node id
+     * @returns {string|undefined} Parent id
+     */
+    getParentId: function(nodeId) {
+        return this.model.getParentId(nodeId);
     },
 
     /**
@@ -528,10 +556,10 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * Enable facility of tree
      * @param {string} featureName - 'selectable', 'draggable', 'editable'
      * @param {object} [options] - Feature options
-     * @todo
+     * @return {Tree} this
      */
     enableFeature: function(featureName, options) {
-        var feature = features[featureName];
+        var feature = Tree.features[featureName];
 
         if (feature) {
             feature.set(this, options);
@@ -542,10 +570,10 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
     /**
      * Disable facility of tree
      * @param {string} featureName - 'selectable', 'draggable', 'editable'
-     * @todo
+     * @return {Tree} this
      */
     disableFeature: function(featureName) {
-        var feature = features[featureName];
+        var feature = Tree.features[featureName];
 
         if (feature) {
             feature.unset();
@@ -554,5 +582,8 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
     }
 });
 
+tui.util.forEach(features, function(feature, name) {
+    Tree.registerFeature(name, feature);
+});
 tui.util.CustomEvents.mixin(Tree);
 module.exports = Tree;

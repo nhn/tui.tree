@@ -3,8 +3,6 @@
 var util = require('./util');
 
 module.exports = {
-    tree: null,
-
     set: function(tree) {
         this.tree = tree;
         this.selectedClassName = tree.classNames.selectedClass;

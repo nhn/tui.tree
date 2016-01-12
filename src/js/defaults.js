@@ -39,18 +39,12 @@ function makeClassNames(prefix, keys) {
  *  @property {string} template.leafNode - A template html for leaf node.
  */
 module.exports = {
-    useDrag: false,
-    useHelper: false,
     nodeDefaultState: 'closed',
     stateLabels: {
         opened: '-',
         closed: '+'
     },
     nodeIdPrefix: 'tui-tree-node-',
-    helperPos: {
-        y: 10,
-        x: 10
-    },
     classNames: makeClassNames('tui-tree-', [
         'opened',
         'closed',
