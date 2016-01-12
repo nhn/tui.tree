@@ -44,7 +44,7 @@ describe('TreeNode', function() {
             title: 'My node'
         }));
 
-        node.addData({newData: 'data2'});
+        node.setData({newData: 'data2'});
         expect(node.getAllData()).toEqual(jasmine.objectContaining({
             title: 'My node',
             newData: 'data2'

@@ -63,7 +63,7 @@ var TreeNode = tui.util.defineClass(/** @lends TreeNode.prototype */{ /*eslint-d
         this._state = states.CLOSED;
 
         this._stampId();
-        this.addData(nodeData);
+        this.setData(nodeData);
     },
 
     /**
@@ -193,10 +193,10 @@ var TreeNode = tui.util.defineClass(/** @lends TreeNode.prototype */{ /*eslint-d
     },
 
     /**
-     * Add data
+     * Set data
      * @param {Object} data - Data for adding
      */
-    addData: function(data) {
+    setData: function(data) {
         data = this._setReservedProperties(data);
         tui.util.extend(this._data, data)
     },

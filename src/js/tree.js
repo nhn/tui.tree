@@ -194,18 +194,17 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
         }
 
         if (util.hasClass(target, this.classNames.toggleBtnClass)) {
-            this.toggleNode(this.getNodeIdFromElement(target));
+            this.toggle(this.getNodeIdFromElement(target));
             return;
         }
 
         if (this.clickTimer) {
-            window.clearTimeout(this.clickTimer);
-            this.clickTimer = null;
             this.fire('doubleClick', event);
+            this.resetClickTimer();
         } else {
             this.clickTimer = setTimeout(function() {
                 self.fire('singleClick', event);
-                self.clickTimer = null;
+                self.resetClickTimer();
             }, 400);
         }
     },
@@ -216,7 +215,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * @param {string} state - Node state
      * @private
      */
-    _setNodeState: function(nodeId, state) {
+    _setDisplayFromNodeState: function(nodeId, state) {
         var subtreeElement = this._getSubtreeElement(nodeId),
             classNames, label, nodeClassName, display, btnElement, nodeElement;
 
@@ -334,7 +333,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
     _getSubtreeElement: function(nodeId) {
         var node = this.model.getNode(nodeId),
             subtreeClassName, nodeElement, subtreeElement;
-        if (!nodeId || (node && node.isLeaf())) {
+        if (!node || node.isLeaf()) {
             return;
         }
 
@@ -347,6 +346,14 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
         subtreeElement = util.getElementsByClassName(nodeElement, subtreeClassName)[0];
 
         return subtreeElement;
+    },
+
+    /**
+     * Reset click timer
+     */
+    resetClickTimer: function() {
+        window.clearTimeout(this.clickTimer);
+        this.clickTimer = null;
     },
 
     /**
@@ -366,15 +373,29 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
     },
 
     /**
-     * Get root node(or element) id
-     * @returns {string} Root node id
+     * Get prefix of node id
+     * @returns {string} Prefix of node id
      */
-    getRootId: function() {
-        return this.model.rootNode.getId();
-    },
-
     getNodeIdPrefix: function() {
         return this.model.getNodeIdPrefix();
+    },
+
+    /**
+     * Set data properties of a node
+     * @param {string} nodeId - Node id
+     * @param {object} data - Properties
+     */
+    setNodeData: function(nodeId, data) {
+        this.model.setNodeData(nodeId, data);
+    },
+
+    /**
+     * Remove node data
+     * @param {string} nodeId - Node id
+     * @param {string|Array} names - Names of properties
+     */
+    removeNodeData: function(nodeId, names) {
+        this.model.removeNodeData(nodeId, names)
     },
 
     /**
@@ -382,7 +403,13 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * @param {string} nodeId - Node id
      */
     open: function(nodeId) {
-        this._setNodeState(nodeId, nodeStates.OPENED);
+        var node = this.model.getNode(nodeId),
+            state = nodeStates.OPENED;
+
+        if (node && !node.isRoot()) {
+            node.setState(state);
+            this._setDisplayFromNodeState(nodeId, state);
+        }
     },
 
     /**
@@ -390,7 +417,13 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * @param {string} nodeId - Node id
      */
     close: function(nodeId) {
-        this._setNodeState(nodeId, nodeStates.CLOSED);
+        var node = this.model.getNode(nodeId),
+            state = nodeStates.CLOSED;
+
+        if (node && !node.isRoot()) {
+            node.setState(state);
+            this._setDisplayFromNodeState(nodeId, state);
+        }
     },
 
     /**
@@ -398,14 +431,14 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * @param {string} nodeId - Node id
      * @private
      **/
-    toggleNode: function(nodeId) {
+    toggle: function(nodeId) {
         var node = this.model.getNode(nodeId),
             state;
 
-        if (node) {
+        if (node && !node.isRoot()) {
             node.toggleState();
             state = node.getState();
-            this._setNodeState(nodeId, state);
+            this._setDisplayFromNodeState(nodeId, state);
         }
     },
 
@@ -462,6 +495,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
     /**
      * Enable facility of tree
      * @param {string} facilityName - 'selection', 'dnd', 'editing'
+     * @todo
      */
     enable: function(facilityName) {
 
@@ -470,6 +504,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
     /**
      * Disable facility of tree
      * @param {string} facilityName - 'selection', 'dnd', 'editing'
+     * @todo
      */
     disable: function(facilityName) {
 
@@ -478,77 +513,3 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
 
 tui.util.CustomEvents.mixin(Tree);
 module.exports = Tree;
-
-// Legacy helper
-// *     @param {Object} [options.helperPos] A related position for helper object
-//--------------------------------------------------------------------------------
-//
-///**
-// * Whether drag and drop use or not
-// * @type {boolean}
-// */
-//this.useDrag = options.useDrag;
-//
-///**
-// * Whether helper element use or not
-// * @type {boolean}
-// */
-//this.useHelper = this.useDrag && options.useHelper;
-//
-///**
-// * Set relative position for helper object
-// * @type {object}
-// */
-//this.helperPos = options.helperPos;
-//
-//
-///**
-// * Set drag and drop event
-// * @private
-// */
-//_addDragEvent: function() {
-//    var userSelectProperty = util.testProp(['userSelect', 'WebkitUserSelect', 'OUserSelect', 'MozUserSelect', 'msUserSelect']),
-//        isSupportSelectStart = 'onselectstart' in document;
-//
-//    if (isSupportSelectStart) {
-//        util.addEventListener(this.rootElement, 'selectstart', util.preventDefault);
-//    } else {
-//        document.documentElement.style[userSelectProperty] = 'none';
-//    }
-//    util.addEventListener(this.rootElement, 'mousedown', snippet.bind(this._onMouseDown, this));
-//},
-//
-///**
-// * Show up guide element
-// * @param {object} pos A element position
-// * @param {string} value A element text value
-// */
-//enableHelper: function(pos, value) {
-//    if (!this.helperElement) {
-//        this.helperElement = document.createElement('span');
-//        this.helperElement.style.position = 'absolute';
-//        this.helperElement.style.display = 'none';
-//        this.root.parentNode.appendChild(this.helperElement);
-//    }
-//
-//    this.helperElement.innerHTML = value;
-//},
-//
-///**
-// * Set guide element location
-// * @param {object} pos A position to move
-// */
-//setHelperLocation: function(pos) {
-//    this.helperElement.style.left = pos.x + this.helperPos.x + 'px';
-//    this.helperElement.style.top = pos.y + this.helperPos.y + 'px';
-//    this.helperElement.style.display = '';
-//},
-//
-///**
-// * Hide guide element
-// */
-//disableHelper: function() {
-//    if (this.helperElement) {
-//        this.helperElement.style.display = 'none';
-//    }
-//},

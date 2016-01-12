@@ -156,7 +156,7 @@ describe('TreeModel', function() {
             firstChildId = treeModel.rootNode.getChildIds()[0];
 
         treeModel.on('update', handler);
-        treeModel.set(firstChildId, {hiddenValue: 'new hidden'});
+        treeModel.setNodeData(firstChildId, {hiddenValue: 'new hidden'});
 
         expect(handler).toHaveBeenCalledWith(rootId);
         expect(treeModel.getNode(firstChildId).getData('hiddenValue')).toEqual('new hidden');

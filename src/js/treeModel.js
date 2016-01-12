@@ -220,18 +220,38 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
     },
 
     /**
-     * Set properties of a node
-     * @param {*} id Node id
-     * @param {object} props Properties
+     * Set data properties of a node
+     * @param {*} id - Node id
+     * @param {object} props - Properties
      */
-    set: function(id, props) {
+    setNodeData: function(id, props) {
         var node = this.getNode(id);
 
         if (!node || !props) {
             return;
         }
 
-        node.addData(props);
+        node.setData(props);
+        this.fire('update', node.getParentId());
+    },
+
+    /**
+     * Remove node data
+     * @param {string} id - Node id
+     * @param {string|Array} names - Names of properties
+     */
+    removeNodeData: function(id, names) {
+        var node = this.getNode(id);
+
+        if (!node || !names) {
+            return;
+        }
+
+        if (tui.util.isArray(names)) {
+            node.removeData.apply(node, names);
+        } else {
+            node.removeData(names);
+        }
         this.fire('update', node.getParentId());
     },
 
