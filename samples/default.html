@@ -11,8 +11,20 @@
 <div class="treeWrap" style="position:relative; border:1px solid #eaeaea;">
     <ul id="treeRoot1" class="tree"></ul>
 </div>
-
+<button id="addChildBtn">addChild</button>
+<button id="removeChildBtn">removeChild</button>
+<button id="sortBtn">sortBtn</button>
 <script>
+    var util = {
+        addEventListener: function(element, eventName, handler) {
+            if (element.addEventListener) {
+                element.addEventListener(eventName, handler, false);
+            } else {
+                element.attachEvent('on' + eventName, handler);
+            }
+        }
+    };
+
     var data = [
         {text: 'rootA', children: [
             {text: 'root-1A'},
@@ -43,14 +55,37 @@
         ]}
     ];
 
-    var t = new tui.component.Tree(data, {
+    var tree = new tui.component.Tree(data, {
         nodeDefaultState: 'opened',
-        useDrag: true,
-        useHelper: true,
         rootElement: document.getElementById('treeRoot1')
     });
 
+    var addChildBtn = document.getElementById('addChildBtn'),
+        removeChildBtn = document.getElementById('removeChildBtn'),
+        sortBtn = document.getElementById('sortBtn'),
+        rootNodeId = tree.getRootNodeId(),
+        firstChildId = tree.getChildIds(rootNodeId)[0];
 
+    util.addEventListener(addChildBtn, 'click', function() {
+        tree.add({text:'hello world'}, firstChildId);
+    });
+
+    util.addEventListener(removeChildBtn, 'click', function() {
+        var lastGrandChildId = tree.getChildIds(firstChildId).slice(-1)[0];
+        tree.remove(lastGrandChildId);
+    });
+
+    util.addEventListener(sortBtn, 'click', function() {
+        tree.sort(function(nodeA, nodeB) {
+            var aValue = nodeA.getData('text'),
+                bValue = nodeB.getData('text');
+
+            if (!bValue.localeCompare) {
+                return 0;
+            }
+            return bValue.localeCompare(aValue);
+        });
+    });
 </script>
 </body>
 </html>

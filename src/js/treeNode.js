@@ -5,8 +5,9 @@ var states = require('./states').node,
 
 var lastIndex = 0,
     getNextIndex = function() {
+        var index = lastIndex;
         lastIndex += 1;
-        return lastIndex;
+        return index;
     },
     RESERVED_PROPERTIES = {
         id: '',
@@ -216,7 +217,7 @@ var TreeNode = tui.util.defineClass(/** @lends TreeNode.prototype */{ /*eslint-d
      * @returns {boolean} Node is leaf or not.
      */
     isLeaf: function() {
-        return (this._childIds.length === 0);
+        return this._childIds.length === 0;
     },
 
     /**

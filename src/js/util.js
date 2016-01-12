@@ -34,6 +34,35 @@ var util = {
     },
 
     /**
+     * Add classname
+     * @param {HTMLElement} element - Target element
+     * @param {string} className - Classname
+     */
+    addClass: function(element, className) {
+        if (element.className === '') {
+            element.className = className;
+        } else if (!util.hasClass(element, className)) {
+            element.className += ' ' + className;
+        }
+    },
+
+    /**
+     * Remove classname
+     * @param {HTMLElement} element - Target element
+     * @param {string} className - Classname
+     */
+    removeClass: function(element, className) {
+        var arr = util.getClass(element).split(' '),
+            index = tui.util.inArray(className, arr);
+
+        if (index !== -1) {
+            arr.splice(index, 1);
+            element.className = arr.join(' ');
+        }
+    },
+
+
+    /**
      * Add event to element
      * @param {Object} element A target element
      * @param {String} eventName A name of event 

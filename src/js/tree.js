@@ -10,11 +10,9 @@ var defaults = require('./defaults'),
     states = require('./states'),
     TreeModel = require('./treeModel');
 
-var treeStates = states.tree,
-    nodeStates = states.node,
+var nodeStates = states.node,
     snippet = tui.util,
-    extend = snippet.extend,
-    reduce = snippet.reduce;
+    extend = snippet.extend;
 /**
  * Create tree model and inject data to model
  * @constructor
@@ -116,12 +114,6 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
         options = extend({}, defaults, options);
 
         /**
-         * A state of tree
-         * @type {number}
-         */
-        this.state = treeStates.NORMAL;
-
-        /**
          * Default class names
          * @type {object.<string, string>}
          */
@@ -156,6 +148,10 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
         this._setEvents();
     },
 
+    /**
+     * Set root element of tree
+     * @private
+     */
     _setRoot: function() {
         var rootEl = this.rootElement;
 
@@ -166,7 +162,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
     },
 
     /**
-     * Set event handler
+     * Set event handlers
      */
     _setEvents: function() {
         this.model.on('update', this._drawChildren, this);
@@ -174,6 +170,13 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
         util.addEventListener(this.rootElement, 'click', snippet.bind(this._onClick, this));
     },
 
+    /**
+     * Move event handler
+     * @param {string} nodeId - Node id
+     * @param {string} originalParentId - Original parent node id
+     * @param {string} newParentId - New parent node id
+     * @private
+     */
     _onMove: function(nodeId, originalParentId, newParentId) {
         this._drawChildren(originalParentId);
         this._drawChildren(newParentId);
@@ -192,12 +195,10 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
             this.clickTimer = null;
             return;
         }
-
         if (util.hasClass(target, this.classNames.toggleBtnClass)) {
             this.toggle(this.getNodeIdFromElement(target));
             return;
         }
-
         if (this.clickTimer) {
             this.fire('doubleClick', event);
             this.resetClickTimer();
@@ -217,46 +218,42 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      */
     _setDisplayFromNodeState: function(nodeId, state) {
         var subtreeElement = this._getSubtreeElement(nodeId),
-            classNames, label, nodeClassName, display, btnElement, nodeElement;
+            toggleBtnClassName = this.classNames.toogleBtnClass,
+            label, btnElement, nodeElement;
 
         if (!subtreeElement || subtreeElement === this.rootElement) {
             return;
         }
-        classNames = this.classNames;
         label = this.stateLabels[state];
         nodeElement = document.getElementById(nodeId);
-        btnElement = util.getElementsByClassName(nodeElement, classNames.toggleBtnClass)[0];
+        btnElement = util.getElementsByClassName(nodeElement, toggleBtnClassName)[0];
 
         if (state === nodeStates.OPENED) {
-            display = '';
+            subtreeElement.style.display = '';
         } else {
-            display = 'none';
+            subtreeElement.style.display = 'none';
         }
-        nodeClassName = this._getNodeClassNameFromState(nodeElement, state);
+        this._setNodeClassNameFromState(nodeElement, state);
 
-        nodeElement.className = nodeClassName;
-        subtreeElement.style.display = display;
         if (btnElement) {
             btnElement.innerHTML = label;
         }
     },
 
     /**
-     * Get node class name from new changed state
+     * Set node class name from provided state
      * @param {HTMLElement} nodeElement - TreeNode element
      * @param {string} state - New changed state
-     * @returns {string} Class name
      * @private
      */
-    _getNodeClassNameFromState: function(nodeElement, state) {
+    _setNodeClassNameFromState: function(nodeElement, state) {
         var classNames = this.classNames,
             openedClassName = classNames[nodeStates.OPENED + 'Class'],
-            closedClassName = classNames[nodeStates.CLOSED + 'Class'],
-            nodeClassName = nodeElement.className
-                .replace(' ' + closedClassName, '')
-                .replace(' ' + openedClassName, '');
+            closedClassName = classNames[nodeStates.CLOSED + 'Class'];
 
-        return nodeClassName + ' ' + classNames[state+'Class'];
+        util.removeClass(nodeElement, openedClassName);
+        util.removeClass(nodeElement, closedClassName);
+        util.addClass(nodeElement, classNames[state + 'Class']);
     },
 
     /**
@@ -349,6 +346,23 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
     },
 
     /**
+     * Get root node id
+     * @returns {string} Root node id
+     */
+    getRootNodeId: function() {
+        return this.model.rootNode.getId();
+    },
+
+    /**
+     * Get child ids
+     * @param {string} nodeId - Node id
+     * @returns {Array.<string>|undefined} Child ids
+     */
+    getChildIds: function(nodeId) {
+        return this.model.getChildIds(nodeId);
+    },
+
+    /**
      * Reset click timer
      */
     resetClickTimer: function() {
@@ -363,7 +377,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * @private
      */
     getNodeIdFromElement: function(element) {
-        var idPrefix = this.model.getNodeIdPrefix();
+        var idPrefix = this.getNodeIdPrefix();
 
         while (element && element.id.indexOf(idPrefix) === -1) {
             element = element.parentElement;
@@ -378,6 +392,15 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      */
     getNodeIdPrefix: function() {
         return this.model.getNodeIdPrefix();
+    },
+
+    /**
+     * Get node data
+     * @param {string} nodeId - Node id
+     * @returns {object|undefined} Node data
+     */
+    getNodeData: function(nodeId) {
+        return this.model.getNodeData(nodeId);
     },
 
     /**
