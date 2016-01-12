@@ -52,9 +52,15 @@ var util = {
      * @param {string} className - Classname
      */
     removeClass: function(element, className) {
-        var arr = util.getClass(element).split(' '),
-            index = tui.util.inArray(className, arr);
+        var originalClassName = util.getClass(element),
+            arr, index;
 
+        if (!originalClassName) {
+            return;
+        }
+
+        arr = originalClassName.split(' ');
+        index = tui.util.inArray(className, arr);
         if (index !== -1) {
             arr.splice(index, 1);
             element.className = arr.join(' ');

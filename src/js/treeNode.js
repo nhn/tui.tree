@@ -75,6 +75,12 @@ var TreeNode = tui.util.defineClass(/** @lends TreeNode.prototype */{ /*eslint-d
         this._id = this.constructor.idPrefix + getNextIndex();
     },
 
+    /**
+     * Set reserved properties from data
+     * @param {object} data - Node data
+     * @returns {object} Node data
+     * @private
+     */
     _setReservedProperties: function(data) {
         tui.util.forEachOwnProperties(RESERVED_PROPERTIES, function(setter, name) {
             var value = data[name];

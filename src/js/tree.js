@@ -8,9 +8,13 @@
 var defaults = require('./defaults'),
     util = require('./util'),
     states = require('./states'),
-    TreeModel = require('./treeModel');
+    TreeModel = require('./treeModel'),
+    selectable = require('./selectable');
 
 var nodeStates = states.node,
+    features = {
+        selectable: selectable
+    },
     snippet = tui.util,
     extend = snippet.extend;
 /**
@@ -522,20 +526,31 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
 
     /**
      * Enable facility of tree
-     * @param {string} facilityName - 'selection', 'dnd', 'editing'
+     * @param {string} featureName - 'selectable', 'draggable', 'editable'
+     * @param {object} [options] - Feature options
      * @todo
      */
-    enable: function(facilityName) {
+    enableFeature: function(featureName, options) {
+        var feature = features[featureName];
 
+        if (feature) {
+            feature.set(this, options);
+        }
+        return this;
     },
 
     /**
      * Disable facility of tree
-     * @param {string} facilityName - 'selection', 'dnd', 'editing'
+     * @param {string} featureName - 'selectable', 'draggable', 'editable'
      * @todo
      */
-    disable: function(facilityName) {
+    disableFeature: function(featureName) {
+        var feature = features[featureName];
 
+        if (feature) {
+            feature.unset();
+        }
+        return this;
     }
 });
 

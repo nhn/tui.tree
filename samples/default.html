@@ -11,9 +11,15 @@
 <div class="treeWrap" style="position:relative; border:1px solid #eaeaea;">
     <ul id="treeRoot1" class="tree"></ul>
 </div>
-<button id="addChildBtn">addChild</button>
-<button id="removeChildBtn">removeChild</button>
-<button id="sortBtn">sortBtn</button>
+<div>
+    <button id="addChildBtn">addChild</button>
+    <button id="removeChildBtn">removeChild</button>
+    <button id="sortBtn">sortBtn</button>
+</div>
+<div>
+    <button id="enableSelectionBtn">enableSelection</button>
+    <button id="disableSelectionBtn">disableSelection</button>
+</div>
 <script>
     var util = {
         addEventListener: function(element, eventName, handler) {
@@ -63,6 +69,8 @@
     var addChildBtn = document.getElementById('addChildBtn'),
         removeChildBtn = document.getElementById('removeChildBtn'),
         sortBtn = document.getElementById('sortBtn'),
+        enableSelectionBtn = document.getElementById('enableSelectionBtn'),
+        disableSelectionBtn = document.getElementById('disableSelectionBtn'),
         rootNodeId = tree.getRootNodeId(),
         firstChildId = tree.getChildIds(rootNodeId)[0];
 
@@ -85,6 +93,18 @@
             }
             return bValue.localeCompare(aValue);
         });
+    });
+
+    util.addEventListener(enableSelectionBtn, 'click', function() {
+        tree.enableFeature('selectable');
+    });
+
+    util.addEventListener(disableSelectionBtn, 'click', function() {
+        tree.disableFeature('selectable');
+    });
+
+    tree.on('select', function(nodeId) {
+        alert('select! - ' + nodeId);
     });
 </script>
 </body>
