@@ -96,12 +96,16 @@ describe('TreeModel', function() {
         expect(searched).toBeFalsy();
     });
 
-    it('Each method', function() {
+    it('Each(all) method should iterate over all descendants of a (root or specific)node', function() {
         var iteratee = jasmine.createSpy(),
-            callCount = treeModel.getCount();
+            firstChildIdOfRoot = treeModel.rootNode.getChildIds()[0];
 
-        treeModel.each(iteratee);
-        expect(iteratee.calls.count()).toEqual(callCount);
+        treeModel.eachAll(iteratee);
+        expect(iteratee.calls.count()).toEqual(25);
+
+        iteratee.calls.reset();
+        treeModel.each(iteratee, firstChildIdOfRoot);
+        expect(iteratee.calls.count()).toEqual(17);
     });
 
     it('Sort method', function() {
@@ -114,14 +118,14 @@ describe('TreeModel', function() {
         expect(childIds.reverse()).toEqual(treeModel.rootNode.getChildIds());
     });
 
+    it('GetNodeIdPrefix method', function() {
+        expect(treeModel.getNodeIdPrefix()).toEqual('tree-node-');
+    });
+
     it('Support initial state for each node', function() {
-        var openedNodeId = treeModel.rootNode.getChildIds[1],
+        var openedNodeId = treeModel.rootNode.getChildIds()[1],
             node = treeModel.getNode(openedNodeId);
 
         expect(node.getState()).toEqual('opened');
-    });
-
-    it('GetNodeIdPrefix method', function() {
-        expect(treeModel.getNodeIdPrefix()).toEqual('tree-node-');
     });
 });

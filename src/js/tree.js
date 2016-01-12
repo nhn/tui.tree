@@ -580,7 +580,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
             } else {
                 this.close(nodeId);
             }
-        }, this);
+        }, parentId, this);
     },
 
     /**

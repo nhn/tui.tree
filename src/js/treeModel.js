@@ -98,7 +98,9 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
      */
     _createNode: function(nodeData, parentId) {
         var node;
-        nodeData.state = nodeData.state || this.nodeDefaultState;
+        nodeData = extend({
+            state: this.nodeDefaultState
+        }, nodeData);
 
         node = new TreeNode(nodeData, parentId);
         node.removeData('children');
@@ -260,7 +262,7 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
      * @param {Function} comparator - Comparator function
      */
     sort: function(comparator) {
-        this.each(function(node, nodeId) {
+        this.eachAll(function(node, nodeId) {
             var children = this.getChildren(nodeId),
                 childIds;
 
@@ -280,12 +282,37 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
      * @param {Function} iteratee - Iteratee function
      * @param {object} [context] - Context of iteratee
      */
-    each: function(iteratee, context) {
+    eachAll: function(iteratee, context) {
         context = context || this;
 
         forEach(this.treeHash, function() {
             iteratee.apply(context, arguments);
         });
+    },
+
+    /**
+     * Traverse this tree iterating over all descendants of a node.
+     * @param {Function} iteratee - Iteratee function
+     * @param {string} parentId - Parent node id
+     * @param {object} [context] - Context of iteratee
+     */
+    each: function(iteratee, parentId, context) {
+        var stack, nodeId, node;
+
+        node = this.getNode(parentId);
+        if (!node) {
+            return;
+        }
+        stack = node.getChildIds();
+
+        context = context || this;
+        while (stack.length) {
+            nodeId = stack.pop();
+            node = this.getNode(nodeId);
+            iteratee.call(context, node, nodeId);
+
+            util.pushAll(stack, node.getChildIds());
+        }
     }
 });
 
