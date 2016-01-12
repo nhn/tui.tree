@@ -241,20 +241,21 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
      * @param {*} newParentId - New parent id
      */
     move: function(nodeId, newParentId) {
-        var getNode = this.getNode,
-            node = getNode(nodeId),
-            originalParent, newParent;
+        var node = this.getNode(nodeId),
+            originalParent, originalParentId, newParent;
 
         if (!node) {
             return;
         }
+        newParent = this.getNode(newParentId) || this.rootNode;
+        newParentId = newParent.getId();
+        originalParentId = node.getParentId();
+        originalParent = this.getNode(originalParentId);
 
-        originalParent = getNode(node.getParentId());
-        newParent = getNode(newParentId) || this.rootNode;
+        node.setParentId(newParentId);
         originalParent.removeChildId(nodeId);
         newParent.addChildId(nodeId);
-
-        this.fire('move', node, originalParent, newParent);
+        this.fire('move', nodeId, originalParentId, newParentId);
     },
 
     /**

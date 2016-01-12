@@ -37,22 +37,19 @@ var treeStates = states.tree,
  *         @param {string} [options.classNames.inputClass] A class input element in a node
  *         @param {string} [options.classNames.subtreeClass] A class name for subtree in internal node
  *         @param {string} [options.classNames.toggleBtnClass] A class name for toggle button in internal node
- *     @param {Object} [options.helperPos] A related position for helper object
  * @example
  * //Default options
+ * //   - HTML TEMPLATE
+ * //       - The prefix "d_" represents the data of each node.
+ * //       - The "d_children" will be converted to HTML-template
+ * //
  * // {
  * //     rootElement: document.createElement('UL'),
  * //     nodeIdPrefix: 'tui-tree-node-'
- * //     useDrag: false,
- * //     useHelper: false,
  * //     defaultState: 'closed',
  * //     stateLabels: {
  * //         opened: '-',
  * //         closed: '+'
- * //     },
- * //     helperPos: {
- * //         y: 10,
- * //         x: 10
  * //     },
  * //     classNames: {
  * //         openedClass: 'tui-tree-opened',
@@ -64,9 +61,6 @@ var treeStates = states.tree,
  * //         iuputClass: 'tui-tree-input'
  * //     },
  * //
- * // HTML TEMPLATE
- * // - The prefix "d_" represents the data of each node.
- * // - The "d_children" will be converted to HTML-template
  * //     template: {
  * //         internalNode:
  * //         '<li id="{{id}}" class="tui-tree-node {{stateClass}}" data-node-id="{{id}}">' +
@@ -152,30 +146,6 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
         this.stateLabels = options.stateLabels;
 
         /**
-         * Whether drag and drop use or not
-         * @type {boolean}
-         */
-        this.useDrag = options.useDrag;
-
-        /**
-         * Whether helper element use or not
-         * @type {boolean}
-         */
-        this.useHelper = this.useDrag && options.useHelper;
-
-        /**
-         * Set relative position for helper object
-         * @type {object}
-         */
-        this.helperPos = options.helperPos;
-
-        /**
-         * Input element 
-         * @type {HTMLElement}
-         */
-        this.inputElement = this._createEditableElement();
-
-        /**
          * Make tree model
          * @type {TreeModel}
          */
@@ -196,24 +166,12 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
     },
 
     /**
-     * Make input element
-     * @return {HTMLElement} Editable element
-     */
-    _createEditableElement: function() {
-        var input = document.createElement('INPUT');
-        input.className = this.classNames['inputClass'];
-        input.setAttribute('type', 'text');
-
-        return input;
-    },
-
-    /**
      * Get node id from element
      * @param {HTMLElement} element - HTMLElement
      * @returns {string} Node id
      * @private
      */
-    _getNodeIdFromElement: function(element) {
+    getNodeIdFromElement: function(element) {
         var idPrefix = this.model.getNodeIdPrefix();
 
         while (element && element.id.indexOf(idPrefix) === -1) {
@@ -225,40 +183,16 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
 
     /**
      * Set event handler
-     * @todo
      */
     _setEvents: function() {
         this.model.on('update', this._drawChildren, this);
-
         util.addEventListener(this.rootElement, 'click', snippet.bind(this._onClick, this));
-        //util.addEventListener(this.inputElement, 'blur', snippet.bind(this._onBlurInput, this));
-        //util.addEventListener(this.inputElement, 'keyup', snippet.bind(this._onKeyup, this));
-        //if (this.useDrag) {
-        //    this._addDragEvent();
-        //}
-    },
-
-    /**
-     * Set drag and drop event 
-     * @private
-     */
-    _addDragEvent: function() {
-        var userSelectProperty = util.testProp(['userSelect', 'WebkitUserSelect', 'OUserSelect', 'MozUserSelect', 'msUserSelect']),
-            isSupportSelectStart = 'onselectstart' in document;
-
-        if (isSupportSelectStart) {
-            util.addEventListener(this.rootElement, 'selectstart', util.preventDefault);
-        } else {
-            document.documentElement.style[userSelectProperty] = 'none';
-        }
-        util.addEventListener(this.rootElement, 'mousedown', snippet.bind(this._onMouseDown, this));
     },
 
     /**
      * On click event handler
      * @param {MouseEvent} event - Click event
      * @private
-     * @todo
      */
     _onClick: function(event) {
         var target = util.getTarget(event),
@@ -269,203 +203,21 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
             return;
         }
 
-        if (!util.hasClass(target, this.classNames.textClass)) {
-            this._onSingleClick(event);
+        if (util.hasClass(target, this.classNames.toggleBtnClass)) {
+            this.toggleNode(this.getNodeIdFromElement(target));
             return;
         }
 
-        //@todo
         if (this.clickTimer) {
-            //this._onDoubleClick(event);
             window.clearTimeout(this.clickTimer);
             this.clickTimer = null;
+            this.fire('doubleClick', event);
         } else {
             this.clickTimer = setTimeout(function() {
-                self._onSingleClick(event);
+                self.fire('singleClick', event);
+                self.clickTimer = null;
             }, 400);
         }
-    },
-
-    /**
-     * handle single click event 
-     * @param {MouseEvent} event - Single click event
-     * @private
-     */
-    _onSingleClick: function(event) {
-        var target = util.getTarget(event),
-            nodeId = this._getNodeIdFromElement(target);
-
-        this.clickTimer = null;
-        if (util.hasClass(target, this.classNames.toggleBtnClass)) {
-            this.toggleNode(nodeId);
-        }
-    },
-
-    /**
-     * handle Double click 
-     * @param {MouseEvent} event - Double click event
-     * @private
-     */
-    _onDoubleClick: function(event) {
-        var target = util.getTarget(event);
-        this.changeEditingState(target);
-    },
-
-    /**
-     * handle mouse down
-     * @private
-     */
-    _onMouseDown: function(e) {
-        if (this.state === treeStates.EDITABLE || util.isRightButton(e)) {
-            return;
-        }
-
-        util.preventDefault(e);
-
-        var target = util.getTarget(e),
-            tag = target.tagName.toUpperCase();
-
-        if (tag === 'BUTTON' || tag === 'INPUT' || !util.hasClass(target, this.valueClass)) {
-            return;
-        }
-
-        this.pos = this.rootElement.getBoundingClientRect();
-
-        if (this.useHelper) {
-            this.enableHelper({
-                x: e.clientX - this.pos.left,
-                y: e.clientY - this.pos.top
-            }, target.innerText || target.textContent);
-        }
-
-        this.move = snippet.bind(this._onMouseMove, this);
-        this.up = snippet.bind(this._onMouseUp, this, target);
-
-        util.addEventListener(document, 'mousemove', this.move);
-        util.addEventListener(document, 'mouseup', this.up);
-    },
-
-    /**
-     * Handle mouse move 
-     * @param {event} me
-     * @private
-     */
-    _onMouseMove: function(me) {
-        if (!this.useHelper) {
-            return;
-        }
-        this.setHelperLocation({
-            x: me.clientX - this.pos.left,
-            y: me.clientY - this.pos.top
-        });
-    },
-
-    /**
-     * Handle mouse up
-     * @param {HTMLElement} target A target 
-     * @param {event} ue
-     * @private
-     */
-    _onMouseUp: function(target, ue) {
-        this.disableHelper();
-
-        var toEl = util.getTarget(ue),
-            model = this.model,
-            node = model.find(target.id),
-            toNode = model.find(toEl.id),
-            isDisable = model.isDisable(toNode, node);
-
-        if (model.find(toEl.id) && toEl.id !== target.id && !isDisable) {
-            model.move(target.id, node, toEl.id);
-        }
-
-        util.removeEventListener(document, 'mousemove', this.move);
-        util.removeEventListener(document, 'mouseup', this.up);
-    },
-
-    /**
-     * Change state (treeStates.NORMAL | treeStates.EDITABLE)
-     * @param {HTMLElement} target 엘리먼트
-     */
-    changeEditingState: function(target) {
-        if (this.state === treeStates.EDITABLE) {
-            this.state = treeStates.NORMAL;
-            this._restore(target);
-        } else {
-            this.state = treeStates.EDITABLE;
-            console.log('setEditable');
-            this._convert(target);
-        }
-    },
-
-    /**
-     * Change state to edit
-     * @param {HTMLElement} element A target element
-     * @private
-     */
-    _convert: function(element) {
-        var nodeId = this._getNodeIdFromElement(element),
-            node = this.model.getNode(nodeId),
-            label = node.getData('text'),
-            parent = element.parentNode;
-
-        element.style.display = 'none';
-        this.inputElement.value = label;
-        parent.insertBefore(this.inputElement, element);
-
-        this.inputElement.focus();
-    },
-
-    /**
-     * Apply node name
-     * @param {HTMLElement} element A target element
-     * @private
-     */
-    _restore: function(element) {
-        var parent = element.parentNode;
-
-        this.inputElement.value = '';
-        parent.removeChild(this.inputElement);
-    },
-
-    /**
-     * On key up event handler
-     * @param {Event} event - Key up event
-     * @private
-     */
-    _onKeyup: function(event) {
-        if (event.keyCode === 13) { // Enter
-            this._changeTextFromInputEvent(event);
-        }
-    },
-
-    /**
-     * On input blur event handler
-     * @param {Event} event - Input blur event
-     * @private
-     */
-    _onBlurInput: function(event) {
-        var target = util.getTarget(event);
-
-        this.state = treeStates.NORMAL;
-        this._restore(target);
-        //if (this.state === treeStates.NORMAL) {
-        //    return;
-        //}
-        //this._changeTextFromInputEvent(event);
-    },
-
-    /**
-     * Change text from input event
-     * @param {Event} event - Input event (key-up, blur)
-     * @private
-     */
-    _changeTextFromInputEvent: function(event) {
-        var target = util.getTarget(event),
-            nodeId = this._getNodeIdFromElement(target);
-
-        this.model.set(nodeId, {text: target.value});
-        this.changeEditingState(target);
     },
 
     /**
@@ -608,68 +360,15 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
     },
 
     /**
-     * Select node
-     * @param {Object} node A target node
-     * @private
+     * Get root node(or element) id
+     * @returns {string} Root node id
      */
-    _select: function(node) {
-        var valueEl = document.getElementById(node.id);
-
-        if (snippet.isExisty(valueEl)) {
-            valueEl.className = valueEl.className.replace(' ' + this.onselectClass, '') + ' ' + this.onselectClass;
-        }
-    },
-
-    /**
-     * Unselect node
-     * @param {Object} node A target node
-     * @private
-     **/
-    _unSelect: function(node) {
-        var valueEl = document.getElementById(node.id);
-
-        if (snippet.isExisty(valueEl) && util.hasClass(valueEl, this.onselectClass)) {
-            valueEl.className = valueEl.className.replace(' ' + this.onselectClass, '');
-        }
+    getRootId: function() {
+        return this.model.rootNode.getId();
     },
 
     getNodeIdPrefix: function() {
         return this.model.getNodeIdPrefix();
-    },
-
-    /**
-     * Show up guide element
-     * @param {object} pos A element position
-     * @param {string} value A element text value
-     */
-    enableHelper: function(pos, value) {
-        if (!this.helperElement) {
-            this.helperElement = document.createElement('span');
-            this.helperElement.style.position = 'absolute';
-            this.helperElement.style.display = 'none';
-            this.root.parentNode.appendChild(this.helperElement);
-        }
-
-        this.helperElement.innerHTML = value;
-    },
-
-    /**
-     * Set guide element location
-     * @param {object} pos A position to move
-     */
-    setHelperLocation: function(pos) {
-        this.helperElement.style.left = pos.x + this.helperPos.x + 'px';
-        this.helperElement.style.top = pos.y + this.helperPos.y + 'px';
-        this.helperElement.style.display = '';
-    },
-
-    /**
-     * Hide guide element
-     */
-    disableHelper: function() {
-        if (this.helperElement) {
-            this.helperElement.style.display = 'none';
-        }
     },
 
     /**
@@ -748,7 +447,102 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      */
     remove: function(nodeId) {
         this.model.remove(nodeId);
+    },
+
+    move: function(nodeId, newParentId) {
+        this.model.move(nodeId, newParentId);
+    },
+
+    /**
+     * Enable facility of tree
+     * @param {string} facilityName - 'selection', 'dnd', 'editing'
+     */
+    enable: function(facilityName) {
+
+    },
+
+    /**
+     * Disable facility of tree
+     * @param {string} facilityName - 'selection', 'dnd', 'editing'
+     */
+    disable: function(facilityName) {
+
     }
 });
 
+tui.util.CustomEvents.mixin(Tree);
 module.exports = Tree;
+
+// Legacy helper
+// *     @param {Object} [options.helperPos] A related position for helper object
+//--------------------------------------------------------------------------------
+//
+///**
+// * Whether drag and drop use or not
+// * @type {boolean}
+// */
+//this.useDrag = options.useDrag;
+//
+///**
+// * Whether helper element use or not
+// * @type {boolean}
+// */
+//this.useHelper = this.useDrag && options.useHelper;
+//
+///**
+// * Set relative position for helper object
+// * @type {object}
+// */
+//this.helperPos = options.helperPos;
+//
+//
+///**
+// * Set drag and drop event
+// * @private
+// */
+//_addDragEvent: function() {
+//    var userSelectProperty = util.testProp(['userSelect', 'WebkitUserSelect', 'OUserSelect', 'MozUserSelect', 'msUserSelect']),
+//        isSupportSelectStart = 'onselectstart' in document;
+//
+//    if (isSupportSelectStart) {
+//        util.addEventListener(this.rootElement, 'selectstart', util.preventDefault);
+//    } else {
+//        document.documentElement.style[userSelectProperty] = 'none';
+//    }
+//    util.addEventListener(this.rootElement, 'mousedown', snippet.bind(this._onMouseDown, this));
+//},
+//
+///**
+// * Show up guide element
+// * @param {object} pos A element position
+// * @param {string} value A element text value
+// */
+//enableHelper: function(pos, value) {
+//    if (!this.helperElement) {
+//        this.helperElement = document.createElement('span');
+//        this.helperElement.style.position = 'absolute';
+//        this.helperElement.style.display = 'none';
+//        this.root.parentNode.appendChild(this.helperElement);
+//    }
+//
+//    this.helperElement.innerHTML = value;
+//},
+//
+///**
+// * Set guide element location
+// * @param {object} pos A position to move
+// */
+//setHelperLocation: function(pos) {
+//    this.helperElement.style.left = pos.x + this.helperPos.x + 'px';
+//    this.helperElement.style.top = pos.y + this.helperPos.y + 'px';
+//    this.helperElement.style.display = '';
+//},
+//
+///**
+// * Hide guide element
+// */
+//disableHelper: function() {
+//    if (this.helperElement) {
+//        this.helperElement.style.display = 'none';
+//    }
+//},

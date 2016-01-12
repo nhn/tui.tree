@@ -29,10 +29,6 @@ describe('Tree', function() {
                 {title:'1'},
                 {title:'2'},
                 {title:'3'}
-            ]},
-            {title:'This node has the customId', id: 'customId', children: [
-                {title: 'This node is child of the node having customId', id: 'customIdChild'},
-                {title: 'This node is sechod child of the node having customId', id: 'a_customIdChild'}
             ]}
         ],
         tree;

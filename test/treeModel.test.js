@@ -128,4 +128,50 @@ describe('TreeModel', function() {
 
         expect(node.getState()).toEqual('opened');
     });
+
+    it('Should fire update event when a node added', function() {
+        var handler = jasmine.createSpy('updateHandler'),
+            rootId = treeModel.rootNode.getId();
+
+        treeModel.on('update', handler);
+        treeModel.add({title: 'new node'}, rootId);
+
+        expect(handler).toHaveBeenCalledWith(rootId);
+    });
+
+    it('Should fire update event when a node removed', function() {
+        var handler = jasmine.createSpy('updateHandler'),
+            rootId = treeModel.rootNode.getId(),
+            firstChildId = treeModel.rootNode.getChildIds()[0];
+
+        treeModel.on('update', handler);
+        treeModel.remove(firstChildId);
+
+        expect(handler).toHaveBeenCalledWith(rootId);
+    });
+
+    it('Should fire update event when node data changed', function() {
+        var handler = jasmine.createSpy('updateHandler'),
+            rootId = treeModel.rootNode.getId(),
+            firstChildId = treeModel.rootNode.getChildIds()[0];
+
+        treeModel.on('update', handler);
+        treeModel.set(firstChildId, {hiddenValue: 'new hidden'});
+
+        expect(handler).toHaveBeenCalledWith(rootId);
+        expect(treeModel.getNode(firstChildId).getData('hiddenValue')).toEqual('new hidden');
+    });
+
+    it('Should fire move event when a node moved', function() {
+        var handler = jasmine.createSpy('moveHandler'),
+            rootId = treeModel.rootNode.getId(),
+            firstChildId = treeModel.rootNode.getChildIds()[0],
+            grandChildId = treeModel.getNode(firstChildId).getChildIds()[0];
+
+        treeModel.on('move', handler);
+        treeModel.move(grandChildId, rootId);
+
+        expect(handler).toHaveBeenCalledWith(grandChildId, firstChildId, rootId);
+        expect(treeModel.getNode(grandChildId).getParentId()).toEqual(rootId);
+    });
 });
