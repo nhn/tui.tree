@@ -166,27 +166,17 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
     },
 
     /**
-     * Get node id from element
-     * @param {HTMLElement} element - HTMLElement
-     * @returns {string} Node id
-     * @private
-     */
-    getNodeIdFromElement: function(element) {
-        var idPrefix = this.model.getNodeIdPrefix();
-
-        while (element && element.id.indexOf(idPrefix) === -1) {
-            element = element.parentElement;
-        }
-
-        return element ? element.id : '';
-    },
-
-    /**
      * Set event handler
      */
     _setEvents: function() {
         this.model.on('update', this._drawChildren, this);
+        this.model.on('move', this._onMove, this);
         util.addEventListener(this.rootElement, 'click', snippet.bind(this._onClick, this));
+    },
+
+    _onMove: function(nodeId, originalParentId, newParentId) {
+        this._drawChildren(originalParentId);
+        this._drawChildren(newParentId);
     },
 
     /**
@@ -357,6 +347,22 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
         subtreeElement = util.getElementsByClassName(nodeElement, subtreeClassName)[0];
 
         return subtreeElement;
+    },
+
+    /**
+     * Get node id from element
+     * @param {HTMLElement} element - HTMLElement
+     * @returns {string} Node id
+     * @private
+     */
+    getNodeIdFromElement: function(element) {
+        var idPrefix = this.model.getNodeIdPrefix();
+
+        while (element && element.id.indexOf(idPrefix) === -1) {
+            element = element.parentElement;
+        }
+
+        return element ? element.id : '';
     },
 
     /**
