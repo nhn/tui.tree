@@ -28,10 +28,11 @@ Each node can be moved by drag and drop.
 
 ## Test environment
 * PC
-	* IE7~11
-	* Chrome
-	* Firefox
-
+    * IE7~11
+    * Edge
+    * Chrome
+    * Firefox
+    * PhantomJS
 
 ## Download/Install
 * Bower:
@@ -50,3 +51,7 @@ Each node can be moved by drag and drop.
 
 ## LICENSE
 [MIT LICENSE](LICENSE)
+
+## Sponsor
+* <img src="https://cloud.githubusercontent.com/assets/12269563/12287774/8cf4d2c0-ba12-11e5-9fa8-0a9c452cca05.png" height="30"><br>
+ [BrowserStack](https://www.browserstack.com/) is a cloud based cross browser testing tool
