@@ -14,13 +14,29 @@ var defaultOptions = {
     ],
     inArray = tui.util.inArray;
 
+/**
+ * Module for draggable tree
+ */
 var DNDModule = {
+    /**
+     * Set the tree selectable
+     * @param {Tree} tree - Tree
+     * @param {Object} options - Options
+     *  @param {boolean} options.useHelper - Using helper flag
+     *  @param {{x: number, y:number}} options.helperPos - Helper position
+     *  @param {Array.<string>} options.rejectedTagNames - No draggable tag names
+     *  @param {Array.<string>} options.rejectedClassNames - No draggable class names
+     */
     set: function(tree, options) {
         this.tree = tree;
         this.setMembers(options);
         this.attachMousedown();
     },
 
+    /**
+     * Set members of this module
+     * @param {Object} options - input options
+     */
     setMembers: function(options) {
         var helperEl;
 
@@ -47,10 +63,16 @@ var DNDModule = {
         this.tree.rootElement.parentNode.appendChild(helperEl);
     },
 
+    /**
+     * Disable this module
+     */
     unset: function() {
         this.detachMousedown();
     },
 
+    /**
+     * Attach mouse down event
+     */
     attachMousedown: function() {
         var tree = this.tree,
             selectKey, style;
@@ -68,7 +90,12 @@ var DNDModule = {
         util.addEventListener(tree.rootElement, 'mousedown', this.handlers.mousedown);
     },
 
-    isPrevention: function(target) {
+    /**
+     * Return whether the target element is in rejectedTagNames or in rejectedClassNames
+     * @param {HTMLElement} target - Target element
+     * @returns {boolean} Whether the target is not draggable or draggable
+     */
+    isNotDraggable: function(target) {
         var tagName = target.tagName.toUpperCase(),
             classNames = util.getClass(target).split(' '),
             result;
@@ -85,11 +112,15 @@ var DNDModule = {
         return result;
     },
 
+    /**
+     * Event handler - mousedown
+     * @param {MouseEvent} event - Mouse event
+     */
     onMousedown: function(event) {
         var target = util.getTarget(event),
             nodeId;
 
-        if (util.isRightButton(event) || this.isPrevention(target)) {
+        if (util.isRightButton(event) || this.isNotDraggable(target)) {
             return;
         }
         util.preventDefault(event);
@@ -105,6 +136,10 @@ var DNDModule = {
         util.addEventListener(document, 'mouseup', this.handlers.mouseup);
     },
 
+    /**
+     * Event handler - mousemove
+     * @param {MouseEvent} event - Mouse event
+     */
     onMousemove: function(event) {
         var helperEl = this.helperElement,
             pos = this.defaultPosition;
@@ -117,6 +152,10 @@ var DNDModule = {
         helperEl.style.display = '';
     },
 
+    /**
+     * Event handler - mouseup
+     * @param {MouseEvent} event - Mouse event
+     */
     onMouseup: function(event) {
         var tree = this.tree,
             target = util.getTarget(event),
@@ -130,10 +169,17 @@ var DNDModule = {
         util.removeEventListener(document, 'mouseup', this.handlers.mouseup);
     },
 
+    /**
+     * Set helper contents
+     * @param {string} text - Helper contents
+     */
     setHelper: function(text) {
         this.helperElement.innerHTML = text;
     },
 
+    /**
+     * Detach mousedown event
+     */
     detachMousedown: function() {
         var tree = this.tree;
 
