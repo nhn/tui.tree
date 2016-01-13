@@ -24,7 +24,7 @@ Each node can be moved by drag and drop.
 ![alt tag](https://nhnent.github.io/tui.component.tree/tree_edit.png)
 
 ## Dependency
-* tui-code-snippet: 1.0.2
+* tui-code-snippet: 1.0.4
 
 ## Test environment
 * PC
@@ -42,6 +42,7 @@ Each node can be moved by drag and drop.
 ## History
 | Version | Description | Date | Developer |
 | ---- | ---- | ---- | ---- |
+| 1.1.0  | CRUD nodes | 2016.01 | NHN Ent. FE dev team.<dl_javascript@nhnent.com> |
 | 1.0.0a | Namespace changed | 2015.10 | NHN Ent. FE dev team.<dl_javascript@nhnent.com> |
 | 1.0.0a | defineNamespace Apply | 2015.05 | NHN Ent. FE dev team.<dl_javascript@nhnent.com> |
 | <a href="https://nhnent.github.io/tui.component.tree/1.0.0">1.0.0</a> | Release | 2015.03 | NHN Ent. FE dev team.<dl_javascript@nhnent.com> |

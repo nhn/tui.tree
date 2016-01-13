@@ -80,8 +80,7 @@ module.exports = function(config) {
             'IE10',
             'IE11',
             'Chrome-WebDriver',
-            'Firefox-WebDriver',
-            'PhantomJS'
+            'Firefox-WebDriver'
         ],
 
         customLaunchers: {

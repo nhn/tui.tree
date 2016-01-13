@@ -144,7 +144,6 @@ module.exports = function(config) {
             'bs_firefox_mac'
         ],
 
-        timeout: 12000,
         singleRun: true
     });
 };

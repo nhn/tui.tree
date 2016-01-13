@@ -2,7 +2,7 @@
   "name": "component-tree",
   "version": "1.1.0",
   "license": "MIT",
-  "description": "",
+  "description": "Tree component",
   "repository": {
     "type": "git",
     "url": "https://github.com/nhnent/fe.component-tree.git"
