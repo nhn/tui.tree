@@ -566,8 +566,8 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      */
     enableFeature: function(featureName, options) {
         var Feature = Tree.features[featureName];
-        this.disableFeature(featureName);
 
+        this.disableFeature(featureName);
         if (Feature) {
             this.enabledFeatures[featureName] = new Feature(this, options);
         }
@@ -591,7 +591,6 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
 });
 
 tui.util.forEach(features, function(Feature, name) {
-    console.log(name, Feature);
     Tree.registerFeature(name, Feature);
 });
 tui.util.CustomEvents.mixin(Tree);

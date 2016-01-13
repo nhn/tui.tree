@@ -10,7 +10,6 @@ var util = require('./util');
  */
 var Selectable = tui.util.defineClass(/** @lends SelectionModule.prototype */{/*eslint-disable*/
     init: function(tree) { /*eslint-enable*/
-        console.log('aa');
         this.tree = tree;
         this.selectedClassName = tree.classNames.selectedClass;
         this.handler = tui.util.bind(this.onSingleClick, this);
