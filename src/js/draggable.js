@@ -10,7 +10,8 @@ var defaultOptions = {
     },
     rejectedTagNames = [
         'INPUT',
-        'BUTTON'
+        'BUTTON',
+        'UL'
     ],
     inArray = tui.util.inArray;
 
@@ -37,7 +38,8 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{
      * @param {Object} options - input options
      */
     setMembers: function(options) {
-        var helperElement = document.createElement('span'),
+        var tree = this.tree,
+            helperElement = document.createElement('span'),
             style = helperElement.style;
         options = tui.util.extend({}, defaultOptions, options);
 
@@ -52,7 +54,6 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{
         this.currentNodeId = null;
 
         this.handlers = {};
-        this.handlers.mousedown = tui.util.bind(this.onMousedown, this);
         this.handlers.mousemove = tui.util.bind(this.onMousemove, this);
         this.handlers.mouseup = tui.util.bind(this.onMouseup, this);
 
@@ -80,7 +81,6 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{
         }
 
         tree.on('mousedown', this.onMousedown, this);
-        //util.addEventListener(tree.rootElement, 'mousedown', this.handlers.mousedown);
     },
 
     /**
@@ -116,7 +116,7 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{
         if (util.isRightButton(event) || this.isNotDraggable(target)) {
             return;
         }
-
+        util.preventDefault(event);
 
         target = util.getTarget(event);
         nodeId = tree.getNodeIdFromElement(target);

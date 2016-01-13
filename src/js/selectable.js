@@ -13,6 +13,7 @@ var Selectable = tui.util.defineClass(/** @lends SelectionModule.prototype */{/*
         this.tree = tree;
         this.selectedClassName = tree.classNames.selectedClass;
         this.tree.on('singleClick', this.onSingleClick, this);
+        this.tree.on('doubleClick', this.onSingleClick, this);
         this.tree.on('afterDraw', this.onAfterDraw, this);
     },
 

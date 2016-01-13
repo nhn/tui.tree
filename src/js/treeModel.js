@@ -87,7 +87,7 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
     /**
      * Create node
      * @param {object} nodeData - Datum of node
-     * @param {*} parentId - Parent id
+     * @param {string} parentId - Parent id
      * @return {TreeNode} TreeNode
      */
     _createNode: function(nodeData, parentId) {
@@ -104,7 +104,7 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
 
     /**
      * Get children
-     * @param {*} nodeId - Node id
+     * @param {string} nodeId - Node id
      * @return {Array.<TreeNode>|undefined} children
      */
     getChildren: function(nodeId) {
@@ -154,7 +154,7 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
 
     /**
      * Find node
-     * @param {*} id - A node id to find
+     * @param {string} id - A node id to find
      * @return {TreeNode|undefined} Node
      */
     getNode: function(id) {
@@ -163,7 +163,7 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
 
     /**
      * Get depth from node id
-     * @param {*} id - A node id to find
+     * @param {string} id - A node id to find
      * @return {number|undefined} Depth
      */
     getDepth: function(id) {
@@ -231,22 +231,27 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
      * - If the parentId is falsy, the node will be appended to rootNode.
      * - The update event will be fired with parent node.
      * @param {Array|object} data - Raw-data
-     * @param {*} parentId - Parent id
+     * @param {string} parentId - Parent id
+     * @param {boolean} [isSilent] - If true, it doesn't trigger the 'update' event
      */
-    add: function(data, parentId) {
+    add: function(data, parentId, isSilent) {
         var parent = this.getNode(parentId) || this.rootNode;
 
         data = [].concat(data);
         this._makeTreeHash(data, parent);
-        this.fire('update', parentId);
+
+        if (!isSilent) {
+            this.fire('update', parentId);
+        }
     },
 
     /**
      * Set data properties of a node
-     * @param {*} id - Node id
+     * @param {string} id - Node id
      * @param {object} props - Properties
+     * @param {boolean} [isSilent] - If true, it doesn't trigger the 'update' event
      */
-    setNodeData: function(id, props) {
+    setNodeData: function(id, props, isSilent) {
         var node = this.getNode(id);
 
         if (!node || !props) {
@@ -254,15 +259,19 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
         }
 
         node.setData(props);
-        this.fire('update', node.getParentId());
+
+        if (!isSilent) {
+            this.fire('update', node.getParentId());
+        }
     },
 
     /**
      * Remove node data
      * @param {string} id - Node id
      * @param {string|Array} names - Names of properties
+     * @param {boolean} [isSilent] - If true, it doesn't trigger the 'update' event
      */
-    removeNodeData: function(id, names) {
+    removeNodeData: function(id, names, isSilent) {
         var node = this.getNode(id);
 
         if (!node || !names) {
@@ -274,15 +283,19 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
         } else {
             node.removeData(names);
         }
-        this.fire('update', node.getParentId());
+
+        if (!isSilent) {
+            this.fire('update', node.getParentId());
+        }
     },
 
     /**
      * Move a node to new parent's child
-     * @param {*} nodeId - Node id
-     * @param {*} newParentId - New parent id
+     * @param {string} nodeId - Node id
+     * @param {string} newParentId - New parent id
+     * @param {boolean} [isSilent] - If true, it doesn't trigger the 'update' event
      */
-    move: function(nodeId, newParentId) {
+    move: function(nodeId, newParentId, isSilent) {
         var node = this.getNode(nodeId),
             originalParent, originalParentId, newParent;
 
@@ -301,7 +314,9 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
         node.setParentId(newParentId);
         newParent.addChildId(nodeId);
 
-        this.fire('move', nodeId, originalParentId, newParentId);
+        if (!isSilent) {
+            this.fire('move', nodeId, originalParentId, newParentId);
+        }
     },
 
     /**

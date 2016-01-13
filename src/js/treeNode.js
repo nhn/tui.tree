@@ -19,7 +19,7 @@ var lastIndex = 0,
  * TreeNode
  * @Constructor TreeNode
  * @param {Object} nodeData - Node data
- * @param {number} [parentId] - Parent node id
+ * @param {string} [parentId] - Parent node id
  */
 var TreeNode = tui.util.defineClass(/** @lends TreeNode.prototype */{ /*eslint-disable*/
     static: {
@@ -38,7 +38,7 @@ var TreeNode = tui.util.defineClass(/** @lends TreeNode.prototype */{ /*eslint-d
 
         /**
          * Parent node id
-         * @type {number}
+         * @type {string}
          * @private
          */
         this._parentId = parentId;
@@ -125,7 +125,7 @@ var TreeNode = tui.util.defineClass(/** @lends TreeNode.prototype */{ /*eslint-d
 
     /**
      * Get id
-     * @returns {number} Node id
+     * @returns {string} Node id
      */
     getId: function() {
         return this._id;
@@ -133,7 +133,7 @@ var TreeNode = tui.util.defineClass(/** @lends TreeNode.prototype */{ /*eslint-d
 
     /**
      * Get parent id
-     * @returns {number} Parent node id
+     * @returns {string} Parent node id
      */
     getParentId: function() {
         return this._parentId;
@@ -141,7 +141,7 @@ var TreeNode = tui.util.defineClass(/** @lends TreeNode.prototype */{ /*eslint-d
 
     /**
      * Set parent id
-     * @param {number} parentId - Parent node id
+     * @param {string} parentId - Parent node id
      */
     setParentId: function(parentId) {
         this._parentId = parentId;
@@ -165,7 +165,7 @@ var TreeNode = tui.util.defineClass(/** @lends TreeNode.prototype */{ /*eslint-d
 
     /**
      * Add child id
-     * @param {number} id - Child node id
+     * @param {string} id - Child node id
      */
     addChildId: function(id) {
         var childIds = this._childIds;
@@ -177,7 +177,7 @@ var TreeNode = tui.util.defineClass(/** @lends TreeNode.prototype */{ /*eslint-d
 
     /**
      * Remove child id
-     * @param {number} id - Child node id
+     * @param {string} id - Child node id
      */
     removeChildId: function(id) {
         util.removeItemFromArray(id, this._childIds);

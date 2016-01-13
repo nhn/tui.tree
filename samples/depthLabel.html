@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <script type="text/javascript" src="js/code-snippet.js"></script>
+    <script type="text/javascript" src="js/tree.js"></script>
+    <title>트리컴포넌트</title>
+    <link rel="stylesheet" href="css/tree.css" />
+</head>
+<body>
+<div class="treeWrap" style="position:relative; border:1px solid #eaeaea;">
+    <ul id="treeRoot1" class="tree"></ul>
+</div>
+<div class="explain">
+    <p>트리요소 뒤에 뎁스에 맞는 레이블 ['층', '열', '구역', '블록'] 을 설정한다.</p>
+    <p>트리가 생성될때 자동으로 설정된 레이블을 부여한다.</p>
+    <p>뎁스별로 Label이 적용되어 노드명과 함께 노출됩니다.<br />
+        - 1Depth : 노드명 + "층"<br />
+        - 2Depth : 노드명 + "열"<br />
+        - 3Depth : 노드명 + "구역"<br />
+        - 4Depth : 노드명 + "블럭"<br />
+    </p>
+
+    <div class="imagewrap">
+        적용 전
+        <img src="nolabel.png" alt="레이블이 적용됨" />
+    </div>
+    <div class="imagewrap">
+        적용 후
+        <img src="label.png" alt="레이블이 적용되지 않음" />
+    </div>
+
+
+
+</div>
+
+<script>
+    var data = [
+        {text: 'rootA', children:
+                [
+                    {text: 'root-1A'}, {text: 'root-1B'},{text: 'root-1C'}, {text: 'root-1D'},
+                    {text: 'root-2A', children: [
+                        {text:'sub_1A', children:[{text:'sub_sub_1A'}]}, {text:'sub_2A'}
+                    ]}, {text: 'root-2B'},{text: 'root-2C'}, {text: 'root-2D'},
+                    {text: 'root-3A',
+                        children: [
+                            {text:'sub3_a'}, {text:'sub3_b'}
+                        ]
+                    }, {text: 'root-3B'},{text: 'root-3C'}, {text: 'root-3D'}
+                ]
+        },
+        {text: 'rootB', children: [
+            {text:'B_sub1'}, {text:'B_sub2'}
+        ]}
+    ],
+    depthLabels = ['층', '열', '구역', '블록'];
+
+
+    var tree = new tui.component.Tree(data, {
+        rootElement: document.getElementById('treeRoot1'),
+        nodeDefaultState: 'opened',
+        template: {
+            internalNode:
+            '<li id="{{id}}" class="tui-tree-node {{stateClass}}">' +
+            '<button type="button" class="{{toggleBtnClass}}">{{stateLabel}}</button>' +
+            '<span class="{{textClass}}">{{text}}<b>{{depthLabel}}</b></span>' +
+            '<ul class="{{subtreeClass}}">{{children}}</ul>' +
+            '</li>',
+            leafNode:
+            '<li id="{{id}}" class="tui-tree-node tui-tree-leaf">' +
+            '<span class="{{textClass}}">{{text}}<b>{{depthLabel}}</b></span>' +
+            '</li>'
+        }
+    }).enableFeature('Draggable', {
+        useHelper: true
+    });
+
+    tree.on('beforeDraw', function(parentId) {
+        tree.each(function(node, nodeId) {
+            var text = node.getData('text'),
+                depth = tree.getDepth(nodeId);
+
+            depth = Math.min(depth, depthLabels.length);
+            node.setData({
+                depthLabel: depthLabels[depth - 1] || ''
+            });
+        }, parentId);
+    });
+    tree.refresh();
+</script>
+</body>
+</html>

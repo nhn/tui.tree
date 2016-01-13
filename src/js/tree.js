@@ -10,12 +10,14 @@ var defaults = require('./defaults'),
     states = require('./states'),
     TreeModel = require('./treeModel'),
     Selectable = require('./selectable'),
-    Draggable = require('./draggable');
+    Draggable = require('./draggable'),
+    Editable = require('./editable');
 
 var nodeStates = states.node,
     features = {
         Selectable: Selectable,
-        Draggable: Draggable
+        Draggable: Draggable,
+        Editable: Editable
     },
     snippet = tui.util,
     extend = snippet.extend;
@@ -26,7 +28,7 @@ var nodeStates = states.node,
  * @param {Object} options The options
  *     @param {HTMLElement} [options.rootElement] Root element (It should be 'UL' element)
  *     @param {string} [options.nodeIdPrefix] A default prefix of a node
- *     @param {Object} [options.defaultState] A default state of a node
+ *     @param {Object} [options.nodeDefaultState] A default state of a node
  *     @param {Object} [options.template] A markup set to make element
  *         @param {string} [options.template.internalNode] HTML template
  *         @param {string} [options.template.leafNode] HTML template
@@ -50,7 +52,7 @@ var nodeStates = states.node,
  * // {
  * //     rootElement: document.createElement('UL'),
  * //     nodeIdPrefix: 'tui-tree-node-'
- * //     defaultState: 'closed',
+ * //     nodeDefaultState: 'closed',
  * //     stateLabels: {
  * //         opened: '-',
  * //         closed: '+'
@@ -111,7 +113,8 @@ var nodeStates = states.node,
  * ];
  *
  * var tree1 = new tui.component.Tree(data, {
- *     defaultState: 'opened'
+ *     rootElement: document.getElementById('treeRoot'),
+ *     nodeDefaultState: 'opened'
  * });
  **/
 var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
@@ -220,7 +223,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      */
     _onMousedown: function(event) {
         var self = this;
-        util.preventDefault(event);
+
         this.mousedownTimer = setTimeout(function() {
             self.fire('mousedown', event);
         }, 200);
@@ -359,6 +362,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
             return;
         }
 
+        this.fire('beforeDraw', parentId);
         subtreeElement.innerHTML = this._makeHtml(node.getChildIds());
         this.model.each(function(node, nodeId) {
             if (node.getState() === nodeStates.OPENED) {
@@ -366,9 +370,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
             } else {
                 this.close(nodeId);
             }
-            this.fire('eachAfterDraw', nodeId);
         }, parentId, this);
-
         this.fire('afterDraw', parentId);
     },
 
@@ -394,6 +396,23 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
         subtreeElement = util.getElementsByClassName(nodeElement, subtreeClassName)[0];
 
         return subtreeElement;
+    },
+
+    /**
+     * Return the depth of node
+     * @param {string} nodeId - Node id
+     * @return {number|undefined} Depth
+     */
+    getDepth: function(nodeId) {
+        return this.model.getDepth(nodeId);
+    },
+
+    /**
+     * Return the last depth of tree
+     * @return {number} Last depth
+     */
+    getLastDepth: function() {
+        return this.model.getLastDepth();
     },
 
     /**
@@ -475,18 +494,20 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * Set data properties of a node
      * @param {string} nodeId - Node id
      * @param {object} data - Properties
+     * @param {boolean} [isSilent] - If true, it doesn't trigger the 'update' event
      */
-    setNodeData: function(nodeId, data) {
-        this.model.setNodeData(nodeId, data);
+    setNodeData: function(nodeId, data, isSilent) {
+        this.model.setNodeData(nodeId, data, isSilent);
     },
 
     /**
      * Remove node data
      * @param {string} nodeId - Node id
      * @param {string|Array} names - Names of properties
+     * @param {boolean} [isSilent] - If true, it doesn't trigger the 'update' event
      */
-    removeNodeData: function(nodeId, names) {
-        this.model.removeNodeData(nodeId, names)
+    removeNodeData: function(nodeId, names, isSilent) {
+        this.model.removeNodeData(nodeId, names, isSilent)
     },
 
     /**
@@ -544,7 +565,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
 
     /**
      * Refresh node
-     * @param {string} nodeId - TreeNode id to refresh
+     * @param {string} [nodeId] - TreeNode id to refresh
      **/
     refresh: function(nodeId) {
         this._drawChildren(nodeId);
@@ -555,8 +576,18 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * @param {Function} iteratee - Iteratee function
      * @param {object} [context] - Context of iteratee
      */
-    each: function(iteratee, context) {
-        this.model.each.apply(this, arguments);
+    eachAll: function(iteratee, context) {
+        this.model.eachAll(iteratee, context);
+    },
+
+    /**
+     * Traverse this tree iterating over all descendants of a node.
+     * @param {Function} iteratee - Iteratee function
+     * @param {string} parentId - Parent node id
+     * @param {object} [context] - Context of iteratee
+     */
+    each: function(iteratee, parentId, context) {
+        this.model.each(iteratee, parentId, context);
     },
 
     /**
@@ -565,27 +596,30 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * - The update event will be fired with parent node.
      * @param {Array|object} data - Raw-data
      * @param {*} parentId - Parent id
+     * @param {boolean} [isSilent] - If true, it doesn't redraw children
      */
-    add: function(data, parentId) {
-        this.model.add(data, parentId);
+    add: function(data, parentId, isSilent) {
+        this.model.add(data, parentId, isSilent);
     },
 
     /**
      * Remove a node with children.
      * - The update event will be fired with parent node.
      * @param {string} nodeId - Node id to remove
+     * @param {boolean} [isSilent] - If true, it doesn't redraw children
      */
-    remove: function(nodeId) {
-        this.model.remove(nodeId);
+    remove: function(nodeId, isSilent) {
+        this.model.remove(nodeId, isSilent);
     },
 
     /**
      * Move a node to new parent
      * @param {string} nodeId - Node id
      * @param {string} newParentId - New parent id
+     * @param {boolean} [isSilent] - If true, it doesn't redraw children
      */
-    move: function(nodeId, newParentId) {
-        this.model.move(nodeId, newParentId);
+    move: function(nodeId, newParentId, isSilent) {
+        this.model.move(nodeId, newParentId, isSilent);
     },
 
     /**
