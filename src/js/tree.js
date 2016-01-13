@@ -192,15 +192,6 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
     },
 
     /**
-     * Set event handlers
-     */
-    _setEvents: function() {
-        this.model.on('update', this._drawChildren, this);
-        this.model.on('move', this._onMove, this);
-        util.addEventListener(this.rootElement, 'click', snippet.bind(this._onClick, this));
-    },
-
-    /**
      * Move event handler
      * @param {string} nodeId - Node id
      * @param {string} originalParentId - Original parent node id
@@ -213,7 +204,35 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
     },
 
     /**
-     * On click event handler
+     * Set event handlers
+     */
+    _setEvents: function() {
+        this.model.on('update', this._drawChildren, this);
+        this.model.on('move', this._onMove, this);
+        util.addEventListener(this.rootElement, 'click', snippet.bind(this._onClick, this));
+        util.addEventListener(this.rootElement, 'mousedown', snippet.bind(this._onMousedown, this));
+    },
+
+    /**
+     * Event handler - mousedown
+     * @param {MouseEvent} event - Mouse event
+     * @private
+     */
+    _onMousedown: function(event) {
+        var self = this;
+        util.preventDefault(event);
+        this.mousedownTimer = setTimeout(function() {
+            self.fire('mousedown', event);
+        }, 200);
+
+        util.addEventListener(document, 'mouseup', function mouseupHandler() {
+            self.resetMousedownTimer();
+            util.removeEventListener(document, 'mouseup', mouseupHandler);
+        });
+    },
+
+    /**
+     * Event handler - click
      * @param {MouseEvent} event - Click event
      * @private
      */
@@ -236,7 +255,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
             this.clickTimer = setTimeout(function() {
                 self.fire('singleClick', event);
                 self.resetClickTimer();
-            }, 400);
+            }, 300);
         }
     },
 
@@ -347,13 +366,16 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
             } else {
                 this.close(nodeId);
             }
+            this.fire('eachAfterDraw', nodeId);
         }, parentId, this);
+
+        this.fire('afterDraw', parentId);
     },
 
     /**
      * Get subtree element
      * @param {string} nodeId - TreeNode id
-     * @returns {HTMLElement|undefined} Subtree element or undefined
+     * @returns {Element|undefined} Subtree element or undefined
      * @private
      */
     _getSubtreeElement: function(nodeId) {
@@ -409,8 +431,16 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
     },
 
     /**
+     * Reset mousedown timer
+     */
+    resetMousedownTimer: function() {
+        window.clearTimeout(this.mousedownTimer);
+        this.mousedownTimer = null;
+    },
+
+    /**
      * Get node id from element
-     * @param {HTMLElement} element - HTMLElement
+     * @param {HTMLElement} element - Element
      * @returns {string} Node id
      * @private
      */

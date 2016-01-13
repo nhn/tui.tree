@@ -12,16 +12,17 @@ var Selectable = tui.util.defineClass(/** @lends SelectionModule.prototype */{/*
     init: function(tree) { /*eslint-enable*/
         this.tree = tree;
         this.selectedClassName = tree.classNames.selectedClass;
-        this.handler = tui.util.bind(this.onSingleClick, this);
-        this.tree.on('singleClick', this.handler);
+        this.tree.on('singleClick', this.onSingleClick, this);
+        this.tree.on('afterDraw', this.onAfterDraw, this);
     },
 
     /**
      * Disable this module
      */
     destroy: function() {
-        util.removeClass(this.currentSelectedElement, this.selectedClassName);
-        this.tree.off(this.handler);
+        var nodeElement = this.getPrevElement();
+        util.removeClass(nodeElement, this.selectedClassName);
+        this.tree.off(this);
     },
 
     /**
@@ -32,14 +33,34 @@ var Selectable = tui.util.defineClass(/** @lends SelectionModule.prototype */{/*
         var tree = this.tree,
             target = util.getTarget(event),
             nodeId = tree.getNodeIdFromElement(target),
+            prevElement = this.getPrevElement(),
             nodeElement = document.getElementById(nodeId),
             selectedClassName = this.selectedClassName;
 
-        util.removeClass(this.currentSelectedElement, selectedClassName);
+        util.removeClass(prevElement, selectedClassName);
         util.addClass(nodeElement, selectedClassName);
-        this.currentSelectedElement = nodeElement;
 
         tree.fire('select', nodeId);
+        this.prevNodeId = nodeId;
+    },
+
+    /**
+     * Get previous selected node element
+     * @returns {HTMLElement} Node element
+     */
+    getPrevElement: function() {
+        return document.getElementById(this.prevNodeId);
+    },
+
+    /**
+     * Custom event handler - "afterDraw"
+     */
+    onAfterDraw: function() {
+        var nodeElement = document.getElementById(this.prevNodeId);
+
+        if (nodeElement) {
+            util.addClass(nodeElement, this.selectedClassName);
+        }
     }
 });
 

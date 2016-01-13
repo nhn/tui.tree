@@ -4,8 +4,8 @@ var util = require('./util');
 var defaultOptions = {
         useHelper: true,
         helperPos: {
-            y: 10,
-            x: 10
+            y: 2,
+            x: 5
         }
     },
     rejectedTagNames = [
@@ -78,7 +78,9 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{
             this.userSelectPropertyValue = style[selectKey];
             style[selectKey] = 'none';
         }
-        util.addEventListener(tree.rootElement, 'mousedown', this.handlers.mousedown);
+
+        tree.on('mousedown', this.onMousedown, this);
+        //util.addEventListener(tree.rootElement, 'mousedown', this.handlers.mousedown);
     },
 
     /**
@@ -114,7 +116,7 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{
         if (util.isRightButton(event) || this.isNotDraggable(target)) {
             return;
         }
-        util.preventDefault(event);
+
 
         target = util.getTarget(event);
         nodeId = tree.getNodeIdFromElement(target);
@@ -174,8 +176,8 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{
     detachMousedown: function() {
         var tree = this.tree;
 
+        tree.off(this);
         util.removeEventListener(tree.rootElement, 'selectstart', util.preventDefault);
-        util.removeEventListener(tree.rootElement, 'mousedown', this.handlers.mousedown);
         if (this.userSelectPropertyKey) {
             document.documentElement.style[this.userSelectPropertyKey] = this.userSelectPropertyValue;
         }

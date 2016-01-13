@@ -39,6 +39,10 @@ var util = {
      * @param {string} className - Classname
      */
     addClass: function(element, className) {
+        if (!element) {
+            return;
+        }
+
         if (element.className === '') {
             element.className = className;
         } else if (!util.hasClass(element, className)) {
