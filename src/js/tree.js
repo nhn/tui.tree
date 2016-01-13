@@ -9,13 +9,13 @@ var defaults = require('./defaults'),
     util = require('./util'),
     states = require('./states'),
     TreeModel = require('./treeModel'),
-    selectable = require('./selectable'),
-    draggable = require('./draggable');
+    Selectable = require('./selectable'),
+    Draggable = require('./draggable');
 
 var nodeStates = states.node,
     features = {
-        selectable: selectable,
-        draggable: draggable
+        Selectable: Selectable,
+        Draggable: Draggable
     },
     snippet = tui.util,
     extend = snippet.extend;
@@ -123,7 +123,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
          * @param {object} module - Module
          */
         registerFeature: function(moduleName, module) {
-            if (module && module.set && module.unset){
+            if (module){
                 this.features[moduleName] = module;
             }
         },
@@ -166,6 +166,12 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
          * @type {TreeModel}
          */
         this.model = new TreeModel(data, options);
+
+        /**
+         * Enabled features
+         * @type {Object.<string, object>}
+         */
+        this.enabledFeatures = {};
 
         this._setRoot();
         this._drawChildren();
@@ -554,36 +560,39 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
 
     /**
      * Enable facility of tree
-     * @param {string} featureName - 'selectable', 'draggable', 'editable'
+     * @param {string} featureName - 'Selectable', 'Draggable'
      * @param {object} [options] - Feature options
      * @return {Tree} this
      */
     enableFeature: function(featureName, options) {
-        var feature = Tree.features[featureName];
+        var Feature = Tree.features[featureName];
+        this.disableFeature(featureName);
 
-        if (feature) {
-            feature.set(this, options);
+        if (Feature) {
+            this.enabledFeatures[featureName] = new Feature(this, options);
         }
         return this;
     },
 
     /**
      * Disable facility of tree
-     * @param {string} featureName - 'selectable', 'draggable', 'editable'
+     * @param {string} featureName - 'Selectable', 'Draggable'
      * @return {Tree} this
      */
     disableFeature: function(featureName) {
-        var feature = Tree.features[featureName];
+        var feature = this.enabledFeatures[featureName];
 
         if (feature) {
-            feature.unset();
+            feature.destroy();
+            delete this.enabledFeatures[featureName]
         }
         return this;
     }
 });
 
-tui.util.forEach(features, function(feature, name) {
-    Tree.registerFeature(name, feature);
+tui.util.forEach(features, function(Feature, name) {
+    console.log(name, Feature);
+    Tree.registerFeature(name, Feature);
 });
 tui.util.CustomEvents.mixin(Tree);
 module.exports = Tree;

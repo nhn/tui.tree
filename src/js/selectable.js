@@ -2,15 +2,15 @@
 
 var util = require('./util');
 
+
 /**
- * Module for selectable tree
+ * Set the tree selectable
+ * @constructor
+ * @param {Tree} tree - Tree
  */
-var SelectionModule = {
-    /**
-     * Set the tree selectable
-     * @param {Tree} tree - Tree
-     */
-    set: function(tree) {
+var Selectable = tui.util.defineClass(/** @lends SelectionModule.prototype */{/*eslint-disable*/
+    init: function(tree) { /*eslint-enable*/
+        console.log('aa');
         this.tree = tree;
         this.selectedClassName = tree.classNames.selectedClass;
         this.handler = tui.util.bind(this.onSingleClick, this);
@@ -20,7 +20,7 @@ var SelectionModule = {
     /**
      * Disable this module
      */
-    unset: function() {
+    destroy: function() {
         util.removeClass(this.currentSelectedElement, this.selectedClassName);
         this.tree.off(this.handler);
     },
@@ -42,6 +42,6 @@ var SelectionModule = {
 
         tree.fire('select', nodeId);
     }
-};
+});
 
-module.exports = SelectionModule;
+module.exports = Selectable;

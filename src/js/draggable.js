@@ -8,26 +8,25 @@ var defaultOptions = {
             x: 10
         }
     },
-    rejectiveTagNames = [
+    rejectedTagNames = [
         'INPUT',
         'BUTTON'
     ],
     inArray = tui.util.inArray;
 
 /**
- * Module for draggable tree
+ * Set the tree draggable
+ * @constructor
+ * @param {Tree} tree - Tree
+ * @param {Object} options - Options
+ *  @param {boolean} options.useHelper - Using helper flag
+ *  @param {{x: number, y:number}} options.helperPos - Helper position
+ *  @param {Array.<string>} options.rejectedTagNames - No draggable tag names
+ *  @param {Array.<string>} options.rejectedClassNames - No draggable class names
  */
-var DNDModule = {
-    /**
-     * Set the tree selectable
-     * @param {Tree} tree - Tree
-     * @param {Object} options - Options
-     *  @param {boolean} options.useHelper - Using helper flag
-     *  @param {{x: number, y:number}} options.helperPos - Helper position
-     *  @param {Array.<string>} options.rejectedTagNames - No draggable tag names
-     *  @param {Array.<string>} options.rejectedClassNames - No draggable class names
-     */
-    set: function(tree, options) {
+var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{
+    /*eslint-disable*/
+    init: function(tree, options) { /*eslint-enable*/
         this.tree = tree;
         this.setMembers(options);
         this.attachMousedown();
@@ -38,36 +37,28 @@ var DNDModule = {
      * @param {Object} options - input options
      */
     setMembers: function(options) {
-        var helperEl;
-
+        var helperElement = document.createElement('span'),
+            style = helperElement.style;
         options = tui.util.extend({}, defaultOptions, options);
+
         this.useHelper = options.useHelper;
         this.helperPos = options.helperPos;
-        this.rejectedTagNames = rejectiveTagNames.concat(options.rejectedTagNames);
+        this.rejectedTagNames = rejectedTagNames.concat(options.rejectedTagNames);
         this.rejectedClassNames = [].concat(options.rejectedClassNames);
         this.defaultPosition = tree.rootElement.getBoundingClientRect();
-        this.helperElement = null;
+        this.helperElement = helperElement;
         this.userSelectPropertyKey = null;
         this.userSelectPropertyValue = null;
         this.currentNodeId = null;
 
-        this.handlers = {
-            mousedown: tui.util.bind(DNDModule.onMousedown, DNDModule),
-            mousemove: tui.util.bind(DNDModule.onMousemove, DNDModule),
-            mouseup: tui.util.bind(DNDModule.onMouseup, DNDModule)
-        };
+        this.handlers = {};
+        this.handlers.mousedown = tui.util.bind(this.onMousedown, this);
+        this.handlers.mousemove = tui.util.bind(this.onMousemove, this);
+        this.handlers.mouseup = tui.util.bind(this.onMouseup, this);
 
-        helperEl = this.helperElement = document.createElement('span');
-        helperEl.style.position = 'absolute';
-        helperEl.style.display = 'none';
-        this.tree.rootElement.parentNode.appendChild(helperEl);
-    },
-
-    /**
-     * Disable this module
-     */
-    unset: function() {
-        this.detachMousedown();
+        style.position = 'absolute';
+        style.display = 'none';
+        this.tree.rootElement.parentNode.appendChild(helperElement);
     },
 
     /**
@@ -188,7 +179,14 @@ var DNDModule = {
         if (this.userSelectPropertyKey) {
             document.documentElement.style[this.userSelectPropertyKey] = this.userSelectPropertyValue;
         }
-    }
-};
+    },
 
-module.exports = DNDModule;
+    /**
+     * Disable this module
+     */
+    destroy: function() {
+        this.detachMousedown();
+    }
+});
+
+module.exports = Draggable;
