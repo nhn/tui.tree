@@ -48,6 +48,10 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
         this._setData(data);
     },
 
+    /**
+     * Return prefix of node id
+     * @returns {string} Prefix
+     */
     getNodeIdPrefix: function() {
         return TreeNode.idPrefix;
     },
