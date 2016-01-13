@@ -300,7 +300,7 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
         originalParentId = node.getParentId();
         originalParent = this.getNode(originalParentId);
 
-        if (node.hasChild(newParentId) || nodeId === newParentId) {
+        if (nodeId === newParentId || this.contains(nodeId, newParentId)) {
             return;
         }
         originalParent.removeChildId(nodeId);
@@ -308,6 +308,23 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
         newParent.addChildId(nodeId);
 
         this.fire('move', nodeId, originalParentId, newParentId);
+    },
+
+    /**
+     * Check to see if a node is a descendant of another node.
+     * @param {string} containerId - Node id
+     * @param {string} containedId - Node id
+     * @returns {boolean} The node is contained or not
+     */
+    contains: function(containerId, containedId) {
+        var parentId = this.getParentId(containedId),
+            isContained = false;
+
+        while (!isContained && parentId) {
+            isContained = (containerId === parentId);
+            parentId = this.getParentId(parentId);
+        }
+        return isContained;
     },
 
     /**
