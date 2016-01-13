@@ -144,10 +144,11 @@ var TreeNode = tui.util.defineClass(/** @lends TreeNode.prototype */{ /*eslint-d
      * @param {number} parentId - Parent node id
      */
     setParentId: function(parentId) {
-        if (parentId === this._id) {
+        var isInvalid = (parentId === this._id) || inArray(parentId, this._childIds);
+
+        if (isInvalid) {
             return;
         }
-        util.removeItemFromArray(parentId, this._childIds);
         this._parentId = parentId;
     },
 
@@ -156,9 +157,9 @@ var TreeNode = tui.util.defineClass(/** @lends TreeNode.prototype */{ /*eslint-d
      * @param {Array.<number>} childIds - Id list of children
      */
     replaceChildIds: function(childIds) {
-        var failed = (inArray(this._id, childIds) !== -1) || (inArray(this._parentId, childIds) !== -1)
+        var isInvalid = (inArray(this._id, childIds) !== -1) || (inArray(this._parentId, childIds) !== -1)
 
-        if (failed) {
+        if (isInvalid) {
             return;
         }
         this._childIds = childIds;
@@ -177,9 +178,10 @@ var TreeNode = tui.util.defineClass(/** @lends TreeNode.prototype */{ /*eslint-d
      * @param {number} id - Child node id
      */
     addChildId: function(id) {
-        var childIds = this._childIds;
+        var childIds = this._childIds,
+            isInvalid = (id === this._parentId) || (id === this._id);
 
-        if (id === this._parentId || id === this._id) {
+        if (isInvalid) {
             return;
         }
 
