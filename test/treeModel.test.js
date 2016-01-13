@@ -110,8 +110,14 @@ describe('TreeModel', function() {
 
     it('- Sort method', function() {
         var childIds = treeModel.rootNode.getChildIds(),
-            comparator = function() {
-                return -1;
+            comparator = function(nodeA, nodeB) {
+                var aValue = nodeA.getData('text'),
+                    bValue = nodeB.getData('text');
+
+                if (!bValue.localeCompare) {
+                    return 0;
+                }
+                return bValue.localeCompare(aValue);
             };
 
         treeModel.sort(comparator);

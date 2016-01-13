@@ -38,7 +38,11 @@ describe('Tree', function() {
     });
 
     it('should have a root element', function() {
-        expect(tree.rootElement).toEqual(jasmine.any(HTMLElement));
+        // Node.ELEMENT_NODE === 1
+        // in IE8,
+        // element instanceof HTMLElement --> error
+        // element.nodeType === Node.ELEMENT_NODE --> error
+        expect(tree.rootElement.nodeType).toEqual(1);
     });
 
     it('should change state of a node to "opened" when open node', function() {
