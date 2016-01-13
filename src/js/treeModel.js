@@ -32,12 +32,6 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
         this.nodeDefaultState = options.nodeDefaultState;
 
         /**
-         * A buffer
-         * @type {null}
-         */
-        this.buffer = null;
-
-        /**
          * Root node
          * @type {TreeNode}
          */
