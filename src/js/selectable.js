@@ -2,13 +2,12 @@
 
 var util = require('./util');
 
-
 /**
  * Set the tree selectable
  * @constructor
  * @param {Tree} tree - Tree
  */
-var Selectable = tui.util.defineClass(/** @lends SelectionModule.prototype */{/*eslint-disable*/
+var Selectable = tui.util.defineClass(/** @lends Selectable.prototype */{/*eslint-disable*/
     init: function(tree) { /*eslint-enable*/
         this.tree = tree;
         this.selectedClassName = tree.classNames.selectedClass;

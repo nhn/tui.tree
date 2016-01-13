@@ -2,7 +2,6 @@
 
 var util = require('./util');
 
-
 /**
  * Set the tree selectable
  * @constructor
@@ -12,7 +11,7 @@ var util = require('./util');
  *  @param {string} options.dataKey - Key of node data to set value
  *  @param {string} options.inputClassName - Classname of input element
  */
-var Editable = tui.util.defineClass(/** @lends SelectionModule.prototype */{/*eslint-disable*/
+var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-disable*/
     init: function(tree, options) { /*eslint-enable*/
         this.tree = tree;
         this.editableClassName = options.editableClassName;
