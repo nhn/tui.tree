@@ -23,9 +23,18 @@ var lastIndex = 0,
  */
 var TreeNode = tui.util.defineClass(/** @lends TreeNode.prototype */{ /*eslint-disable*/
     static: {
+        /**
+         * Set prefix of id
+         * @param {string} prefix - Prefix of id
+         */
         setIdPrefix: function(prefix) {
             this.idPrefix = prefix || this.idPrefix;
         },
+
+        /**
+         * Prefix of id
+         * @type {string}
+         */
         idPrefix: ''
     },
     init: function(nodeData, parentId) { /*eslint-enable*/
@@ -97,6 +106,7 @@ var TreeNode = tui.util.defineClass(/** @lends TreeNode.prototype */{ /*eslint-d
 
     /**
      * Toggle state
+     * @api
      */
     toggleState: function() {
         if (this._state === states.CLOSED) {
@@ -108,6 +118,7 @@ var TreeNode = tui.util.defineClass(/** @lends TreeNode.prototype */{ /*eslint-d
 
     /**
      * Set state
+     * @api
      * @param {string} state - State of node ('closed', 'opened')
      */
     setState: function(state) {
@@ -117,6 +128,7 @@ var TreeNode = tui.util.defineClass(/** @lends TreeNode.prototype */{ /*eslint-d
 
     /**
      * Get state
+     * @api
      * @returns {string} state ('opened' or 'closed')
      */
     getState: function() {
@@ -125,6 +137,7 @@ var TreeNode = tui.util.defineClass(/** @lends TreeNode.prototype */{ /*eslint-d
 
     /**
      * Get id
+     * @api
      * @returns {string} Node id
      */
     getId: function() {
@@ -133,6 +146,7 @@ var TreeNode = tui.util.defineClass(/** @lends TreeNode.prototype */{ /*eslint-d
 
     /**
      * Get parent id
+     * @api
      * @returns {string} Parent node id
      */
     getParentId: function() {
@@ -157,6 +171,7 @@ var TreeNode = tui.util.defineClass(/** @lends TreeNode.prototype */{ /*eslint-d
 
     /**
      * Get id list of children
+     * @api
      * @returns {Array.<number>} Id list of children
      */
     getChildIds: function() {
@@ -185,6 +200,7 @@ var TreeNode = tui.util.defineClass(/** @lends TreeNode.prototype */{ /*eslint-d
 
     /**
      * Get data
+     * @api
      * @param {string} name - Property name of data
      * @returns {*} Data
      */
@@ -194,6 +210,7 @@ var TreeNode = tui.util.defineClass(/** @lends TreeNode.prototype */{ /*eslint-d
 
     /**
      * Get all data
+     * @api
      * @returns {Object} Data
      */
     getAllData: function() {
@@ -202,6 +219,7 @@ var TreeNode = tui.util.defineClass(/** @lends TreeNode.prototype */{ /*eslint-d
 
     /**
      * Set data
+     * @api
      * @param {Object} data - Data for adding
      */
     setData: function(data) {
@@ -211,6 +229,7 @@ var TreeNode = tui.util.defineClass(/** @lends TreeNode.prototype */{ /*eslint-d
 
     /**
      * Remove data
+     * @api
      * @param {...string} names - Names of data
      */
     removeData: function(names) {
@@ -221,6 +240,7 @@ var TreeNode = tui.util.defineClass(/** @lends TreeNode.prototype */{ /*eslint-d
 
     /**
      * Return true if this node has a provided child id.
+     * @api
      * @param {string} id - Node id
      * @returns {boolean} - Whether this node has a provided child id.
      */
@@ -230,6 +250,7 @@ var TreeNode = tui.util.defineClass(/** @lends TreeNode.prototype */{ /*eslint-d
 
     /**
      * Return whether this node is leaf.
+     * @api
      * @returns {boolean} Node is leaf or not.
      */
     isLeaf: function() {
@@ -238,6 +259,7 @@ var TreeNode = tui.util.defineClass(/** @lends TreeNode.prototype */{ /*eslint-d
 
     /**
      * Return whether this node is root.
+     * @api
      * @returns {boolean} Node is root or not.
      */
     isRoot: function() {

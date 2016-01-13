@@ -133,6 +133,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
 
         /**
          * Tree features
+         * @type {Object}
          */
         features: {}
     },
@@ -400,6 +401,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
 
     /**
      * Return the depth of node
+     * @api
      * @param {string} nodeId - Node id
      * @return {number|undefined} Depth
      */
@@ -409,6 +411,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
 
     /**
      * Return the last depth of tree
+     * @api
      * @return {number} Last depth
      */
     getLastDepth: function() {
@@ -417,6 +420,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
 
     /**
      * Return root node id
+     * @api
      * @returns {string} Root node id
      */
     getRootNodeId: function() {
@@ -425,6 +429,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
 
     /**
      * Return child ids
+     * @api
      * @param {string} nodeId - Node id
      * @returns {Array.<string>|undefined} Child ids
      */
@@ -434,6 +439,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
 
     /**
      * Return parent id of node
+     * @api
      * @param {string} nodeId - Node id
      * @returns {string|undefined} Parent id
      */
@@ -459,6 +465,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
 
     /**
      * Get node id from element
+     * @api
      * @param {HTMLElement} element - Element
      * @returns {string} Node id
      * @private
@@ -475,6 +482,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
 
     /**
      * Get prefix of node id
+     * @api
      * @returns {string} Prefix of node id
      */
     getNodeIdPrefix: function() {
@@ -483,6 +491,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
 
     /**
      * Get node data
+     * @api
      * @param {string} nodeId - Node id
      * @returns {object|undefined} Node data
      */
@@ -492,6 +501,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
 
     /**
      * Set data properties of a node
+     * @api
      * @param {string} nodeId - Node id
      * @param {object} data - Properties
      * @param {boolean} [isSilent] - If true, it doesn't trigger the 'update' event
@@ -502,6 +512,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
 
     /**
      * Remove node data
+     * @api
      * @param {string} nodeId - Node id
      * @param {string|Array} names - Names of properties
      * @param {boolean} [isSilent] - If true, it doesn't trigger the 'update' event
@@ -512,6 +523,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
 
     /**
      * Open node
+     * @api
      * @param {string} nodeId - Node id
      */
     open: function(nodeId) {
@@ -526,6 +538,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
 
     /**
      * Close node
+     * @api
      * @param {string} nodeId - Node id
      */
     close: function(nodeId) {
@@ -540,6 +553,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
 
     /**
      * Toggle node
+     * @api
      * @param {string} nodeId - Node id
      * @private
      **/
@@ -556,6 +570,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
 
     /**
      * Sort all nodes
+     * @api
      * @param {Function} comparator - Comparator for sorting
      */
     sort: function(comparator) {
@@ -564,7 +579,8 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
     },
 
     /**
-     * Refresh node
+     * Refresh tree or node's children
+     * @api
      * @param {string} [nodeId] - TreeNode id to refresh
      **/
     refresh: function(nodeId) {
@@ -573,6 +589,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
 
     /**
      * Traverse this tree iterating over all nodes.
+     * @api
      * @param {Function} iteratee - Iteratee function
      * @param {object} [context] - Context of iteratee
      */
@@ -582,6 +599,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
 
     /**
      * Traverse this tree iterating over all descendants of a node.
+     * @api
      * @param {Function} iteratee - Iteratee function
      * @param {string} parentId - Parent node id
      * @param {object} [context] - Context of iteratee
@@ -593,7 +611,8 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
     /**
      * Add node(s).
      * - If the parentId is falsy, the node will be appended to rootNode.
-     * - The update event will be fired with parent node.
+     * - If 'isSilent' is not true, it redraws the tree
+     * @api
      * @param {Array|object} data - Raw-data
      * @param {*} parentId - Parent id
      * @param {boolean} [isSilent] - If true, it doesn't redraw children
@@ -604,7 +623,8 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
 
     /**
      * Remove a node with children.
-     * - The update event will be fired with parent node.
+     * - If 'isSilent' is not true, it redraws the tree
+     * @api
      * @param {string} nodeId - Node id to remove
      * @param {boolean} [isSilent] - If true, it doesn't redraw children
      */
@@ -614,6 +634,8 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
 
     /**
      * Move a node to new parent
+     * - If 'isSilent' is not true, it redraws the tree
+     * @api
      * @param {string} nodeId - Node id
      * @param {string} newParentId - New parent id
      * @param {boolean} [isSilent] - If true, it doesn't redraw children
@@ -624,7 +646,8 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
 
     /**
      * Enable facility of tree
-     * @param {string} featureName - 'Selectable', 'Draggable'
+     * @api
+     * @param {string} featureName - 'Selectable', 'Draggable', 'Editable'
      * @param {object} [options] - Feature options
      * @return {Tree} this
      */
@@ -640,7 +663,8 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
 
     /**
      * Disable facility of tree
-     * @param {string} featureName - 'Selectable', 'Draggable'
+     * @api
+     * @param {string} featureName - 'Selectable', 'Draggable', 'Editable'
      * @return {Tree} this
      */
     disableFeature: function(featureName) {
