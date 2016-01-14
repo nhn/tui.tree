@@ -7,20 +7,6 @@ var div = document.createElement('div');
 
 var util = {
     /**
-     * Push all elements from new array
-     * @param {Array} arr1 - Base array
-     * @param {Array} arr2 - New array
-     */
-    pushAll: function(arr1, arr2) {
-        var length = arr2.length,
-            i = 0;
-
-        for (; i < length; i += 1) {
-            arr1.push(arr2[i]);
-        }
-    },
-
-    /**
      * Remove first specified item from array, if it exists
      * @param {*} item Item to look for
      * @param {Array} arr Array to query

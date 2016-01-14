@@ -408,7 +408,7 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
             node = this.getNode(nodeId);
             iteratee.call(context, node, nodeId);
 
-            util.pushAll(stack, node.getChildIds());
+            stack = stack.concat(node.getChildIds());
         }
     }
 });
