@@ -23,5 +23,8 @@
   ],
   "dependencies": {
     "tui-code-snippet": "~1.0.4"
+  },
+  "devDependencies": {
+    "jquery": "~2.2.0"
   }
 }
