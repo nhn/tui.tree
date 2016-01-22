@@ -40,6 +40,16 @@ var Selectable = tui.util.defineClass(/** @lends Selectable.prototype */{/*eslin
         util.removeClass(prevElement, selectedClassName);
         util.addClass(nodeElement, selectedClassName);
 
+        /**
+         * @api
+         * @event Tree#select
+         * @example
+         * tree
+         *  .enableFeature('Selectable')
+         *  .on('select', functino(nodeId) {
+         *      console.log('selected node: ' + nodeId);
+         *  });
+         */
         tree.fire('select', nodeId);
         this.prevNodeId = nodeId;
     },

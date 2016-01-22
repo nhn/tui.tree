@@ -367,7 +367,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
          * @api
          * @event Tree#beforeDraw
          * @example
-         * Tree.on('beforDraw', function(parentId) {
+         * tree.on('beforeDraw', function(parentId) {
          *     console.log(parentId);
          * });
          */
@@ -385,7 +385,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
          * @api
          * @event Tree#afterDraw
          * @example
-         * Tree.on('afterDraw', function(parentId) {
+         * tree.on('afterDraw', function(parentId) {
          *     console.log(parentId);
          * });
          */

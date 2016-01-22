@@ -5,7 +5,7 @@
   "index_depthLabel": {
     "title": "Label"
   },
-  "index_event": {
-    "title": "Custom event"
+  "index_selectable": {
+    "title": "Selectable"
   }
 }
