@@ -44,11 +44,7 @@ var nodeStates = states.node,
  *         @param {string} [options.classNames.subtreeClass] A class name for subtree in internal node
  *         @param {string} [options.classNames.toggleBtnClass] A class name for toggle button in internal node
  * @example
- * //Default options
- * //   - HTML TEMPLATE
- * //       - The prefix "d_" represents the data of each node.
- * //       - The "d_children" will be converted to HTML-template
- * //
+ * //Default options:
  * // {
  * //     rootElement: document.createElement('UL'),
  * //     nodeIdPrefix: 'tui-tree-node-'
