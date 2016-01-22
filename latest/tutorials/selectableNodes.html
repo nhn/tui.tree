@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <link type="text/css" rel="stylesheet" href="../styles/prettify-jsdoc.css" />
+    <link type="text/css" rel="stylesheet" href="../styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="../styles/tui.css">
+    <title>트리컴포넌트</title>
+    <link rel="stylesheet" href="css/tree.css" />
+</head>
+<body>
+<div class="wrap" style="height:500px;">
+    <div class="treeWrap" style="position:relative; border:1px solid #eaeaea;">
+        <ul id="treeRoot1" class="tree"></ul>
+    </div>
+    <div>
+    <input type="text" id="selectValue" style="border:1px solid #eaeaea;margin:10px 0 0 10px; font-size:11px;" />
+    </div>
+</div>
+
+<div class="codeArea"></div>
+
+<script type="text/javascript" src="js/code-snippet.js"></script>
+<script type="text/javascript" src="js/tree.js"></script>
+<script type="text/javascript" src="js/jquery.js"></script>
+
+<script src="../scripts/prettify/prettify.js"></script>
+<script src="../scripts/prettify/lang-css.js"></script>
+<script src="../scripts/samplecode.js"></script>
+<script class="serviceCode">
+    var data = [
+        {text: 'rootA', children: [
+            {text: 'root-1A'},
+            {text: 'root-1B'},
+            {text: 'root-1C'},
+            {text: 'root-1D'},
+            {text: 'root-2A', children: [
+                {text:'sub_1A', children:[
+                    {text:'sub_sub_1A'}
+                ]},
+                {text:'sub_2A'}
+            ]},
+            {text: 'root-2B'},
+            {text: 'root-2C'},
+            {text: 'root-2D'},
+            {text: 'root-3A', children: [
+                {text:'sub3_a'},
+                {text:'sub3_b'}
+            ]},
+            {text: 'root-3B'},
+            {text: 'root-3C'},
+            {text: 'root-3D'}
+        ]},
+        {text: 'rootB', children: [
+            {text:'B_sub1'},
+            {text:'B_sub2'}
+        ]}
+    ];
+
+    var tree = new tui.component.Tree(data, {
+        rootElement: document.getElementById('treeRoot1'),
+        nodeDefaultState: 'opened'
+    });
+
+    // 노드를 선택시 발생
+    tree.on('select', function(nodeId) {
+        document.getElementById('selectValue').value = tree.getNodeData(nodeId).text;
+    });
+
+    tree.enableFeature('Selectable')
+        .enableFeature('Editable', {
+            editableClassName: tree.classNames.textClass,
+            dataKey: 'text'
+        });
+</script>
+</body>
+</html>
