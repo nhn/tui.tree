@@ -46,7 +46,7 @@ var Selectable = tui.util.defineClass(/** @lends Selectable.prototype */{/*eslin
          * @example
          * tree
          *  .enableFeature('Selectable')
-         *  .on('select', functino(nodeId) {
+         *  .on('select', function(nodeId) {
          *      console.log('selected node: ' + nodeId);
          *  });
          */
