@@ -54,7 +54,9 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
      */
     createInputElement: function(inputClassName) {
         var el = document.createElement('INPUT');
-        el.className = inputClassName;
+        if (inputClassName) {
+            el.className = inputClassName;
+        }
         el.setAttribute('type', 'text');
 
         return el;

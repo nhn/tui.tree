@@ -363,6 +363,14 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
             return;
         }
 
+        /**
+         * @api
+         * @event Tree#beforeDraw
+         * @example
+         * Tree.on('beforDraw', function(parentId) {
+         *     console.log(parentId);
+         * });
+         */
         this.fire('beforeDraw', parentId);
         subtreeElement.innerHTML = this._makeHtml(node.getChildIds());
         this.model.each(function(node, nodeId) {
@@ -372,6 +380,15 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
                 this.close(nodeId);
             }
         }, parentId, this);
+
+        /**
+         * @api
+         * @event Tree#afterDraw
+         * @example
+         * Tree.on('afterDraw', function(parentId) {
+         *     console.log(parentId);
+         * });
+         */
         this.fire('afterDraw', parentId);
     },
 
@@ -601,7 +618,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * Traverse this tree iterating over all descendants of a node.
      * @api
      * @param {Function} iteratee - Iteratee function
-     * @param {string} parentId - Parent node id
+     * @param {string} [parentId] - Parent node id
      * @param {object} [context] - Context of iteratee
      */
     each: function(iteratee, parentId, context) {
@@ -650,6 +667,20 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * @param {string} featureName - 'Selectable', 'Draggable', 'Editable'
      * @param {object} [options] - Feature options
      * @return {Tree} this
+     * @example
+     * tree
+     *  .enableFeature('Selectable')
+     *  .enableFeature('Editable', {
+     *      enableClassName: tree.classNames.textClass,
+     *      dateKey: 'text',
+     *      inputClassName: 'myInput'
+     *  })
+     *  .enableFeature('Draggable', {
+     *      useHelper: true,
+     *      helperPos: {x: 5, y: 2},
+     *      rejectedTagNames: ['UL', 'INPUT', 'BUTTON'],
+     *      rejectedClassNames: ['elementHavingSomeClassIsNotDraggable', 'myClass']
+     *  });
      */
     enableFeature: function(featureName, options) {
         var Feature = Tree.features[featureName];
@@ -666,6 +697,11 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * @api
      * @param {string} featureName - 'Selectable', 'Draggable', 'Editable'
      * @return {Tree} this
+     * @example
+     * tree
+     *  .disableFeature('Selectable')
+     *  .disableFeature('Draggable')
+     *  .disableFeature('Editable');
      */
     disableFeature: function(featureName) {
         var feature = this.enabledFeatures[featureName];
