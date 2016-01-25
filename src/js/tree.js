@@ -79,32 +79,32 @@ var nodeStates = states.node,
  * //
  *
  * var data = [
- *     {title: 'rootA', children: [
- *         {title: 'root-1A'},
- *         {title: 'root-1B'},
- *         {title: 'root-1C'},
- *         {title: 'root-1D'},
- *         {title: 'root-2A', children: [
- *             {title:'sub_1A', children:[
- *                 {title:'sub_sub_1A'}
+ *     {text: 'rootA', children: [
+ *         {text: 'root-1A'},
+ *         {text: 'root-1B'},
+ *         {text: 'root-1C'},
+ *         {text: 'root-1D'},
+ *         {text: 'root-2A', children: [
+ *             {text:'sub_1A', children:[
+ *                 {text:'sub_sub_1A'}
  *             ]},
- *             {title:'sub_2A'}
+ *             {text:'sub_2A'}
  *         ]},
- *         {title: 'root-2B'},
- *         {title: 'root-2C'},
- *         {title: 'root-2D'},
- *         {title: 'root-3A', children: [
- *             {title:'sub3_a'},
- *             {title:'sub3_b'}
+ *         {text: 'root-2B'},
+ *         {text: 'root-2C'},
+ *         {text: 'root-2D'},
+ *         {text: 'root-3A', children: [
+ *             {text:'sub3_a'},
+ *             {text:'sub3_b'}
  *         ]},
- *         {title: 'root-3B'},
- *         {title: 'root-3C'},
- *         {title: 'root-3D'}
+ *         {text: 'root-3B'},
+ *         {text: 'root-3C'},
+ *         {text: 'root-3D'}
  *     ]},
- *     {title: 'rootB', children: [
- *         {title:'B_sub1'},
- *         {title:'B_sub2'},
- *         {title:'b'}
+ *     {text: 'rootB', children: [
+ *         {text:'B_sub1'},
+ *         {text:'B_sub2'},
+ *         {text:'b'}
  *     ]}
  * ];
  *
@@ -585,6 +585,16 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * Sort all nodes
      * @api
      * @param {Function} comparator - Comparator for sorting
+     * @example
+     * tree.sort(function(nodeA, nodeB) {
+     *     var aValue = nodeA.getData('text'),
+     *         bValue = nodeB.getData('text');
+     *
+     *     if (!bValue || !bValue.localeCompare) {
+     *         return 0;
+     *     }
+     *     return bValue.localeCompare(aValue);
+     * });
      */
     sort: function(comparator) {
         this.model.sort(comparator);
@@ -605,6 +615,10 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * @api
      * @param {Function} iteratee - Iteratee function
      * @param {object} [context] - Context of iteratee
+     * @example
+     * tree.eachAll(function(node, nodeId) {
+     *     console.log(node.getId() === nodeId); // true
+     * });
      */
     eachAll: function(iteratee, context) {
         this.model.eachAll(iteratee, context);
@@ -614,8 +628,13 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * Traverse this tree iterating over all descendants of a node.
      * @api
      * @param {Function} iteratee - Iteratee function
-     * @param {string} [parentId] - Parent node id
+     * @param {string} parentId - Parent node id
      * @param {object} [context] - Context of iteratee
+     * @example
+     * tree.each(function(node, nodeId) {
+     *     console.log(node.getId() === nodeId); // true
+     * }, parentId);
+     *
      */
     each: function(iteratee, parentId, context) {
         this.model.each(iteratee, parentId, context);
@@ -629,6 +648,9 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * @param {Array|object} data - Raw-data
      * @param {*} parentId - Parent id
      * @param {boolean} [isSilent] - If true, it doesn't redraw children
+     * @example
+     * tree.add({text:'FE development team'}, myParentId); // add node with redrawing
+     * tree.add({text:'FE development team'}, myParentId, true); // add node without redrawing
      */
     add: function(data, parentId, isSilent) {
         this.model.add(data, parentId, isSilent);
@@ -640,6 +662,9 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * @api
      * @param {string} nodeId - Node id to remove
      * @param {boolean} [isSilent] - If true, it doesn't redraw children
+     * @example
+     * tree.remove(myNodeId); // remove node with redrawing
+     * tree.remove(myNodeId, true); // remove node without redrawing
      */
     remove: function(nodeId, isSilent) {
         this.model.remove(nodeId, isSilent);
@@ -652,6 +677,9 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * @param {string} nodeId - Node id
      * @param {string} newParentId - New parent id
      * @param {boolean} [isSilent] - If true, it doesn't redraw children
+     * @exmaple
+     * tree.move(myNodeId, newParentId); // mode node with redrawing
+     * tree.move(myNodeId, newParentId, true); // move node without redrawing
      */
     move: function(nodeId, newParentId, isSilent) {
         this.model.move(nodeId, newParentId, isSilent);
