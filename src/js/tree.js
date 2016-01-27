@@ -134,7 +134,8 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
         features: {}
     },
     init: function(data, options) { /*eslint-enable*/
-        var extend = snippet.extend;
+        var extend = snippet.extend,
+            browser = tui.util.browser;
         options = extend({}, defaults, options);
 
         /**
@@ -172,6 +173,12 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
          * @type {Object.<string, object>}
          */
         this.enabledFeatures = {};
+
+        /**
+         * Whether the browser is ie and lower than 9
+         * @type {boolean}
+         */
+        this.isLowerThanIE9 = browser.msie && browser.version < 9;
 
         this._setRoot();
         this._drawChildren();
@@ -221,6 +228,10 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
     _onMousedown: function(event) {
         var self = this;
 
+        if (this.isLowerThanIE9) {
+            event = tui.util.extend({}, event);
+        }
+
         this.mousedownTimer = setTimeout(function() {
             self.fire('mousedown', event);
         }, 200);
@@ -252,6 +263,9 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
             this.fire('doubleClick', event);
             this.resetClickTimer();
         } else {
+            if (this.isLowerThanIE9) {
+                event = tui.util.extend({}, event);
+            }
             this.clickTimer = setTimeout(function() {
                 self.fire('singleClick', event);
                 self.resetClickTimer();

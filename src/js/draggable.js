@@ -47,7 +47,6 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{
         this.helperPos = options.helperPos;
         this.rejectedTagNames = rejectedTagNames.concat(options.rejectedTagNames);
         this.rejectedClassNames = [].concat(options.rejectedClassNames);
-        this.defaultPosition = tree.rootElement.getBoundingClientRect();
         this.helperElement = helperElement;
         this.userSelectPropertyKey = null;
         this.userSelectPropertyValue = null;
@@ -66,21 +65,22 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{
      * Attach mouse down event
      */
     attachMousedown: function() {
-        var tree = this.tree,
-            selectKey, style;
+        this.preventTextSelection();
+        this.tree.on('mousedown', this.onMousedown, this);
+    },
 
-        if ('onselectstart' in document) {
-            util.addEventListener(tree.rootElement, 'selectstart', util.preventDefault);
-        } else {
-            style = document.documentElement.style;
-            selectKey = util.testProp(['userSelect', 'WebkitUserSelect', 'OUserSelect', 'MozUserSelect', 'msUserSelect']);
+    /**
+     * Prevent text-selection
+     */
+    preventTextSelection: function() {
+        var selectKey = util.testProp(['userSelect', 'WebkitUserSelect', 'OUserSelect', 'MozUserSelect', 'msUserSelect']),
+            style = tree.rootElement.style;
 
-            this.userSelectPropertyKey = selectKey;
-            this.userSelectPropertyValue = style[selectKey];
-            style[selectKey] = 'none';
-        }
+        util.addEventListener(tree.rootElement, 'selectstart', util.preventDefault);
 
-        tree.on('mousedown', this.onMousedown, this);
+        this.userSelectPropertyKey = selectKey;
+        this.userSelectPropertyValue = style[selectKey];
+        style[selectKey] = 'none';
     },
 
     /**
@@ -107,7 +107,7 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{
 
     /**
      * Event handler - mousedown
-     * @param {MouseEvent} event - Mouse event
+     //* @param {MouseEvent} event - Mouse event
      */
     onMousedown: function(event) {
         var target = util.getTarget(event),
@@ -135,13 +135,13 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{
      */
     onMousemove: function(event) {
         var helperEl = this.helperElement,
-            pos = this.defaultPosition;
+            pos = tree.rootElement.getBoundingClientRect();
         if (!this.useHelper) {
             return;
         }
 
-        helperEl.style.left = event.clientX - pos.left + this.helperPos.x + 'px';
         helperEl.style.top = event.clientY - pos.top + this.helperPos.y + 'px';
+        helperEl.style.left = event.clientX - pos.left + this.helperPos.x + 'px';
         helperEl.style.display = '';
     },
 
@@ -163,6 +163,16 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{
     },
 
     /**
+     * Restore text-selection
+     */
+    restoreTextSelection: function() {
+        util.removeEventListener(tree.rootElement, 'selectstart', util.preventDefault);
+        if (this.userSelectPropertyKey) {
+            tree.rootElement.style[this.userSelectPropertyKey] = this.userSelectPropertyValue;
+        }
+    },
+
+    /**
      * Set helper contents
      * @param {string} text - Helper contents
      */
@@ -174,19 +184,14 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{
      * Detach mousedown event
      */
     detachMousedown: function() {
-        var tree = this.tree;
-
-        tree.off(this);
-        util.removeEventListener(tree.rootElement, 'selectstart', util.preventDefault);
-        if (this.userSelectPropertyKey) {
-            document.documentElement.style[this.userSelectPropertyKey] = this.userSelectPropertyValue;
-        }
+        this.tree.off(this);
     },
 
     /**
      * Disable this module
      */
     destroy: function() {
+        this.restoreTextSelection();
         this.detachMousedown();
     }
 });

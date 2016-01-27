@@ -132,7 +132,11 @@
         });
 
         tree.on('select', function(nodeId) {
-            console.log('select! - ' + nodeId);
+            if (window.console) {
+                console.log('select! - ' + nodeId);
+            } else {
+                alert('select! - ' + nodeId);
+            }
         });
     </script>
 </body>
