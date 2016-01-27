@@ -23,4 +23,13 @@ describe('Util', function() {
 
         expect(util.template(source, prop)).toEqual('hello NHN ENT!');
     });
+
+    it('"getClass" should return classname of element', function() {
+        //v1.0.1a - fixed for IE7
+        var element = document.createElement('div'),
+            className = 'asdfasdf';
+        util.addClass(element, className);
+
+        expect(util.getClass(element)).toEqual(className);
+    })
 });

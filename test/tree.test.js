@@ -1,5 +1,6 @@
 'use strict';
-var Tree = require('../src/js/tree');
+var Tree = require('../src/js/tree'),
+    util = require('../src/js/util');
 
 describe('Tree', function() {
     var data = [
@@ -86,6 +87,19 @@ describe('Tree', function() {
 
         expect(handler).toHaveBeenCalled();
         jasmine.clock().uninstall();
+    });
+
+    it('should change button label when change the state of node', function() {
+        //v1.0.1a - fixed
+        var firstChildId = tree.model.rootNode.getChildIds()[0],
+            firstChildElement = document.getElementById(firstChildId),
+            btnElement = util.getElementsByClassName(firstChildElement, tree.classNames.toggleBtnClass)[0];
+
+        tree.close(firstChildId);
+        expect(btnElement.innerHTML).toEqual(tree.stateLabels.closed);
+
+        tree.open(firstChildId);
+        expect(btnElement.innerHTML).toEqual(tree.stateLabels.opened);
     });
 
     it('should fire doubleClick event', function() {

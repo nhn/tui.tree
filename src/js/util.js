@@ -3,8 +3,6 @@
  * @author NHN Ent. FE dev team.<dl_javascript@nhnent.com>
  */
 'use strict';
-var div = document.createElement('div');
-
 var util = {
     /**
      * Remove first specified item from array, if it exists
@@ -104,7 +102,7 @@ var util = {
      * @returns {string} Class name
      */
     getClass: function(element) {
-        return element && element.getAttribute && (element.getAttribute('class') || '');
+        return element && element.getAttribute && (element.getAttribute('class') || element.getAttribute('className') || '');
     },
 
     /**
@@ -131,7 +129,7 @@ var util = {
         if (target.querySelectorAll) {
             filtered = target.querySelectorAll('.' + className);
         } else {
-            all = target.getElementsByTagName('*');
+            all = tui.util.toArray(target.getElementsByTagName('*'));
             filtered = tui.util.filter(all, function(el) {
                 var classNames = el.className || '';
                 return (classNames.indexOf(className) !== -1)

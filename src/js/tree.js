@@ -267,7 +267,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      */
     _setDisplayFromNodeState: function(nodeId, state) {
         var subtreeElement = this._getSubtreeElement(nodeId),
-            toggleBtnClassName = this.classNames.toogleBtnClass,
+            toggleBtnClassName = this.classNames.toggleBtnClass,
             label, btnElement, nodeElement;
 
         if (!subtreeElement || subtreeElement === this.rootElement) {
@@ -532,6 +532,20 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      */
     removeNodeData: function(nodeId, names, isSilent) {
         this.model.removeNodeData(nodeId, names, isSilent)
+    },
+
+    /**
+     * Get node state.
+     * @param {string} nodeId - Node id
+     * @return {string|undefined} Node state(('opened', 'closed', undefined)
+     */
+    getState: function(nodeId) {
+        var node = this.model.getNode(nodeId);
+
+        if (!node) {
+            return;
+        }
+        return node.getState();
     },
 
     /**

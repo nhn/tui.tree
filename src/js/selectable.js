@@ -37,6 +37,10 @@ var Selectable = tui.util.defineClass(/** @lends Selectable.prototype */{/*eslin
             nodeElement = document.getElementById(nodeId),
             selectedClassName = this.selectedClassName;
 
+        if (!nodeId) {
+            return;
+        }
+
         util.removeClass(prevElement, selectedClassName);
         util.addClass(nodeElement, selectedClassName);
 
