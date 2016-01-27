@@ -43,6 +43,7 @@ Each node can be moved by drag and drop.
 ## History
 | Version | Description | Date | Developer |
 | ---- | ---- | ---- | ---- |
+| 1.1.0a  | [Bug fix][https://github.com/nhnent/tui.component.tree/releases/tag/1.1.0a] | 2016.01 | NHN Ent. FE dev team.<dl_javascript@nhnent.com> |
 | <a href="https://nhnent.github.io/tui.component.tree/1.1.0">1.1.0</a>  | CRUD nodes | 2016.01 | NHN Ent. FE dev team.<dl_javascript@nhnent.com> |
 | 1.0.0a | Namespace changed | 2015.10 | NHN Ent. FE dev team.<dl_javascript@nhnent.com> |
 | 1.0.0a | defineNamespace Apply | 2015.05 | NHN Ent. FE dev team.<dl_javascript@nhnent.com> |
