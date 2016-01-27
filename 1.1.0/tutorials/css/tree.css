@@ -10,3 +10,7 @@ h3 {margin-left:25px; font-weight: normal;}
 .treeWrap .tui-tree-opened button {background-position: -107px 0; }
 .treeWrap .tui-tree-closed button {background-position: -92px 0; }
 .tui-tree-selected > .tui-tree-text { background-color:#F49999; }
+input {
+    border: 2px dotted;
+    outline: none;
+}
