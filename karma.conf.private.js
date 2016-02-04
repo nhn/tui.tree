@@ -21,11 +21,7 @@ module.exports = function(config) {
             'node_modules/jasmine-jquery/lib/jasmine-jquery.js',
             'bower_components/tui-code-snippet/code-snippet.min.js',
             'test/**/*.js',
-            'src/**/*.js',
-            {
-                pattern: 'test/fixture/**/*.html',
-                included: false
-            }
+            'src/**/*.js'
         ],
 
         exclude: [
@@ -79,6 +75,7 @@ module.exports = function(config) {
             'IE9',
             'IE10',
             'IE11',
+            'Edge',
             'Chrome-WebDriver',
             'Firefox-WebDriver'
         ],
@@ -113,6 +110,11 @@ module.exports = function(config) {
                 config: webdriverConfig,
                 browserName: 'internet explorer',
                 version: 11
+            },
+            'Edge': {
+                base: 'WebDriver',
+                config: webdriverConfig,
+                browserName: 'MicrosoftEdge'
             },
             'Chrome-WebDriver': {
                 base: 'WebDriver',

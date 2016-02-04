@@ -15,11 +15,7 @@ module.exports = function(config) {
             'node_modules/jasmine-jquery/lib/jasmine-jquery.js',
             'bower_components/tui-code-snippet/code-snippet.min.js',
             'test/**/*.js',
-            'src/**/*.js',
-            {
-                pattern: 'test/fixture/**/*.html',
-                included: false
-            }
+            'src/**/*.js'
         ],
 
         exclude: [
@@ -134,7 +130,7 @@ module.exports = function(config) {
         },
 
         browsers: [
-            //'bs_ie7', Timeout no activity
+            'bs_ie7',
             'bs_ie8',
             'bs_ie9',
             'bs_ie10',
