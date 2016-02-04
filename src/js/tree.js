@@ -24,6 +24,7 @@ var ERROR_MESSAGE_INVALID_ROOT_ELEMENT = '"tui-component-tree": Root element is 
     extend = snippet.extend;
 /**
  * Create tree model and inject data to model
+ * @class Tree
  * @constructor
  * @param {Object} data A data to be used on tree
  * @param {Object} options The options
@@ -211,14 +212,35 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
     _onMove: function(nodeId, originalParentId, newParentId) {
         this._drawChildren(originalParentId);
         this._drawChildren(newParentId);
+
+        /**
+         * @api
+         * @event Tree#move
+         * @param {{nodeId: string, originalParentId: string, newParentId: string}} treeEvent - Tree event
+         * @example
+         * tree.on('move', function(treeEvent) {
+         *     var nodeId = treeEvent.nodeId,
+         *         originalParentId = treeEvent.originalParentId,
+         *         newParentId = treeEvent.newParentId;
+         *
+         *     console.log(nodeId, originalParentId, newParentId);
+         * });
+         */
+        this.fire('move', {
+            nodeId: nodeId,
+            originalParentId: originalParentId,
+            newParentId: newParentId
+        });
     },
 
     /**
      * Set event handlers
      */
     _setEvents: function() {
-        this.model.on('update', this._drawChildren, this);
-        this.model.on('move', this._onMove, this);
+        this.model.on({
+            update: this._drawChildren,
+            move: this._onMove
+        }, this);
         util.addEventListener(this.rootElement, 'click', snippet.bind(this._onClick, this));
         util.addEventListener(this.rootElement, 'mousedown', snippet.bind(this._onMousedown, this));
     },
@@ -379,6 +401,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
         /**
          * @api
          * @event Tree#beforeDraw
+         * @param {string} parentId - parentNode id
          * @example
          * tree.on('beforeDraw', function(parentId) {
          *     console.log(parentId);
@@ -397,6 +420,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
         /**
          * @api
          * @event Tree#afterDraw
+         * @param {string} parentId - parentNode id
          * @example
          * tree.on('afterDraw', function(parentId) {
          *     console.log(parentId);
@@ -408,23 +432,22 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
     /**
      * Get subtree element
      * @param {string} nodeId - TreeNode id
-     * @returns {Element|undefined} Subtree element or undefined
+     * @returns {HTMLElement} Subtree element
      * @private
      */
     _getSubtreeElement: function(nodeId) {
         var node = this.model.getNode(nodeId),
             subtreeClassName, nodeElement, subtreeElement;
+
         if (!node || node.isLeaf()) {
-            return;
+            subtreeElement = null;
+        } else if (node.isRoot()) {
+            subtreeElement = this.rootElement
+        } else {
+            subtreeClassName = this.classNames.subtreeClass;
+            nodeElement = document.getElementById(node.getId());
+            subtreeElement = util.getElementsByClassName(nodeElement, subtreeClassName)[0];
         }
-
-        if (node.isRoot()) {
-            return this.rootElement;
-        }
-
-        subtreeClassName = this.classNames['subtreeClass'];
-        nodeElement = document.getElementById(node.getId());
-        subtreeElement = util.getElementsByClassName(nodeElement, subtreeClassName)[0];
 
         return subtreeElement;
     },
@@ -679,12 +702,21 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * @param {Array|object} data - Raw-data
      * @param {*} parentId - Parent id
      * @param {boolean} [isSilent] - If true, it doesn't redraw children
+     * @returns {Array.<string>} Added node ids
      * @example
-     * tree.add({text:'FE development team'}, myParentId); // add node with redrawing
-     * tree.add({text:'FE development team'}, myParentId, true); // add node without redrawing
+     * // add node with redrawing
+     * var firstAddedIds = tree.add({text:'FE development team1'}, myParentId);
+     * console.log(firstAddedIds); // ["tui-tree-node-1"]
+     *
+     * // add node without redrawing
+     * var secondAddedIds = tree.add([
+     *    {text: 'FE development team2'},
+     *    {text: 'FE development team3'}
+     * ], myParentId, true);
+     * console.log(secondAddedIds); // ["tui-tree-node-2", "tui-tree-node-3"]
      */
     add: function(data, parentId, isSilent) {
-        this.model.add(data, parentId, isSilent);
+        return this.model.add(data, parentId, isSilent);
     },
 
     /**

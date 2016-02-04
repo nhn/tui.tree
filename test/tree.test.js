@@ -44,9 +44,8 @@ describe('Tree', function() {
 
     it('when has invalid root element, should throw an error', function() {
         function createInvalidTree() {
-            tree = new Tree(data);
+            return new Tree(data);
         }
-
         expect(createInvalidTree).toThrow();
     });
 
@@ -102,7 +101,6 @@ describe('Tree', function() {
     });
 
     it('should change button label when change the state of node', function() {
-        //v1.0.1a - fixed
         var firstChildId = tree.model.rootNode.getChildIds()[0],
             firstChildElement = document.getElementById(firstChildId),
             btnElement = util.getElementsByClassName(firstChildElement, tree.classNames.toggleBtnClass)[0];
@@ -144,6 +142,21 @@ describe('Tree', function() {
         expect(subtreeElement.childNodes.length).toEqual(childCount + 2);
     });
 
+    it('should return node ids when new nodes are added', function() {
+        var firstChildId = tree.model.rootNode.getChildIds()[0],
+            data = [
+                {text: 'hello world', children: [
+                    {text: 'foo'},
+                    {text: 'bar'}
+                ]},
+                {text: 'new world'}
+            ],
+            ids = tree.add(data, firstChildId);
+
+        expect(ids).toEqual(jasmine.any(Array));
+        expect(ids.length).toEqual(2);
+    });
+
     it('should redraw nodes when a node is removed', function() {
         var firstChildId = tree.model.rootNode.getChildIds()[0],
             firstChild = tree.model.getNode(firstChildId),
@@ -170,5 +183,21 @@ describe('Tree', function() {
 
         expect(firstChildElement.contains(grandChildElement)).toBe(false);
         expect(lastChildElement.contains(grandChildElement)).toBe(true);
+    });
+
+    it('should fire "move" event when a node is moved', function() {
+        var firstChildId = tree.model.rootNode.getChildIds()[0],
+            lastChildId = tree.model.rootNode.getChildIds().slice(-1)[0], // slice(-1) returns a value of last index
+            grandChildId = tree.model.getNode(firstChildId).getChildIds()[0];
+
+        spyOn(tree, 'fire');
+
+        tree.move(grandChildId, lastChildId);
+
+        expect(tree.fire).toHaveBeenCalledWith('move', {
+            nodeId: grandChildId,
+            originalParentId: firstChildId,
+            newParentId: lastChildId
+        });
     });
 });

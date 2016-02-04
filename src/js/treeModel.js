@@ -72,27 +72,32 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
      * Make tree hash from data and parentNode
      * @param {Array} data - Tree data
      * @param {TreeNode} parent - Parent node id
+     * @returns {Array.<string>} Added node ids
      * @private
      */
     _makeTreeHash: function(data, parent) {
-        var parentId = parent.getId();
+        var parentId = parent.getId(),
+            ids = [];
 
         forEach(data, function(datum) {
             var childrenData = datum.children,
                 node = this._createNode(datum, parentId),
                 nodeId = node.getId();
 
+            ids.push(nodeId);
             this.treeHash[nodeId] = node;
             parent.addChildId(nodeId);
             this._makeTreeHash(childrenData, node);
         }, this);
+
+        return ids;
     },
 
     /**
      * Create node
      * @param {object} nodeData - Datum of node
      * @param {string} parentId - Parent id
-     * @return {TreeNode} TreeNode
+     * @returns {TreeNode} TreeNode
      */
     _createNode: function(nodeData, parentId) {
         var node;
@@ -109,7 +114,7 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
     /**
      * Get children
      * @param {string} nodeId - Node id
-     * @return {Array.<TreeNode>|undefined} children
+     * @returns {Array.<TreeNode>|undefined} children
      */
     getChildren: function(nodeId) {
         var childIds = this.getChildIds(nodeId);
@@ -159,7 +164,7 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
     /**
      * Find node
      * @param {string} id - A node id to find
-     * @return {TreeNode|undefined} Node
+     * @returns {TreeNode|undefined} Node
      */
     getNode: function(id) {
         return this.treeHash[id];
@@ -168,7 +173,7 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
     /**
      * Get depth from node id
      * @param {string} id - A node id to find
-     * @return {number|undefined} Depth
+     * @returns {number|undefined} Depth
      */
     getDepth: function(id) {
         var node = this.getNode(id),
@@ -239,14 +244,17 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
      * @param {boolean} [isSilent] - If true, it doesn't trigger the 'update' event
      */
     add: function(data, parentId, isSilent) {
-        var parent = this.getNode(parentId) || this.rootNode;
+        var parent = this.getNode(parentId) || this.rootNode,
+            ids;
 
         data = [].concat(data);
-        this._makeTreeHash(data, parent);
+        ids = this._makeTreeHash(data, parent);
 
         if (!isSilent) {
             this.fire('update', parentId);
         }
+
+        return ids;
     },
 
     /**
@@ -363,7 +371,7 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
     /**
      * Get node data (all)
      * @param {string} nodeId - Node id
-     * @return {object|undefined} Node data
+     * @returns {object|undefined} Node data
      */
     getNodeData: function(nodeId) {
         var node = this.getNode(nodeId);
