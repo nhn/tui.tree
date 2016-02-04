@@ -107,7 +107,7 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{
 
     /**
      * Event handler - mousedown
-     //* @param {MouseEvent} event - Mouse event
+     * @param {MouseEvent} event - Mouse event
      */
     onMousedown: function(event) {
         var target = util.getTarget(event),

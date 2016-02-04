@@ -31,5 +31,5 @@ describe('Util', function() {
         util.addClass(element, className);
 
         expect(util.getClass(element)).toEqual(className);
-    })
+    });
 });

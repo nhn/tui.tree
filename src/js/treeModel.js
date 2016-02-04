@@ -242,6 +242,7 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
      * @param {Array|object} data - Raw-data
      * @param {string} parentId - Parent id
      * @param {boolean} [isSilent] - If true, it doesn't trigger the 'update' event
+     * @returns {Array.<string>} New added node ids
      */
     add: function(data, parentId, isSilent) {
         var parent = this.getNode(parentId) || this.rootNode,
