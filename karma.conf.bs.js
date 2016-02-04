@@ -15,7 +15,11 @@ module.exports = function(config) {
             'node_modules/jasmine-jquery/lib/jasmine-jquery.js',
             'bower_components/tui-code-snippet/code-snippet.min.js',
             'test/**/*.js',
-            'src/**/*.js'
+            'src/**/*.js',
+            {
+                pattern: 'test/fixtures/**/*.html',
+                included: false
+            }
         ],
 
         exclude: [

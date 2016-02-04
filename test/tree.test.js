@@ -2,6 +2,7 @@
 var Tree = require('../src/js/tree'),
     util = require('../src/js/util');
 
+jasmine.getFixtures().fixturesPath = 'base/test/fixtures';
 describe('Tree', function() {
     var data = [
             {title: 'A', children: [
@@ -35,7 +36,18 @@ describe('Tree', function() {
         tree;
 
     beforeEach(function() {
-        tree = new Tree(data);
+        loadFixtures('basicFixture.html');
+        tree = new Tree(data, {
+            rootElement: 'treeRoot'
+        });
+    });
+
+    it('when has invalid root element, should throw an error', function() {
+        function createInvalidTree() {
+            tree = new Tree(data);
+        }
+
+        expect(createInvalidTree).toThrow();
     });
 
     it('should have a root element', function() {

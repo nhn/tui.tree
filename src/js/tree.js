@@ -13,7 +13,8 @@ var defaults = require('./defaults'),
     Draggable = require('./draggable'),
     Editable = require('./editable');
 
-var nodeStates = states.node,
+var ERROR_MESSAGE_INVALID_ROOT_ELEMENT = '"tui-component-tree": Root element is invalid',
+    nodeStates = states.node,
     features = {
         Selectable: Selectable,
         Draggable: Draggable,
@@ -46,7 +47,6 @@ var nodeStates = states.node,
  * @example
  * //Default options:
  * // {
- * //     rootElement: document.createElement('UL'),
  * //     nodeIdPrefix: 'tui-tree-node-'
  * //     nodeDefaultState: 'closed',
  * //     stateLabels: {
@@ -109,7 +109,7 @@ var nodeStates = states.node,
  * ];
  *
  * var tree1 = new tui.component.Tree(data, {
- *     rootElement: document.getElementById('treeRoot'),
+ *     rootElement: 'treeRoot', // or document.getElementById('treeRoot')
  *     nodeDefaultState: 'opened'
  * });
  **/
@@ -134,8 +134,8 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
         features: {}
     },
     init: function(data, options) { /*eslint-enable*/
-        var extend = snippet.extend,
-            browser = tui.util.browser;
+        var browser = tui.util.browser;
+
         options = extend({}, defaults, options);
 
         /**
@@ -192,9 +192,12 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
     _setRoot: function() {
         var rootEl = this.rootElement;
 
+        if (snippet.isString(rootEl)) {
+            rootEl = this.rootElement = document.getElementById(rootEl);
+        }
+
         if (!snippet.isHTMLNode(rootEl)) {
-            rootEl = this.rootElement = document.createElement('UL');
-            document.body.appendChild(rootEl);
+            throw new Error(ERROR_MESSAGE_INVALID_ROOT_ELEMENT);
         }
     },
 
@@ -229,7 +232,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
         var self = this;
 
         if (this.isLowerThanIE9) {
-            event = tui.util.extend({}, event);
+            event = extend({}, event);
         }
 
         this.mousedownTimer = setTimeout(function() {
@@ -264,7 +267,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
             this.resetClickTimer();
         } else {
             if (this.isLowerThanIE9) {
-                event = tui.util.extend({}, event);
+                event = extend({}, event);
             }
             this.clickTimer = setTimeout(function() {
                 self.fire('singleClick', event);
