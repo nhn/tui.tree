@@ -6,32 +6,34 @@ var Tree = require('../src/js/tree'),
 jasmine.getFixtures().fixturesPath = 'base/test/fixtures';
 describe('Tree', function() {
     var data = [
-            {title: 'A', children: [
-                {title: '1'},
-                {title: '2'},
-                {title: '3'},
-                {title: '4'},
-                {title: '5', children: [
-                    {title:'가', children:[
-                        {title:'*'}
+            {text: 'A', children: [
+                {text: '1'},
+                {text: '2'},
+                {text: '3'},
+                {text: '4'},
+                {text: '5', children: [
+                    {text:'가', children:[
+                        {text:'*'}
                     ]},
-                    {title:'나'}
+                    {text:'나'}
                 ]},
-                {title: '6'},
-                {title: '7'},
-                {title: '8'},
-                {title: '9', children: [
-                    {title:'가'},
-                    {title:'나'}
+                {text: '6'},
+                {text: '7'},
+                {text: '8'},
+                {text: '9', children: [
+                    {text:'가'},
+                    {text:'나'}
                 ]},
-                {title: '10'},
-                {title: '11'},
-                {title: '12'}
+                {text: '10'},
+                {text: '11'},
+                {text: '12'}
             ]},
-            {title: 'B', children: [
-                {title:'1'},
-                {title:'2'},
-                {title:'3'}
+            {text: 'B', children: [
+                {text: '1'},
+                {text: '2'},
+                {text: '3'},
+                {text: '4'},
+                {text: '5'}
             ]}
         ],
         tree;
@@ -200,5 +202,20 @@ describe('Tree', function() {
             originalParentId: firstChildId,
             newParentId: lastChildId
         });
+    });
+
+    it('"Search" API should return array of node ids', function() {
+        var result = tree.search({
+            text: '5'
+        });
+        expect(result).toEqual(jasmine.any(Array));
+        expect(result.length).toEqual(2);
+
+        result = tree.search(function(node) {
+            var text = node.getData('text');
+            return text === '가' || text === '나';
+        });
+        expect(result).toEqual(jasmine.any(Array));
+        expect(result.length).toEqual(4);
     });
 });

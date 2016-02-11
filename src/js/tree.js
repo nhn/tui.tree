@@ -740,12 +740,86 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * @param {string} nodeId - Node id
      * @param {string} newParentId - New parent id
      * @param {boolean} [isSilent] - If true, it doesn't redraw children
-     * @exmaple
+     * @example
      * tree.move(myNodeId, newParentId); // mode node with redrawing
      * tree.move(myNodeId, newParentId, true); // move node without redrawing
      */
     move: function(nodeId, newParentId, isSilent) {
         this.model.move(nodeId, newParentId, isSilent);
+    },
+
+    /**
+     * Search node ids by passing the predicate check or matching data
+     * @api
+     * @param {Function|Object} predicate - Predicate or data
+     * @param {Object} [context] - Context of predicate
+     * @returns {Array.<string>} Node ids
+     * @example
+     * // search from predicate
+     * var leafNodeIds = tree.search(function(node, nodeId) {
+     *     return node.isLeaf();
+     * });
+     * console.log(leafNodeIds); // ['tui-tree-node-3', 'tui-tree-node-5']
+     *
+     * // search from data
+     * var specialNodeIds = tree.search({
+     *     isSpecial: true,
+     *     foo: 'bar'
+     * });
+     * console.log(specialNodeIds); // ['tui-tree-node-5', 'tui-tree-node-10']
+     * console.log(tree.getNodeData('tui-tree-node-5').isSpecial); // true
+     * console.log(tree.getNodeData('tui-tree-node-5').foo); // 'bar'
+     */
+    search: function(predicate, context) {
+        if (!snippet.isObject(predicate)) {
+            return [];
+        }
+
+        if (snippet.isFunction(predicate)) {
+            return this._filter(predicate, context);
+        }
+
+        return this._where(predicate);
+    },
+
+    /**
+     * Search node ids by matching data
+     * @param {Object} props - Data
+     * @returns {Array.<string>} Node ids
+     * @private
+     */
+    _where: function(props) {
+        return this._filter(function(node) {
+            var result = true,
+                data;
+
+            data = node.getAllData();
+            snippet.forEach(props, function(value, key) {
+                result = (key in data) && (data[key] === value);
+                return result;
+            });
+
+            return result;
+        });
+    },
+
+    /**
+     * Search node ids by passing the predicate check
+     * @param {Function} predicate - Predicate
+     * @param {Object} [context] - Context of predicate
+     * @returns {Array.<string>} Node ids
+     * @private
+     */
+    _filter: function(predicate, context) {
+        var filtered = [];
+
+        this.eachAll(function(node, nodeId) {
+            if (predicate(node, nodeId)) {
+                filtered.push(nodeId);
+            }
+        }, context);
+
+        return filtered;
     },
 
     /**
