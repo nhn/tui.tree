@@ -35,27 +35,44 @@ var Selectable = tui.util.defineClass(/** @lends Selectable.prototype */{/*eslin
             nodeId = tree.getNodeIdFromElement(target),
             prevElement = this.getPrevElement(),
             nodeElement = document.getElementById(nodeId),
-            selectedClassName = this.selectedClassName;
+            selectedClassName = this.selectedClassName,
+            prevNodeId = this.prevNodeId;
 
         if (!nodeId) {
             return;
         }
 
-        util.removeClass(prevElement, selectedClassName);
-        util.addClass(nodeElement, selectedClassName);
-
         /**
          * @api
-         * @event Tree#select
+         * @event Tree#beforeSelect
          * @example
          * tree
          *  .enableFeature('Selectable')
-         *  .on('select', function(nodeId) {
+         *  .on('beforeSelect', function(nodeId, prevNodeId) {
          *      console.log('selected node: ' + nodeId);
+         *      console.log('previous selected node: ' + prevNodeId);
+         *      return false; // It cancels "select"
+         *      // return true; // It fires "select"
          *  });
          */
-        tree.fire('select', nodeId);
-        this.prevNodeId = nodeId;
+        if (tree.invoke('beforeSelect', nodeId, prevNodeId)) {
+            util.removeClass(prevElement, selectedClassName);
+            util.addClass(nodeElement, selectedClassName);
+
+            /**
+             * @api
+             * @event Tree#select
+             * @example
+             * tree
+             *  .enableFeature('Selectable')
+             *  .on('select', function(nodeId, prevNodeId) {
+             *      console.log('selected node: ' + nodeId);
+             *      console.log('previous selected node: ' + prevNodeId);
+             *  });
+             */
+            tree.fire('select', nodeId, prevNodeId);
+            this.prevNodeId = nodeId;
+        }
     },
 
     /**

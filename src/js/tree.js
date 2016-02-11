@@ -135,8 +135,6 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
         features: {}
     },
     init: function(data, options) { /*eslint-enable*/
-        var browser = tui.util.browser;
-
         options = extend({}, defaults, options);
 
         /**
@@ -179,7 +177,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
          * Whether the browser is ie and lower than 9
          * @type {boolean}
          */
-        this.isLowerThanIE9 = browser.msie && browser.version < 9;
+        this.isLowerThanIE9 = snippet.browser.msie && snippet.browser.version < 9;
 
         this._setRoot();
         this._drawChildren();
@@ -370,12 +368,13 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
                 nodeTemplate = templateSource.leafNode;
             } else {
                 nodeTemplate = templateSource.internalNode;
-                props.stateClass = classNames[state+'Class'];
+                props.stateClass = classNames[state + 'Class'];
                 props.stateLabel = stateLabels[state];
                 props.children = this._makeHtml(node.getChildIds());
             }
             html += util.template(nodeTemplate, props);
         }, this);
+
         return html;
     },
 
@@ -385,16 +384,17 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * @private
      */
     _drawChildren: function(parentId) {
-        var node = this.model.getNode(parentId),
+        var parent = this.model.getNode(parentId),
             subtreeElement;
 
-        if (!node) {
-            node = this.model.rootNode;
-            parentId = node.getId();
+        if (!parent) {
+            parent = this.model.rootNode;
+            parentId = parent.getId();
         }
+
         subtreeElement = this._getSubtreeElement(parentId);
         if (!subtreeElement) {
-            this._drawChildren(node.getParentId());
+            this._drawChildren(parent.getParentId());
             return;
         }
 
@@ -408,7 +408,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
          * });
          */
         this.fire('beforeDraw', parentId);
-        subtreeElement.innerHTML = this._makeHtml(node.getChildIds());
+        subtreeElement.innerHTML = this._makeHtml(parent.getChildIds());
         this.model.each(function(node, nodeId) {
             if (node.getState() === nodeStates.OPENED) {
                 this.open(nodeId);
