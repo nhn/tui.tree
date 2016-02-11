@@ -1,6 +1,6 @@
 'use strict';
 
-var util = require('./util');
+var util = require('./../util');
 
 /**
  * Set the tree selectable
@@ -11,9 +11,13 @@ var Selectable = tui.util.defineClass(/** @lends Selectable.prototype */{/*eslin
     init: function(tree) { /*eslint-enable*/
         this.tree = tree;
         this.selectedClassName = tree.classNames.selectedClass;
-        this.tree.on('singleClick', this.onSingleClick, this);
-        this.tree.on('doubleClick', this.onSingleClick, this);
-        this.tree.on('afterDraw', this.onAfterDraw, this);
+
+        tree.on({
+            singleClick: this.onSingleClick,
+            doubleClick: this.onSingleClick,
+            afterDraw: this.onAfterDraw
+        }, this);
+        tree.select = tui.util.bind(this.select, this);
     },
 
     /**
@@ -22,17 +26,16 @@ var Selectable = tui.util.defineClass(/** @lends Selectable.prototype */{/*eslin
     destroy: function() {
         var nodeElement = this.getPrevElement();
         util.removeClass(nodeElement, this.selectedClassName);
+        delete this.tree.select;
         this.tree.off(this);
     },
 
     /**
-     * Custom event handler "singleClick"
-     * @param {MouseEvent} event - Mouse event
+     * Select
+     * @param {string} nodeId - Node id
      */
-    onSingleClick: function(event) {
+    select: function(nodeId) {
         var tree = this.tree,
-            target = util.getTarget(event),
-            nodeId = tree.getNodeIdFromElement(target),
             prevElement = this.getPrevElement(),
             nodeElement = document.getElementById(nodeId),
             selectedClassName = this.selectedClassName,
@@ -73,6 +76,17 @@ var Selectable = tui.util.defineClass(/** @lends Selectable.prototype */{/*eslin
             tree.fire('select', nodeId, prevNodeId);
             this.prevNodeId = nodeId;
         }
+    },
+
+    /**
+     * Custom event handler "singleClick"
+     * @param {MouseEvent} event - Mouse event
+     */
+    onSingleClick: function(event) {
+        var target = util.getTarget(event),
+            nodeId = this.tree.getNodeIdFromElement(target);
+
+        this.select(nodeId);
     },
 
     /**

@@ -1,6 +1,7 @@
 'use strict';
 var Tree = require('../src/js/tree'),
-    util = require('../src/js/util');
+    util = require('../src/js/util'),
+    messages = require('../src/js/consts/messages');
 
 jasmine.getFixtures().fixturesPath = 'base/test/fixtures';
 describe('Tree', function() {
@@ -42,11 +43,11 @@ describe('Tree', function() {
         });
     });
 
-    it('when has invalid root element, should throw an error', function() {
+    it('should throw an error if has invalid root element', function() {
         function createInvalidTree() {
             return new Tree(data);
         }
-        expect(createInvalidTree).toThrow();
+        expect(createInvalidTree).toThrowError(messages.INVALID_ROOT_ELEMENT);
     });
 
     it('should have a root element', function() {

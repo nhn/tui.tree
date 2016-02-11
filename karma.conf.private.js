@@ -32,7 +32,7 @@ module.exports = function(config) {
         ],
 
         preprocessors: {
-            'src/js/*.js': ['browserify', 'coverage'],
+            'src/**/*.js': ['browserify', 'coverage'],
             'test/**/*.js': ['browserify']
         },
 

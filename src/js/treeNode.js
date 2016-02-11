@@ -1,6 +1,6 @@
 'use strict';
 
-var states = require('./states').node,
+var states = require('./consts/states').node,
     util = require('./util');
 
 var lastIndex = 0,

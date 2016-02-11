@@ -1,7 +1,3 @@
-/**
- * A default values for tree
- * @module defaults
- */
 'use strict';
 
 /**
@@ -19,8 +15,9 @@ function makeClassNames(prefix, keys) {
 }
 
 /**
+ * A default values for tree
  * @const
- * @type {object}
+ * @type {Object}
  * @property {boolean} useDrag - Default: false
  * @property {boolean} useHelper - Default: false
  * @property {object} stateLabel - State label in node

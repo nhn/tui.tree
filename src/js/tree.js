@@ -5,16 +5,16 @@
 
 'use strict';
 
-var defaults = require('./defaults'),
-    util = require('./util'),
-    states = require('./states'),
+var util = require('./util'),
+    defaults = require('./consts/defaults'),
+    states = require('./consts/states'),
+    messages = require('./consts/messages'),
     TreeModel = require('./treeModel'),
-    Selectable = require('./selectable'),
-    Draggable = require('./draggable'),
-    Editable = require('./editable');
+    Selectable = require('./features/selectable'),
+    Draggable = require('./features/draggable'),
+    Editable = require('./features/editable');
 
-var ERROR_MESSAGE_INVALID_ROOT_ELEMENT = '"tui-component-tree": Root element is invalid',
-    nodeStates = states.node,
+var nodeStates = states.node,
     features = {
         Selectable: Selectable,
         Draggable: Draggable,
@@ -196,7 +196,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
         }
 
         if (!snippet.isHTMLNode(rootEl)) {
-            throw new Error(ERROR_MESSAGE_INVALID_ROOT_ELEMENT);
+            throw new Error(messages.INVALID_ROOT_ELEMENT);
         }
     },
 
@@ -705,15 +705,15 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * @returns {Array.<string>} Added node ids
      * @example
      * // add node with redrawing
-     * var firstAddedIds = tree.add({text:'FE development team1'}, myParentId);
-     * console.log(firstAddedIds); // ["tui-tree-node-1"]
+     * var firstAddedIds = tree.add({text:'FE development team1'}, parentId);
+     * console.log(firstAddedIds); // ["tui-tree-node-10"]
      *
      * // add node without redrawing
      * var secondAddedIds = tree.add([
      *    {text: 'FE development team2'},
      *    {text: 'FE development team3'}
-     * ], myParentId, true);
-     * console.log(secondAddedIds); // ["tui-tree-node-2", "tui-tree-node-3"]
+     * ], parentId, true);
+     * console.log(secondAddedIds); // ["tui-tree-node-11", "tui-tree-node-12"]
      */
     add: function(data, parentId, isSilent) {
         return this.model.add(data, parentId, isSilent);
@@ -798,11 +798,28 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
             delete this.enabledFeatures[featureName]
         }
         return this;
+    },
+
+    /**
+     * Select node if the feature-"Selectable" is enabled.
+     * @api
+     * @param {string} nodeId - Node id to remove
+     * @example
+     * tree
+     *  .enableFeature('Selectable')
+     *  .on('select', function(nodeId, prevNodeId) {
+     *      console.log('selected node: ' + nodeId);
+     *  });
+     *
+     * tree.select('tui-tree-node-13'); // selected node: tui-tree-node-13
+     */
+    select: function(nodeId) {
+        throw new Error(messages.INVALID_API_SELECTABLE);
     }
 });
 
-tui.util.forEach(features, function(Feature, name) {
+snippet.forEach(features, function(Feature, name) {
     Tree.registerFeature(name, Feature);
 });
-tui.util.CustomEvents.mixin(Tree);
+snippet.CustomEvents.mixin(Tree);
 module.exports = Tree;

@@ -33,7 +33,7 @@ gulp.task('connect', function() {
     connect.server({
         livereload: true
     });
-    gulp.watch(['./src/**/*.js', './index.js', './demo/**/*.html'], ['liveBuild']);
+    gulp.watch(['./src/**/*.js', './index.js'], ['liveBuild']);
 });
 
 gulp.task('liveBuild', function() {

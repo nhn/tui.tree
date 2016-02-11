@@ -1,6 +1,7 @@
 'use strict';
 var Tree = require('../src/js/tree'),
-    utils = require('../src/js/util');
+    utils = require('../src/js/util'),
+    messages = require('../src/js/consts/messages');
 
 jasmine.getFixtures().fixturesPath = 'base/test/fixtures';
 describe('Tree', function() {
@@ -131,5 +132,29 @@ describe('Tree', function() {
 
         expect(beforeSelectListenerSpy).toHaveBeenCalledWith(curNodeId, prevNodeId);
         expect(selectListenerSpy).toHaveBeenCalledWith(curNodeId, prevNodeId);
+    });
+
+    it('should throw error when the feature-"Selectable" is not enabled and select a node', function() {
+        tree.disableFeature('Selectable');
+        expect(tree.select).toThrowError(messages.INVALID_API_SELECTABLE);
+    });
+
+    it('should not throw an error when the feature-"Selectable" is enabled', function() {
+        expect(tree.select).not.toThrowError();
+    });
+
+    it('should invoke "beforeSelect" and fire "select"', function() {
+        var beforeSelectListenerSpy = jasmine.createSpy(),
+            selectListenerSpy = jasmine.createSpy(),
+            targetId = utils.getElementsByClassName(rootElement, 'tui-tree-node')[2].id;
+
+        tree.on({
+            beforeSelect: beforeSelectListenerSpy,
+            select: selectListenerSpy
+        });
+        tree.select(targetId);
+
+        expect(beforeSelectListenerSpy).toHaveBeenCalled();
+        expect(selectListenerSpy).toHaveBeenCalled();
     });
 });
