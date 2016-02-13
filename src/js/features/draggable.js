@@ -71,7 +71,8 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{/*eslint-
      * Prevent text-selection
      */
     preventTextSelection: function() {
-        var selectKey = util.testProp(['userSelect', 'WebkitUserSelect', 'OUserSelect', 'MozUserSelect', 'msUserSelect']),
+        var tree = this.tree,
+            selectKey = util.testProp(['userSelect', 'WebkitUserSelect', 'OUserSelect', 'MozUserSelect', 'msUserSelect']),
             style = tree.rootElement.style;
 
         util.addEventListener(tree.rootElement, 'selectstart', util.preventDefault);

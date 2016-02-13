@@ -82,30 +82,26 @@
             nodeDefaultState: 'opened',
             template: {
                 internalNode:
-                '<li id="{{id}}" class="tui-tree-node {{stateClass}}">' +
-                '<button type="button" class="{{toggleBtnClass}}">{{stateLabel}}</button>' +
-                '<span class="{{textClass}}">{{text}}<b>{{depthLabel}}</b></span>' +
-                '<ul class="{{subtreeClass}}">{{children}}</ul>' +
-                '</li>',
+                    '<button type="button" class="{{toggleBtnClass}}">{{stateLabel}}</button>' +
+                    '<span class="{{textClass}}">{{text}}<b>{{depthLabel}}</b></span>' +
+                    '<ul class="{{subtreeClass}}">{{children}}</ul>',
                 leafNode:
-                '<li id="{{id}}" class="tui-tree-node tui-tree-leaf">' +
-                '<span class="{{textClass}}">{{text}}<b>{{depthLabel}}</b></span>' +
-                '</li>'
+                    '<span class="{{textClass}}">{{text}}<b>{{depthLabel}}</b></span>'
             }
         }).enableFeature('Draggable', {
             useHelper: true
         });
 
-        tree.on('beforeDraw', function(parentId) {
-            tree.each(function(node, nodeId) {
-                var text = node.getData('text'),
-                    depth = tree.getDepth(nodeId);
+        tree.on('beforeDraw', function(nodeId) {
+            tree.each(function(child, childId) {
+                var text = child.getData('text'),
+                    depth = tree.getDepth(childId);
 
                 depth = Math.min(depth, depthLabels.length);
-                node.setData({
+                child.setData({
                     depthLabel: depthLabels[depth - 1] || ''
                 });
-            }, parentId);
+            }, nodeId);
         });
 
         tree.refresh();
