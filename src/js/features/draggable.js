@@ -25,8 +25,7 @@ var defaultOptions = {
  *  @param {Array.<string>} options.rejectedTagNames - No draggable tag names
  *  @param {Array.<string>} options.rejectedClassNames - No draggable class names
  */
-var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{
-    /*eslint-disable*/
+var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{/*eslint-disable*/
     init: function(tree, options) { /*eslint-enable*/
         this.tree = tree;
         this.setMembers(options);
@@ -38,8 +37,7 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{
      * @param {Object} options - input options
      */
     setMembers: function(options) {
-        var tree = this.tree,
-            helperElement = document.createElement('span'),
+        var helperElement = document.createElement('span'),
             style = helperElement.style;
         options = tui.util.extend({}, defaultOptions, options);
 

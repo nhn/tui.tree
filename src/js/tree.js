@@ -6,9 +6,10 @@
 'use strict';
 
 var util = require('./util'),
-    defaults = require('./consts/defaults'),
+    defaultOption = require('./consts/defaultOption'),
     states = require('./consts/states'),
     messages = require('./consts/messages'),
+    outerTemplate = require('./consts/outerTemplate'),
     TreeModel = require('./treeModel'),
     Selectable = require('./features/selectable'),
     Draggable = require('./features/draggable'),
@@ -26,6 +27,7 @@ var nodeStates = states.node,
  * Create tree model and inject data to model
  * @class Tree
  * @constructor
+ * @mixes tui.util.CustomEvents
  * @param {Object} data A data to be used on tree
  * @param {Object} options The options
  *     @param {HTMLElement} [options.rootElement] Root element (It should be 'UL' element)
@@ -38,11 +40,11 @@ var nodeStates = states.node,
  *         @param {string} [options.stateLabels.opened] State-OPENED label (Text or HTML)
  *         @param {string} [options.stateLabels.closed] State-CLOSED label (Text or HTML)
  *     @param {Object} [options.classNames] Class names for tree
+ *         @param {string} [options.classNames.nodeClass] A class name for node
+ *         @param {string} [options.classNames.leafClass] A class name for leaf node
  *         @param {string} [options.classNames.openedClass] A class name for opened node
  *         @param {string} [options.classNames.closedClass] A class name for closed node
- *         @param {string} [options.classNames.selectedClass] A class name to selected node
  *         @param {string} [options.classNames.textClass] A class name that for textElement in node
- *         @param {string} [options.classNames.inputClass] A class input element in a node
  *         @param {string} [options.classNames.subtreeClass] A class name for subtree in internal node
  *         @param {string} [options.classNames.toggleBtnClass] A class name for toggle button in internal node
  * @example
@@ -55,26 +57,21 @@ var nodeStates = states.node,
  * //         closed: '+'
  * //     },
  * //     classNames: {
+ * //         nodeClass: 'tui-tree-node',
+ * //         leafClass: 'tui-tree-leaf',
  * //         openedClass: 'tui-tree-opened',
  * //         closedClass: 'tui-tree-closed',
- * //         selectedClass: 'tui-tree-selected',
  * //         subtreeClass: 'tui-tree-subtree',
  * //         toggleBtnClass: 'tui-tree-toggleBtn',
  * //         textClass: 'tui-tree-text',
- * //         iuputClass: 'tui-tree-input'
  * //     },
- * //
  * //     template: {
  * //         internalNode:
- * //         '<li id="{{id}}" class="tui-tree-node {{stateClass}}" data-node-id="{{id}}">' +
  * //             '<button type="button" class="{{toggleBtnClass}}">{{stateLabel}}</button>' +
  * //             '<span class="{{textClass}}">{{text}}</span>' +
  * //             '<ul class="{{subtreeClass}}">{{children}}</ul>' +
- * //         '</li>',
  * //         leafNode:
- * //         '<li id="{{id}}" class="tui-tree-node tui-tree-leaf" data-node-id="{{id}}">' +
  * //             '<span class="{{textClass}}">{{text}}</span>' +
- * //         '</li>'
  * //     }
  * // }
  * //
@@ -135,19 +132,19 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
         features: {}
     },
     init: function(data, options) { /*eslint-enable*/
-        options = extend({}, defaults, options);
+        options = extend({}, defaultOption, options);
 
         /**
          * Default class names
          * @type {object.<string, string>}
          */
-        this.classNames = extend({}, defaults.classNames, options.classNames);
+        this.classNames = extend({}, defaultOption.classNames, options.classNames);
 
         /**
          * Default template
          * @type {{internalNode: string, leafNode: string}}
          */
-        this.template = extend({}, defaults.template, options.template);
+        this.template = extend({}, defaultOption.template, options.template);
 
         /**
          * Root element
@@ -179,8 +176,20 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
          */
         this.isLowerThanIE9 = snippet.browser.msie && snippet.browser.version < 9;
 
+        /**
+         * Click timer to prevent click-duplication with double click
+         * @type {number}
+         */
+        this.clickTimer = null;
+
+        /**
+         * Flag for mouse moving to prevent click event
+         * @type {number}
+         */
+        this.mouseMovingFlag = false;
+
         this._setRoot();
-        this._drawChildren();
+        this._draw(this.model.rootNode.getId());
         this._setEvents();
     },
 
@@ -208,8 +217,8 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * @private
      */
     _onMove: function(nodeId, originalParentId, newParentId) {
-        this._drawChildren(originalParentId);
-        this._drawChildren(newParentId);
+        this._draw(originalParentId);
+        this._draw(newParentId);
 
         /**
          * @api
@@ -233,36 +242,48 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
 
     /**
      * Set event handlers
+     * @private
      */
     _setEvents: function() {
         this.model.on({
-            update: this._drawChildren,
+            update: this._draw,
             move: this._onMove
         }, this);
         util.addEventListener(this.rootElement, 'click', snippet.bind(this._onClick, this));
         util.addEventListener(this.rootElement, 'mousedown', snippet.bind(this._onMousedown, this));
+        util.addEventListener(this.rootElement, 'dblclick', snippet.bind(this._onDoubleClick, this));
     },
 
     /**
      * Event handler - mousedown
      * @param {MouseEvent} event - Mouse event
      * @private
+     * @todo adjust events - mousedown, single click, double click
      */
     _onMousedown: function(event) {
-        var self = this;
+        var self = this,
+            clientX = event.clientX,
+            clientY = event.clientY,
+            abs = Math.abs;
 
-        if (this.isLowerThanIE9) {
-            event = extend({}, event);
+        function onMouseMove(event) {
+            var newClientX = event.clientX,
+                newClientY = event.clientY;
+
+            if (abs(newClientX - clientX) + abs(newClientY - clientY) > 5) {
+                self.fire('mousemove', event);
+                self.mouseMovingFlag = true;
+            }
+        }
+        function onMouseUp() {
+            self.fire('mouseup', event);
+            util.removeEventListener(document, 'mousemove', onMouseMove);
+            util.removeEventListener(document, 'mouseup', onMouseUp);
         }
 
-        this.mousedownTimer = setTimeout(function() {
-            self.fire('mousedown', event);
-        }, 200);
-
-        util.addEventListener(document, 'mouseup', function mouseupHandler() {
-            self.resetMousedownTimer();
-            util.removeEventListener(document, 'mouseup', mouseupHandler);
-        });
+        this.fire('mousedown', event);
+        util.addEventListener(document, 'mousemove', onMouseMove);
+        util.addEventListener(document, 'mouseup', onMouseUp);
     },
 
     /**
@@ -278,22 +299,29 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
             this.clickTimer = null;
             return;
         }
+
         if (util.hasClass(target, this.classNames.toggleBtnClass)) {
             this.toggle(this.getNodeIdFromElement(target));
             return;
         }
-        if (this.clickTimer) {
-            this.fire('doubleClick', event);
-            this.resetClickTimer();
-        } else {
-            if (this.isLowerThanIE9) {
-                event = extend({}, event);
-            }
+
+        if (!this.clickTimer && !this.mouseMovingFlag) {
+            this.fire('singleClick', event);
             this.clickTimer = setTimeout(function() {
-                self.fire('singleClick', event);
                 self.resetClickTimer();
-            }, 300);
+            }, 200);
         }
+        this.mouseMovingFlag = false;
+    },
+
+    /**
+     * Event handler - double click (dblclick)
+     * @param {MouseEvent} event - Double click event
+     * @private
+     */
+    _onDoubleClick: function(event) {
+        this.fire('doubleClick', event);
+        this.resetClickTimer();
     },
 
     /**
@@ -304,7 +332,6 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      */
     _setDisplayFromNodeState: function(nodeId, state) {
         var subtreeElement = this._getSubtreeElement(nodeId),
-            toggleBtnClassName = this.classNames.toggleBtnClass,
             label, btnElement, nodeElement;
 
         if (!subtreeElement || subtreeElement === this.rootElement) {
@@ -312,7 +339,10 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
         }
         label = this.stateLabels[state];
         nodeElement = document.getElementById(nodeId);
-        btnElement = util.getElementsByClassName(nodeElement, toggleBtnClassName)[0];
+        btnElement = util.getElementsByClassName(
+            nodeElement,
+            this.classNames.toggleBtnClass
+        )[0];
 
         if (state === nodeStates.OPENED) {
             subtreeElement.style.display = '';
@@ -350,83 +380,164 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      */
     _makeHtml: function(nodeIds) {
         var model = this.model,
-            classNames = this.classNames,
-            stateLabels = this.stateLabels,
-            templateSource = this.template,
             html = '';
 
         snippet.forEach(nodeIds, function(nodeId) {
             var node = model.getNode(nodeId),
-                state = node.getState(),
-                nodeData = node.getAllData(),
-                props = extend({
-                    id: nodeId
-                }, classNames, nodeData),
-                nodeTemplate;
+                sources, props;
 
-            if (node.isLeaf()) {
-                nodeTemplate = templateSource.leafNode;
-            } else {
-                nodeTemplate = templateSource.internalNode;
-                props.stateClass = classNames[state + 'Class'];
-                props.stateLabel = stateLabels[state];
-                props.children = this._makeHtml(node.getChildIds());
+            if (!node) {
+                return;
             }
-            html += util.template(nodeTemplate, props);
+
+            sources = this._getTemplate(node);
+            props = this._makeTemplateProps(node);
+            props.innerTemplate = this._makeInnerHTML(node, {
+                source: sources.inner,
+                props: props
+            });
+            html += util.template(sources.outer, props);
         }, this);
 
         return html;
     },
 
     /**
-     * Draw tree
-     * @param {string} [parentId] - Parent node id
+     * Make inner html of node
+     * @param {TreeNode} node - Node
+     * @param {{source: string, props: Object}} [cached] - Cashed data to make html
+     * @returns {string} Inner html of node
      * @private
      */
-    _drawChildren: function(parentId) {
-        var parent = this.model.getNode(parentId),
-            subtreeElement;
+    _makeInnerHTML: function(node, cached) {
+        var source, props;
 
-        if (!parent) {
-            parent = this.model.rootNode;
-            parentId = parent.getId();
+        cached = cached || {};
+        source = cached.source || this._getTemplate(node).inner;
+        props = cached.props || this._makeTemplateProps(node);
+        return util.template(source, props);
+    },
+
+    /**
+     * Get template sources
+     * @param {TreeNode} node - Node
+     * @returns {{inner: string, outer: string}} Template sources
+     * @private
+     */
+    _getTemplate: function(node) {
+        var source;
+
+        if (node.isLeaf()) {
+            source = {
+                inner: this.template.leafNode,
+                outer: outerTemplate.LEAF_NODE
+            }
+        } else {
+            source = {
+                inner: this.template.internalNode,
+                outer: outerTemplate.INTERNAL_NODE
+            }
         }
 
-        subtreeElement = this._getSubtreeElement(parentId);
-        if (!subtreeElement) {
-            this._drawChildren(parent.getParentId());
+        return source;
+    },
+
+    /**
+     * Make template properties
+     * @param {TreeNode} node - Node
+     * @return {Object} Template properties
+     * @private
+     */
+    _makeTemplateProps: function(node) {
+        var classNames = this.classNames,
+            props, state;
+
+        if (node.isLeaf()) {
+            props = {
+                id: node.getId()
+            };
+        } else {
+            state = node.getState();
+            props = {
+                id: node.getId(),
+                stateClass: classNames[state + 'Class'],
+                stateLabel: this.stateLabels[state],
+                children: this._makeHtml(node.getChildIds())
+            };
+        }
+
+        return extend(props, classNames, node.getAllData());
+    },
+
+    /**
+     * Draw element of node
+     * @param {string} nodeId - Node id
+     * @private
+     */
+    _draw: function(nodeId) {
+        var node = this.model.getNode(nodeId),
+            element, html;
+
+        if (!node) {
             return;
         }
 
         /**
          * @api
          * @event Tree#beforeDraw
-         * @param {string} parentId - parentNode id
+         * @param {string} nodeId - Node id
          * @example
-         * tree.on('beforeDraw', function(parentId) {
-         *     console.log(parentId);
+         * tree.on('beforeDraw', function(nodeId) {
+         *     console.log(nodeId);
          * });
          */
-        this.fire('beforeDraw', parentId);
-        subtreeElement.innerHTML = this._makeHtml(parent.getChildIds());
-        this.model.each(function(node, nodeId) {
-            if (node.getState() === nodeStates.OPENED) {
-                this.open(nodeId);
-            } else {
-                this.close(nodeId);
-            }
-        }, parentId, this);
+        this.fire('beforeDraw', nodeId);
+
+        if (node.isRoot()) {
+            html = this._makeHtml(node.getChildIds());
+            element = this.rootElement;
+            element.innerHTML = html;
+        } else {
+            html = this._makeInnerHTML(node);
+            element = document.getElementById(nodeId);
+            element.innerHTML = html;
+        }
+        this._setClassWithDisplay(node);
 
         /**
          * @api
          * @event Tree#afterDraw
-         * @param {string} parentId - parentNode id
+         * @param {string} nodeId - Node id
          * @example
-         * tree.on('afterDraw', function(parentId) {
-         *     console.log(parentId);
+         * tree.on('afterDraw', function(nodeId) {
+         *     console.log(nodeId);
          * });
          */
-        this.fire('afterDraw', parentId);
+        this.fire('afterDraw', nodeId);
+    },
+
+    /**
+     * Set class and display of node element
+     * @param {TreeNode} node - Node
+     * @private
+     */
+    _setClassWithDisplay: function(node) {
+        var nodeId = node.getId(),
+            element = document.getElementById(nodeId),
+            openedClass = this.classNames.openedClass,
+            closedClass = this.classNames.closedClass,
+            leafClass = this.classNames.leafClass;
+
+        if (node.isLeaf()) {
+            util.removeClass(element, openedClass);
+            util.removeClass(element, closedClass);
+            util.addClass(element, leafClass);
+        } else {
+            this._setDisplayFromNodeState(nodeId, node.getState());
+            this.each(function(child) {
+                this._setClassWithDisplay(child);
+            }, nodeId, this);
+        }
     },
 
     /**
@@ -437,16 +548,18 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      */
     _getSubtreeElement: function(nodeId) {
         var node = this.model.getNode(nodeId),
-            subtreeClassName, nodeElement, subtreeElement;
+            nodeElement, subtreeElement;
 
         if (!node || node.isLeaf()) {
             subtreeElement = null;
         } else if (node.isRoot()) {
             subtreeElement = this.rootElement
         } else {
-            subtreeClassName = this.classNames.subtreeClass;
-            nodeElement = document.getElementById(node.getId());
-            subtreeElement = util.getElementsByClassName(nodeElement, subtreeClassName)[0];
+            nodeElement = document.getElementById(nodeId);
+            subtreeElement = util.getElementsByClassName(
+                nodeElement,
+                this.classNames.subtreeClass
+            )[0];
         }
 
         return subtreeElement;
@@ -506,14 +619,6 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
     resetClickTimer: function() {
         window.clearTimeout(this.clickTimer);
         this.clickTimer = null;
-    },
-
-    /**
-     * Reset mousedown timer
-     */
-    resetMousedownTimer: function() {
-        window.clearTimeout(this.mousedownTimer);
-        this.mousedownTimer = null;
     },
 
     /**
@@ -652,16 +757,17 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      */
     sort: function(comparator) {
         this.model.sort(comparator);
-        this._drawChildren();
+        this._draw(this.model.rootNode.getId());
     },
 
     /**
      * Refresh tree or node's children
      * @api
      * @param {string} [nodeId] - TreeNode id to refresh
-     **/
+     */
     refresh: function(nodeId) {
-        this._drawChildren(nodeId);
+        nodeId = nodeId || this.model.rootNode.getId();
+        this._draw(nodeId);
     },
 
     /**
@@ -830,17 +936,19 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * @return {Tree} this
      * @example
      * tree
-     *  .enableFeature('Selectable')
+     *  .enableFeature('Selectable', {
+     *      selectedClassName: 'tui-tree-selected'
+     *  })
      *  .enableFeature('Editable', {
      *      enableClassName: tree.classNames.textClass,
-     *      dateKey: 'text',
+     *      dataKey: 'text',
      *      inputClassName: 'myInput'
      *  })
      *  .enableFeature('Draggable', {
      *      useHelper: true,
      *      helperPos: {x: 5, y: 2},
      *      rejectedTagNames: ['UL', 'INPUT', 'BUTTON'],
-     *      rejectedClassNames: ['elementHavingSomeClassIsNotDraggable', 'myClass']
+     *      rejectedClassNames: ['notDraggable', 'notDraggable-2']
      *  });
      */
     enableFeature: function(featureName, options) {

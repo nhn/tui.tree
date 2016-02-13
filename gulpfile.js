@@ -51,11 +51,13 @@ gulp.task('liveBuild', function() {
         .pipe(source(filename + '.js'))
         .pipe(buffer())
         .pipe(gulp.dest('./'))
+        .pipe(concat(filename + '.js'))
+        .pipe(gulp.dest('./samples/js/'))
         .pipe(uglify())
         .pipe(concat(filename + '.min.js'))
-        .pipe(gulp.dest('./'))
-        .pipe(concat(filename + '.js'))
-        .pipe(gulp.dest('./samples/js/'));
+        .pipe(gulp.dest('./'));
+        //.pipe(concat(filename + '.js'))
+        //.pipe(gulp.dest('./samples/js/'));
 });
 
 gulp.task('bundle', ['karma'], function() {

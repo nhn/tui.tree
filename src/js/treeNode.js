@@ -43,7 +43,7 @@ var TreeNode = tui.util.defineClass(/** @lends TreeNode.prototype */{ /*eslint-d
          * @type {string}
          * @private
          */
-        this._id = null;
+        this._id = this.constructor.idPrefix + getNextIndex();
 
         /**
          * Parent node id
@@ -73,16 +73,7 @@ var TreeNode = tui.util.defineClass(/** @lends TreeNode.prototype */{ /*eslint-d
          */
         this._state = states.CLOSED;
 
-        this._stampId();
         this.setData(nodeData);
-    },
-
-    /**
-     * Stamp node id
-     * @private
-     */
-    _stampId: function() {
-        this._id = this.constructor.idPrefix + getNextIndex();
     },
 
     /**

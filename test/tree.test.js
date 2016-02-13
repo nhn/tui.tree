@@ -36,12 +36,19 @@ describe('Tree', function() {
                 {text: '5'}
             ]}
         ],
+        rootElement,
         tree;
 
     beforeEach(function() {
         loadFixtures('basicFixture.html');
+        rootElement = document.getElementById('treeRoot');
         tree = new Tree(data, {
-            rootElement: 'treeRoot'
+            rootElement: 'treeRoot',
+            template: {
+                leafNode:
+                '<span class="tui-tree-leaf-label"></span>' +
+                '<span class="{{textClass}}">{{text}}</span>'
+            }
         });
     });
 
@@ -58,6 +65,20 @@ describe('Tree', function() {
         // element instanceof HTMLElement --> error
         // element.nodeType === Node.ELEMENT_NODE --> error
         expect(tree.rootElement.nodeType).toEqual(1);
+    });
+
+    it('should make correct DOM', function() {
+        var firstChild = util.getElementsByClassName(rootElement, 'tui-tree-node')[0],
+            textElement = util.getElementsByClassName(firstChild, tree.classNames.textClass)[0];
+
+        expect(textElement.innerHTML).toEqual('A');
+    });
+
+    it('should make DOM from optional-template', function() {
+        var firstLeaf = util.getElementsByClassName(rootElement, 'tui-tree-leaf')[0],
+            leafLabel = util.getElementsByClassName(firstLeaf, 'tui-tree-leaf-label');
+
+        expect(leafLabel.length).toEqual(1);
     });
 
     it('should change state of a node to "opened" when open node', function() {
@@ -122,8 +143,7 @@ describe('Tree', function() {
             };
 
         tree.on('doubleClick', handler);
-        tree.clickTimer = 1; // Set clicked once
-        tree._onClick(eventMock); // Double click
+        tree._onDoubleClick(eventMock);
 
         expect(handler).toHaveBeenCalled();
     });
@@ -132,15 +152,17 @@ describe('Tree', function() {
         var firstChildId = tree.model.rootNode.getChildIds()[0],
             firstChild = tree.model.getNode(firstChildId),
             childCount = firstChild.getChildIds().length,
-            subtreeElement = document.getElementById(firstChildId).lastChild,
             data = [
                 {text: 'hello world'},
                 {text: 'new world'}
-            ];
+            ],
+            subtreeElement;
 
-        spyOn(tree, '_drawChildren').and.callThrough();
+        spyOn(tree, '_draw').and.callThrough();
 
         tree.add(data, firstChildId);
+        subtreeElement = document.getElementById(firstChildId).lastChild;
+
         expect(firstChild.getChildIds().length).toEqual(childCount + 2);
         expect(subtreeElement.childNodes.length).toEqual(childCount + 2);
     });
@@ -164,10 +186,12 @@ describe('Tree', function() {
         var firstChildId = tree.model.rootNode.getChildIds()[0],
             firstChild = tree.model.getNode(firstChildId),
             childCount = firstChild.getChildIds().length,
-            subtreeElement = document.getElementById(firstChildId).lastChild,
-            idForRemoving = firstChild.getChildIds()[0];
+            idForRemoving = firstChild.getChildIds()[0],
+            subtreeElement;
 
         tree.remove(idForRemoving);
+        subtreeElement = document.getElementById(firstChildId).lastChild;
+
         expect(document.getElementById(idForRemoving)).toBeFalsy();
         expect(firstChild.getChildIds().length).toEqual(childCount - 1);
         expect(subtreeElement.childNodes.length).toEqual(childCount - 1);

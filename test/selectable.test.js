@@ -6,43 +6,33 @@ var Tree = require('../src/js/tree'),
 jasmine.getFixtures().fixturesPath = 'base/test/fixtures';
 describe('Tree', function() {
     var data = [
-            {
-                title: 'A', children: [
+            {title: 'A', children: [
                 {title: '1'},
                 {title: '2'},
                 {title: '3'},
                 {title: '4'},
-                {
-                    title: '5', children: [
-                    {
-                        title: '가', children: [
+                {title: '5', children: [
+                    {title: '가', children: [
                         {title: '*'}
-                    ]
-                    },
+                    ]},
                     {title: '나'}
-                ]
-                },
+                ]},
                 {title: '6'},
                 {title: '7'},
                 {title: '8'},
-                {
-                    title: '9', children: [
+                {title: '9', children: [
                     {title: '가'},
                     {title: '나'}
-                ]
-                },
+                ]},
                 {title: '10'},
                 {title: '11'},
                 {title: '12'}
-            ]
-            },
-            {
-                title: 'B', children: [
+            ]},
+            {title: 'B', children: [
                 {title: '1'},
                 {title: '2'},
                 {title: '3'}
-            ]
-            }
+            ]}
         ],
         rootElement,
         tree,
@@ -130,8 +120,8 @@ describe('Tree', function() {
         tree.on('select', selectListenerSpy);
         treeSelection.onSingleClick(eventMock);
 
-        expect(beforeSelectListenerSpy).toHaveBeenCalledWith(curNodeId, prevNodeId);
-        expect(selectListenerSpy).toHaveBeenCalledWith(curNodeId, prevNodeId);
+        expect(beforeSelectListenerSpy).toHaveBeenCalledWith(curNodeId, prevNodeId, target);
+        expect(selectListenerSpy).toHaveBeenCalledWith(curNodeId, prevNodeId, target);
     });
 
     it('should throw error when the feature-"Selectable" is not enabled and select a node', function() {

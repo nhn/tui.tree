@@ -10,9 +10,11 @@ var util = require('./../util');
  *  @param {string} options.editableClassName - Classname of editable element
  *  @param {string} options.dataKey - Key of node data to set value
  *  @param {string} options.inputClassName - Classname of input element
+ * @todo
  */
 var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-disable*/
     init: function(tree, options) { /*eslint-enable*/
+        options = tui.util.extend({}, options);
         this.tree = tree;
         this.editableClassName = options.editableClassName;
         this.dataKey = options.dataKey;
@@ -63,7 +65,7 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
     },
 
     /**
-     * Custom event handler "singleClick"
+     * Custom event handler "doubleClick"
      * @param {MouseEvent} event - Mouse event
      */
     onDoubleClick: function(event) {
@@ -83,18 +85,17 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
     },
 
     /**
-     * Event handler - keyup - input element
+     * Event handler: keyup - input element
      * @param {Event} event - Key event
      */
     onKeyup: function(event) {
-        if (event.keyCode !== 13) { // If not enter
-            return;
+        if (event.keyCode === 13) { // keyup "enter"
+            this.setData();
         }
-        this.setData();
     },
 
     /**
-     * Event handler - blur - input element
+     * Event handler: blur - input element
      */
     onBlur: function() {
         this.setData();
