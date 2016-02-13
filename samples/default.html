@@ -108,10 +108,10 @@
                 var aValue = nodeA.getData('text'),
                     bValue = nodeB.getData('text');
 
-                if (!bValue.localeCompare) {
+                if (!aValue.localeCompare) {
                     return 0;
                 }
-                return bValue.localeCompare(aValue);
+                return aValue.localeCompare(bValue);
             });
         });
 

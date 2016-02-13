@@ -114,7 +114,7 @@ var Selectable = tui.util.defineClass(/** @lends Selectable.prototype */{/*eslin
      * Custom event handler - "afterDraw"
      */
     onAfterDraw: function() {
-        var nodeElement = document.getElementById(this.prevNodeId);
+        var nodeElement = this.getPrevElement();
 
         if (nodeElement) {
             util.addClass(nodeElement, this.selectedClassName);

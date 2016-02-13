@@ -154,13 +154,12 @@ describe('TreeModel', function() {
 
     it('should fire update event when node data changed', function() {
         var handler = jasmine.createSpy('updateHandler'),
-            rootId = treeModel.rootNode.getId(),
             firstChildId = treeModel.rootNode.getChildIds()[0];
 
         treeModel.on('update', handler);
         treeModel.setNodeData(firstChildId, {hiddenValue: 'new hidden'});
 
-        expect(handler).toHaveBeenCalledWith(rootId);
+        expect(handler).toHaveBeenCalledWith(firstChildId);
         expect(treeModel.getNode(firstChildId).getData('hiddenValue')).toEqual('new hidden');
     });
 

@@ -183,10 +183,10 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
         this.clickTimer = null;
 
         /**
-         * Flag for mouse moving to prevent click event
+         * To prevent click event if mouse moved before mouseup.
          * @type {number}
          */
-        this.mouseMovingFlag = false;
+        this._mouseMovingFlag = false;
 
         this._setRoot();
         this._draw(this.model.rootNode.getId());
@@ -258,7 +258,6 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * Event handler - mousedown
      * @param {MouseEvent} event - Mouse event
      * @private
-     * @todo adjust events - mousedown, single click, double click
      */
     _onMousedown: function(event) {
         var self = this,
@@ -272,7 +271,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
 
             if (abs(newClientX - clientX) + abs(newClientY - clientY) > 5) {
                 self.fire('mousemove', event);
-                self.mouseMovingFlag = true;
+                self._mouseMovingFlag = true;
             }
         }
         function onMouseUp() {
@@ -281,6 +280,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
             util.removeEventListener(document, 'mouseup', onMouseUp);
         }
 
+        this._mouseMovingFlag = false;
         this.fire('mousedown', event);
         util.addEventListener(document, 'mousemove', onMouseMove);
         util.addEventListener(document, 'mouseup', onMouseUp);
@@ -305,13 +305,12 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
             return;
         }
 
-        if (!this.clickTimer && !this.mouseMovingFlag) {
+        if (!this.clickTimer && !this._mouseMovingFlag) {
             this.fire('singleClick', event);
             this.clickTimer = setTimeout(function() {
                 self.resetClickTimer();
             }, 200);
         }
-        this.mouseMovingFlag = false;
     },
 
     /**
@@ -496,12 +495,11 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
         if (node.isRoot()) {
             html = this._makeHtml(node.getChildIds());
             element = this.rootElement;
-            element.innerHTML = html;
         } else {
             html = this._makeInnerHTML(node);
             element = document.getElementById(nodeId);
-            element.innerHTML = html;
         }
+        element.innerHTML = html;
         this._setClassWithDisplay(node);
 
         /**
@@ -744,7 +742,9 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * Sort all nodes
      * @api
      * @param {Function} comparator - Comparator for sorting
+     * @param {boolean} [isSilent] - If true, it doesn't redraw tree
      * @example
+     * // Sort with redrawing tree
      * tree.sort(function(nodeA, nodeB) {
      *     var aValue = nodeA.getData('text'),
      *         bValue = nodeB.getData('text');
@@ -754,10 +754,23 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      *     }
      *     return bValue.localeCompare(aValue);
      * });
+     *
+     * // Sort, but not redraw tree
+     * tree.sort(function(nodeA, nodeB) {
+     *     var aValue = nodeA.getData('text'),
+     *         bValue = nodeB.getData('text');
+     *
+     *     if (!bValue || !bValue.localeCompare) {
+     *         return 0;
+     *     }
+     *     return bValue.localeCompare(aValue);
+     * }, true);
      */
-    sort: function(comparator) {
+    sort: function(comparator, isSilent) {
         this.model.sort(comparator);
-        this._draw(this.model.rootNode.getId());
+        if (!isSilent) {
+            this.refresh();
+        }
     },
 
     /**

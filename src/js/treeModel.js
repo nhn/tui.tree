@@ -274,7 +274,7 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
         node.setData(props);
 
         if (!isSilent) {
-            this.fire('update', node.getParentId());
+            this.fire('update', id);
         }
     },
 
@@ -298,7 +298,7 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
         }
 
         if (!isSilent) {
-            this.fire('update', node.getParentId());
+            this.fire('update', id);
         }
     },
 
