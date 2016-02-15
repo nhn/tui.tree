@@ -56,8 +56,6 @@ gulp.task('liveBuild', function() {
         .pipe(uglify())
         .pipe(concat(filename + '.min.js'))
         .pipe(gulp.dest('./'));
-        //.pipe(concat(filename + '.js'))
-        //.pipe(gulp.dest('./samples/js/'));
 });
 
 gulp.task('bundle', ['karma'], function() {

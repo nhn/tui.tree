@@ -171,12 +171,6 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
         this.enabledFeatures = {};
 
         /**
-         * Whether the browser is ie and lower than 9
-         * @type {boolean}
-         */
-        this.isLowerThanIE9 = snippet.browser.msie && snippet.browser.version < 9;
-
-        /**
          * Click timer to prevent click-duplication with double click
          * @type {number}
          */
@@ -522,14 +516,12 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
     _setClassWithDisplay: function(node) {
         var nodeId = node.getId(),
             element = document.getElementById(nodeId),
-            openedClass = this.classNames.openedClass,
-            closedClass = this.classNames.closedClass,
-            leafClass = this.classNames.leafClass;
+            classNames = this.classNames;
 
         if (node.isLeaf()) {
-            util.removeClass(element, openedClass);
-            util.removeClass(element, closedClass);
-            util.addClass(element, leafClass);
+            util.removeClass(element, classNames.openedClass);
+            util.removeClass(element, classNames.closedClass);
+            util.addClass(element, classNames.leafClass);
         } else {
             this._setDisplayFromNodeState(nodeId, node.getState());
             this.each(function(child) {
@@ -546,16 +538,15 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      */
     _getSubtreeElement: function(nodeId) {
         var node = this.model.getNode(nodeId),
-            nodeElement, subtreeElement;
+            subtreeElement;
 
         if (!node || node.isLeaf()) {
             subtreeElement = null;
         } else if (node.isRoot()) {
             subtreeElement = this.rootElement
         } else {
-            nodeElement = document.getElementById(nodeId);
             subtreeElement = util.getElementsByClassName(
-                nodeElement,
+                document.getElementById(nodeId),
                 this.classNames.subtreeClass
             )[0];
         }
