@@ -48,7 +48,7 @@ var Selectable = tui.util.defineClass(/** @lends Selectable.prototype */{/*eslin
     /**
      * Select
      * @param {string} nodeId - Node id
-     * @param {Element} target - Event target element
+     * @param {Element} [target] - Event target element
      */
     select: function(nodeId, target) {
         var tree = this.tree,

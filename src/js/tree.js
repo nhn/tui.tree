@@ -624,7 +624,6 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * @api
      * @param {HTMLElement} element - Element
      * @returns {string} Node id
-     * @private
      */
     getNodeIdFromElement: function(element) {
         var idPrefix = this.getNodeIdPrefix();
@@ -725,8 +724,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * Toggle node
      * @api
      * @param {string} nodeId - Node id
-     * @private
-     **/
+     */
     toggle: function(nodeId) {
         var node = this.model.getNode(nodeId),
             state;
