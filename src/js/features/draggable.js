@@ -13,6 +13,7 @@ var defaultOptions = {
         'BUTTON',
         'UL'
     ],
+    API_LIST = [],
     inArray = tui.util.inArray;
 
 /**
@@ -26,6 +27,17 @@ var defaultOptions = {
  *  @param {Array.<string>} options.rejectedClassNames - No draggable class names
  */
 var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{/*eslint-disable*/
+    static: {
+        /**
+         * @static
+         * @memberOf Selectable
+         * @returns {Array.<string>} API list of Draggable
+         */
+        getAPIList: function() {
+            return API_LIST.slice();
+        }
+    },
+
     init: function(tree, options) { /*eslint-enable*/
         this.tree = tree;
         this.setMembers(options);

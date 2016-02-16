@@ -1,16 +1,31 @@
 'use strict';
 
 var util = require('./../util');
-var defaults = {
-    selectedClassName: 'tui-tree-selected'
-};
+
+var API_LIST = [
+        'select'
+    ],
+    defaults = {
+        selectedClassName: 'tui-tree-selected'
+    };
 
 /**
  * Set the tree selectable
+ * @class Selectable
  * @constructor
  * @param {Tree} tree - Tree
  */
 var Selectable = tui.util.defineClass(/** @lends Selectable.prototype */{/*eslint-disable*/
+    static: {
+        /**
+         * @static
+         * @memberOf Selectable
+         * @returns {Array.<string>} API list of Selectable
+         */
+        getAPIList: function() {
+            return API_LIST.slice();
+        }
+    },
     init: function(tree, options) { /*eslint-enable*/
         options = tui.util.extend({}, defaults, options);
 
@@ -21,17 +36,34 @@ var Selectable = tui.util.defineClass(/** @lends Selectable.prototype */{/*eslin
             singleClick: this.onSingleClick,
             afterDraw: this.onAfterDraw
         }, this);
-        tree.select = tui.util.bind(this.select, this);
+        this._setAPIs();
+    },
+
+    /**
+     * Set apis of selectable tree
+     * @private
+     */
+    _setAPIs: function() {
+        var tree = this.tree,
+            bind = tui.util.bind;
+
+        tui.util.forEach(API_LIST, function(apiName) {
+            tree[apiName] = bind(this[apiName], this);
+        }, this);
     },
 
     /**
      * Disable this module
      */
     destroy: function() {
-        var nodeElement = this.getPrevElement();
+        var tree = this.tree,
+            nodeElement = this.getPrevElement();
+
         util.removeClass(nodeElement, this.selectedClassName);
-        delete this.tree.select;
-        this.tree.off(this);
+        tree.off(this);
+        tui.util.forEach(API_LIST, function(apiName) {
+            delete tree[apiName];
+        });
     },
 
     /**
@@ -45,11 +77,21 @@ var Selectable = tui.util.defineClass(/** @lends Selectable.prototype */{/*eslin
         this.select(nodeId, target);
     },
 
+    /* eslint-disable valid-jsdoc */
     /**
-     * Select
+     * Select node if the feature-"Selectable" is enabled.
+     * @api
+     * @memberOf Tree.prototype
+     * @requires Selectable
      * @param {string} nodeId - Node id
-     * @param {Element} [target] - Event target element
+     * @example
+     * tree
+     *  .enableFeature('Selectable')
+     *  .on('select', function(nodeId, prevNodeId) {
+     *      console.log('selected node: ' + nodeId);
+     *  });
      */
+    /* eslint-enable valid-jsdoc */
     select: function(nodeId, target) {
         var tree = this.tree,
             prevElement = this.getPrevElement(),

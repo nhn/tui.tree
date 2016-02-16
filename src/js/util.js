@@ -10,10 +10,13 @@ var util = {
      * @param {Array} arr Array to query
      */
     removeItemFromArray: function(item, arr) {
-        var index = tui.util.inArray(item, arr);
+        var index = arr.length - 1;
 
-        if (index > -1) {
-            arr.splice(index, 1);
+        while (index > -1) {
+            if (item === arr[index]) {
+                arr.splice(index, 1);
+            }
+            index -= 1;
         }
     },
 

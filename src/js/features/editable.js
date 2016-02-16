@@ -2,6 +2,8 @@
 
 var util = require('./../util');
 
+var API_LIST = [];
+
 /**
  * Set the tree selectable
  * @constructor
@@ -12,6 +14,17 @@ var util = require('./../util');
  *  @param {string} options.inputClassName - Classname of input element
  */
 var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-disable*/
+    static: {
+        /**
+         * @static
+         * @memberOf Selectable
+         * @returns {Array.<string>} API list of Editable
+         */
+        getAPIList: function() {
+            return API_LIST.slice();
+        }
+    },
+
     init: function(tree, options) { /*eslint-enable*/
         options = tui.util.extend({}, options);
         this.tree = tree;

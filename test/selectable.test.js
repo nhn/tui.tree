@@ -34,9 +34,7 @@ describe('Tree', function() {
                 {title: '3'}
             ]}
         ],
-        rootElement,
-        tree,
-        treeSelection;
+        rootElement, tree, treeSelection;
 
     beforeEach(function() {
         loadFixtures('basicFixture.html');

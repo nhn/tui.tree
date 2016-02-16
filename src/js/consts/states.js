@@ -2,7 +2,7 @@
 
 /**
  * States in tree
- * @type {Object} states
+ * @type {Object.<string, string>}
  */
 module.exports = {
     /**

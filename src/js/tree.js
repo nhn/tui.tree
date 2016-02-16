@@ -13,13 +13,15 @@ var util = require('./util'),
     TreeModel = require('./treeModel'),
     Selectable = require('./features/selectable'),
     Draggable = require('./features/draggable'),
-    Editable = require('./features/editable');
+    Editable = require('./features/editable'),
+    Checkbox = require('./features/checkbox');
 
 var nodeStates = states.node,
     features = {
         Selectable: Selectable,
         Draggable: Draggable,
-        Editable: Editable
+        Editable: Editable,
+        Checkbox: Checkbox
     },
     snippet = tui.util,
     extend = snippet.extend;
@@ -116,13 +118,34 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
         /**
          * @memberOf Tree
          * @static
-         * @param {string} moduleName - Module name
-         * @param {object} module - Module
+         * @param {string} featureName - Feature name
+         * @param {object} feature - Feature
          */
-        registerFeature: function(moduleName, module) {
-            if (module){
-                this.features[moduleName] = module;
+        registerFeature: function(featureName, feature) {
+
+            if (feature) {
+                this.features[featureName] = feature;
+                this._setAbstractAPIs(featureName, feature);
             }
+        },
+
+        /**
+         * Set abstract apis to tree prototype
+         * @static
+         * @param {string} featureName - Feature name
+         * @param {object} feature - Feature
+         * @private
+         */
+        _setAbstractAPIs: function(featureName, feature) {
+            var self = this,
+                messageName = 'INVALID_API_' + featureName.toUpperCase(),
+                apiList = feature.getAPIList ? feature.getAPIList() : [];
+
+            snippet.forEach(apiList, function(api) {
+                self.prototype[api] = function() {
+                    throw new Error(messages[messageName] || messages.INVALID_API);
+                }
+            });
         },
 
         /**
@@ -183,7 +206,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
         this._mouseMovingFlag = false;
 
         this._setRoot();
-        this._draw(this.model.rootNode.getId());
+        this._draw(this.getRootNodeId());
         this._setEvents();
     },
 
@@ -768,7 +791,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * @param {string} [nodeId] - TreeNode id to refresh
      */
     refresh: function(nodeId) {
-        nodeId = nodeId || this.model.rootNode.getId();
+        nodeId = nodeId || this.getRootNodeId();
         this._draw(nodeId);
     },
 
@@ -931,6 +954,37 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
     },
 
     /**
+     * Whether the node is leaf
+     * @api
+     * @param {string} nodeId - Node id
+     * @returns {boolean} True if the node is leaf.
+     */
+    isLeaf: function(nodeId) {
+        var node = this.model.getNode(nodeId);
+
+        return node && node.isLeaf();
+    },
+
+    /**
+     * Whether a node is a ancestor of another node.
+     * @api
+     * @param {string} containerNodeId - Id of a node that may contain the other node
+     * @param {string} containedNodeId - Id of a node that may be contained by the other node
+     * @return {boolean} Whether a node contains another node
+     */
+    contains: function(containerNodeId, containedNodeId) {
+        var parentId = tree.getParentId(containedNodeId),
+            result = false;
+
+        while (!result && parentId) {
+            result = (containerNodeId === parentId);
+            parentId = tree.getParentId(parentId);
+        }
+
+        return result;
+    },
+
+    /**
      * Enable facility of tree
      * @api
      * @param {string} featureName - 'Selectable', 'Draggable', 'Editable'
@@ -982,23 +1036,6 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
             delete this.enabledFeatures[featureName]
         }
         return this;
-    },
-
-    /**
-     * Select node if the feature-"Selectable" is enabled.
-     * @api
-     * @param {string} nodeId - Node id to remove
-     * @example
-     * tree
-     *  .enableFeature('Selectable')
-     *  .on('select', function(nodeId, prevNodeId) {
-     *      console.log('selected node: ' + nodeId);
-     *  });
-     *
-     * tree.select('tui-tree-node-13'); // selected node: tui-tree-node-13
-     */
-    select: function(nodeId) {
-        throw new Error(messages.INVALID_API_SELECTABLE);
     }
 });
 

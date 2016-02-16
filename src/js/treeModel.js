@@ -402,7 +402,7 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
      * @param {string} parentId - Parent node id
      * @param {object} [context] - Context of iteratee
      */
-    each: function(iteratee, parentId, context) {
+    each: function(iteratee, parentId, context) { //depth-first
         var stack, nodeId, node;
 
         node = this.getNode(parentId);
