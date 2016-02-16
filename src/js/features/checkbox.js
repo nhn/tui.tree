@@ -223,18 +223,6 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
     },
 
     /**
-     * Get checked children(=id list)
-     * @param {string} parentId - Node id
-     * @returns {Array.<string>} Children id list
-     * @private
-     */
-    _getCheckedChildIds: function(parentId) {
-        var childIds = tree.getChildIds(parentId);
-
-        return tui.util.filter(childIds, this.isChecked, this);
-    },
-
-    /**
      * Update all descendants state
      * @param {string} nodeId - Node id
      * @param {number} state - State for checkbox

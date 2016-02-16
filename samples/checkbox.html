@@ -81,22 +81,22 @@
     ];
 
     var tree = new tui.component.Tree(data, {
-        nodeDefaultState: 'opened',
-        rootElement: document.getElementById('treeRoot1'),
-        template: {
-            internalNode:
-            '<button type="button" class="{{toggleBtnClass}}">{{stateLabel}}</button>' +
-            '<input type="checkbox" class="tui-tree-checkbox">' +
-            '<span class="{{textClass}}">{{text}}</span>' +
-            '<ul class="{{subtreeClass}}">{{children}}</ul>',
-            leafNode:
-            '<input type="checkbox" class="tui-tree-checkbox">' +
-            '<span class="{{textClass}}">{{text}}</span>'
-        }
-    })
-            .enableFeature('Checkbox', {
-                checkboxClassName: 'tui-tree-checkbox'
-            });
+            nodeDefaultState: 'opened',
+            rootElement: 'treeRoot1',
+            template: {
+                internalNode:
+                    '<button type="button" class="{{toggleBtnClass}}">{{stateLabel}}</button>' +
+                    '<input type="checkbox" class="tui-tree-checkbox">' +
+                    '<span class="{{textClass}}">{{text}}</span>' +
+                    '<ul class="{{subtreeClass}}">{{children}}</ul>',
+                leafNode:
+                    '<input type="checkbox" class="tui-tree-checkbox">' +
+                    '<span class="{{textClass}}">{{text}}</span>'
+            }
+        })
+        .enableFeature('Checkbox', {
+            checkboxClassName: 'tui-tree-checkbox'
+        });
 
     var addChildBtn = document.getElementById('addChildBtn'),
             removeChildBtn = document.getElementById('removeChildBtn'),
