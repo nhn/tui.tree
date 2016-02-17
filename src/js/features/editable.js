@@ -6,6 +6,7 @@ var API_LIST = [];
 
 /**
  * Set the tree selectable
+ * @class Editable
  * @constructor
  * @param {Tree} tree - Tree
  * @param {Object} options - Options

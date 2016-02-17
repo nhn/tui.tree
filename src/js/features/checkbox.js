@@ -26,6 +26,7 @@ var filter = tui.util.filter,
     forEach = tui.util.forEach;
 /**
  * Set the checkbox-api
+ * @class Checkbox
  * @constructor
  * @param {Tree} tree - Tree
  * @param {Object} option - Option
@@ -72,23 +73,22 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
      * @private
      */
     _attachEvents: function() {
-        var tree = this.tree;
+        this.tree.on({
+            singleClick: function(event) {
+                var target = util.getTarget(event),
+                    nodeId, state;
 
-        tree.on('singleClick', function(event) {
-            var target = util.getTarget(event),
-                nodeId, state;
-
-            if (util.hasClass(target, this.checkboxClassName)) {
-                nodeId = tree.getNodeIdFromElement(target);
-                state = this._getStateFromCheckbox(target);
-                this._continuePostprocessing(nodeId, state);
+                if (util.hasClass(target, this.checkboxClassName)) {
+                    nodeId = tree.getNodeIdFromElement(target);
+                    state = this._getStateFromCheckbox(target);
+                    this._continuePostprocessing(nodeId, state);
+                }
+            },
+            afterDraw: function() {
+                forEach(this.checkedList, function(nodeId) {
+                    this._setState(nodeId, STATE_CHECKED, true);
+                }, this);
             }
-        }, this);
-
-        tree.on('afterDraw', function() {
-            forEach(this.checkedList, function(nodeId) {
-                this._setState(nodeId, STATE_CHECKED, true);
-            }, this);
         }, this);
     },
 
@@ -218,9 +218,9 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
              */
             eventName = 'uncheck';
         }
-
         DATA[DATA_KEY_OF_CHECKING_STATE] = state;
         tree.setNodeData(nodeId, DATA, true);
+
         if (!stopPropagation) {
             this._propagateState(nodeId, state);
             tree.fire(eventName, nodeId);
@@ -260,28 +260,37 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
      * @private
      */
     _updateAllAncestorsState: function(nodeId) {
-        var parentId = tree.getParentId(nodeId),
-            checked = true,
-            unchecked = true,
-            childIds;
+        var parentId = tree.getParentId(nodeId);
 
         while (parentId) {
-            childIds = tree.getChildIds(parentId);
-            forEach(childIds, function(childId) {
-                var state = this._getState(childId);
-                checked = (checked && state === STATE_CHECKED);
-                unchecked = (unchecked && state === STATE_UNCHECKED);
-                return checked || unchecked;
-            }, this);
-
-            if (checked) {
-                this._setState(parentId, STATE_CHECKED, true);
-            } else if (unchecked) {
-                this._setState(parentId, STATE_UNCHECKED, true);
-            } else {
-                this._setState(parentId, STATE_INDETERMINATE, true);
-            }
+            this._judgeOwnState(parentId);
             parentId = tree.getParentId(parentId);
+        }
+    },
+
+    /**
+     * Judge own state when a child node is changed
+     * @param {string} nodeId - Node id
+     * @private
+     */
+    _judgeOwnState: function(nodeId) {
+        var childIds = tree.getChildIds(nodeId),
+            checked = true,
+            unchecked = true;
+
+        forEach(childIds, function(childId) {
+            var state = this._getState(childId);
+            checked = (checked && state === STATE_CHECKED);
+            unchecked = (unchecked && state === STATE_UNCHECKED);
+            return checked || unchecked;
+        }, this);
+
+        if (checked) {
+            this._setState(nodeId, STATE_CHECKED, true);
+        } else if (unchecked) {
+            this._setState(nodeId, STATE_UNCHECKED, true);
+        } else {
+            this._setState(nodeId, STATE_INDETERMINATE, true);
         }
     },
 

@@ -18,6 +18,7 @@ var defaultOptions = {
 
 /**
  * Set the tree draggable
+ * @class Draggable
  * @constructor
  * @param {Tree} tree - Tree
  * @param {Object} options - Options
