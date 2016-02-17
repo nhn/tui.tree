@@ -77,7 +77,10 @@ var Selectable = tui.util.defineClass(/** @lends Selectable.prototype */{/*eslin
         this.select(nodeId, target);
     },
 
-    /* eslint-disable valid-jsdoc */
+    /* eslint-disable valid-jsdoc
+        Ignore "target" parameter annotation for API page
+        "tree.select(nodeId)"
+     */
     /**
      * Select node if the feature-"Selectable" is enabled.
      * @api
@@ -85,30 +88,29 @@ var Selectable = tui.util.defineClass(/** @lends Selectable.prototype */{/*eslin
      * @requires Selectable
      * @param {string} nodeId - Node id
      * @example
-     * tree
-     *  .enableFeature('Selectable')
-     *  .on('select', function(nodeId, prevNodeId) {
-     *      console.log('selected node: ' + nodeId);
-     *  });
+     * tree.select('tui-tree-node-3');
      */
     /* eslint-enable valid-jsdoc */
     select: function(nodeId, target) {
-        var tree = this.tree,
-            prevElement = this.getPrevElement(),
-            nodeElement = document.getElementById(nodeId),
-            selectedClassName = this.selectedClassName,
-            prevNodeId = this.prevNodeId;
+        var tree, prevElement, nodeElement,
+            selectedClassName, prevNodeId;
 
         if (!nodeId) {
             return;
         }
+
+        tree = this.tree;
+        prevElement = this.getPrevElement();
+        nodeElement = document.getElementById(nodeId);
+        selectedClassName = this.selectedClassName;
+        prevNodeId = this.prevNodeId;
 
         /**
          * @api
          * @event Tree#beforeSelect
          * @param {string} nodeId - Selected node id
          * @param {string} prevNodeId - Previous selected node id
-         * @param {Element} target - Target element
+         * @param {Element|undefined} target - Target element
          * @example
          * tree
          *  .enableFeature('Selectable')
@@ -129,7 +131,7 @@ var Selectable = tui.util.defineClass(/** @lends Selectable.prototype */{/*eslin
              * @event Tree#select
              * @param {string} nodeId - Selected node id
              * @param {string} prevNodeId - Previous selected node id
-             * @param {Element} target - Target element
+             * @param {Element|undefined} target - Target element
              * @example
              * tree
              *  .enableFeature('Selectable')

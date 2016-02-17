@@ -24,7 +24,8 @@ var nodeStates = states.node,
         Checkbox: Checkbox
     },
     snippet = tui.util,
-    extend = snippet.extend;
+    extend = snippet.extend,
+    TIMEOUT_TO_DIFFERENTIATE_CLICK_AND_DBLCLICK;
 /**
  * Create tree model and inject data to model
  * @class Tree
@@ -114,46 +115,6 @@ var nodeStates = states.node,
  * });
  **/
 var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
-    static: {
-        /**
-         * @memberOf Tree
-         * @static
-         * @param {string} featureName - Feature name
-         * @param {object} feature - Feature
-         */
-        registerFeature: function(featureName, feature) {
-
-            if (feature) {
-                this.features[featureName] = feature;
-                this._setAbstractAPIs(featureName, feature);
-            }
-        },
-
-        /**
-         * Set abstract apis to tree prototype
-         * @static
-         * @param {string} featureName - Feature name
-         * @param {object} feature - Feature
-         * @private
-         */
-        _setAbstractAPIs: function(featureName, feature) {
-            var self = this,
-                messageName = 'INVALID_API_' + featureName.toUpperCase(),
-                apiList = feature.getAPIList ? feature.getAPIList() : [];
-
-            snippet.forEach(apiList, function(api) {
-                self.prototype[api] = function() {
-                    throw new Error(messages[messageName] || messages.INVALID_API);
-                }
-            });
-        },
-
-        /**
-         * Tree features
-         * @type {Object}
-         */
-        features: {}
-    },
     init: function(data, options) { /*eslint-enable*/
         options = extend({}, defaultOption, options);
 
@@ -326,7 +287,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
             this.fire('singleClick', event);
             this.clickTimer = setTimeout(function() {
                 self.resetClickTimer();
-            }, 200);
+            }, TIMEOUT_TO_DIFFERENTIATE_CLICK_AND_DBLCLICK);
         }
     },
 
@@ -970,7 +931,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * @api
      * @param {string} containerNodeId - Id of a node that may contain the other node
      * @param {string} containedNodeId - Id of a node that may be contained by the other node
-     * @return {boolean} Whether a node contains another node
+     * @returns {boolean} Whether a node contains another node
      */
     contains: function(containerNodeId, containedNodeId) {
         var parentId = tree.getParentId(containedNodeId),
@@ -989,7 +950,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * @api
      * @param {string} featureName - 'Selectable', 'Draggable', 'Editable'
      * @param {object} [options] - Feature options
-     * @return {Tree} this
+     * @returns {Tree} this
      * @example
      * tree
      *  .enableFeature('Selectable', {
@@ -1005,10 +966,13 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      *      helperPos: {x: 5, y: 2},
      *      rejectedTagNames: ['UL', 'INPUT', 'BUTTON'],
      *      rejectedClassNames: ['notDraggable', 'notDraggable-2']
+     *  })
+     *  .enableFeature('Checkbox', {
+     *      checkboxClassName: 'tui-tree-checkbox'
      *  });
      */
     enableFeature: function(featureName, options) {
-        var Feature = Tree.features[featureName];
+        var Feature = features[featureName];
 
         this.disableFeature(featureName);
         if (Feature) {
@@ -1021,7 +985,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * Disable facility of tree
      * @api
      * @param {string} featureName - 'Selectable', 'Draggable', 'Editable'
-     * @return {Tree} this
+     * @returns {Tree} this
      * @example
      * tree
      *  .disableFeature('Selectable')
@@ -1040,7 +1004,25 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
 });
 
 snippet.forEach(features, function(Feature, name) {
-    Tree.registerFeature(name, Feature);
+    setAbstractAPIs(name, Feature);
 });
 snippet.CustomEvents.mixin(Tree);
+
+/**
+ * Set abstract apis to tree prototype
+ * @static
+ * @param {string} featureName - Feature name
+ * @param {object} feature - Feature
+ * @private
+ */
+function setAbstractAPIs(featureName, feature) {
+    var messageName = 'INVALID_API_' + featureName.toUpperCase(),
+        apiList = feature.getAPIList ? feature.getAPIList() : [];
+
+    snippet.forEach(apiList, function(api) {
+        Tree.prototype[api] = function() {
+            throw new Error(messages[messageName] || messages.INVALID_API);
+        }
+    });
+}
 module.exports = Tree;

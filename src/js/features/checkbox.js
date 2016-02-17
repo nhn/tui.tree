@@ -18,7 +18,9 @@ var API_LIST = [
  */
 var STATE_CHECKED = 1,
     STATE_UNCHECKED = 2,
-    STATE_INDETERMINATE = 3;
+    STATE_INDETERMINATE = 3,
+    DATA_KEY_OF_CHECKING_STATE = '__CheckingState__',
+    DATA = {};
 
 var filter = tui.util.filter,
     forEach = tui.util.forEach;
@@ -71,20 +73,20 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
      */
     _attachEvents: function() {
         var tree = this.tree;
+
         tree.on('singleClick', function(event) {
             var target = util.getTarget(event),
                 nodeId, state;
 
             if (util.hasClass(target, this.checkboxClassName)) {
                 nodeId = tree.getNodeIdFromElement(target);
-                state = this._getState(nodeId);
+                state = this._getStateFromCheckbox(target);
                 this._continuePostprocessing(nodeId, state);
             }
         }, this);
 
         tree.on('afterDraw', function() {
-            var checkedList = this.checkedList;
-            forEach(checkedList, function(nodeId) {
+            forEach(this.checkedList, function(nodeId) {
                 this._setState(nodeId, STATE_CHECKED, true);
             }, this);
         }, this);
@@ -139,8 +141,8 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
             case STATE_INDETERMINATE:
                 this._setCheckboxAttr(checkbox, false, true);
                 break;
-            default:
-                break;
+            default: // no more process if the state is invalid
+                return;
         }
 
         this._continuePostprocessing(nodeId, state, stopPropagation);
@@ -148,13 +150,29 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
 
     /**
      * Get checking state of node
-     * @private
      * @param {string} nodeId - Node id
-     * @returns {number|undefined} state of node
+     * @returns {number} Checking state
+     * @private
      */
     _getState: function(nodeId) {
-        var checkbox = this._getCheckboxElement(nodeId),
-            state;
+        var state = tree.getNodeData(nodeId)[DATA_KEY_OF_CHECKING_STATE],
+            checkbox;
+
+        if (!state) {
+            checkbox = this._getCheckboxElement(nodeId);
+            state = this._getStateFromCheckbox(checkbox)
+        }
+        return state;
+    },
+
+    /**
+     * Get checking state of node element
+     * @private
+     * @param {Element} checkbox - Checkbox element
+     * @returns {number|undefined} Checking state
+     */
+    _getStateFromCheckbox: function(checkbox) {
+        var state;
 
         if (!checkbox) {
             return;
@@ -201,6 +219,8 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
             eventName = 'uncheck';
         }
 
+        DATA[DATA_KEY_OF_CHECKING_STATE] = state;
+        tree.setNodeData(nodeId, DATA, true);
         if (!stopPropagation) {
             this._propagateState(nodeId, state);
             tree.fire(eventName, nodeId);
@@ -241,7 +261,8 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
      */
     _updateAllAncestorsState: function(nodeId) {
         var parentId = tree.getParentId(nodeId),
-            checked = true, unchecked = true,
+            checked = true,
+            unchecked = true,
             childIds;
 
         while (parentId) {
