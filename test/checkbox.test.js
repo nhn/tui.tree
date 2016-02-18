@@ -82,14 +82,103 @@ describe('Tree', function() {
         expect(spy).toHaveBeenCalledWith(firstChildId);
     });
 
-    it('should fire "check"-event when a node is checked', function() {
+    it('should fire "uncheck"-event when a node is unchecked', function() {
         var firstChildId = tree.getChildIds(tree.getRootNodeId())[0],
             spy = jasmine.createSpy();
-
         tree.on('uncheck', spy);
+
+        tree.uncheck(firstChildId);
+        expect(spy).not.toHaveBeenCalled();
+
         tree.check(firstChildId);
         tree.uncheck(firstChildId);
-
         expect(spy).toHaveBeenCalledWith(firstChildId);
+    });
+
+    it('should check with all descendants', function() {
+        var firstChildId = tree.getChildIds(tree.getRootNodeId())[0];
+
+        tree.check(firstChildId);
+        tree.each(function(node, nodeId) {
+            expect(tree.isChecked(nodeId)).toBe(true);
+        }, firstChildId);
+    });
+
+    it('should uncheck with all descendants', function() {
+        var firstChildId = tree.getChildIds(tree.getRootNodeId())[0];
+
+        tree.check(firstChildId);
+        tree.uncheck(firstChildId);
+        tree.each(function(node, nodeId) {
+            expect(tree.isUnchecked(nodeId)).toBe(true);
+        }, firstChildId);
+    });
+
+    it('should toggle with all descendants', function() {
+        var firstChildId = tree.getChildIds(tree.getRootNodeId())[0];
+
+        tree.check(firstChildId);
+        tree.toggleCheck(firstChildId);
+        expect(tree.isUnchecked(firstChildId)).toBe(true);
+        tree.each(function(node, nodeId) {
+            expect(tree.isUnchecked(nodeId)).toBe(true);
+        }, firstChildId);
+    });
+
+    it('should be indeterminate node if not all but some children are checked', function() {
+        var baseNodeId = tree.getChildIds(tree.getRootNodeId())[0],
+            childIds = tree.getChildIds(baseNodeId);
+
+        tree.check(childIds[0]);
+        expect(tree.isIndeterminate(baseNodeId)).toBe(true);
+
+        tree.each(function(node, nodeId) {
+            tree.check(nodeId);
+        }, baseNodeId);
+        expect(tree.isIndeterminate(baseNodeId)).toBe(false);
+        expect(tree.isChecked(baseNodeId)).toBe(true);
+
+        tree.uncheck(childIds[0]);
+        expect(tree.isIndeterminate(baseNodeId)).toBe(true);
+    });
+
+    it('should reflect states when a node is changed with children', function() {
+        var rootChildIds = tree.getChildIds(tree.getRootNodeId());
+
+        /**
+         * ======== Set node states ========
+         * a-1(v)
+         *   a-1-1(v)
+         *   a-1-2(v)
+         *   a-1-3(v)
+         *   ....
+         * a-2(-)
+         *   a-2-1(v)
+         *   a-2-2( )
+         *   a-2-3(v)
+         */
+        tree.check(rootChildIds[0]);
+        tree.check(rootChildIds[1]);
+        tree.uncheck(tree.getChildIds(rootChildIds[1])[1]);
+
+        expect(tree.isChecked(rootChildIds[0])).toBe(true);
+        expect(tree.isIndeterminate(rootChildIds[1])).toBe(true);
+
+        /**
+         * ======== Reflect the changes ========
+         * a-1(-)
+         *   a-1-1(v)
+         *   a-1-2(v)
+         *   a-1-3(v)
+         *   ....
+         *   a-2-2( )  <-- moved to "a-1" from "a-2"
+         * a-2(v)
+         *   a-2-1(v)
+         *   a-2-3(v)
+         */
+        tree.move(tree.getChildIds(rootChildIds[1])[1], rootChildIds[0]);
+
+        expect(tree.isIndeterminate(rootChildIds[0])).toBe(true);
+        expect(tree.isChecked(rootChildIds[1])).toBe(true);
     });
 });
