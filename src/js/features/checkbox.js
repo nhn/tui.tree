@@ -366,7 +366,9 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
      * tree.check(nodeId);
      */
     check: function(nodeId) {
-        this._setState(nodeId, STATE_CHECKED);
+        if (!this.isChecked(nodeId)) {
+            this._setState(nodeId, STATE_CHECKED);
+        }
     },
 
     /**
@@ -379,7 +381,9 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
      * tree.uncheck(nodeId);
      */
     uncheck: function(nodeId) {
-        this._setState(nodeId, STATE_UNCHECKED);
+        if (!this.isUnchecked(nodeId)) {
+            this._setState(nodeId, STATE_UNCHECKED);
+        }
     },
 
     /**
