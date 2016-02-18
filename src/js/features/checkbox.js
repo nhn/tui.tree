@@ -227,6 +227,10 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
              * @api
              * @event Tree#check
              * @param {string} nodeId - Checked node id
+             * @example
+             * tree.on('check', function(nodeId) {
+             *     console.log('checked: ' + nodeId);
+             * });
              */
             eventName = 'check';
         } else if (state === STATE_UNCHECKED) {
@@ -234,6 +238,10 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
              * @api
              * @event Tree#uncheck
              * @param {string} nodeId - Unchecked node id
+             * @example
+             * tree.on('uncheck', function(nodeId) {
+             *     console.log('unchecked: ' + nodeId);
+             * });
              */
             eventName = 'uncheck';
         }
@@ -345,6 +353,9 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
      * @api
      * @memberOf Tree.prototype
      * @param {string} nodeId - Node id
+     * @example
+     * var nodeId = 'tui-tree-node-3';
+     * tree.check(nodeId);
      */
     check: function(nodeId) {
         this._setState(nodeId, STATE_CHECKED);
@@ -355,6 +366,9 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
      * @api
      * @memberOf Tree.prototype
      * @param {string} nodeId - Node id
+     * @example
+     * var nodeId = 'tui-tree-node-3';
+     * tree.uncheck(nodeId);
      */
     uncheck: function(nodeId) {
         this._setState(nodeId, STATE_UNCHECKED);
@@ -365,6 +379,9 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
      * @api
      * @memberOf Tree.prototype
      * @param {string} nodeId - Node id
+     * @example
+     * var nodeId = 'tui-tree-node-3';
+     * tree.toggleCheck(nodeId);
      */
     toggleCheck: function(nodeId) {
         if (!this.isChecked(nodeId)) {
@@ -380,6 +397,10 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
      * @memberOf Tree.prototype
      * @param {string} nodeId - Node id
      * @returns {boolean} True if node is indeterminate
+     * @example
+     * var nodeId = 'tui-tree-node-3';
+     * tree.check(nodeId);
+     * console.log(tree.isChecked(nodeId)); // true
      */
     isChecked: function(nodeId) {
         return STATE_CHECKED === this._getState(nodeId);
@@ -391,6 +412,10 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
      * @memberOf Tree.prototype
      * @param {string} nodeId - Node id
      * @returns {boolean} True if node is indeterminate
+     * @example
+     * var nodeId = 'tui-tree-node-3';
+     * tree.check(nodeId);
+     * console.log(tree.isIndeterminate(nodeId)); // false
      */
     isIndeterminate: function(nodeId) {
         return STATE_INDETERMINATE === this._getState(nodeId);
@@ -399,8 +424,13 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
     /**
      * Whether the node is unchecked or not
      * @api
+     * @memberOf Tree.prototype
      * @param {string} nodeId - Node id
      * @returns {boolean} True if node is unchecked.
+     * @example
+     * var nodeId = 'tui-tree-node-3';
+     * tree.uncheck(nodeId);
+     * console.log(tree.isUnchecked(nodeId)); // true
      */
     isUnchecked: function(nodeId) {
         return STATE_UNCHECKED === this._getState(nodeId);
@@ -412,6 +442,20 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
      * @memberOf Tree.prototype
      * @param {string} [parentId] - Node id (default: rootNode id)
      * @returns {Array.<string>} Checked node ids
+     * @example
+     * //
+     * // node1(v)
+     * //   node2(v)
+     * //   node3(v)
+     * // node4
+     * //   node5(v)
+     * // node6
+     * //   node7(v)
+     * //     node8(v)
+     * //   node9
+     *
+     * var allCheckedList = tree.getCheckedList(); // ['node1', 'node2', 'node3' ,....]
+     * var descendantsCheckedList = tree.getCheekedList('node6'); // ['node7', 'node8']
      */
     getCheckedList: function(parentId) {
         var tree = this.tree,
@@ -432,6 +476,20 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
      * @memberOf Tree.prototype
      * @param {string} [parentId] - Node id (default: rootNode id)
      * @returns {Array.<string>} Checked node ids
+     * @example
+     * //
+     * // node1(v)
+     * //   node2(v)
+     * //   node3(v)
+     * // node4
+     * //   node5(v)
+     * // node6
+     * //   node7(v)
+     * //     node8(v)
+     * //   node9
+     *
+     * var allTopCheckedList = tree.getTopCheckedList(); // ['node1', 'node5', 'node7']
+     * var descendantsTopCheckedList = tree.getTopCheekedList('node6'); // ['node7']
      */
     getTopCheckedList: function(parentId) {
         var tree = this.tree,
@@ -458,6 +516,20 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
      * @memberOf Tree.prototype
      * @param {string} [parentId] - Node id (default: rootNode id)
      * @returns {Array.<string>} Checked node ids
+     * @example
+     * //
+     * // node1(v)
+     * //   node2(v)
+     * //   node3(v)
+     * // node4
+     * //   node5(v)
+     * // node6
+     * //   node7(v)
+     * //     node8(v)
+     * //   node9
+     *
+     * var allBottomCheckedList = tree.getBottomCheckedList(); // ['node2', 'node3', 'node5', 'node8']
+     * var descendantsBottomCheckedList = tree.getBottomCheekedList('node6'); // ['node8']
      */
     getBottomCheckedList: function(parentId) {
         var tree = this.tree,

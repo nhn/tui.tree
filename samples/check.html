@@ -99,14 +99,14 @@
         });
 
     var addChildBtn = document.getElementById('addChildBtn'),
-            removeChildBtn = document.getElementById('removeChildBtn'),
-            sortBtn = document.getElementById('sortBtn'),
-            enableSelectionBtn = document.getElementById('enableSelectionBtn'),
-            disableSelectionBtn = document.getElementById('disableSelectionBtn'),
-            enableDNDBtn = document.getElementById('enableDNDBtn'),
-            disableDNDBtn = document.getElementById('disableDNDBtn'),
-            rootNodeId = tree.getRootNodeId(),
-            firstChildId = tree.getChildIds(rootNodeId)[0];
+        removeChildBtn = document.getElementById('removeChildBtn'),
+        sortBtn = document.getElementById('sortBtn'),
+        enableSelectionBtn = document.getElementById('enableSelectionBtn'),
+        disableSelectionBtn = document.getElementById('disableSelectionBtn'),
+        enableDNDBtn = document.getElementById('enableDNDBtn'),
+        disableDNDBtn = document.getElementById('disableDNDBtn'),
+        rootNodeId = tree.getRootNodeId(),
+        firstChildId = tree.getChildIds(rootNodeId)[0];
 
     util.addEventListener(addChildBtn, 'click', function() {
         tree.add({text:'hello world'}, firstChildId);
@@ -169,5 +169,6 @@
         }
     });
 </script>
+
 </body>
 </html>

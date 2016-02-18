@@ -608,6 +608,8 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * @api
      * @param {HTMLElement} element - Element
      * @returns {string} Node id
+     * @example
+     * tree.getNodeIdFromElement(elementInNode); // 'tui-tree-node-3'
      */
     getNodeIdFromElement: function(element) {
         var idPrefix = this.getNodeIdPrefix();
@@ -623,6 +625,8 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * Get prefix of node id
      * @api
      * @returns {string} Prefix of node id
+     * @example
+     * tree.getNodeIdPrefix(); // 'tui-tree-node-'
      */
     getNodeIdPrefix: function() {
         return this.model.getNodeIdPrefix();
@@ -644,6 +648,9 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * @param {string} nodeId - Node id
      * @param {object} data - Properties
      * @param {boolean} [isSilent] - If true, it doesn't trigger the 'update' event
+     * @exmaple
+     * tree.setNodeData(nodeId, {foo: 'bar'}); // auto refresh
+     * tree.setNodeData(nodeId, {foo: 'bar'}, true); // not refresh
      */
     setNodeData: function(nodeId, data, isSilent) {
         this.model.setNodeData(nodeId, data, isSilent);
@@ -655,6 +662,8 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * @param {string} nodeId - Node id
      * @param {string|Array} names - Names of properties
      * @param {boolean} [isSilent] - If true, it doesn't trigger the 'update' event
+     * tree.setNodeData(nodeId, 'foo'); // auto refresh
+     * tree.setNodeData(nodeId, 'foo', true); // not refresh
      */
     removeNodeData: function(nodeId, names, isSilent) {
         this.model.removeNodeData(nodeId, names, isSilent)
@@ -664,6 +673,9 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * Get node state.
      * @param {string} nodeId - Node id
      * @return {string|undefined} Node state(('opened', 'closed', undefined)
+     * @example
+     * tree.getState(nodeId); // 'opened', 'closed',
+     *                        // undefined if not exist node
      */
     getState: function(nodeId) {
         var node = this.model.getNode(nodeId);
@@ -999,7 +1011,8 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * tree
      *  .disableFeature('Selectable')
      *  .disableFeature('Draggable')
-     *  .disableFeature('Editable');
+     *  .disableFeature('Editable')
+     *  .disableFeature('Checkbox');
      */
     disableFeature: function(featureName) {
         var feature = this.enabledFeatures[featureName];
@@ -1011,11 +1024,6 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
         return this;
     }
 });
-
-snippet.forEach(features, function(Feature, name) {
-    setAbstractAPIs(name, Feature);
-});
-snippet.CustomEvents.mixin(Tree);
 
 /**
  * Set abstract apis to tree prototype
@@ -1034,4 +1042,8 @@ function setAbstractAPIs(featureName, feature) {
         }
     });
 }
+snippet.forEach(features, function(Feature, name) {
+    setAbstractAPIs(name, Feature);
+});
+snippet.CustomEvents.mixin(Tree);
 module.exports = Tree;

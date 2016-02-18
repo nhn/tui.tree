@@ -7,5 +7,8 @@
   },
   "selectableNodes": {
     "title": "Selectable, Editable"
+  },
+  "check": {
+    "title": "Checkbox"
   }
 }
