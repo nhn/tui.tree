@@ -86,7 +86,9 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
      * @private
      */
     _attachEvents: function() {
-        this.tree.on({
+        var tree = this.tree;
+
+        tree.on({
             singleClick: function(event) {
                 var target = util.getTarget(event),
                     nodeId, state;
@@ -117,7 +119,7 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
      * @private
      */
     _reflectChanges: function(nodeId) {
-        tree.each(function(descendant, descendantId) {
+        this.tree.each(function(descendant, descendantId) {
             this._setState(descendantId, this._getState(descendantId), true);
         }, nodeId, this);
         this._judgeOwnState(nodeId);
@@ -174,7 +176,8 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
      * @private
      */
     _getState: function(nodeId) {
-        var state = tree.getNodeData(nodeId)[DATA_KEY_OF_CHECKING_STATE],
+        var tree = this.tree,
+            state = tree.getNodeData(nodeId)[DATA_KEY_OF_CHECKING_STATE],
             checkbox;
 
         if (!state) {
@@ -215,7 +218,8 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
      * @private
      */
     _continuePostprocessing: function(nodeId, state, stopPropagation) {
-        var checkedList = this.checkedList,
+        var tree = this.tree,
+            checkedList = this.checkedList,
             eventName;
 
         /* Prevent duplicated node id */
@@ -276,7 +280,7 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
      * @private
      */
     _updateAllDescendantsState: function(nodeId, state) {
-        tree.each(function(descendant, descendantId) {
+        this.tree.each(function(descendant, descendantId) {
             this._setState(descendantId, state, true);
         }, nodeId, this);
     },
@@ -287,7 +291,8 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
      * @private
      */
     _updateAllAncestorsState: function(nodeId) {
-        var parentId = tree.getParentId(nodeId);
+        var tree = this.tree,
+            parentId = tree.getParentId(nodeId);
 
         while (parentId) {
             this._judgeOwnState(parentId);
@@ -301,7 +306,8 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
      * @private
      */
     _judgeOwnState: function(nodeId) {
-        var childIds = tree.getChildIds(nodeId),
+        var tree = this.tree,
+            childIds = tree.getChildIds(nodeId),
             checked = true,
             unchecked = true;
 
@@ -332,7 +338,9 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
      * @private
      */
     _getCheckboxElement: function(nodeId) {
-        var el, nodeEl;
+        var tree = this.tree,
+            el, nodeEl;
+
         if (nodeId === tree.getRootNodeId()) {
             el = this.rootCheckbox;
         } else {

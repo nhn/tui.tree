@@ -71,4 +71,14 @@ describe('Tree', function() {
             expect(tree[name]).toThrowError(messages.INVALID_API_CHECKBOX);
         });
     });
+
+    it('should fire "check"-event when a node is checked', function() {
+        var firstChildId = tree.getChildIds(tree.getRootNodeId())[0],
+            spy = jasmine.createSpy();
+
+        tree.on('check', spy);
+        tree.check(firstChildId);
+
+        expect(spy).toHaveBeenCalledWith(firstChildId);
+    });
 });

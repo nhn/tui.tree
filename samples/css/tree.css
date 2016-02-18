@@ -9,6 +9,8 @@ h3 {margin-left:25px; font-weight: normal;}
 .treeWrap button {background:url('../sp_floor.png') no-repeat left; width:13px; height:13px; font-size: 0px; padding:0; color:#000000;vertical-align: middle; margin-right:5px; border:0; }
 .treeWrap .tui-tree-opened button {background-position: -107px 0; }
 .treeWrap .tui-tree-closed button {background-position: -92px 0; }
+/*.treeWrap .tui-tree-closed > .tui-tree-subtree {display: none;}*/
+/*.treeWrap .tui-tree-opened > .tui-tree-subtree {display: block;}*/
 .tui-tree-selected > .tui-tree-text { background-color:#F49999; }
 input {
     border: 2px dotted;
