@@ -57,13 +57,14 @@ describe('Tree', function() {
         tree.enableFeature('Checkbox', {
             checkboxClassName: 'tui-tree-checkbox'
         });
-
-        //// "tree.enabledFeatures.Checkbox" is not constructor but instance.
-        //treeCheckbox = tree.enabledFeatures.Checkbox;
     });
 
-    it('should have implemented apis about checkbox', function() {
+    it('should have implemented apis about checkbox if enabled', function() {
         var apiList = Checkbox.getAPIList();
+
+        tui.util.forEach(apiList, function(name) {
+            expect(tree[name]).not.toThrowError(messages.INVALID_API_CHECKBOX);
+        });
 
         tree.disableFeature('Checkbox');
         tui.util.forEach(apiList, function(name) {

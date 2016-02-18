@@ -955,15 +955,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * @returns {boolean} Whether a node contains another node
      */
     contains: function(containerNodeId, containedNodeId) {
-        var parentId = tree.getParentId(containedNodeId),
-            result = false;
-
-        while (!result && parentId) {
-            result = (containerNodeId === parentId);
-            parentId = tree.getParentId(parentId);
-        }
-
-        return result;
+        return this.model.contains(containedNodeId, containedNodeId);
     },
 
     /**

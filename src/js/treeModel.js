@@ -333,10 +333,10 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
     },
 
     /**
-     * Check to see if a node is a descendant of another node.
-     * @param {string} containerId - Node id
-     * @param {string} containedId - Node id
-     * @returns {boolean} The node is contained or not
+     * Whether a node is a ancestor of another node.
+     * @param {string} containerId - Id of a node that may contain the other node
+     * @param {string} containedId - Id of a node that may be contained by the other node
+     * @returns {boolean} Whether a node contains another node
      */
     contains: function(containerId, containedId) {
         var parentId = this.getParentId(containedId),
