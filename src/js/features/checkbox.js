@@ -52,8 +52,8 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
         this.rootCheckbox = document.createElement('INPUT');
         this.rootCheckbox.type = 'checkbox';
 
-        this._attachEvents();
         this._setAPIs();
+        this._attachEvents();
     },
 
     /**
@@ -66,6 +66,19 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
         forEach(API_LIST, function(apiName) {
             delete tree[apiName];
         });
+    },
+
+    /**
+     * Set apis of checkbox tree
+     * @private
+     */
+    _setAPIs: function() {
+        var tree = this.tree,
+            bind = tui.util.bind;
+
+        forEach(API_LIST, function(apiName) {
+            tree[apiName] = bind(this[apiName], this);
+        }, this);
     },
 
     /**
@@ -84,25 +97,31 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
                     this._continuePostprocessing(nodeId, state);
                 }
             },
-            afterDraw: function() {
-                forEach(this.checkedList, function(nodeId) {
-                    this._setState(nodeId, STATE_CHECKED, true);
-                }, this);
+            afterDraw: function(nodeId, isMoving) {
+                if (isMoving) {
+                    return;
+                }
+                this._reflectChanges(nodeId);
+            },
+            move: function(data) {
+                //@todo - Optimization
+                this._reflectChanges(data.originalParentId);
+                this._reflectChanges(data.newParentId);
             }
         }, this);
     },
 
     /**
-     * Set apis of checkbox tree
+     * Reflect the changes on node.
+     * @param {string} nodeId - Node id
      * @private
      */
-    _setAPIs: function() {
-        var tree = this.tree,
-            bind = tui.util.bind;
-
-        forEach(API_LIST, function(apiName) {
-            tree[apiName] = bind(this[apiName], this);
-        }, this);
+    _reflectChanges: function(nodeId) {
+        tree.each(function(descendant, descendantId) {
+            this._setState(descendantId, this._getState(descendantId), true);
+        }, nodeId, this);
+        this._judgeOwnState(nodeId);
+        this._updateAllAncestorsState(nodeId);
     },
 
     /**
@@ -269,7 +288,7 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
     },
 
     /**
-     * Judge own state when a child node is changed
+     * Judge own state from child node is changed
      * @param {string} nodeId - Node id
      * @private
      */
@@ -278,12 +297,16 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
             checked = true,
             unchecked = true;
 
-        forEach(childIds, function(childId) {
-            var state = this._getState(childId);
-            checked = (checked && state === STATE_CHECKED);
-            unchecked = (unchecked && state === STATE_UNCHECKED);
-            return checked || unchecked;
-        }, this);
+        if (!childIds.length) {
+            checked = this.isChecked(nodeId);
+        } else {
+            forEach(childIds, function(childId) {
+                var state = this._getState(childId);
+                checked = (checked && state === STATE_CHECKED);
+                unchecked = (unchecked && state === STATE_UNCHECKED);
+                return checked || unchecked;
+            }, this);
+        }
 
         if (checked) {
             this._setState(nodeId, STATE_CHECKED, true);

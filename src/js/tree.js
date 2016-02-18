@@ -195,8 +195,8 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * @private
      */
     _onMove: function(nodeId, originalParentId, newParentId) {
-        this._draw(originalParentId);
-        this._draw(newParentId);
+        this._draw(originalParentId, true);
+        this._draw(newParentId, true);
 
         /**
          * @api
@@ -449,9 +449,10 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
     /**
      * Draw element of node
      * @param {string} nodeId - Node id
+     * @param {boolean} [isMoving] - Moving state
      * @private
      */
-    _draw: function(nodeId) {
+    _draw: function(nodeId, isMoving) {
         var node = this.model.getNode(nodeId),
             element, html;
 
@@ -463,12 +464,16 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
          * @api
          * @event Tree#beforeDraw
          * @param {string} nodeId - Node id
+         * @param {boolean} [isMoving] - Moving state
          * @example
-         * tree.on('beforeDraw', function(nodeId) {
-         *     console.log(nodeId);
+         * tree.on('beforeDraw', function(nodeId, isMoving) {
+         *     if (isMoving) {
+         *         console.log('isMoving');
+         *     }
+         *     console.log('beforeDraw: ' + nodeId);
          * });
          */
-        this.fire('beforeDraw', nodeId);
+        this.fire('beforeDraw', nodeId, isMoving);
 
         if (node.isRoot()) {
             html = this._makeHtml(node.getChildIds());
@@ -484,12 +489,16 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
          * @api
          * @event Tree#afterDraw
          * @param {string} nodeId - Node id
+         * @param {boolean} [isMoving] - Moving state
          * @example
-         * tree.on('afterDraw', function(nodeId) {
-         *     console.log(nodeId);
+         * tree.on('afterDraw', function(nodeId, isMoving) {
+         *     if (isMoving) {
+         *         console.log('isMoving');
+         *     }
+         *     console.log('afterDraw: ' + nodeId);
          * });
          */
-        this.fire('afterDraw', nodeId);
+        this.fire('afterDraw', nodeId, isMoving);
     },
 
     /**
