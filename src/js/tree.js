@@ -50,6 +50,7 @@ var nodeStates = states.node,
  *         @param {string} [options.classNames.textClass] A class name that for textElement in node
  *         @param {string} [options.classNames.subtreeClass] A class name for subtree in internal node
  *         @param {string} [options.classNames.toggleBtnClass] A class name for toggle button in internal node
+ *     @param {Function} [options.parseTemplate] Function for parsing template
  * @example
  * //Default options:
  * // {
@@ -72,7 +73,7 @@ var nodeStates = states.node,
  * //         internalNode:
  * //             '<button type="button" class="{{toggleBtnClass}}">{{stateLabel}}</button>' +
  * //             '<span class="{{textClass}}">{{text}}</span>' +
- * //             '<ul class="{{subtreeClass}}">{{children}}</ul>' +
+ * //             '<ul class="{{subtreeClass}}">{{children}}</ul>'
  * //         leafNode:
  * //             '<span class="{{textClass}}">{{text}}</span>' +
  * //     }
@@ -111,7 +112,19 @@ var nodeStates = states.node,
  *
  * var tree1 = new tui.component.Tree(data, {
  *     rootElement: 'treeRoot', // or document.getElementById('treeRoot')
- *     nodeDefaultState: 'opened'
+ *     nodeDefaultState: 'opened',
+ *     template: { // template for mustache engine
+ *         internalNode:
+ *             '<button type="button" class="{{toggleBtnClass}}">{{{stateLabel}}}</button>' +
+ *             '<span class="{{textClass}}">{{{text}}}</span>' +
+ *             '<ul class="{{subtreeClass}}">{{{children}}}</ul>'
+ *         leafNode:
+ *             '<span class="{{textClass}}">{{{text}}}</span>' +
+ *     },
+ *     parseTemplate: function(source, props) { // override your template engine
+ *         // Use mustache template engine
+ *         return mustache.render(template, props);
+ *     }
  * });
  **/
 var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
@@ -165,6 +178,14 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
          * @type {number}
          */
         this._mouseMovingFlag = false;
+
+        /**
+         * Parse template
+         * It can be overrode by user's template engine.
+         * @type {Function}
+         * @private
+         */
+        this._parseTemplate = options.parseTemplate || util.parseTemplate;
 
         this._setRoot();
         this._draw(this.getRootNodeId());
@@ -234,32 +255,32 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
 
     /**
      * Event handler - mousedown
-     * @param {MouseEvent} event - Mouse event
+     * @param {MouseEvent} downEvent - Mouse event
      * @private
      */
-    _onMousedown: function(event) {
+    _onMousedown: function(downEvent) {
         var self = this,
-            clientX = event.clientX,
-            clientY = event.clientY,
+            clientX = downEvent.clientX,
+            clientY = downEvent.clientY,
             abs = Math.abs;
 
-        function onMouseMove(event) {
-            var newClientX = event.clientX,
-                newClientY = event.clientY;
+        function onMouseMove(moveEvent) {
+            var newClientX = moveEvent.clientX,
+                newClientY = moveEvent.clientY;
 
             if (abs(newClientX - clientX) + abs(newClientY - clientY) > 5) {
-                self.fire('mousemove', event);
+                self.fire('mousemove', moveEvent);
                 self._mouseMovingFlag = true;
             }
         }
-        function onMouseUp() {
-            self.fire('mouseup', event);
+        function onMouseUp(upEvent) {
+            self.fire('mouseup', upEvent);
             util.removeEventListener(document, 'mousemove', onMouseMove);
             util.removeEventListener(document, 'mouseup', onMouseUp);
         }
 
         this._mouseMovingFlag = false;
-        this.fire('mousedown', event);
+        this.fire('mousedown', downEvent);
         util.addEventListener(document, 'mousemove', onMouseMove);
         util.addEventListener(document, 'mouseup', onMouseUp);
     },
@@ -354,6 +375,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * @param {Array.<string>} nodeIds - Node id list
      * @returns {string} HTML
      * @private
+     * @see outerTemplate uses "util.parseTemplate"
      */
     _makeHtml: function(nodeIds) {
         var model = this.model,
@@ -373,7 +395,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
                 source: sources.inner,
                 props: props
             });
-            html += util.template(sources.outer, props);
+            html += util.parseTemplate(sources.outer, props);
         }, this);
 
         return html;
@@ -385,6 +407,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * @param {{source: string, props: Object}} [cached] - Cashed data to make html
      * @returns {string} Inner html of node
      * @private
+     * @see innerTemplate uses "this._parseTemplate"
      */
     _makeInnerHTML: function(node, cached) {
         var source, props;
@@ -392,7 +415,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
         cached = cached || {};
         source = cached.source || this._getTemplate(node).inner;
         props = cached.props || this._makeTemplateProps(node);
-        return util.template(source, props);
+        return this._parseTemplate(source, props);
     },
 
     /**
@@ -431,7 +454,8 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
 
         if (node.isLeaf()) {
             props = {
-                id: node.getId()
+                id: node.getId(),
+                isLeaf: true // for custom template method
             };
         } else {
             state = node.getState();

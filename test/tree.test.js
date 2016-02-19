@@ -242,4 +242,21 @@ describe('Tree', function() {
         expect(result).toEqual(jasmine.any(Array));
         expect(result.length).toEqual(4);
     });
+
+    it('should override template parser', function() {
+        var templateParser = jasmine.createSpy().and.callFake(function(source, props) {
+            return util.parseTemplate(source, props);
+        });
+
+        tree = new Tree(data, {
+            rootElement: 'treeRoot',
+            template: {
+                leafNode:
+                '<span class="tui-tree-leaf-label"></span>' +
+                '<span class="{{textClass}}">{{text}}</span>'
+            },
+            parseTemplate: templateParser
+        });
+        expect(templateParser).toHaveBeenCalled();
+    });
 });

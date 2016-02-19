@@ -21,7 +21,22 @@ describe('Util', function() {
                 dummy: 'dummy'
             };
 
-        expect(util.template(source, prop)).toEqual('hello NHN ENT!');
+        expect(util.parseTemplate(source, prop)).toEqual('hello NHN ENT!');
+    });
+
+    it('"template" supports dot notation and array value', function() {
+        var source = '{{..INVALID dot notation}}{{dummy}} {{obj.foo.a}}, {{obj.bar}}!',
+            prop = {
+                obj: {
+                    foo: {
+                        a: 'foo-a'
+                    },
+                    bar: ['bar-1', 'bar-2'] // it will be converted to 'bar-1 bar-2'
+                },
+                dummy: 'dummy'
+            };
+
+        expect(util.parseTemplate(source, prop)).toEqual('dummy foo-a, bar-1 bar-2!');
     });
 
     it('"getClass" should return classname of element', function() {

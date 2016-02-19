@@ -63,10 +63,6 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{/*eslint-
         this.userSelectPropertyValue = null;
         this.currentNodeId = null;
 
-        this.handlers = {};
-        this.handlers.mousemove = tui.util.bind(this.onMousemove, this);
-        this.handlers.mouseup = tui.util.bind(this.onMouseup, this);
-
         style.position = 'absolute';
         style.display = 'none';
         this.tree.rootElement.parentNode.appendChild(helperElement);
@@ -137,8 +133,10 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{/*eslint-
             this.setHelper(target.innerText || target.textContent);
         }
 
-        util.addEventListener(document, 'mousemove', this.handlers.mousemove);
-        util.addEventListener(document, 'mouseup', this.handlers.mouseup);
+        tree.on({
+            mousemove: this.onMousemove,
+            mouseup: this.onMouseup
+        }, this);
     },
 
     /**
@@ -170,8 +168,8 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{/*eslint-
         tree.move(this.currentNodeId, nodeId);
         this.currentNodeId = null;
 
-        util.removeEventListener(document, 'mousemove', this.handlers.mousemove);
-        util.removeEventListener(document, 'mouseup', this.handlers.mouseup);
+        tree.off(this, 'mousemove');
+        tree.off(this, 'mouseup');
     },
 
     /**

@@ -3,6 +3,15 @@
  * @author NHN Ent. FE dev team.<dl_javascript@nhnent.com>
  */
 'use strict';
+var isUndefined = tui.util.isUndefined,
+    pick = tui.util.pick,
+    templateMaskRe = /\{\{(.+?)}}/gi,
+    isValidDotNotationRe = /^\w+(?:\.\w+)*$/,
+    isValidDotNotation = function(str) {
+        return isValidDotNotationRe.test(str);
+    },
+    isArray = tui.util.isArraySafe;
+
 var util = {
     /**
      * Remove first specified item from array, if it exists
@@ -195,11 +204,22 @@ var util = {
      * @param {Object} props - Template data
      * @returns {string} html
      */
-    template: function(source, props) {
-        return source.replace(/\{\{(\w+)}}/gi, function(match, name) {
-            var value = props[name];
-            if (tui.util.isFalsy(value)) {
-                return '';
+    parseTemplate: function(source, props) {
+        var pickValue = function(names) {
+                return pick.apply(null, [props].concat(names));
+            };
+
+        return source.replace(templateMaskRe, function(match, name) {
+            var value;
+
+            if (isValidDotNotation(name)) {
+                value = pickValue(name.split('.'));
+            }
+
+            if (isArray(value)) {
+                value = value.join(' ');
+            } else if (isUndefined(value)) {
+                value = ''
             }
             return value;
         });
