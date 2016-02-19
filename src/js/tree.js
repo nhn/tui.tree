@@ -113,7 +113,10 @@ var nodeStates = states.node,
  * var tree1 = new tui.component.Tree(data, {
  *     rootElement: 'treeRoot', // or document.getElementById('treeRoot')
  *     nodeDefaultState: 'opened',
- *     template: { // template for mustache engine
+ *
+ *     // ========= Option: Override template parser ===========
+ *
+ *     template: { // template for Mustache engine
  *         internalNode:
  *             '<button type="button" class="{{toggleBtnClass}}">{{{stateLabel}}}</button>' +
  *             '<span class="{{textClass}}">{{{text}}}</span>' +
@@ -121,9 +124,9 @@ var nodeStates = states.node,
  *         leafNode:
  *             '<span class="{{textClass}}">{{{text}}}</span>' +
  *     },
- *     parseTemplate: function(source, props) { // override your template engine
- *         // Use mustache template engine
- *         return mustache.render(template, props);
+ *     parseTemplate: function(source, props) {
+ *         // Mustache template engine
+ *         return Mustache.render(template, props);
  *     }
  * });
  **/
