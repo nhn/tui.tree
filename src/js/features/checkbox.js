@@ -19,7 +19,7 @@ var API_LIST = [
 var STATE_CHECKED = 1,
     STATE_UNCHECKED = 2,
     STATE_INDETERMINATE = 3,
-    DATA_KEY_OF_CHECKING_STATE = '__CheckingState__',
+    DATA_KEY_FOR_CHECKBOX_STATE = '__CheckBoxState__',
     DATA = {};
 
 var filter = tui.util.filter,
@@ -177,7 +177,7 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
      */
     _getState: function(nodeId) {
         var tree = this.tree,
-            state = tree.getNodeData(nodeId)[DATA_KEY_OF_CHECKING_STATE],
+            state = tree.getNodeData(nodeId)[DATA_KEY_FOR_CHECKBOX_STATE],
             checkbox;
 
         if (!state) {
@@ -249,7 +249,7 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
              */
             eventName = 'uncheck';
         }
-        DATA[DATA_KEY_OF_CHECKING_STATE] = state;
+        DATA[DATA_KEY_FOR_CHECKBOX_STATE] = state;
         tree.setNodeData(nodeId, DATA, true);
 
         if (!stopPropagation) {
