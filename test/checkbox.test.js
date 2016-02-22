@@ -125,20 +125,33 @@ describe('Tree', function() {
         }, firstChildId);
     });
 
-    it('should be indeterminate node if not all but some children are checked', function() {
+    it('should be indeterminate if some children are checked', function() {
         var baseNodeId = tree.getChildIds(tree.getRootNodeId())[0],
             childIds = tree.getChildIds(baseNodeId);
 
         tree.check(childIds[0]);
         expect(tree.isIndeterminate(baseNodeId)).toBe(true);
+    });
+
+    it('should be checked if all descendants are checked', function() {
+        var baseNodeId = tree.getChildIds(tree.getRootNodeId())[0];
 
         tree.each(function(node, nodeId) {
             tree.check(nodeId);
         }, baseNodeId);
-        expect(tree.isIndeterminate(baseNodeId)).toBe(false);
-        expect(tree.isChecked(baseNodeId)).toBe(true);
 
+        expect(tree.isChecked(baseNodeId)).toBe(true);
+    });
+
+    it('should be indeterminate if some children are unchecked from all checked', function() {
+        var baseNodeId = tree.getChildIds(tree.getRootNodeId())[0],
+            childIds = tree.getChildIds(baseNodeId);
+
+        tree.each(function(node, nodeId) {
+            tree.check(nodeId);
+        }, baseNodeId);
         tree.uncheck(childIds[0]);
+
         expect(tree.isIndeterminate(baseNodeId)).toBe(true);
     });
 
@@ -160,9 +173,6 @@ describe('Tree', function() {
         tree.check(rootChildIds[0]);
         tree.check(rootChildIds[1]);
         tree.uncheck(tree.getChildIds(rootChildIds[1])[1]);
-
-        expect(tree.isChecked(rootChildIds[0])).toBe(true);
-        expect(tree.isIndeterminate(rootChildIds[1])).toBe(true);
 
         /**
          * ======== Reflect the changes ========

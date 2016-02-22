@@ -98,7 +98,7 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
                 }
             },
             afterDraw: function(nodeId) {
-                if (this.tree.isMoving) {
+                if (this.tree.isMovingNode) {
                     return;
                 }
                 this._reflectChanges(nodeId);

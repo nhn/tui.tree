@@ -25,7 +25,8 @@ var nodeStates = states.node,
     },
     snippet = tui.util,
     extend = snippet.extend,
-    TIMEOUT_TO_DIFFERENTIATE_CLICK_AND_DBLCLICK = 200;
+    TIMEOUT_TO_DIFFERENTIATE_CLICK_AND_DBLCLICK = 200,
+    MOUSE_MOVING_THRESHOLD = 5;
 /**
  * Create tree model and inject data to model
  * @class Tree
@@ -50,7 +51,7 @@ var nodeStates = states.node,
  *         @param {string} [options.classNames.textClass] A class name that for textElement in node
  *         @param {string} [options.classNames.subtreeClass] A class name for subtree in internal node
  *         @param {string} [options.classNames.toggleBtnClass] A class name for toggle button in internal node
- *     @param {Function} [options.parseTemplate] Function for parsing template
+ *     @param {Function} [options.renderTemplate] Function for rendering template
  * @example
  * //Default options:
  * // {
@@ -114,7 +115,7 @@ var nodeStates = states.node,
  *     rootElement: 'treeRoot', // or document.getElementById('treeRoot')
  *     nodeDefaultState: 'opened',
  *
- *     // ========= Option: Override template parser ===========
+ *     // ========= Option: Override template renderer ===========
  *
  *     template: { // template for Mustache engine
  *         internalNode:
@@ -124,7 +125,7 @@ var nodeStates = states.node,
  *         leafNode:
  *             '<span class="{{textClass}}">{{{text}}}</span>' +
  *     },
- *     parseTemplate: function(source, props) {
+ *     renderTemplate: function(source, props) {
  *         // Mustache template engine
  *         return Mustache.render(template, props);
  *     }
@@ -183,12 +184,12 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
         this._mouseMovingFlag = false;
 
         /**
-         * Parse template
+         * Render template
          * It can be overrode by user's template engine.
          * @type {Function}
          * @private
          */
-        this._parseTemplate = options.parseTemplate || util.parseTemplate;
+        this._renderTemplate = options.renderTemplate || util.renderTemplate;
 
         /**
          * True when a node is moving
@@ -197,7 +198,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
          * @example
          * tree.on({
          *     beforeDraw: function(nodeId) {
-         *         if (tree.isMoving) {
+         *         if (tree.isMovingNode) {
          *             return;
          *         }
          *         //..
@@ -206,7 +207,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
          * });
          * tree.move('tui-tree-node-1', 'tui-tree-node-2');
          */
-        this.isMoving = false;
+        this.isMovingNode = false;
 
         this._setRoot();
         this._draw(this.getRootNodeId());
@@ -237,8 +238,8 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * @private
      */
     _onMove: function(nodeId, originalParentId, newParentId) {
-        this._draw(originalParentId, true);
-        this._draw(newParentId, true);
+        this._draw(originalParentId);
+        this._draw(newParentId);
 
         /**
          * @api
@@ -289,7 +290,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
             var newClientX = moveEvent.clientX,
                 newClientY = moveEvent.clientY;
 
-            if (abs(newClientX - clientX) + abs(newClientY - clientY) > 5) {
+            if (abs(newClientX - clientX) + abs(newClientY - clientY) > MOUSE_MOVING_THRESHOLD) {
                 self.fire('mousemove', moveEvent);
                 self._mouseMovingFlag = true;
             }
@@ -396,7 +397,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * @param {Array.<string>} nodeIds - Node id list
      * @returns {string} HTML
      * @private
-     * @see outerTemplate uses "util.parseTemplate"
+     * @see outerTemplate uses "util.renderTemplate"
      */
     _makeHtml: function(nodeIds) {
         var model = this.model,
@@ -416,7 +417,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
                 source: sources.inner,
                 props: props
             });
-            html += util.parseTemplate(sources.outer, props);
+            html += util.renderTemplate(sources.outer, props);
         }, this);
 
         return html;
@@ -428,7 +429,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * @param {{source: string, props: Object}} [cached] - Cashed data to make html
      * @returns {string} Inner html of node
      * @private
-     * @see innerTemplate uses "this._parseTemplate"
+     * @see innerTemplate uses "this._renderTemplate"
      */
     _makeInnerHTML: function(node, cached) {
         var source, props;
@@ -436,7 +437,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
         cached = cached || {};
         source = cached.source || this._getTemplate(node).inner;
         props = cached.props || this._makeTemplateProps(node);
-        return this._parseTemplate(source, props);
+        return this._renderTemplate(source, props);
     },
 
     /**
@@ -508,11 +509,10 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
          * @api
          * @event Tree#beforeDraw
          * @param {string} nodeId - Node id
-         * @param {boolean} [isMoving] - Moving state
          * @example
-         * tree.on('beforeDraw', function(nodeId, isMoving) {
-         *     if (isMoving) {
-         *         console.log('isMoving');
+         * tree.on('beforeDraw', function(nodeId) {
+         *     if (tree.isMovingNode) {
+         *         console.log('isMovingNode');
          *     }
          *     console.log('beforeDraw: ' + nodeId);
          * });
@@ -533,11 +533,10 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
          * @api
          * @event Tree#afterDraw
          * @param {string} nodeId - Node id
-         * @param {boolean} [isMoving] - Moving state
          * @example
-         * tree.on('afterDraw', function(nodeId, isMoving) {
-         *     if (isMoving) {
-         *         console.log('isMoving');
+         * tree.on('afterDraw', function(nodeId) {
+         *     if (tree.isMovingNode) {
+         *         console.log('isMovingNode');
          *     }
          *     console.log('afterDraw: ' + nodeId);
          * });
@@ -706,6 +705,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * @param {string} nodeId - Node id
      * @param {string|Array} names - Names of properties
      * @param {boolean} [isSilent] - If true, it doesn't trigger the 'update' event
+     * @example
      * tree.setNodeData(nodeId, 'foo'); // auto refresh
      * tree.setNodeData(nodeId, 'foo', true); // not refresh
      */
@@ -719,7 +719,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * @return {string|undefined} Node state(('opened', 'closed', undefined)
      * @example
      * tree.getState(nodeId); // 'opened', 'closed',
-     *                        // undefined if not exist node
+     *                        // undefined if the node is nonexistent
      */
     getState: function(nodeId) {
         var node = this.model.getNode(nodeId);
@@ -902,9 +902,9 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * tree.move(myNodeId, newParentId, true); // move node without redrawing
      */
     move: function(nodeId, newParentId, isSilent) {
-        this.isMoving = true;
+        this.isMovingNode = true;
         this.model.move(nodeId, newParentId, isSilent);
-        this.isMoving = false;
+        this.isMovingNode = false;
     },
 
     /**
@@ -950,9 +950,8 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
     _where: function(props) {
         return this._filter(function(node) {
             var result = true,
-                data;
+                data = node.getAllData();
 
-            data = node.getAllData();
             snippet.forEach(props, function(value, key) {
                 result = (key in data) && (data[key] === value);
                 return result;
@@ -1065,10 +1064,8 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
 
 /**
  * Set abstract apis to tree prototype
- * @static
  * @param {string} featureName - Feature name
  * @param {object} feature - Feature
- * @private
  */
 function setAbstractAPIs(featureName, feature) {
     var messageName = 'INVALID_API_' + featureName.toUpperCase(),

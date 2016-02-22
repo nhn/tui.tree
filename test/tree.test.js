@@ -243,9 +243,9 @@ describe('Tree', function() {
         expect(result.length).toEqual(4);
     });
 
-    it('should override template parser', function() {
-        var templateParser = jasmine.createSpy().and.callFake(function(source, props) {
-            return util.parseTemplate(source, props);
+    it('should override template renderer', function() {
+        var templateRenderer = jasmine.createSpy().and.callFake(function(source, props) {
+            return util.renderTemplate(source, props);
         });
 
         tree = new Tree(data, {
@@ -255,8 +255,8 @@ describe('Tree', function() {
                 '<span class="tui-tree-leaf-label"></span>' +
                 '<span class="{{textClass}}">{{text}}</span>'
             },
-            parseTemplate: templateParser
+            renderTemplate: templateRenderer
         });
-        expect(templateParser).toHaveBeenCalled();
+        expect(templateRenderer).toHaveBeenCalled();
     });
 });

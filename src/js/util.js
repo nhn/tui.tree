@@ -204,7 +204,7 @@ var util = {
      * @param {Object} props - Template data
      * @returns {string} html
      */
-    parseTemplate: function(source, props) {
+    renderTemplate: function(source, props) {
         var pickValue = function(names) {
                 return pick.apply(null, [props].concat(names));
             };
