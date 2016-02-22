@@ -25,7 +25,7 @@ var nodeStates = states.node,
     },
     snippet = tui.util,
     extend = snippet.extend,
-    TIMEOUT_TO_DIFFERENTIATE_CLICK_AND_DBLCLICK;
+    TIMEOUT_TO_DIFFERENTIATE_CLICK_AND_DBLCLICK = 200;
 /**
  * Create tree model and inject data to model
  * @class Tree
@@ -189,6 +189,24 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
          * @private
          */
         this._parseTemplate = options.parseTemplate || util.parseTemplate;
+
+        /**
+         * True when a node is moving
+         * @api
+         * @type {boolean}
+         * @example
+         * tree.on({
+         *     beforeDraw: function(nodeId) {
+         *         if (tree.isMoving) {
+         *             return;
+         *         }
+         *         //..
+         *     },
+         *     //....
+         * });
+         * tree.move('tui-tree-node-1', 'tui-tree-node-2');
+         */
+        this.isMoving = false;
 
         this._setRoot();
         this._draw(this.getRootNodeId());
@@ -476,10 +494,9 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
     /**
      * Draw element of node
      * @param {string} nodeId - Node id
-     * @param {boolean} [isMoving] - Moving state
      * @private
      */
-    _draw: function(nodeId, isMoving) {
+    _draw: function(nodeId) {
         var node = this.model.getNode(nodeId),
             element, html;
 
@@ -500,7 +517,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
          *     console.log('beforeDraw: ' + nodeId);
          * });
          */
-        this.fire('beforeDraw', nodeId, isMoving);
+        this.fire('beforeDraw', nodeId);
 
         if (node.isRoot()) {
             html = this._makeHtml(node.getChildIds());
@@ -525,7 +542,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
          *     console.log('afterDraw: ' + nodeId);
          * });
          */
-        this.fire('afterDraw', nodeId, isMoving);
+        this.fire('afterDraw', nodeId);
     },
 
     /**
@@ -885,7 +902,9 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * tree.move(myNodeId, newParentId, true); // move node without redrawing
      */
     move: function(nodeId, newParentId, isSilent) {
+        this.isMoving = true;
         this.model.move(nodeId, newParentId, isSilent);
+        this.isMoving = false;
     },
 
     /**

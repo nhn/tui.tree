@@ -86,21 +86,19 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
      * @private
      */
     _attachEvents: function() {
-        var tree = this.tree;
-
-        tree.on({
+        this.tree.on({
             singleClick: function(event) {
                 var target = util.getTarget(event),
                     nodeId, state;
 
                 if (util.hasClass(target, this.checkboxClassName)) {
-                    nodeId = tree.getNodeIdFromElement(target);
+                    nodeId = this.tree.getNodeIdFromElement(target);
                     state = this._getStateFromCheckbox(target);
                     this._continuePostprocessing(nodeId, state);
                 }
             },
-            afterDraw: function(nodeId, isMoving) {
-                if (isMoving) {
+            afterDraw: function(nodeId) {
+                if (this.tree.isMoving) {
                     return;
                 }
                 this._reflectChanges(nodeId);
