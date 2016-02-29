@@ -118,7 +118,8 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
      * Set data of input element to node and detach input element from doc.
      */
     setData: function() {
-        var nodeId = tree.getNodeIdFromElement(this.inputElement),
+        var tree = this.tree,
+            nodeId = tree.getNodeIdFromElement(this.inputElement),
             data = {};
 
         if (nodeId) {
