@@ -5,9 +5,8 @@ var gulp = require('gulp');
 var connect = require('gulp-connect');
 var browserify = require('browserify');
 var source = require('vinyl-source-stream');
-var sourceMap = require('gulp-sourcemaps');
 var buffer = require('vinyl-buffer');
-var karma = require('karma').server;
+var KarmaServer = require('karma').Server;
 var hbsfy = require('hbsfy');
 var uglify = require('gulp-uglify');
 var concat = require('gulp-concat');
@@ -22,11 +21,11 @@ gulp.task('eslint', function() {
 });
 
 gulp.task('karma', ['eslint'], function(done) {
-    karma.start({
+    new KarmaServer({
         configFile: path.join(__dirname, 'karma.conf.private.js'),
         singleRun: true,
         logLevel: 'error'
-    }, done);
+    }, done).start();
 });
 
 gulp.task('connect', function() {
@@ -51,11 +50,7 @@ gulp.task('liveBuild', function() {
         .pipe(source(filename + '.js'))
         .pipe(buffer())
         .pipe(gulp.dest('./'))
-        .pipe(concat(filename + '.js'))
-        .pipe(gulp.dest('./samples/js/'))
-        .pipe(uglify())
-        .pipe(concat(filename + '.min.js'))
-        .pipe(gulp.dest('./'));
+        .pipe(gulp.dest('./samples/js/'));
 });
 
 gulp.task('bundle', ['karma'], function() {
@@ -72,7 +67,8 @@ gulp.task('bundle', ['karma'], function() {
         })
         .pipe(source(filename + '.js'))
         .pipe(buffer())
-        .pipe(gulp.dest('./'));
+        .pipe(gulp.dest('./'))
+        .pipe(gulp.dest('./samples/js/'));
 });
 
 gulp.task('compress', ['bundle'], function() {
@@ -83,10 +79,4 @@ gulp.task('compress', ['bundle'], function() {
 
 });
 
-gulp.task('concat', ['compress'], function() {
-    gulp.src(filename + '.js')
-        .pipe(concat(filename + '.js'))
-        .pipe(gulp.dest('./samples/js/'));
-});
-
-gulp.task('default', ['eslint', 'karma', 'bundle', 'compress', 'concat']);
+gulp.task('default', ['eslint', 'karma', 'bundle', 'compress']);

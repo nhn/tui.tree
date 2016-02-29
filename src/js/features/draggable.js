@@ -119,6 +119,7 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{/*eslint-
      */
     onMousedown: function(event) {
         var target = util.getTarget(event),
+            tree = this.tree,
             nodeId;
 
         if (util.isRightButton(event) || this.isNotDraggable(target)) {
@@ -144,7 +145,8 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{/*eslint-
      * @param {MouseEvent} event - Mouse event
      */
     onMousemove: function(event) {
-        var helperEl = this.helperElement,
+        var tree = this.tree,
+            helperEl = this.helperElement,
             pos = tree.rootElement.getBoundingClientRect();
         if (!this.useHelper) {
             return;
@@ -176,6 +178,7 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{/*eslint-
      * Restore text-selection
      */
     restoreTextSelection: function() {
+        var tree = this.tree;
         util.removeEventListener(tree.rootElement, 'selectstart', util.preventDefault);
         if (this.userSelectPropertyKey) {
             tree.rootElement.style[this.userSelectPropertyKey] = this.userSelectPropertyValue;
