@@ -1,6 +1,5 @@
 'use strict';
 var Tree = require('../src/js/tree'),
-    utils = require('../src/js/util'),
     messages = require('../src/js/consts/messages');
 
 jasmine.getFixtures().fixturesPath = 'base/test/fixtures';
@@ -49,100 +48,105 @@ describe('Tree', function() {
         treeSelection = tree.enabledFeatures.Selectable;
     });
 
-    it('should not invoke "beforeSelect" if the selected node does not exist', function() {
-        var eventMock = {
-                target: null
-            },
-            spyListener = jasmine.createSpy();
+    describe('events', function() {
+        var eventMock,
+            target;
 
-        tree.on('beforeSelect', spyListener);
-        tree.fire('singleClick', eventMock);
-
-        expect(spyListener).not.toHaveBeenCalled();
-    });
-
-    it('should invoke "beforeSelect" if the selected node exists', function() {
-        var eventMock = {
-                target: utils.getElementsByClassName(rootElement, 'tui-tree-node')[2]
-            },
-            beforeSelectListenerSpy = jasmine.createSpy();
-
-        tree.on('beforeSelect', beforeSelectListenerSpy);
-        treeSelection.onSingleClick(eventMock);
-
-        expect(beforeSelectListenerSpy).toHaveBeenCalled();
-    });
-
-    it('should fire "select" event if the "beforeSelect"-listener does not return false', function() {
-        var eventMock = {
-                target: utils.getElementsByClassName(rootElement, 'tui-tree-node')[2]
-            },
-            selectListenerSpy = jasmine.createSpy();
-
-        tree.on('beforeSelect', function() {
-            return;
-        });
-        tree.on('select', selectListenerSpy);
-        treeSelection.onSingleClick(eventMock);
-
-        expect(selectListenerSpy).toHaveBeenCalled();
-    });
-
-    it('should not fire "select" event if the "beforeSelect"-listener returns false', function() {
-        var eventMock = {
-                target: utils.getElementsByClassName(rootElement, 'tui-tree-node')[2]
-            },
-            selectListenerSpy = jasmine.createSpy();
-
-        tree.on('beforeSelect', function() {
-            return false;
-        });
-        tree.on('select', selectListenerSpy);
-        treeSelection.onSingleClick(eventMock);
-
-        expect(selectListenerSpy).not.toHaveBeenCalled();
-    });
-
-    it('should fire custom events with args containing "nodeId" and "prevNodeId"', function() {
-        var target = utils.getElementsByClassName(rootElement, 'tui-tree-node')[2],
+        beforeEach(function() {
+            target = $(rootElement).find('.tui-tree-node')[2];
             eventMock = {
                 target: target
-            },
-            beforeSelectListenerSpy = jasmine.createSpy(),
-            selectListenerSpy = jasmine.createSpy(),
-            curNodeId = target.id,
-            prevNodeId = 'previousNodeId';
-
-        treeSelection.prevNodeId = prevNodeId;
-        tree.on('beforeSelect', beforeSelectListenerSpy);
-        tree.on('select', selectListenerSpy);
-        treeSelection.onSingleClick(eventMock);
-
-        expect(beforeSelectListenerSpy).toHaveBeenCalledWith(curNodeId, prevNodeId, target);
-        expect(selectListenerSpy).toHaveBeenCalledWith(curNodeId, prevNodeId, target);
-    });
-
-    it('should throw error when the feature-"Selectable" is not enabled and select a node', function() {
-        tree.disableFeature('Selectable');
-        expect(tree.select).toThrowError(messages.INVALID_API_SELECTABLE);
-    });
-
-    it('should not throw an error when the feature-"Selectable" is enabled', function() {
-        expect(tree.select).not.toThrowError();
-    });
-
-    it('should invoke "beforeSelect" and fire "select"', function() {
-        var beforeSelectListenerSpy = jasmine.createSpy(),
-            selectListenerSpy = jasmine.createSpy(),
-            targetId = utils.getElementsByClassName(rootElement, 'tui-tree-node')[2].id;
-
-        tree.on({
-            beforeSelect: beforeSelectListenerSpy,
-            select: selectListenerSpy
+            };
         });
-        tree.select(targetId);
 
-        expect(beforeSelectListenerSpy).toHaveBeenCalled();
-        expect(selectListenerSpy).toHaveBeenCalled();
+        it('should not invoke "beforeSelect" if the selected node does not exist', function() {
+            var spyListener = jasmine.createSpy();
+            eventMock = {
+                target: null
+            };
+
+            tree.on('beforeSelect', spyListener);
+            tree.fire('singleClick', eventMock);
+
+            expect(spyListener).not.toHaveBeenCalled();
+        });
+
+        it('should invoke "beforeSelect" if the selected node exists', function() {
+            var beforeSelectListenerSpy = jasmine.createSpy();
+
+            tree.on('beforeSelect', beforeSelectListenerSpy);
+            treeSelection.onSingleClick(eventMock);
+
+            expect(beforeSelectListenerSpy).toHaveBeenCalled();
+        });
+
+        it('should fire "select" event if the "beforeSelect"-listener does not return false', function() {
+            var selectListenerSpy = jasmine.createSpy();
+
+            tree.on('beforeSelect', function() {
+                return '';
+            });
+            tree.on('select', selectListenerSpy);
+            treeSelection.onSingleClick(eventMock);
+
+            expect(selectListenerSpy).toHaveBeenCalled();
+        });
+
+        it('should not fire "select" event if the "beforeSelect"-listener returns false', function() {
+            var selectListenerSpy = jasmine.createSpy();
+
+            tree.on('beforeSelect', function() {
+                return false;
+            });
+            tree.on('select', selectListenerSpy);
+            treeSelection.onSingleClick(eventMock);
+
+            expect(selectListenerSpy).not.toHaveBeenCalled();
+        });
+
+        it('should fire custom events with args containing "nodeId" and "prevNodeId"', function() {
+            var beforeSelectListenerSpy = jasmine.createSpy(),
+                selectListenerSpy = jasmine.createSpy(),
+                curNodeId = target.id,
+                prevNodeId = 'previousNodeId';
+
+            treeSelection.selectedNodeId = prevNodeId;
+            tree.on('beforeSelect', beforeSelectListenerSpy);
+            tree.on('select', selectListenerSpy);
+            treeSelection.onSingleClick(eventMock);
+
+            expect(beforeSelectListenerSpy).toHaveBeenCalledWith(curNodeId, prevNodeId, target);
+            expect(selectListenerSpy).toHaveBeenCalledWith(curNodeId, prevNodeId, target);
+        });
+    });
+
+    describe('API', function() {
+        it('should throw error when the feature-"Selectable" is not enabled', function() {
+            tree.disableFeature('Selectable');
+            expect(tree.select).toThrowError(messages.INVALID_API_SELECTABLE);
+            expect(tree.getSelectedNodeId).toThrowError(messages.INVALID_API_SELECTABLE);
+        });
+
+        it('should invoke "beforeSelect" and fire "select"', function() {
+            var beforeSelectListenerSpy = jasmine.createSpy(),
+                selectListenerSpy = jasmine.createSpy(),
+                targetId = $(rootElement).find('.tui-tree-node')[2].id;
+
+            tree.on({
+                beforeSelect: beforeSelectListenerSpy,
+                select: selectListenerSpy
+            });
+            tree.select(targetId);
+
+            expect(beforeSelectListenerSpy).toHaveBeenCalled();
+            expect(selectListenerSpy).toHaveBeenCalled();
+        });
+
+        it('should have "getSelectedNodeId" api', function() {
+            var targetId = $(rootElement).find('.tui-tree-node')[2].id;
+
+            tree.select(targetId);
+            expect(tree.getSelectedNodeId()).toEqual(targetId);
+        });
     });
 });
