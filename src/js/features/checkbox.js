@@ -180,8 +180,9 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
 
         if (!state) {
             checkbox = this._getCheckboxElement(nodeId);
-            state = this._getStateFromCheckbox(checkbox)
+            state = this._getStateFromCheckbox(checkbox);
         }
+
         return state;
     },
 
@@ -189,13 +190,13 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
      * Get checking state of node element
      * @private
      * @param {Element} checkbox - Checkbox element
-     * @returns {number|undefined} Checking state
+     * @returns {?number} Checking state
      */
     _getStateFromCheckbox: function(checkbox) {
         var state;
 
         if (!checkbox) {
-            return;
+            return null;
         }
 
         if (checkbox.checked) {
@@ -205,6 +206,7 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
         } else {
             state = STATE_UNCHECKED;
         }
+
         return state;
     },
 
@@ -316,6 +318,7 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
                 var state = this._getState(childId);
                 checked = (checked && state === STATE_CHECKED);
                 unchecked = (unchecked && state === STATE_UNCHECKED);
+
                 return checked || unchecked;
             }, this);
         }
@@ -332,7 +335,7 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
     /**
      * Get checkbox element of node
      * @param {string} nodeId - Node id
-     * @returns {HTMLElement|undefined} Checkbox element
+     * @returns {?HTMLElement} Checkbox element
      * @private
      */
     _getCheckboxElement: function(nodeId) {
@@ -344,13 +347,14 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
         } else {
             nodeEl = document.getElementById(nodeId);
             if (!nodeEl) {
-                return;
+                return null;
             }
             el = util.getElementsByClassName(
                 nodeEl,
                 this.checkboxClassName
             )[0];
         }
+
         return el;
     },
 
@@ -547,6 +551,7 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
 
         parentId = parentId || tree.getRootNodeId();
         checkedList = this.getCheckedList(parentId);
+
         return filter(checkedList, function(nodeId) {
             return tree.isLeaf(nodeId);
         });
