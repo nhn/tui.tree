@@ -7,11 +7,13 @@ var lastIndex = 0,
     getNextIndex = function() {
         var index = lastIndex;
         lastIndex += 1;
+
         return index;
     },
     RESERVED_PROPERTIES = {
         id: '',
-        state: 'setState'
+        state: 'setState',
+        children: ''
     },
     inArray = tui.util.inArray;
 
@@ -113,7 +115,7 @@ var TreeNode = tui.util.defineClass(/** @lends TreeNode.prototype */{ /*eslint-d
      * @param {string} state - State of node ('closed', 'opened')
      */
     setState: function(state) {
-        state += '';
+        state = String(state);
         this._state = states[state.toUpperCase()] || this._state;
     },
 
@@ -215,7 +217,7 @@ var TreeNode = tui.util.defineClass(/** @lends TreeNode.prototype */{ /*eslint-d
      */
     setData: function(data) {
         data = this._setReservedProperties(data);
-        tui.util.extend(this._data, data)
+        tui.util.extend(this._data, data);
     },
 
     /**
@@ -223,7 +225,7 @@ var TreeNode = tui.util.defineClass(/** @lends TreeNode.prototype */{ /*eslint-d
      * @api
      * @param {...string} names - Names of data
      */
-    removeData: function(names) {
+    removeData: function() {
         tui.util.forEachArray(arguments, function(name) {
             delete this._data[name];
         }, this);

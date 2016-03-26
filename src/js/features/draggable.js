@@ -81,8 +81,10 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{/*eslint-
      */
     preventTextSelection: function() {
         var tree = this.tree,
-            selectKey = util.testProp(['userSelect', 'WebkitUserSelect', 'OUserSelect', 'MozUserSelect', 'msUserSelect']),
-            style = tree.rootElement.style;
+            style = tree.rootElement.style,
+            selectKey = util.testProp(
+                ['userSelect', 'WebkitUserSelect', 'OUserSelect', 'MozUserSelect', 'msUserSelect']
+            );
 
         util.addEventListener(tree.rootElement, 'selectstart', util.preventDefault);
 
@@ -107,6 +109,7 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{/*eslint-
 
         tui.util.forEach(classNames, function(className) {
             result = inArray(className, this.rejectedClassNames) !== -1;
+
             return !result;
         }, this);
 

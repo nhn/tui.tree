@@ -318,11 +318,13 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
 
         if (util.isRightButton(event)) {
             this.clickTimer = null;
+
             return;
         }
 
         if (util.hasClass(target, this.classNames.toggleBtnClass)) {
             this.toggle(this.getNodeIdFromElement(target));
+
             return;
         }
 
@@ -392,6 +394,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
         util.addClass(nodeElement, classNames[state + 'Class']);
     },
 
+
     /**
      * Make html
      * @param {Array.<string>} nodeIds - Node id list
@@ -437,6 +440,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
         cached = cached || {};
         source = cached.source || this._getTemplate(node).inner;
         props = cached.props || this._makeTemplateProps(node);
+
         return this._renderTemplate(source, props);
     },
 
@@ -453,12 +457,12 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
             source = {
                 inner: this.template.leafNode,
                 outer: outerTemplate.LEAF_NODE
-            }
+            };
         } else {
             source = {
                 inner: this.template.internalNode,
                 outer: outerTemplate.INTERNAL_NODE
-            }
+            };
         }
 
         return source;
@@ -467,7 +471,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
     /**
      * Make template properties
      * @param {TreeNode} node - Node
-     * @return {Object} Template properties
+     * @returns {Object} Template properties
      * @private
      */
     _makeTemplateProps: function(node) {
@@ -579,7 +583,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
         if (!node || node.isLeaf()) {
             subtreeElement = null;
         } else if (node.isRoot()) {
-            subtreeElement = this.rootElement
+            subtreeElement = this.rootElement;
         } else {
             subtreeElement = util.getElementsByClassName(
                 document.getElementById(nodeId),
@@ -594,7 +598,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * Return the depth of node
      * @api
      * @param {string} nodeId - Node id
-     * @return {number|undefined} Depth
+     * @returns {number|undefined} Depth
      */
     getDepth: function(nodeId) {
         return this.model.getDepth(nodeId);
@@ -603,7 +607,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
     /**
      * Return the last depth of tree
      * @api
-     * @return {number} Last depth
+     * @returns {number} Last depth
      */
     getLastDepth: function() {
         return this.model.getLastDepth();
@@ -710,13 +714,13 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * tree.setNodeData(nodeId, 'foo', true); // not refresh
      */
     removeNodeData: function(nodeId, names, isSilent) {
-        this.model.removeNodeData(nodeId, names, isSilent)
+        this.model.removeNodeData(nodeId, names, isSilent);
     },
 
     /**
      * Get node state.
      * @param {string} nodeId - Node id
-     * @return {string|undefined} Node state(('opened', 'closed', undefined)
+     * @returns {string|null} Node state(('opened', 'closed', null)
      * @example
      * tree.getState(nodeId); // 'opened', 'closed',
      *                        // undefined if the node is nonexistent
@@ -725,8 +729,9 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
         var node = this.model.getNode(nodeId);
 
         if (!node) {
-            return;
+            return null;
         }
+
         return node.getState();
     },
 
@@ -954,6 +959,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
 
             snippet.forEach(props, function(value, key) {
                 result = (key in data) && (data[key] === value);
+
                 return result;
             });
 
@@ -1036,6 +1042,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
         if (Feature) {
             this.enabledFeatures[featureName] = new Feature(this, options);
         }
+
         return this;
     },
 
@@ -1056,8 +1063,9 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
 
         if (feature) {
             feature.destroy();
-            delete this.enabledFeatures[featureName]
+            delete this.enabledFeatures[featureName];
         }
+
         return this;
     }
 });
@@ -1074,7 +1082,7 @@ function setAbstractAPIs(featureName, feature) {
     snippet.forEach(apiList, function(api) {
         Tree.prototype[api] = function() {
             throw new Error(messages[messageName] || messages.INVALID_API);
-        }
+        };
     });
 }
 snippet.forEach(features, function(Feature, name) {

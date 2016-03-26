@@ -11,6 +11,7 @@ function makeClassNames(prefix, keys) {
     tui.util.forEach(keys, function(key) {
         obj[key + 'Class'] = prefix + key;
     });
+
     return obj;
 }
 

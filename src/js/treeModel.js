@@ -4,16 +4,12 @@
  */
 'use strict';
 
-var TreeNode = require('./treeNode'),
-    util = require('./util');
+var TreeNode = require('./treeNode');
 
-var snippet = tui.util,
-    extend = snippet.extend,
-    keys = snippet.keys,
-    forEach = snippet.forEach,
-    map = snippet.map,
-    filter = snippet.filter,
-    inArray = snippet.inArray;
+var extend = tui.util.extend,
+    keys = tui.util.keys,
+    forEach = tui.util.forEach,
+    map = tui.util.map;
 
 /**
  * Tree model
@@ -100,26 +96,23 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
      * @returns {TreeNode} TreeNode
      */
     _createNode: function(nodeData, parentId) {
-        var node;
         nodeData = extend({
             state: this.nodeDefaultState
         }, nodeData);
 
-        node = new TreeNode(nodeData, parentId);
-        node.removeData('children');
-
-        return node;
+        return new TreeNode(nodeData, parentId);
     },
 
     /**
      * Get children
      * @param {string} nodeId - Node id
-     * @returns {Array.<TreeNode>|undefined} children
+     * @returns {?Array.<TreeNode>} children
      */
     getChildren: function(nodeId) {
         var childIds = this.getChildIds(nodeId);
+
         if (!childIds) {
-            return;
+            return null;
         }
 
         return map(childIds, function(childId) {
@@ -130,12 +123,13 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
     /**
      * Get child ids
      * @param {string} nodeId - Node id
-     * @returns {Array.<string>|undefined} Child ids
+     * @returns {?Array.<string>} Child ids
      */
     getChildIds: function(nodeId) {
         var node = this.getNode(nodeId);
+
         if (!node) {
-            return;
+            return null;
         }
 
         return node.getChildIds();
@@ -164,7 +158,7 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
     /**
      * Find node
      * @param {string} id - A node id to find
-     * @returns {TreeNode|undefined} Node
+     * @returns {?TreeNode} Node
      */
     getNode: function(id) {
         return this.treeHash[id];
@@ -173,7 +167,7 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
     /**
      * Get depth from node id
      * @param {string} id - A node id to find
-     * @returns {number|undefined} Depth
+     * @returns {?number} Depth
      */
     getDepth: function(id) {
         var node = this.getNode(id),
@@ -181,7 +175,7 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
             parent;
 
         if (!node) {
-            return;
+            return null;
         }
 
         parent = this.getNode(node.getParentId());
@@ -196,14 +190,15 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
     /**
      * Return parent id of node
      * @param {string} id - Node id
-     * @returns {string|undefined} Parent id
+     * @returns {?string} Parent id
      */
     getParentId: function(id) {
         var node = this.getNode(id);
 
         if (!node) {
-            return;
+            return null;
         }
+
         return node.getParentId();
     },
 
@@ -346,6 +341,7 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
             isContained = (containerId === parentId);
             parentId = this.getParentId(parentId);
         }
+
         return isContained;
     },
 
@@ -372,12 +368,13 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
     /**
      * Get node data (all)
      * @param {string} nodeId - Node id
-     * @returns {object|undefined} Node data
+     * @returns {?object} Node data
      */
     getNodeData: function(nodeId) {
         var node = this.getNode(nodeId);
+
         if (!node) {
-            return;
+            return null;
         }
 
         return node.getAllData();

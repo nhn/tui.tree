@@ -71,7 +71,7 @@ var util = {
     /**
      * Add event to element
      * @param {Object} element A target element
-     * @param {String} eventName A name of event 
+     * @param {String} eventName A name of event
      * @param {Function} handler A callback function to add
      */
     addEventListener: function(element, eventName, handler) {
@@ -99,12 +99,13 @@ var util = {
     /**
      * Get target element
      * @param {Event} e Event object
-     * @return {HTMLElement} Event target
+     * @returns {HTMLElement} Event target
      */
     getTarget: function(e) {
         var target;
         e = e || window.event;
         target = e.target || e.srcElement;
+
         return target;
     },
 
@@ -114,14 +115,15 @@ var util = {
      * @returns {string} Class name
      */
     getClass: function(element) {
-        return element && element.getAttribute && (element.getAttribute('class') || element.getAttribute('className') || '');
+        return element && element.getAttribute &&
+            (element.getAttribute('class') || element.getAttribute('className') || '');
     },
 
     /**
      * Check the element has specific class or not
      * @param {HTMLElement} element A target element
      * @param {string} className A name of class to find
-     * @return {boolean} Whether the element has the class
+     * @returns {boolean} Whether the element has the class
      */
     hasClass: function(element, className) {
         var elClassName = util.getClass(element);
@@ -133,7 +135,7 @@ var util = {
      * Find element by class name
      * @param {HTMLElement} target A target element
      * @param {string} className A name of class
-     * @return {Array.<HTMLElement>} Elements
+     * @returns {Array.<HTMLElement>} Elements
      */
     getElementsByClassName: function(target, className) {
         var all, filtered;
@@ -144,7 +146,8 @@ var util = {
             all = tui.util.toArray(target.getElementsByTagName('*'));
             filtered = tui.util.filter(all, function(el) {
                 var classNames = el.className || '';
-                return (classNames.indexOf(className) !== -1)
+
+                return (classNames.indexOf(className) !== -1);
             });
         }
 
@@ -154,7 +157,7 @@ var util = {
     /**
      * Check whether the click event by right button
      * @param {MouseEvent} event Event object
-     * @return {boolean} Whether the click event by right button
+     * @returns {boolean} Whether the click event by right button
      */
     isRightButton: function(event) {
         return util._getButton(event) === 2;
@@ -163,7 +166,7 @@ var util = {
     /**
      * Whether the property exist or not
      * @param {Array} props A property
-     * @return {string|boolean} Property name or false
+     * @returns {string|boolean} Property name or false
      * @example
      * var userSelectProperty = util.testProp([
      *     'userSelect',
@@ -177,17 +180,21 @@ var util = {
         var style = document.documentElement.style,
             propertyName = false;
 
+        /* eslint-disable consistent-return */
         tui.util.forEach(props, function(prop) {
             if (prop in style) {
                 propertyName = prop;
+
                 return false;
             }
         });
+        /* eslint-enable consistent-return */
+
         return propertyName;
     },
 
     /**
-     * Prevent default event 
+     * Prevent default event
      * @param {Event} event Event object
      */
     preventDefault: function(event) {
@@ -205,9 +212,9 @@ var util = {
      * @returns {string} html
      */
     renderTemplate: function(source, props) {
-        var pickValue = function(names) {
-                return pick.apply(null, [props].concat(names));
-            };
+        function pickValue(names) {
+            return pick.apply(null, [props].concat(names));
+        }
 
         return source.replace(templateMaskRe, function(match, name) {
             var value;
@@ -219,17 +226,18 @@ var util = {
             if (isArray(value)) {
                 value = value.join(' ');
             } else if (isUndefined(value)) {
-                value = ''
+                value = '';
             }
+
             return value;
         });
     },
 
     /**
-     * Normalization for event button property 
+     * Normalization for event button property
      * 0: First mouse button, 2: Second mouse button, 1: Center button
      * @param {MouseEvent} event Event object
-     * @return {number|undefined} button type
+     * @returns {?number} button type
      * @private
      */
     _getButton: function(event) {
@@ -242,7 +250,7 @@ var util = {
             return event.button;
         }
 
-        button = event.button + '';
+        button = String(event.button);
         if (primary.indexOf(button) > -1) {
             return 0;
         } else if (secondary.indexOf(button) > -1) {
@@ -250,6 +258,8 @@ var util = {
         } else if (wheel.indexOf(button) > -1) {
             return 1;
         }
+
+        return null;
     }
 };
 
