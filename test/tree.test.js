@@ -3,7 +3,6 @@ var Tree = require('../src/js/tree'),
     util = require('../src/js/util'),
     messages = require('../src/js/consts/messages');
 
-jasmine.getFixtures().fixturesPath = 'base/test/fixtures';
 describe('Tree', function() {
     var nodeData = [
             {text: 'A', children: [

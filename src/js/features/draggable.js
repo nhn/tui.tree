@@ -31,7 +31,7 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{/*eslint-
     static: {
         /**
          * @static
-         * @memberOf Selectable
+         * @memberOf Draggable
          * @returns {Array.<string>} API list of Draggable
          */
         getAPIList: function() {

@@ -2,7 +2,6 @@
 var Tree = require('../src/js/tree'),
     messages = require('../src/js/consts/messages');
 
-jasmine.getFixtures().fixturesPath = 'base/test/fixtures';
 describe('Tree', function() {
     var data = [
             {title: 'A', children: [

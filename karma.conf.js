@@ -14,7 +14,8 @@ module.exports = function(config) {
             'bower_components/jquery/jquery.min.js',
             'node_modules/jasmine-jquery/lib/jasmine-jquery.js',
             'bower_components/tui-code-snippet/code-snippet.min.js',
-            'test/**/*.js',
+            'test/preparation.js',
+            'test/**/*.test.js',
             'src/**/*.js',
             {
                 pattern: 'test/fixtures/**/*.html',
