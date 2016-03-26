@@ -4,7 +4,7 @@ var Tree = require('./src/js/tree');
 var component = tui.util.defineNamespace('tui.component');
 component.Tree = Tree;
 
-},{"./src/js/tree":10}],2:[function(require,module,exports){
+},{"./src/js/tree":11}],2:[function(require,module,exports){
 'use strict';
 
 /**
@@ -685,7 +685,59 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
 tui.util.CustomEvents.mixin(Checkbox);
 module.exports = Checkbox;
 
-},{"../util.js":13}],7:[function(require,module,exports){
+},{"../util.js":14}],7:[function(require,module,exports){
+'use strict';
+var util = require('./../util');
+
+var API_LIST = [];
+
+var ContextMenu = tui.util.defineClass(/** @lends ContextMenu.prototype */{/*eslint-disable*/
+    static: {
+        /**
+         * @static
+         * @memberOf ContextMenu
+         * @returns {Array.<string>} API list of ContextMenu
+         */
+        getAPIList: function() {
+            return API_LIST.slice();
+        }
+    },
+
+    init: function(tree, options) { /*eslint-enable*/
+        this.tree = tree;
+
+        this.attachEvent();
+    },
+
+    attachEvent: function() {
+        var tree = this.tree;
+
+        tree.on('_contextMenu', function(event) {
+            var nodeId = tree.getNodeIdFromElement(util.getTarget(event));
+
+            event.preventDefault();
+            console.log('contextMenu: ', nodeId);
+            /**
+             * @api
+             * @events Tree#contextMenu
+             * @param {object} data - Data
+             *  @param {data.nodeId} nodeId - selected node id
+             */
+            tree.fire('contextMenu', {
+                nodeId: nodeId
+            });
+        });
+    },
+
+    destroy: function() {
+        this.tree.off(this);
+        this.tree.off('_contextMenu');
+    }
+});
+
+module.exports = ContextMenu;
+
+},{"./../util":14}],8:[function(require,module,exports){
 'use strict';
 var util = require('./../util');
 
@@ -719,7 +771,7 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{/*eslint-
     static: {
         /**
          * @static
-         * @memberOf Selectable
+         * @memberOf Draggable
          * @returns {Array.<string>} API list of Draggable
          */
         getAPIList: function() {
@@ -902,7 +954,7 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{/*eslint-
 
 module.exports = Draggable;
 
-},{"./../util":13}],8:[function(require,module,exports){
+},{"./../util":14}],9:[function(require,module,exports){
 'use strict';
 
 var util = require('./../util');
@@ -1037,7 +1089,7 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
 
 module.exports = Editable;
 
-},{"./../util":13}],9:[function(require,module,exports){
+},{"./../util":14}],10:[function(require,module,exports){
 'use strict';
 
 var util = require('./../util');
@@ -1221,7 +1273,7 @@ var Selectable = tui.util.defineClass(/** @lends Selectable.prototype */{/*eslin
 
 module.exports = Selectable;
 
-},{"./../util":13}],10:[function(require,module,exports){
+},{"./../util":14}],11:[function(require,module,exports){
 /**
  * @fileoverview Render tree and update tree.
  * @author NHN Ent. FE dev team.<dl_javascript@nhnent.com>
@@ -1238,14 +1290,16 @@ var util = require('./util'),
     Selectable = require('./features/selectable'),
     Draggable = require('./features/draggable'),
     Editable = require('./features/editable'),
-    Checkbox = require('./features/checkbox');
+    Checkbox = require('./features/checkbox'),
+    ContextMenu = require('./features/contextMenu');
 
 var nodeStates = states.node,
     features = {
         Selectable: Selectable,
         Draggable: Draggable,
         Editable: Editable,
-        Checkbox: Checkbox
+        Checkbox: Checkbox,
+        ContextMenu: ContextMenu
     },
     snippet = tui.util,
     extend = snippet.extend,
@@ -1497,6 +1551,11 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
         util.addEventListener(this.rootElement, 'click', snippet.bind(this._onClick, this));
         util.addEventListener(this.rootElement, 'mousedown', snippet.bind(this._onMousedown, this));
         util.addEventListener(this.rootElement, 'dblclick', snippet.bind(this._onDoubleClick, this));
+        util.addEventListener(this.rootElement, 'contextmenu', snippet.bind(this._onContextMenu, this));
+    },
+
+    _onContextMenu: function(event) {
+        this.fire('_contextMenu', event);
     },
 
     /**
@@ -2298,6 +2357,8 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      *  })
      *  .enableFeature('Checkbox', {
      *      checkboxClassName: 'tui-tree-checkbox'
+     *  })
+     *  .enableFeature('ContextMenu, {
      *  });
      */
     enableFeature: function(featureName, options) {
@@ -2321,7 +2382,8 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      *  .disableFeature('Selectable')
      *  .disableFeature('Draggable')
      *  .disableFeature('Editable')
-     *  .disableFeature('Checkbox');
+     *  .disableFeature('Checkbox')
+     *  .disableFeature('ContextMenu');
      */
     disableFeature: function(featureName) {
         var feature = this.enabledFeatures[featureName];
@@ -2356,7 +2418,7 @@ snippet.forEach(features, function(Feature, name) {
 snippet.CustomEvents.mixin(Tree);
 module.exports = Tree;
 
-},{"./consts/defaultOption":2,"./consts/messages":3,"./consts/outerTemplate":4,"./consts/states":5,"./features/checkbox":6,"./features/draggable":7,"./features/editable":8,"./features/selectable":9,"./treeModel":11,"./util":13}],11:[function(require,module,exports){
+},{"./consts/defaultOption":2,"./consts/messages":3,"./consts/outerTemplate":4,"./consts/states":5,"./features/checkbox":6,"./features/contextMenu":7,"./features/draggable":8,"./features/editable":9,"./features/selectable":10,"./treeModel":12,"./util":14}],12:[function(require,module,exports){
 /**
  * @fileoverview Update view and control tree data
  * @author NHN Ent. FE dev team.<dl_javascript@nhnent.com>
@@ -2781,7 +2843,7 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
 tui.util.CustomEvents.mixin(TreeModel);
 module.exports = TreeModel;
 
-},{"./treeNode":12}],12:[function(require,module,exports){
+},{"./treeNode":13}],13:[function(require,module,exports){
 'use strict';
 
 var states = require('./consts/states').node,
@@ -3045,7 +3107,7 @@ var TreeNode = tui.util.defineClass(/** @lends TreeNode.prototype */{ /*eslint-d
 });
 module.exports = TreeNode;
 
-},{"./consts/states":5,"./util":13}],13:[function(require,module,exports){
+},{"./consts/states":5,"./util":14}],14:[function(require,module,exports){
 /**
  * @fileoverview Helper object to make easy tree elements
  * @author NHN Ent. FE dev team.<dl_javascript@nhnent.com>
