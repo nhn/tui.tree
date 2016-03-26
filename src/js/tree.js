@@ -14,14 +14,16 @@ var util = require('./util'),
     Selectable = require('./features/selectable'),
     Draggable = require('./features/draggable'),
     Editable = require('./features/editable'),
-    Checkbox = require('./features/checkbox');
+    Checkbox = require('./features/checkbox'),
+    ContextMenu = require('./features/contextMenu');
 
 var nodeStates = states.node,
     features = {
         Selectable: Selectable,
         Draggable: Draggable,
         Editable: Editable,
-        Checkbox: Checkbox
+        Checkbox: Checkbox,
+        ContextMenu: ContextMenu
     },
     snippet = tui.util,
     extend = snippet.extend,
