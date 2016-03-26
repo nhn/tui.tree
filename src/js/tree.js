@@ -862,7 +862,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * - If 'isSilent' is not true, it redraws the tree
      * @api
      * @param {Array|object} data - Raw-data
-     * @param {*} parentId - Parent id
+     * @param {*} [parentId] - Parent id
      * @param {boolean} [isSilent] - If true, it doesn't redraw children
      * @returns {Array.<string>} Added node ids
      * @example
@@ -879,6 +879,47 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      */
     add: function(data, parentId, isSilent) {
         return this.model.add(data, parentId, isSilent);
+    },
+
+    /**
+     * Reset all data
+     * @api
+     * @param {Array|object} data - Raw data for all nodes
+     * @returns {Array.<string>} Added node ids
+     * @example
+     * tree.resetAllData([
+     *  {text: 'hello', children: [
+     *      {text: 'foo'},
+     *      {text: 'bar'}
+     *  ]},
+     *  {text: 'wolrd'}
+     * ]);
+     */
+    resetAllData: function(data) {
+        this.removeAllChildren(this.getRootNodeId(), true);
+
+        return this.add(data);
+    },
+
+    /**
+     * Remove all children
+     * @api
+     * @param {string} nodeId - Parent node id
+     * @param {boolean} [isSilent] - If true, it doesn't redraw the node
+     * @example
+     * tree.removeAllChildren(nodeId); // Redraws the node
+     * tree.removeAllChildren(nodId, true); // Doesn't redraw the node
+     */
+    removeAllChildren: function(nodeId, isSilent) {
+        var children = this.getChildIds(nodeId);
+
+        tui.util.forEach(children, function(childId) {
+            this.remove(childId, true);
+        }, this);
+
+        if (!isSilent) {
+            this._draw(nodeId);
+        }
     },
 
     /**
