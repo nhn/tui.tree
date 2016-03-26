@@ -275,6 +275,11 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
         util.addEventListener(this.rootElement, 'click', snippet.bind(this._onClick, this));
         util.addEventListener(this.rootElement, 'mousedown', snippet.bind(this._onMousedown, this));
         util.addEventListener(this.rootElement, 'dblclick', snippet.bind(this._onDoubleClick, this));
+        util.addEventListener(this.rootElement, 'contextmenu', snippet.bind(this._onContextMenu, this));
+    },
+
+    _onContextMenu: function(event) {
+        this.fire('_contextMenu', event);
     },
 
     /**
@@ -1076,6 +1081,8 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      *  })
      *  .enableFeature('Checkbox', {
      *      checkboxClassName: 'tui-tree-checkbox'
+     *  })
+     *  .enableFeature('ContextMenu, {
      *  });
      */
     enableFeature: function(featureName, options) {
@@ -1099,7 +1106,8 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      *  .disableFeature('Selectable')
      *  .disableFeature('Draggable')
      *  .disableFeature('Editable')
-     *  .disableFeature('Checkbox');
+     *  .disableFeature('Checkbox')
+     *  .disableFeature('ContextMenu');
      */
     disableFeature: function(featureName) {
         var feature = this.enabledFeatures[featureName];

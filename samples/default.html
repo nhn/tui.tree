@@ -27,6 +27,10 @@
             <button id="enableDNDBtn">enableDragAndDrop</button>
             <button id="disableDNDBtn">disableDragAndDrop</button>
         </div>
+        <div>
+            <button id="enableContextMenuBtn">enableContextMenu</button>
+            <button id="disableContextMenuBtn">disableContextMenu</button>
+        </div>
     </div>
 
     <div class="codeArea"></div>
@@ -91,6 +95,8 @@
             disableSelectionBtn = document.getElementById('disableSelectionBtn'),
             enableDNDBtn = document.getElementById('enableDNDBtn'),
             disableDNDBtn = document.getElementById('disableDNDBtn'),
+            enableContextMenuBtn = document.getElementById('enableContextMenuBtn'),
+            disableContextMenuBtn = document.getElementById('disableContextMenuBtn'),
             rootNodeId = tree.getRootNodeId(),
             firstChildId = tree.getChildIds(rootNodeId)[0];
 
@@ -129,6 +135,14 @@
 
         util.addEventListener(disableDNDBtn, 'click', function() {
             tree.disableFeature('Draggable');
+        });
+
+        util.addEventListener(enableContextMenuBtn, 'click', function() {
+            tree.enableFeature('ContextMenu', {});
+        });
+
+        util.addEventListener(disableContextMenuBtn, 'click', function() {
+            tree.disableFeature('ContextMenu');
         });
 
         tree.on('select', function(nodeId) {
