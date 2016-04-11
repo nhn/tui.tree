@@ -24,7 +24,7 @@ var ContextMenu = tui.util.defineClass(/** @lends ContextMenu.prototype */{/*esl
         this.attachEvent();
     },
 
-    makeLayer: function(menus) {
+    makeLayer: function() {
         var style = this.layer.style;
 
         style.position = 'absolute';
