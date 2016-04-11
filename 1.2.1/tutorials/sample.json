@@ -1,0 +1,14 @@
+{
+  "default": {
+    "title": "Default, Draggable, Selectable"
+  },
+  "depthLabel": {
+    "title": "Custom_DepthLabel"
+  },
+  "selectableNodes": {
+    "title": "Selectable, Editable"
+  },
+  "check": {
+    "title": "Checkbox"
+  }
+}

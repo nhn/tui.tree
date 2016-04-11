@@ -1,0 +1,18 @@
+body {margin:0;padding:0; font-family: malgun gothic,verdana,consolas; font-size:12px; height:500px;
+    min-width: 950px;}
+h3 {margin-left:25px; font-weight: normal;}
+.treeWrap { width: 300px; height:500px; overflow:auto;float:left; font-size:11px; }
+.treeWrap ul li { list-style: none; padding:3px 0; width:150px; margin: 0;}
+.treeWrap ul li em { font-weight: bold; font-style: normal}
+.treeWrap ul li.tui-tree-leaf { padding-left:17px; }
+.treeWrap ul {margin: 0; padding-left:15px;}
+.treeWrap button {background:url('../sp_floor.png') no-repeat left; width:13px; height:13px; font-size: 0px; padding:0; color:#000000;vertical-align: middle; margin-right:5px; border:0; }
+.treeWrap .tui-tree-opened button {background-position: -107px 0; }
+.treeWrap .tui-tree-closed button {background-position: -92px 0; }
+/*.treeWrap .tui-tree-closed > .tui-tree-subtree {display: none;}*/
+/*.treeWrap .tui-tree-opened > .tui-tree-subtree {display: block;}*/
+.tui-tree-selected > .tui-tree-text { background-color:#F49999; }
+input {
+    border: 2px dotted;
+    outline: none;
+}

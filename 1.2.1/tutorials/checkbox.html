@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <link type="text/css" rel="stylesheet" href="../styles/prettify-jsdoc.css" />
+    <link type="text/css" rel="stylesheet" href="../styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="../styles/tui.css">
+
+    <title>트리컴포넌트</title>
+    <link rel="stylesheet" href="css/tree.css" />
+</head>
+<body>
+<div class="wrap" style="height: 500px;">
+    <div class="treeWrap" style="position:relative; border:1px solid #eaeaea;">
+        <ul id="treeRoot1" class="tree"></ul>
+    </div>
+    <div>
+        <button id="addChildBtn">addChild</button>
+        <button id="removeChildBtn">removeChild</button>
+        <button id="sortBtn">sortBtn</button>
+    </div>
+    <div>
+        <button id="enableSelectionBtn">enableSelection</button>
+        <button id="disableSelectionBtn">disableSelection</button>
+    </div>
+    <div>
+        <button id="enableDNDBtn">enableDragAndDrop</button>
+        <button id="disableDNDBtn">disableDragAndDrop</button>
+    </div>
+
+</div>
+
+<div class="codeArea"></div>
+
+<script type="text/javascript" src="js/code-snippet.js"></script>
+<script type="text/javascript" src="js/tree.js"></script>
+<script type="text/javascript" src="js/jquery.js"></script>
+
+<script src="../scripts/prettify/prettify.js"></script>
+<script src="../scripts/prettify/lang-css.js"></script>
+<script src="../scripts/samplecode.js"></script>
+<script class="serviceCode">
+    var util = {
+        addEventListener: function(element, eventName, handler) {
+            if (element.addEventListener) {
+                element.addEventListener(eventName, handler, false);
+            } else {
+                element.attachEvent('on' + eventName, handler);
+            }
+        }
+    };
+
+    var data = [
+        {text: 'rootA', children: [
+            {text: 'sub-A1'},
+            {text: 'sub-A2'},
+            {text: 'sub-A3'},
+            {text: 'sub-A4'},
+            {text: 'sub-A5', state: 'closed', children: [
+                {text:'sub-A5A', children:[
+                    {text:'sub-A5A1'}
+                ]},
+                {text:'sub_A5B'}
+            ]},
+            {text: 'sub-A6'},
+            {text: 'sub-A7'},
+            {text: 'sub-A8'},
+            {text: 'sub-A9', state: 'closed', children: [
+                {text:'sub-A9A'},
+                {text:'sub-A9B'}
+            ]},
+            {text: 'sub-A10'},
+            {text: 'sub-A11'},
+            {text: 'sub-A12'}
+        ]},
+        {text: 'rootB', state:'closed', children: [
+            {text:'sub-B1'},
+            {text:'sub-B2'},
+            {text:'sub-B3'}
+        ]}
+    ];
+
+    var tree = new tui.component.Tree(data, {
+            nodeDefaultState: 'opened',
+            rootElement: 'treeRoot1',
+            template: {
+                internalNode:
+                    '<button type="button" class="{{toggleBtnClass}}">{{stateLabel}}</button>' +
+                    '<input type="checkbox" class="tui-tree-checkbox">' +
+                    '<span class="{{textClass}}">{{text}}</span>' +
+                    '<ul class="{{subtreeClass}}">{{children}}</ul>',
+                leafNode:
+                    '<input type="checkbox" class="tui-tree-checkbox">' +
+                    '<span class="{{textClass}}">{{text}}</span>'
+            }
+        })
+        .enableFeature('Checkbox', {
+            checkboxClassName: 'tui-tree-checkbox'
+        });
+
+    var addChildBtn = document.getElementById('addChildBtn'),
+        removeChildBtn = document.getElementById('removeChildBtn'),
+        sortBtn = document.getElementById('sortBtn'),
+        enableSelectionBtn = document.getElementById('enableSelectionBtn'),
+        disableSelectionBtn = document.getElementById('disableSelectionBtn'),
+        enableDNDBtn = document.getElementById('enableDNDBtn'),
+        disableDNDBtn = document.getElementById('disableDNDBtn'),
+        rootNodeId = tree.getRootNodeId(),
+        firstChildId = tree.getChildIds(rootNodeId)[0];
+
+    util.addEventListener(addChildBtn, 'click', function() {
+        tree.add({text:'hello world'}, firstChildId);
+    });
+
+    util.addEventListener(removeChildBtn, 'click', function() {
+        var lastGrandChildId = tree.getChildIds(firstChildId).slice(-1)[0];
+        tree.remove(lastGrandChildId);
+    });
+
+    util.addEventListener(sortBtn, 'click', function() {
+        tree.sort(function(nodeA, nodeB) {
+            var aValue = nodeA.getData('text'),
+                    bValue = nodeB.getData('text');
+
+            if (!aValue.localeCompare) {
+                return 0;
+            }
+            return aValue.localeCompare(bValue);
+        });
+    });
+
+    util.addEventListener(enableSelectionBtn, 'click', function() {
+        tree.enableFeature('Selectable');
+    });
+
+    util.addEventListener(disableSelectionBtn, 'click', function() {
+        tree.disableFeature('Selectable');
+    });
+
+    util.addEventListener(enableDNDBtn, 'click', function() {
+        tree.enableFeature('Draggable');
+    });
+
+    util.addEventListener(disableDNDBtn, 'click', function() {
+        tree.disableFeature('Draggable');
+    });
+
+    tree.on('select', function(nodeId) {
+        if (window.console) {
+            console.log('select! - ' + nodeId);
+        } else {
+            alert('select! - ' + nodeId);
+        }
+    });
+
+    tree.on('check', function(nodeId) {
+        if (window.console) {
+            console.log('check! - ' + nodeId);
+        } else {
+            alert('check! - ' + nodeId);
+        }
+    });
+
+    tree.on('uncheck', function(nodeId) {
+        if (window.console) {
+            console.log('uncheck! - ' + nodeId);
+        } else {
+            alert('uncheck! - ' + nodeId);
+        }
+    });
+</script>
+
+</body>
+</html>

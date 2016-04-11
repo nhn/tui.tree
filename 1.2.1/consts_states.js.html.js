@@ -1,0 +1,2 @@
+tui.util.defineNamespace("fedoc.content", {});
+fedoc.content["consts_states.js.html"] = "      <div id=\"main\" class=\"main\">\n\n\n\n    \n    <section>\n        <article>\n            <pre class=\"prettyprint source linenums\"><code>'use strict';\n\n/**\n * States in tree\n * @type {Object.&lt;string, string>}\n */\nmodule.exports = {\n    /**\n     * States of node\n     * @type {{OPENED: string, CLOSED: string}}\n     */\n    node: {\n        OPENED: 'opened',\n        CLOSED: 'closed'\n    }\n};\n</code></pre>\n        </article>\n    </section>\n\n\n\n</div>\n\n"
