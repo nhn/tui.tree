@@ -100,7 +100,7 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{/*eslint-
      */
     isNotDraggable: function(target) {
         var tagName = target.tagName.toUpperCase(),
-            classNames = util.getClass(target).split(' '),
+            classNames = util.getClass(target).split(/\s+/),
             result;
 
         if (inArray(tagName, this.rejectedTagNames) !== -1) {

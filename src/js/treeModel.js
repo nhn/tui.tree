@@ -247,7 +247,7 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
         ids = this._makeTreeHash(data, parent);
 
         if (!isSilent) {
-            this.fire('update', parentId);
+            this.fire('update', parent.getId());
         }
 
         return ids;

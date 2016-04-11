@@ -75,4 +75,10 @@ describe('TreeNode', function() {
 
         expect(node.getId()).toContain('new-tree-node-');
     });
+
+    it('children property in "setData" will be ignored', function() {
+        node.setData({children: []});
+
+        expect(node.getData('children')).toBeUndefined();
+    });
 });

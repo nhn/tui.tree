@@ -3,7 +3,8 @@
 var util = require('./../util');
 
 var API_LIST = [
-        'select'
+        'select',
+        'getSelectedNodeId'
     ],
     defaults = {
         selectedClassName: 'tui-tree-selected'
@@ -33,6 +34,7 @@ var Selectable = tui.util.defineClass(/** @lends Selectable.prototype */{/*eslin
 
         this.tree = tree;
         this.selectedClassName = options.selectedClassName;
+        this.selectedNodeId = null;
 
         tree.on({
             singleClick: this.onSingleClick,
@@ -105,7 +107,7 @@ var Selectable = tui.util.defineClass(/** @lends Selectable.prototype */{/*eslin
         prevElement = this.getPrevElement();
         nodeElement = document.getElementById(nodeId);
         selectedClassName = this.selectedClassName;
-        prevNodeId = this.prevNodeId;
+        prevNodeId = this.selectedNodeId;
 
         /**
          * @api
@@ -144,7 +146,7 @@ var Selectable = tui.util.defineClass(/** @lends Selectable.prototype */{/*eslin
              *  });
              */
             tree.fire('select', nodeId, prevNodeId, target);
-            this.prevNodeId = nodeId;
+            this.selectedNodeId = nodeId;
         }
     },
 
@@ -153,7 +155,16 @@ var Selectable = tui.util.defineClass(/** @lends Selectable.prototype */{/*eslin
      * @returns {HTMLElement} Node element
      */
     getPrevElement: function() {
-        return document.getElementById(this.prevNodeId);
+        return document.getElementById(this.selectedNodeId);
+    },
+
+    /**
+     * Get selected node id
+     * @api
+     * @returns {string} selected node id
+     */
+    getSelectedNodeId: function() {
+        return this.selectedNodeId;
     },
 
     /**
