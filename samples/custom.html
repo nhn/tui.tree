@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <link type="text/css" rel="stylesheet" href="../styles/prettify-jsdoc.css" />
+    <link type="text/css" rel="stylesheet" href="../styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="../styles/tui.css">
+
+    <title>트리컴포넌트</title>
+    <link rel="stylesheet" href="css/customTree.css" />
+</head>
+<body>
+    <div class="wrap" style="height: 500px;">
+        <div class="treeWrap" style="position:relative; border:1px solid #eaeaea;">
+            <ul id="treeRoot" class="tree"></ul>
+        </div>
+        <div>
+            <button id="addChildBtn">addChild</button>
+            <button id="removeChildBtn">removeChild</button>
+            <button id="sortBtn">sortBtn</button>
+        </div>
+        <div>
+            <button id="enableSelectionBtn">enableSelection</button>
+            <button id="disableSelectionBtn">disableSelection</button>
+        </div>
+        <div>
+            <button id="enableDNDBtn">enableDragAndDrop</button>
+            <button id="disableDNDBtn">disableDragAndDrop</button>
+        </div>
+    </div>
+
+    <div class="codeArea"></div>
+
+    <script type="text/javascript" src="js/code-snippet.js"></script>
+    <script type="text/javascript" src="js/tree.js"></script>
+    <script type="text/javascript" src="js/jquery.js"></script>
+
+    <script src="../scripts/prettify/prettify.js"></script>
+    <script src="../scripts/prettify/lang-css.js"></script>
+    <script src="../scripts/samplecode.js"></script>
+
+    <script class="serviceCode">
+        var util = {
+            addEventListener: function(element, eventName, handler) {
+                if (element.addEventListener) {
+                    element.addEventListener(eventName, handler, false);
+                } else {
+                    element.attachEvent('on' + eventName, handler);
+                }
+            },
+            getTarget: function(e) {
+                var target;
+                e = e || window.event;
+                target = e.target || e.srcElement;
+
+                return target;
+            }
+        };
+
+        var data = [
+            {text: 'folder A', addClass: 'hidden'},
+            {text: 'folder B', addClass: 'hidden'},
+            {text: 'folder C', addClass: 'hidden'},
+            {text: 'folder D', state: 'closed', addClass: 'closed', toggleBtnText: '▶'},
+            {text: 'folder E', state: 'opened', addClass: 'opened', toggleBtnText: '▼'}
+        ];
+
+        var aa = 1;
+
+        var tree = new tui.component.Tree(data, {
+            nodeDefaultState: 'closed',
+            rootElement: document.getElementById('treeRoot'),
+            stateLabels: {
+                closed: '▶',
+                opened: '▼'
+            },
+            template: {
+                internalNode:
+                    '<button type="button" class="{{toggleBtnClass}}">{{stateLabel}}</button>' +
+                    '<span class="tui-custom-icon"></span>' +
+                    '<span class="{{textClass}}">{{text}}</span>' +
+                    '<ul class="{{subtreeClass}}">{{children}}</ul>',
+                leafNode:
+                    '<button type="button" class="{{toggleBtnClass}} {{addClass}}">{{toggleBtnText}}</button>' +
+                    '<span class="tui-custom-icon"></span>' +
+                    '<span class="{{textClass}}">{{text}}</span>'
+            }
+        });
+
+        var addChildBtn = document.getElementById('addChildBtn'),
+            removeChildBtn = document.getElementById('removeChildBtn'),
+            sortBtn = document.getElementById('sortBtn'),
+            enableSelectionBtn = document.getElementById('enableSelectionBtn'),
+            disableSelectionBtn = document.getElementById('disableSelectionBtn'),
+            enableDNDBtn = document.getElementById('enableDNDBtn'),
+            disableDNDBtn = document.getElementById('disableDNDBtn'),
+            rootNodeId = tree.getRootNodeId(),
+            firstChildId = tree.getChildIds(rootNodeId)[0];
+
+        util.addEventListener(addChildBtn, 'click', function() {
+            tree.add({text:'hello world'}, firstChildId);
+        });
+
+        util.addEventListener(removeChildBtn, 'click', function() {
+            var lastGrandChildId = tree.getChildIds(firstChildId).slice(-1)[0];
+            tree.remove(lastGrandChildId);
+        });
+
+        util.addEventListener(sortBtn, 'click', function() {
+            tree.sort(function(nodeA, nodeB) {
+                var aValue = nodeA.getData('text'),
+                    bValue = nodeB.getData('text');
+
+                if (!aValue.localeCompare) {
+                    return 0;
+                }
+                return aValue.localeCompare(bValue);
+            });
+        });
+
+        util.addEventListener(enableSelectionBtn, 'click', function() {
+            tree.enableFeature('Selectable');
+        });
+
+        util.addEventListener(disableSelectionBtn, 'click', function() {
+            tree.disableFeature('Selectable');
+        });
+
+        util.addEventListener(enableDNDBtn, 'click', function() {
+            tree.enableFeature('Draggable');
+        });
+
+        util.addEventListener(disableDNDBtn, 'click', function() {
+            tree.disableFeature('Draggable');
+        });
+
+        tree.on('select', function(nodeId) {
+            if (window.console) {
+                console.log('select! - ' + nodeId);
+            } else {
+                alert('select! - ' + nodeId);
+            }
+        });
+
+        util.addEventListener(document.getElementById('treeRoot'), 'click', function(e) {
+            var target = util.getTarget(e);
+            var nodeId = tree.getNodeIdFromElement(target);
+
+            if (tree.getChildIds(nodeId).length === 0) {
+                tree.add(data, nodeId);
+            }
+        });
+
+    </script>
+</body>
+</html>
