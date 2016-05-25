@@ -24,7 +24,7 @@ Each node can be moved by drag and drop.
 * Label Apply<br>
 ![alt tag](https://nhnent.github.io/tui.component.tree/tree_edit.png)<br>
 * Daraggable<br>
-![alt tag](https://nhnent.github.io/tui.component.tree/tree_drag.png)<br>
+![alt tag](https://nhnent.github.io/tui.component.tree/tree_draggable.png)<br>
 * Context Menu<br>
 ![alt tag](https://nhnent.github.io/tui.component.tree/tree_contextmenu.png)<br>
 
