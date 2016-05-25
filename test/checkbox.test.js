@@ -1,10 +1,8 @@
 'use strict';
 var Tree = require('../src/js/tree'),
-    utils = require('../src/js/util'),
     messages = require('../src/js/consts/messages'),
     Checkbox = require('../src/js/features/checkbox');
 
-jasmine.getFixtures().fixturesPath = 'base/test/fixtures';
 describe('Tree', function() {
     var data = [
             {title: 'A', children: [
