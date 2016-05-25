@@ -170,9 +170,9 @@ describe('TreeModel', function() {
             grandChildId = treeModel.getNode(firstChildId).getChildIds()[0];
 
         treeModel.on('move', handler);
-        treeModel.move(grandChildId, rootId);
+        treeModel.move(grandChildId, rootId, -1);
 
-        expect(handler).toHaveBeenCalledWith(grandChildId, firstChildId, rootId);
+        expect(handler).toHaveBeenCalledWith(grandChildId, firstChildId, rootId, -1);
         expect(treeModel.getNode(grandChildId).getParentId()).toEqual(rootId);
     });
 });

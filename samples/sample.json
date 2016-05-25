@@ -10,5 +10,8 @@
   },
   "check": {
     "title": "Checkbox"
+  },
+  "ctxMenu": {
+    "title": "Context Menu"
   }
 }

@@ -14,14 +14,16 @@ var util = require('./util'),
     Selectable = require('./features/selectable'),
     Draggable = require('./features/draggable'),
     Editable = require('./features/editable'),
-    Checkbox = require('./features/checkbox');
+    Checkbox = require('./features/checkbox'),
+    ContextMenu = require('./features/contextMenu');
 
 var nodeStates = states.node,
     features = {
         Selectable: Selectable,
         Draggable: Draggable,
         Editable: Editable,
-        Checkbox: Checkbox
+        Checkbox: Checkbox,
+        ContextMenu: ContextMenu
     },
     snippet = tui.util,
     extend = snippet.extend,
@@ -235,29 +237,32 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * @param {string} nodeId - Node id
      * @param {string} originalParentId - Original parent node id
      * @param {string} newParentId - New parent node id
+     * @param {number} [index] - Start index number for inserting
      * @private
      */
-    _onMove: function(nodeId, originalParentId, newParentId) {
+    _onMove: function(nodeId, originalParentId, newParentId, index) {
         this._draw(originalParentId);
         this._draw(newParentId);
 
         /**
          * @api
          * @event Tree#move
-         * @param {{nodeId: string, originalParentId: string, newParentId: string}} treeEvent - Tree event
+         * @param {{nodeId: string, originalParentId: string, newParentId: string, index: number}} treeEvent - Event
          * @example
          * tree.on('move', function(treeEvent) {
          *     var nodeId = treeEvent.nodeId,
          *         originalParentId = treeEvent.originalParentId,
-         *         newParentId = treeEvent.newParentId;
+         *         newParentId = treeEvent.newParentId,
+         *         index = treeEvent.index;
          *
-         *     console.log(nodeId, originalParentId, newParentId);
+         *     console.log(nodeId, originalParentId, newParentId, index);
          * });
          */
         this.fire('move', {
             nodeId: nodeId,
             originalParentId: originalParentId,
-            newParentId: newParentId
+            newParentId: newParentId,
+            index: index
         });
     },
 
@@ -273,6 +278,16 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
         util.addEventListener(this.rootElement, 'click', snippet.bind(this._onClick, this));
         util.addEventListener(this.rootElement, 'mousedown', snippet.bind(this._onMousedown, this));
         util.addEventListener(this.rootElement, 'dblclick', snippet.bind(this._onDoubleClick, this));
+        util.addEventListener(this.rootElement, 'contextmenu', snippet.bind(this._onContextMenu, this));
+    },
+
+    /**
+     * Event handler - contextmenu
+     * @param {MouseEvent} mouseEvent - Contextmenu event
+     * @private
+     */
+    _onContextMenu: function(mouseEvent) {
+        this.fire('contextmenu', mouseEvent);
     },
 
     /**
@@ -942,14 +957,15 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * @api
      * @param {string} nodeId - Node id
      * @param {string} newParentId - New parent id
+     * @param {number} index - Index number of selected node
      * @param {boolean} [isSilent] - If true, it doesn't redraw children
      * @example
      * tree.move(myNodeId, newParentId); // mode node with redrawing
      * tree.move(myNodeId, newParentId, true); // move node without redrawing
      */
-    move: function(nodeId, newParentId, isSilent) {
+    move: function(nodeId, newParentId, index, isSilent) {
         this.isMovingNode = true;
-        this.model.move(nodeId, newParentId, isSilent);
+        this.model.move(nodeId, newParentId, index, isSilent);
         this.isMovingNode = false;
     },
 
@@ -1053,7 +1069,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
     /**
      * Enable facility of tree
      * @api
-     * @param {string} featureName - 'Selectable', 'Draggable', 'Editable'
+     * @param {string} featureName - 'Selectable', 'Draggable', 'Editable', 'ContextMenu'
      * @param {object} [options] - Feature options
      * @returns {Tree} this
      * @example
@@ -1070,11 +1086,33 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      *      useHelper: true,
      *      helperPos: {x: 5, y: 2},
      *      rejectedTagNames: ['UL', 'INPUT', 'BUTTON'],
-     *      rejectedClassNames: ['notDraggable', 'notDraggable-2']
+     *      rejectedClassNames: ['notDraggable', 'notDraggable-2'],
+     *      autoOpenDelay: 1500,
+     *      isSortable: true,
+     *      hoverClassName: 'tui-tree-hover'
+     *      lineClassName: 'tui-tree-line',
+     *      lineBoundary: {
+     *      	top: 10,
+     *       	bottom: 10
+     *      }
      *  })
      *  .enableFeature('Checkbox', {
      *      checkboxClassName: 'tui-tree-checkbox'
-     *  });
+     *  })
+     *  .enableFeature('ContextMenu, {
+     *  	menuData: [
+     *   		{title: 'menu1', command: 'copy'},
+     *     		{title: 'menu2', command: 'paste'},
+     *       	{separator: true},
+     *        	{
+     *         		title: 'menu3',
+     *           	menu: [
+     *            		{title: 'submenu1'},
+     *              	{title: 'submenu2'}
+     *              ]
+     *          }
+     *      }
+     *  })
      */
     enableFeature: function(featureName, options) {
         var Feature = features[featureName];
@@ -1097,7 +1135,8 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      *  .disableFeature('Selectable')
      *  .disableFeature('Draggable')
      *  .disableFeature('Editable')
-     *  .disableFeature('Checkbox');
+     *  .disableFeature('Checkbox')
+     *  .disableFeature('ContextMenu');
      */
     disableFeature: function(featureName) {
         var feature = this.enabledFeatures[featureName];
@@ -1108,6 +1147,18 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
         }
 
         return this;
+    },
+
+    /**
+     * Get index number of selected node
+     * @api
+     * @param {string} nodeId - Id of selected node
+     * @returns {number} Index number of attached node
+     */
+    getNodeIndex: function(nodeId) {
+        var parentId = this.model.getParentId(nodeId);
+
+        return this.model.getNode(parentId).getChildIndex(nodeId);
     }
 });
 

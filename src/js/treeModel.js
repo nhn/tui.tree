@@ -301,29 +301,43 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
      * Move a node to new parent's child
      * @param {string} nodeId - Node id
      * @param {string} newParentId - New parent id
+     * @param {number} [index] - Start index number for inserting
      * @param {boolean} [isSilent] - If true, it doesn't trigger the 'update' event
      */
-    move: function(nodeId, newParentId, isSilent) {
-        var node = this.getNode(nodeId),
-            originalParent, originalParentId, newParent;
+    move: function(nodeId, newParentId, index, isSilent) {
+        var node = this.getNode(nodeId);
+        var originalParent, originalParentId, newParent;
 
         if (!node) {
             return;
         }
+
         newParent = this.getNode(newParentId) || this.rootNode;
         newParentId = newParent.getId();
         originalParentId = node.getParentId();
         originalParent = this.getNode(originalParentId);
+        index = tui.util.isUndefined(index) ? -1 : index;
 
         if (nodeId === newParentId || this.contains(nodeId, newParentId)) {
             return;
         }
-        originalParent.removeChildId(nodeId);
+
+        if (index !== -1) {
+            if (newParentId === originalParentId) {
+                newParent.moveChildId(nodeId, index);
+            } else {
+                newParent.insertChildId(nodeId, index);
+                originalParent.removeChildId(nodeId);
+            }
+        } else {
+            newParent.addChildId(nodeId);
+            originalParent.removeChildId(nodeId);
+        }
+
         node.setParentId(newParentId);
-        newParent.addChildId(nodeId);
 
         if (!isSilent) {
-            this.fire('move', nodeId, originalParentId, newParentId);
+            this.fire('move', nodeId, originalParentId, newParentId, index);
         }
     },
 

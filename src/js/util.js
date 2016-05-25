@@ -10,7 +10,9 @@ var isUndefined = tui.util.isUndefined,
     isValidDotNotation = function(str) {
         return isValidDotNotationRe.test(str);
     },
-    isArray = tui.util.isArraySafe;
+    isArray = tui.util.isArraySafe,
+    isSupportPageOffset = typeof window.pageXOffset !== 'undefined',
+    isCSS1Compat = document.compatMode === 'CSS1Compat';
 
 var util = {
     /**
@@ -260,6 +262,34 @@ var util = {
         }
 
         return null;
+    },
+
+    /**
+     * Get mouse position
+     * @param {MouseEvet} event - Event object
+     * @returns {object} X, Y position of mouse
+     */
+    getMousePos: function(event) {
+        return {
+            x: event.clientX,
+            y: event.clientY
+        };
+    },
+
+    /**
+     * Get value of scroll top on document.body (cross browsing)
+     * @returns {number} Value of scroll top
+     */
+    getWindowScrollTop: function() {
+        var scrollTop;
+
+        if (isSupportPageOffset) {
+            scrollTop = window.pageYOffset;
+        } else {
+            scrollTop = isCSS1Compat ? document.documentElement.scrollTop : document.body.scrollTop;
+        }
+
+        return scrollTop;
     }
 };
 
