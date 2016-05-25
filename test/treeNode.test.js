@@ -81,4 +81,43 @@ describe('TreeNode', function() {
 
         expect(node.getData('children')).toBeUndefined();
     });
+
+    it('"getChildIndex()" should return index number of child node.', function() {
+        var index;
+
+        node.replaceChildIds(['1', '2', '3']);
+
+        index = node.getChildIndex('2');
+
+        expect(index).toEqual(1);
+    });
+
+    it('"insertChildId()" add the node id in the position corresponding to the index .', function() {
+        var ids;
+
+        node.replaceChildIds(['node-a', 'node-b', 'node-c']);
+        node.insertChildId('node-d', 1);
+
+        ids = node.getChildIds();
+
+        expect(ids).toEqual(['node-a', 'node-d', 'node-b', 'node-c']);
+    });
+
+    it('"moveChildId()" changes the node id position.', function() {
+        var ids;
+
+        node.replaceChildIds(['node-a', 'node-b', 'node-c', 'node-d']);
+
+        node.moveChildId('node-d', 1);
+        ids = node.getChildIds();
+        expect(ids).toEqual(['node-a', 'node-d', 'node-b', 'node-c']);
+
+        node.moveChildId('node-a', 3);
+        ids = node.getChildIds();
+        expect(ids).toEqual(['node-d', 'node-b', 'node-a', 'node-c']);
+
+        node.moveChildId('node-c', 0);
+        ids = node.getChildIds();
+        expect(ids).toEqual(['node-c', 'node-d', 'node-b', 'node-a']);
+    });
 });

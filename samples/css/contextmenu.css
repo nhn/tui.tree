@@ -1,0 +1,35 @@
+.js-menu {
+    position: absolute;
+    z-index: 1;
+    top: -1px;
+    width: 180px;
+    border: 1px solid #bbb;
+    background-color: #eee;
+}
+
+.js-menu-item {
+    position: relative;
+}
+
+.js-menu-button {
+    padding: 5px;
+    border: none;
+    background-color: #eee;
+    cursor: pointer;
+}
+
+.js-menu-button:hover {
+    background-color: #ccc;
+}
+
+.js-menu-has-submenu:after {
+    content: '►';
+    display: inline;
+    float: right;
+    font-size: 0.8em;
+}
+
+.js-menu-separator {
+    height: 2px;
+    border-bottom: 1px solid #ccc;
+}

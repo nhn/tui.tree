@@ -10,34 +10,35 @@
     <link rel="stylesheet" href="css/tree.css" />
 </head>
 <body>
-<div class="wrap" style="height: 500px;">
-    <div class="treeWrap" style="position:relative; border:1px solid #eaeaea;">
+<div class="wrap" style="position:relative;height:500px;">
+    <div class="treeWrap" style="position:relative;border:1px solid #eaeaea;">
         <ul id="treeRoot1" class="tree"></ul>
     </div>
-    <div>
-        <button id="addChildBtn">addChild</button>
-        <button id="removeChildBtn">removeChild</button>
-        <button id="sortBtn">sortBtn</button>
+    <div style="position:absolute;top:0;left:305px;">
+        <div>
+            <button id="addChildBtn">addChild</button>
+            <button id="removeChildBtn">removeChild</button>
+            <button id="sortBtn">sortBtn</button>
+        </div>
+        <div>
+            <button id="enableSelectionBtn">enableSelection</button>
+            <button id="disableSelectionBtn">disableSelection</button>
+        </div>
+        <div>
+            <button id="enableDNDBtn">enableDragAndDrop</button>
+            <button id="disableDNDBtn">disableDragAndDrop</button>
+        </div>
     </div>
-    <div>
-        <button id="enableSelectionBtn">enableSelection</button>
-        <button id="disableSelectionBtn">disableSelection</button>
-    </div>
-    <div>
-        <button id="enableDNDBtn">enableDragAndDrop</button>
-        <button id="disableDNDBtn">disableDragAndDrop</button>
-    </div>
-
 </div>
 
 <div class="codeArea"></div>
 
 <script type="text/javascript" src="js/code-snippet.js"></script>
 <script type="text/javascript" src="js/tree.js"></script>
-<script type="text/javascript" src="js/jquery.js"></script>
 
 <script src="../scripts/prettify/prettify.js"></script>
 <script src="../scripts/prettify/lang-css.js"></script>
+<script src="../scripts/jquery.js"></script>
 <script src="../scripts/samplecode.js"></script>
 <script class="serviceCode">
     var util = {

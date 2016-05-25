@@ -1,4 +1,4 @@
-/*!code-snippet v1.0.4 | NHN Entertainment*/
+/*!code-snippet v1.1.3 | NHN Entertainment*/
 /**********
  * array.js
  **********/
@@ -7,7 +7,7 @@
  * @fileoverview This module has some functions for handling array.
  * @author NHN Ent.
  *         FE Development Team <jiung.kang@nhnent.com>
- * @dependency type.js
+ * @dependency type.js, collection.js
  */
 
 (function(tui) {
@@ -18,15 +18,21 @@
     if (!tui.util) {
         tui.util = window.tui.util = {};
     }
-
     var aps = Array.prototype.slice;
 
     /**
+     * This variable saves whether the 'indexOf' method is in Array.prototype or not.<br>
+     * And it will be checked only once when the page is loaded.
+     * @type {boolean}
+     */
+    var hasIndexOf = !!Array.prototype.indexOf;
+
+    /**
      * Generate an integer Array containing an arithmetic progression.
+     * @memberof tui.util
      * @param {number} start
      * @param {number} stop
      * @param {number} step
-     * @memberof tui.util
      * @returns {Array}
      * @example
      *
@@ -64,8 +70,8 @@
 
     /**
      * Zip together multiple lists into a single array
-     * @param {...Array}
      * @memberof tui.util
+     * @param {...Array}
      * @returns {Array}
      * @example
      *
@@ -91,6 +97,54 @@
         return result;
     };
 
+    /**
+     * Returns the first index at which a given element can be found in the array from start index(default 0), or -1 if it is not present.<br>
+     * It compares searchElement to elements of the Array using strict equality (the same method used by the ===, or triple-equals, operator).
+     * @memberof tui.util
+     * @param {*} searchElement Element to locate in the array
+     * @param {Array} array Array that will be traversed.
+     * @param {number} startIndex Start index in array for searching (default 0)
+     * @return {number} the First index at which a given element, or -1 if it is not present
+     * @example
+     *
+     *   var arr = ['one', 'two', 'three', 'four'],
+     *       idx1,
+     *       idx2;
+     *
+     *   idx1 = tui.util.inArray('one', arr, 3);
+     *   alert(idx1); // -1
+     *
+     *   idx2 = tui.util.inArray('one', arr);
+     *   alert(idx2); // 0
+     */
+    var inArray = function(searchElement, array, startIndex) {
+        var i, length;
+
+        if (!tui.util.isArray(array)) {
+            return -1;
+        }
+
+        if (hasIndexOf) {
+            return Array.prototype.indexOf.call(array, searchElement, startIndex);
+        }
+
+        length = array.length;
+        if (tui.util.isUndefined(startIndex)) {
+            startIndex = 0;
+        } else if (startIndex >= length || startIndex < 0) {
+            return -1;
+        }
+
+        for (i = startIndex; i < length; i++) {
+            if (array[i] === searchElement) {
+                return i;
+            }
+        }
+
+        return -1;
+    };
+
+    tui.util.inArray = inArray;
     tui.util.range = range;
     tui.util.zip = zip;
 })(window.tui);
@@ -124,12 +178,14 @@
      *  - chrome
      *  - firefox
      *  - safari
+     *  - edge
      * @memberof tui.util
      * @example
      *  tui.util.browser.chrome === true;    // chrome
      *  tui.util.browser.firefox === true;    // firefox
      *  tui.util.browser.safari === true;    // safari
      *  tui.util.browser.msie === true;    // IE
+     *  tui.util.browser.edge === true;     // edge
      *  tui.util.browser.other === true;    // other browser
      *  tui.util.browser.version;    // browser version
      */
@@ -138,6 +194,7 @@
         firefox: false,
         safari: false,
         msie: false,
+        edge: false,
         others: false,
         version: 0
     };
@@ -148,6 +205,7 @@
 
     var rIE = /MSIE\s([0-9]+[.0-9]*)/,
         rIE11 = /Trident.*rv:11\./,
+        rEdge = /Edge\/(\d+)\./,
         versionRegex = {
             'firefox': /Firefox\/(\d+)\./,
             'chrome': /Chrome\/(\d+)\./,
@@ -168,6 +226,11 @@
             if (rIE11.exec(userAgent)) {
                 browser.msie = true;
                 browser.version = 11;
+                detected = true;
+            } else if (rEdge.exec(userAgent)) {
+                browser.edge = true;
+                browser.version = userAgent.match(rEdge)[1];
+                detected = true;
             } else {
                 for (key in versionRegex) {
                     if (versionRegex.hasOwnProperty(key)) {
@@ -186,7 +249,12 @@
         }
     };
 
-    detector[appName]();
+    var fn = detector[appName];
+
+    if (fn) {
+        detector[appName]();
+    }
+
     tui.util.browser = browser;
 })(window.tui);
 
@@ -209,13 +277,6 @@
     if (!tui.util) {
         tui.util = window.tui.util = {};
     }
-
-    /**
-     * This variable saves whether the 'indexOf' method is in Array.prototype or not.<br>
-     * And it will be checked only once when the page is loaded.
-     * @type {boolean}
-     */
-    var hasIndexOf = !!Array.prototype.indexOf;
 
     /**
      * Execute the provided callback once for each element present in the array(or Array-like object) in ascending order.<br>
@@ -481,55 +542,6 @@
     };
 
     /**
-     * Returns the first index at which a given element can be found in the array from start index(default 0), or -1 if it is not present.<br>
-     * It compares searchElement to elements of the Array using strict equality (the same method used by the ===, or triple-equals, operator).
-     * @param {*} searchElement Element to locate in the array
-     * @param {Array} array Array that will be traversed.
-     * @param {number} startIndex Start index in array for searching (default 0)
-     * @memberof tui.util
-     * @return {number} the First index at which a given element, or -1 if it is not present
-     * @example
-     *
-     *   var arr = ['one', 'two', 'three', 'four'],
-     *       idx1,
-     *       idx2;
-     *
-     *   idx1 = tui.util.inArray('one', arr, 3);
-     *   alert(idx1); // -1
-     *
-     *   idx2 = tui.util.inArray('one', arr);
-     *   alert(idx2); // 0
-     */
-    var inArray = function(searchElement, array, startIndex) {
-        if (!tui.util.isArray(array)) {
-            return -1;
-        }
-
-        if (hasIndexOf) {
-            return Array.prototype.indexOf.call(array, searchElement, startIndex);
-        }
-
-        var i,
-            length = array.length;
-
-        // set startIndex
-        if (tui.util.isUndefined(startIndex)) {
-            startIndex = 0;
-        } else if (startIndex >= length || startIndex < 0) {
-            return -1;
-        }
-
-        // search
-        for (i = startIndex; i < length; i++) {
-            if (array[i] === searchElement) {
-                return i;
-            }
-        }
-
-        return -1;
-    };
-
-    /**
      * fetching a property
      * @param {Array} arr target collection
      * @param {String|Number} property property name
@@ -568,9 +580,7 @@
     tui.util.map = map;
     tui.util.reduce = reduce;
     tui.util.filter = filter;
-    tui.util.inArray = inArray;
     tui.util.pluck = pluck;
-
 })(window.tui);
 
 /**********
@@ -598,64 +608,15 @@
         tui.util = window.tui.util = {};
     }
 
+    var R_EVENTNAME_SPLIT = /\s+/g;  // eslint-disable-line
+
     /**
      * A unit of event handler item.
      * @ignore
-     * @typedef {Object} handlerItem
+     * @typedef {object} HandlerItem
      * @property {function} fn - event handler
-     * @property {*} ctx - context of event handler
+     * @property {object} ctx - context of event handler
      */
-
-    /**
-     * A data structure for storing handlerItems bound with a specific context
-     *  and is a unit item of ctxEvents.<br>
-     * Handlers in this item, will be executed with same event.
-     * @ignore
-     * @typedef {Object.<string, handlerItem>} ctxEventsItem
-     * @example
-     *  ctxEventsItem = {
-     *      1_1: {
-     *          fn: function(){...},
-     *          ctx: context1
-     *      },
-     *      2_1: {
-     *          fn: function(){...},
-     *          ctx: context1
-     *      }
-     *  }
-     */
-
-    /**
-     * A data structure for storing ctxEventsItem and length for each event(or event name).
-     * @ignore
-     * @typedef {Object.<string, (ctxEventsItem|number)>} ctxEvents
-     * @example
-     *  ctxEvents = {
-     *      eventName1_idx: {
-     *          1_1: {
-     *              fn: function(){...},
-     *              ctx: context1
-     *          },
-     *          2_1: {
-     *              fn: function(){...},
-     *              ctx: context1
-     *          }
-     *      },
-     *      eventName1_len: 2,
-     *      eventName2_idx: {
-     *          3_2: {
-     *              fn: function(){...},
-     *              ctx: context2
-     *          },
-     *          4_2: {
-     *              fn: function(){...},
-     *              ctx: context2
-     *          }
-     *      },
-     *      eventName2_len: 2
-     *  };
-     */
-
 
     /**
      * @constructor
@@ -663,28 +624,20 @@
      */
     function CustomEvents() {
         /**
-         * Caching a data structure that has normal event handlers which are not bound with a specific context.
-         * @type {object.<string, handlerItem[]>}
-         * @private
+         * @type {HandlerItem[]}
          */
-        this._events = null;
+        this.events = null;
 
         /**
-         * Caching a {ctxEvents}
-         * @type {ctxEvents}
-         * @private
+         * only for checking specific context event was binded
+         * @type {object[]}
          */
-        this._ctxEvents = null;
+        this.contexts = null;
     }
 
-
-    /**********
-     * static
-     **********/
-
     /**
-     * Use for making a constructor to be able to do CustomEvent's functions.
-     * @param {function} func - Constructor
+     * Mixin custom events feature to specific constructor
+     * @param {function} func - constructor
      * @example
      *  function Model() {
      *      this.name = '';
@@ -693,6 +646,7 @@
      *
      *  var model = new Model();
      *  model.on('change', function() { this.name = 'model'; }, this);
+     *
      *  model.fire('change');
      *  alert(model.name); // 'model';
      */
@@ -700,400 +654,151 @@
         tui.util.extend(func.prototype, CustomEvents.prototype);
     };
 
-    /**********
-     * private
-     **********/
+    /**
+     * Get HandlerItem object
+     * @param {function} handler - handler function
+     * @param {object} [context] - context for handler
+     * @returns {HandlerItem} HandlerItem object
+     * @private
+     */
+    CustomEvents.prototype._getHandlerItem = function(handler, context) {
+        var item = {handler: handler};
+
+        if (context) {
+            item.context = context;
+        }
+
+        return item;
+    };
 
     /**
-     * Work similarly to Array.prototype.forEach(),
-     *  however does Array.prototype.splice() additionally.<br>
-     * Callback(iteratee) function is invoked with four arguments:
-     *  - The value of the element
-     *  - The index of the element
-     *  - The array being traversed
-     *  - A special callback function that decreases the length of array
-     * @param {Array} arr - Array that will be traversed
-     * @param {function} iteratee - Callback function
+     * Get event object safely
+     * @param {string} [eventName] - create sub event map if not exist.
+     * @returns {(object|array)} event object. if you supplied `eventName`
+     *  parameter then make new array and return it
+     * @private
      */
-    CustomEvents.prototype._forEachArraySplice = function(arr, iteratee) {
-        var i,
-            len,
-            item,
-            decrease = function() {
-                arr.splice(i, 1);
-                len -= 1;
-                i -= 1;
-            };
+    CustomEvents.prototype._safeEvent = function(eventName) {
+        var events = this.events,
+            byName;
 
-        if (!tui.util.isExisty(arr) || !tui.util.isArray(arr)) {
+        if (!events) {
+            events = this.events = {};
+        }
+
+        if (eventName) {
+            byName = events[eventName];
+
+            if (!byName) {
+                byName = [];
+                events[eventName] = byName;
+            }
+
+            events = byName;
+        }
+
+        return events;
+    };
+
+    /**
+     * Get context array safely
+     * @returns {array} context array
+     */
+    CustomEvents.prototype._safeContext = function() {
+        var context = this.contexts;
+
+        if (!context) {
+            context = this.contexts = [];
+        }
+
+        return context;
+    };
+
+    /**
+     * Get index of context
+     * @param {object} ctx - context that used for bind custom event
+     * @returns {number} index of context
+     */
+    CustomEvents.prototype._indexOfContext = function(ctx) {
+        var context = this._safeContext(),
+            index = 0;
+
+        while (context[index]) {
+            if (ctx === context[index][0]) {
+                return index;
+            }
+
+            index += 1;
+        }
+
+        return -1;
+    };
+
+    /**
+     * Memorize supplied context for recognize supplied object is context or
+     *  name: handler pair object when off()
+     * @param {object} ctx - context object to memorize
+     */
+    CustomEvents.prototype._memorizeContext = function(ctx) {
+        var context, index;
+
+        if (!tui.util.isExisty(ctx)) {
             return;
         }
 
-        for (i = 0, len = arr.length; i < len; i++) {
-            item = arr[i];
+        context = this._safeContext();
+        index = this._indexOfContext(ctx);
 
-            if (iteratee(item, i, arr, decrease) === false) {
-                return;
-            }
+        if (index > -1) {
+            context[index][1] += 1;
+        } else {
+            context.push([ctx, 1]);
         }
     };
 
-    /**********
-     * context event handler
-     **********/
-
     /**
-     * Execute the callback once for each ctxEventsItem.<br>
-     * Callback function(iteratee) is invoked with three arguments:
-     *  - {ctxEventsItem} A unit item of ctxEvents
-     *  - {string} A key (ex - 'eventName_idx' or 'eventName_len')
-     *  - {ctxEvents} A ctxEvents being traversed
-     * @param {function} iteratee - Callback function
-     * @private
+     * Forget supplied context object
+     * @param {object} ctx - context object to forget
      */
-    CustomEvents.prototype._eachCtxEvents = function(iteratee) {
-        var events = this._ctxEvents;
-        tui.util.forEachOwnProperties(events, iteratee);
-    };
+    CustomEvents.prototype._forgetContext = function(ctx) {
+        var context, contextIndex;
 
-    /**
-     * Execute the callback once
-     *  for each handler item that is value of the key including a specific string(=id, arguments[1]).<br>
-     * Callback function(iteratee) is invoked with two arguments:
-     *  - handlerItem
-     *  - handlerItemId
-     * @param {ctxEventsItem} ctxEventsItem - A data structure storing handlerItems.
-     * @param {string} id - An id of handler for searching
-     * @param {function} iteratee - Callback function
-     * @private
-     */
-    CustomEvents.prototype._eachCtxHandlerItemByContainId = function(ctxEventsItem, id, iteratee) {
-        tui.util.forEachOwnProperties(ctxEventsItem, function(handlerItem, handlerItemId) {
-            if (handlerItemId.indexOf(id) > -1) {
-                iteratee(handlerItem, handlerItemId);
-            }
-        });
-    };
-
-    /**
-     * Execute the callback once
-     *  for each case of when the provided handler(arguments[0]) is equal to a handler in ctxEventsItem.<br>
-     * Callback function(iteratee) is invoked with four arguments:
-     *  - handlerItem
-     *  - handlerItemId
-     *  - ctxEventsItem
-     *  - eventKey, A Name of custom event (ex - 'eventName_idx')
-     * @param {function} handler - Event handler
-     * @param {function} iteratee - Callback function
-     * @private
-     */
-    CustomEvents.prototype._eachCtxEventByHandler = function(handler, iteratee) {
-        var handlerId = tui.util.stamp(handler),
-            eachById = this._eachCtxHandlerItemByContainId;
-
-        this._eachCtxEvents(function(ctxEventsItem, eventKey) {
-            eachById(ctxEventsItem, handlerId, function(handlerItem, handlerItemId) {
-                iteratee(handlerItem, handlerItemId, ctxEventsItem, eventKey);
-            });
-        });
-    };
-
-    /**
-     * Execute the callback once
-     *  for each case of when the provided context(arguments[0]) is equal to a context in ctxEventsItem.<br>
-     * Callback function(iteratee) is invoked with four arguments:
-     *  - handlerItem
-     *  - handlerItemId
-     *  - ctxEventsItem
-     *  - eventKey, A Name of custom event with postfix (ex - 'eventName_idx')
-     * @param {*} context - Context for searching
-     * @param {function} iteratee - Callback function
-     * @private
-     */
-    CustomEvents.prototype._eachCtxEventByContext = function(context, iteratee) {
-        var contextId = tui.util.stamp(context),
-            eachById = this._eachCtxHandlerItemByContainId;
-
-        this._eachCtxEvents(function(ctxEventsItem, eventKey) {
-            eachById(ctxEventsItem, contextId, function(handlerItem, handlerItemId) {
-                iteratee(handlerItem, handlerItemId, ctxEventsItem, eventKey);
-            });
-        });
-    };
-
-    /**
-     * Execute the callback once for each handler of ctxEventsItem of the provided eventName(arguments[0]).<br>
-     * Callback function(iteratee) is invoked with four arguments:
-     *  - handlerItem
-     *  - handlerItemId
-     *  - ctxEventsItem
-     *  - eventKey, A Name of custom event with postfix (ex - 'eventName_idx')
-     * @param {string} eventName - Custom event name
-     * @param {function} iteratee - Callback function
-     * @private
-     */
-    CustomEvents.prototype._eachCtxEventByEventName = function(eventName, iteratee) {
-        if (!this._ctxEvents) {
+        if (!tui.util.isExisty(ctx)) {
             return;
         }
 
-        var key = this._getCtxKey(eventName),
-            ctxEventsItem = this._ctxEvents[key],
-            args;
+        context = this._safeContext();
+        contextIndex = this._indexOfContext(ctx);
 
-        tui.util.forEachOwnProperties(ctxEventsItem, function() {
-            args = Array.prototype.slice.call(arguments);
-            args.push(key);
-            iteratee.apply(null, args);
-        });
-    };
+        if (contextIndex > -1) {
+            context[contextIndex][1] -= 1;
 
-    /**********
-     * normal event handler
-     **********/
-
-    /**
-     * Execute the callback once
-     *  for each handler in instance equal to the provided handler(arguments[0]).<br>
-     * Callback function(iteratee) is invoked with five arguments:
-     *  - handlerItem
-     *  - index of handlerItem array
-     *  - eventList by handler
-     *  - eventKey, A Name of custom event with postfix (ex - 'eventName_idx')
-     *  - decrease, A special callback function that decreases the length of array.
-     * @param {function} handler - A handler for searching
-     * @param {function} iteratee - Callback function
-     * @private
-     */
-    CustomEvents.prototype._eachEventByHandler = function(handler, iteratee) {
-        var events = this._events,
-            forEachArrayDecrease = this._forEachArraySplice,
-            idx = 0;
-
-        tui.util.forEachOwnProperties(events, function(eventList, eventKey) {
-            forEachArrayDecrease(eventList, function(handlerItem, index, eventList, decrease) {
-                if (handlerItem.fn === handler) {
-                    iteratee(handlerItem, idx, eventList, eventKey, decrease);
-                    idx += 1;
-                }
-            });
-        });
-    };
-
-    /**
-     * Execute the callback once for each handler of normal events of the provided eventName.<br>
-     * Callback function(iteratee) is invoked with four arguments:
-     *  - handler
-     *  - index of handler-list
-     *  - handler-list
-     *  - decrease, A special callback function that decreases the length of array
-     * @param {string} eventName - Custom event name
-     * @param {function} iteratee - Callback function
-     * @private
-     */
-    CustomEvents.prototype._eachEventByEventName = function(eventName, iteratee) {
-        var events;
-
-        if (!this._events) {
-            return;
-        }
-
-        events = this._events[eventName];
-        if (!tui.util.isExisty(events)) {
-            return;
-        }
-
-        this._forEachArraySplice(events, iteratee);
-    };
-
-    /**
-     * Return a new key for saving a handler with a context in event name.
-     * @param {string} eventName A event name
-     * @returns {string} Key
-     * @private
-     */
-    CustomEvents.prototype._getCtxKey = function(eventName) {
-        return eventName + '_idx';
-    };
-
-    /**
-     * Return a new key for saving length of handlers in event name.
-     * @param {string} eventName A event name
-     * @returns {string} Key
-     * @private
-     */
-    CustomEvents.prototype._getCtxLenKey = function(eventName) {
-        return eventName + '_len';
-    };
-
-    /**
-     * Return a new key for storing to ctxEventsItem.
-     * @param {function} func A event handler
-     * @param {*} ctx A context in handler
-     * @returns {string} Key
-     * @private
-     */
-    CustomEvents.prototype._getHandlerKey = function(func, ctx) {
-        return tui.util.stamp(func) + '_' + tui.util.stamp(ctx);
-    };
-
-
-    /**
-     * Set the length of handlers in ctxEventsItem.
-     * @param {string} lenKey - A key for saving the length of handlers in `this._ctxEvents`
-     * @param {number} change - A variation value of length
-     * @private
-     */
-    CustomEvents.prototype._setCtxLen = function(lenKey, change) {
-        var events = this._ctxEvents;
-
-        if (!tui.util.isExisty(events[lenKey])) {
-            events[lenKey] = 0;
-        }
-
-        events[lenKey] += change;
-    };
-
-
-    /**
-     * Store a {handlerItem} to instance.
-     * @param {string} eventName - Custom event name
-     * @param {*} context - Context for binding
-     * @param {function} handler - Handler function
-     * @private
-     */
-    CustomEvents.prototype._addCtxEvent = function(eventName, context, handler) {
-        var events = this._ctxEvents,
-            key = this._getCtxKey(eventName),
-            event;
-
-        if (!tui.util.isExisty(events)) {
-            events = this._ctxEvents = {};
-        }
-
-        event = events[key];
-        if (!tui.util.isExisty(event)) {
-            event = events[key] = {};
-        }
-
-        var lenKey = this._getCtxLenKey(eventName),
-            handlerItemId = this._getHandlerKey(handler, context);
-
-        event[handlerItemId] = {
-            fn: handler,
-            ctx: context
-        };
-
-        this._setCtxLen(lenKey, +1);
-    };
-
-    /**
-     * Store a event handler without context to instance.
-     * @param {string} eventName - Custom event name
-     * @param {function} handler - Handler function
-     * @private
-     */
-    CustomEvents.prototype._addNormalEvent = function(eventName, handler) {
-        var events = this._events,
-            event;
-
-        if (!tui.util.isExisty(events)) {
-            events = this._events = {};
-        }
-
-        event = events[eventName];
-        if (!tui.util.isExisty(event)) {
-            event = events[eventName] = [];
-        }
-
-        event.push({ fn: handler });
-    };
-
-
-    /**
-     * Take the event handler off by handler(arguments[0])
-     * @param {function} handler - Handler for offing
-     * @private
-     */
-    CustomEvents.prototype._offByHandler = function(handler) {
-        var ctxEvents = this._ctxEvents,
-            lenKey;
-
-        this._eachCtxEventByHandler(handler, function(handlerItem, hanId, ctxItems, eventKey) {
-            lenKey = eventKey.replace('_idx', '_len');
-            delete ctxItems[hanId];
-            ctxEvents[lenKey] -= 1;
-        });
-
-        this._eachEventByHandler(handler, function(handlerItem, index, items, eventKey, decrease) {
-            items.splice(index, 1);
-            decrease();
-        });
-    };
-
-    /**
-     * Take the event handler off by context with event name
-     * @param {*} context - Context
-     * @param {(string|function)} [eventName] - Custom event name
-     * @private
-     */
-    CustomEvents.prototype._offByContext = function(context, eventName) {
-        var ctxEvents = this._ctxEvents,
-            hasArgs = tui.util.isExisty(eventName),
-            matchEventName,
-            matchHandler,
-            lenKey;
-
-        this._eachCtxEventByContext(context, function(handlerItem, hanId, ctxItems, eventKey) {
-            lenKey = eventKey.replace('_idx', '_len');
-
-            matchEventName = hasArgs && tui.util.isString(eventName) && eventKey.indexOf(eventName) > -1;
-            matchHandler = hasArgs && tui.util.isFunction(eventName) && handlerItem.fn === eventName;
-
-            if (!hasArgs || (matchEventName || matchHandler)) {
-                delete ctxItems[hanId];
-                ctxEvents[lenKey] -= 1;
+            if (context[contextIndex][1] <= 0) {
+                context.splice(contextIndex, 1);
             }
-        });
+        }
     };
 
     /**
-     * Take the event handler off by event name with handler
-     * @param {string} eventName - Custom event name
-     * @param {function} [handler] - Event handler
+     * Bind event handler
+     * @param {(string|{name:string, handler:function})} eventName - custom
+     *  event name or an object {eventName: handler}
+     * @param {(function|object)} [handler] - handler function or context
+     * @param {object} [context] - context for binding
      * @private
      */
-    CustomEvents.prototype._offByEventName = function(eventName, handler) {
-        var ctxEvents = this._ctxEvents,
-            hasHandler = tui.util.isExisty(handler),
-            lenKey;
-
-        this._eachCtxEventByEventName(eventName, function(handlerItem, hanId, ctxItems, eventKey) {
-            lenKey = eventKey.replace('_idx', '_len');
-            if (!hasHandler || (hasHandler && handlerItem.fn === handler)) {
-                delete ctxItems[hanId];
-                ctxEvents[lenKey] -= 1;
-            }
-        });
-
-        this._eachEventByEventName(eventName, function(handlerItem, index, items, decrease) {
-            if (!hasHandler || (hasHandler && handlerItem.fn === handler)) {
-                items.splice(index, 1);
-                decrease();
-            }
-        });
-
+    CustomEvents.prototype._bindEvent = function(eventName, handler, context) {
+        var events = this._safeEvent(eventName);
+        this._memorizeContext(context);
+        events.push(this._getHandlerItem(handler, context));
     };
 
-    /**********
-     * public
-     **********/
-
     /**
-     * Attach the event handler with event name and context.
-     * @param {(string|{name:string, handler:function})} eventName - Custom event name or an object {eventName: handler}
-     * @param {(function|*)} [handler] - Handler function or context
-     * @param {*} [context] - Context for binding
+     * Bind event handlers
+     * @param {(string|{name:string, handler:function})} eventName - custom
+     *  event name or an object {eventName: handler}
+     * @param {(function|object)} [handler] - handler function or context
+     * @param {object} [context] - context for binding
      * @example
      *  // 1. Basic
      *  customEvent.on('onload', handler);
@@ -1101,65 +806,239 @@
      *  // 2. With context
      *  customEvent.on('onload', handler, myObj);
      *
-     *  // 3. Attach with an object
+     *  // 3. Bind by object that name, handler pairs
      *  customEvent.on({
      *    'play': handler,
      *    'pause': handler2
      *  });
      *
-     *  // 4. Attach with an object with context
+     *  // 4. Bind by object that name, handler pairs with context object
      *  customEvent.on({
      *    'play': handler
      *  }, myObj);
      */
     CustomEvents.prototype.on = function(eventName, handler, context) {
-        var eventNameList;
+        var self = this;
 
-        if (tui.util.isObject(eventName)) {
-            // {eventName: handler}
+        if (tui.util.isString(eventName)) {
+            // [syntax 1, 2]
+            eventName = eventName.split(R_EVENTNAME_SPLIT);
+            tui.util.forEach(eventName, function(name) {
+                self._bindEvent(name, handler, context);
+            });
+        } else if (tui.util.isObject(eventName)) {
+            // [syntax 3, 4]
             context = handler;
-            tui.util.forEachOwnProperties(eventName, function(handler, name) {
-                 this.on(name, handler, context);
-            }, this);
-            return;
-        } else if (tui.util.isString(eventName) && eventName.indexOf(' ') > -1) {
-            // processing of multiple events by split event name
-            eventNameList = eventName.split(' ');
-            tui.util.forEachArray(eventNameList, function(name) {
-                this.on(name, handler, context);
-            }, this);
-            return;
-        }
-
-        var ctxId;
-
-        if (tui.util.isExisty(context)) {
-            ctxId = tui.util.stamp(context);
-        }
-
-        if (tui.util.isExisty(ctxId)) {
-            this._addCtxEvent(eventName, context, handler);
-        } else {
-            this._addNormalEvent(eventName, handler);
+            tui.util.forEach(eventName, function(func, name) {
+                self.on(name, func, context);
+            });
         }
     };
 
     /**
-     * Detach the event handler.
-     * @param {(string|{name:string, handler:function})} eventName - Custom event name or an object {eventName: handler}
-     * @param {function} [handler] Handler function
+     * Bind one-shot event handlers
+     * @param {(string|{name:string, handler:function})} eventName - custom
+     *  event name or an object {eventName: handler}
+     * @param {(function|object)} [handler] - handler function or context
+     * @param {object} [context] - context for binding
+     */
+    CustomEvents.prototype.once = function(eventName, handler, context) {
+        var self = this;
+
+        if (tui.util.isObject(eventName)) {
+            context = handler;
+            tui.util.forEach(eventName, function(func, name) {
+                self.once(name, func, context);
+            });
+            return;
+        }
+
+        function onceHandler() {
+            handler.apply(context, arguments);
+            self.off(eventName, onceHandler, context);
+        }
+
+        this.on(eventName, onceHandler, context);
+    };
+
+    /**
+     * Splice supplied array by callback result
+     * @param {array} arr - array to splice
+     * @param {function} predicate - function return boolean
+     * @private
+     */
+    CustomEvents.prototype._spliceMatches = function(arr, predicate) {
+        var i, len;
+
+        if (!tui.util.isArray(arr)) {
+            return;
+        }
+
+        for (i = 0, len = arr.length; i < len; i += 1) {
+            if (predicate(arr[i]) === true) {
+                arr.splice(i, 1);
+                len -= 1;
+                i -= 1;
+            }
+        }
+    };
+
+    /**
+     * Get matcher for unbind specific handler events
+     * @param {function} handler - handler function
+     * @returns {function} handler matcher
+     * @private
+     */
+    CustomEvents.prototype._matchHandler = function(handler) {
+        var self = this;
+
+        return function(item) {
+            var needRemove = handler === item.handler;
+
+            if (needRemove) {
+                self._forgetContext(item.context);
+            }
+
+            return needRemove;
+        };
+    };
+
+    /**
+     * Get matcher for unbind specific context events
+     * @param {object} context - context
+     * @returns {function} object matcher
+     * @private
+     */
+    CustomEvents.prototype._matchContext = function(context) {
+        var self = this;
+
+        return function(item) {
+            var needRemove = context === item.context;
+
+            if (needRemove) {
+                self._forgetContext(item.context);
+            }
+
+            return needRemove;
+        };
+    };
+
+    /**
+     * Get matcher for unbind specific hander, context pair events
+     * @param {function} handler - handler function
+     * @param {object} context - context
+     * @returns {function} handler, context matcher
+     * @private
+     */
+    CustomEvents.prototype._matchHandlerAndContext = function(handler, context) {
+        var self = this;
+
+        return function(item) {
+            var matchHandler = (handler === item.handler),
+                matchContext = (context === item.context),
+                needRemove = (matchHandler && matchContext);
+
+            if (needRemove) {
+                self._forgetContext(item.context);
+            }
+
+            return needRemove;
+        };
+    };
+
+    /**
+     * Unbind event by event name
+     * @param {string} eventName - custom event name to unbind
+     * @param {function} [handler] - handler function
+     * @private
+     */
+    CustomEvents.prototype._offByEventName = function(eventName, handler) {
+        var self = this,
+            forEach = tui.util.forEachArray,
+            andByHandler = tui.util.isFunction(handler),
+            matchHandler = self._matchHandler(handler);
+
+        eventName = eventName.split(R_EVENTNAME_SPLIT);
+
+        forEach(eventName, function(name) {
+            var handlerItems = self._safeEvent(name);
+
+            if (andByHandler) {
+                self._spliceMatches(handlerItems, matchHandler);
+            } else {
+                forEach(handlerItems, function(item) {
+                    self._forgetContext(item.context);
+                });
+
+                self.events[name] = [];
+            }
+        });
+    };
+
+    /**
+     * Unbind event by handler function
+     * @param {function} handler - handler function
+     * @private
+     */
+    CustomEvents.prototype._offByHandler = function(handler) {
+        var self = this,
+            matchHandler = this._matchHandler(handler);
+
+        tui.util.forEach(this._safeEvent(), function(handlerItems) {
+            self._spliceMatches(handlerItems, matchHandler);
+        });
+    };
+
+    /**
+     * Unbind event by object(name: handler pair object or context object)
+     * @param {object} obj - context or {name: handler} pair object
+     * @param {function} handler - handler function
+     * @private
+     */
+    CustomEvents.prototype._offByObject = function(obj, handler) {
+        var self = this,
+            matchFunc;
+
+        if (this._indexOfContext(obj) < 0) {
+            tui.util.forEach(obj, function(func, name) {
+                self.off(name, func);
+            });
+        } else if (tui.util.isString(handler)) {
+            matchFunc = this._matchContext(obj);
+
+            self._spliceMatches(this._safeEvent(handler), matchFunc);
+        } else if (tui.util.isFunction(handler)) {
+            matchFunc = this._matchHandlerAndContext(handler, obj);
+
+            tui.util.forEach(this._safeEvent(), function(handlerItems) {
+                self._spliceMatches(handlerItems, matchFunc);
+            });
+        } else {
+            matchFunc = this._matchContext(obj);
+
+            tui.util.forEach(this._safeEvent(), function(handlerItems) {
+                self._spliceMatches(handlerItems, matchFunc);
+            });
+        }
+    };
+
+    /**
+     * Unbind custom events
+     * @param {(string|object|function)} eventName - event name or context or
+     *  {name: handler} pair object or handler function
+     * @param {(function)} handler - handler function
      * @example
-     * // 1. off by context
-     * customEvent.off(myObj);
-     *
-     * // 2. off by event name
+     * // 1. off by event name
      * customEvent.off('onload');
+     *
+     * // 2. off by event name and handler
+     * customEvent.off('play', handler);
      *
      * // 3. off by handler
      * customEvent.off(handler);
      *
-     * // 4. off by event name and handler
-     * customEvent.off('play', handler);
+     * // 4. off by context
+     * customEvent.off(myObj);
      *
      * // 5. off by context and handler
      * customEvent.off(myObj, handler);
@@ -1177,68 +1056,38 @@
      * customEvent.off();
      */
     CustomEvents.prototype.off = function(eventName, handler) {
-        if (!arguments.length) {
-            // 8. off the all events
-            this._events = null;
-            this._ctxEvents = null;
-            return;
-        }
-
-        if (tui.util.isFunction(eventName)) {
-            // 3. off by handler
-            this._offByHandler(eventName);
-
-        } else if (tui.util.isObject(eventName)) {
-            if (tui.util.hasStamp(eventName)) {
-                // 1, 5, 6 off by context
-                this._offByContext(eventName, handler);
-            } else {
-                // 4. off by an Object.<string, function>
-                tui.util.forEachOwnProperties(eventName, function(handler, name) {
-                    this.off(name, handler);
-                }, this);
-            }
-
-        } else {
-            // 2, 4 off by event name
+        if (tui.util.isString(eventName)) {
+            // [syntax 1, 2]
             this._offByEventName(eventName, handler);
-
+        } else if (!arguments.length) {
+            // [syntax 8]
+            this.events = {};
+            this.contexts = [];
+        } else if (tui.util.isFunction(eventName)) {
+            // [syntax 3]
+            this._offByHandler(eventName);
+        } else if (tui.util.isObject(eventName)) {
+            // [syntax 4, 5, 6]
+            this._offByObject(eventName, handler);
         }
     };
 
     /**
-     * Return a count of events registered.
-     * @param {string} eventName - Custom event name
-     * @returns {*}
+     * Fire custom event
+     * @param {string} eventName - name of custom event
      */
-    CustomEvents.prototype.getListenerLength = function(eventName) {
-        var ctxEvents = this._ctxEvents,
-            events = this._events,
-            existy = tui.util.isExisty,
-            lenKey = this._getCtxLenKey(eventName);
-
-        var normal = (existy(events) && tui.util.isArray(events[eventName])) ? events[eventName].length : 0,
-            ctx = (existy(ctxEvents) && existy(ctxEvents[lenKey])) ? ctxEvents[lenKey] : 0;
-
-        return normal + ctx;
+    CustomEvents.prototype.fire = function(eventName) {  // eslint-disable-line
+        this.invoke.apply(this, arguments);
     };
 
     /**
-     * Return whether at least one of the handlers is registered in the given event name.
-     * @param {string} eventName - Custom event name
-     * @returns {boolean} Is there at least one handler in event name?
-     */
-    CustomEvents.prototype.hasListener = function(eventName) {
-        return this.getListenerLength(eventName) > 0;
-    };
-
-
-
-    /**
-     * Fire a event and returns the result of operation 'boolean AND' with all listener's results.<br>
-     * So, It is different from {@link CustomEvents#fire}.<br>
-     * In service code,
-     *  use this as a before event in component level usually for notifying that the event is cancelable.
+     * Fire a event and returns the result of operation 'boolean AND' with all
+     *  listener's results.
+     *
+     * So, It is different from {@link CustomEvents#fire}.
+     *
+     * In service code, use this as a before event in component level usually
+     *  for notifying that the event is cancelable.
      * @param {string} eventName - Custom event name
      * @param {...*} data - Data for event
      * @returns {boolean} The result of operation 'boolean AND'
@@ -1251,81 +1100,59 @@
      *  // In service code,
      *  map.on({
      *      'beforeZoom': function() {
-     *          if (that.disabled && this.getState()) {    // It should cancel the 'zoom' event by some conditions.
+     *          // It should cancel the 'zoom' event by some conditions.
+     *          if (that.disabled && this.getState()) {
      *              return false;
      *          }
      *          return true;
      *      }
      *  });
      */
-    CustomEvents.prototype.invoke = function(eventName, data) {
+    CustomEvents.prototype.invoke = function(eventName) {
+        var events, args, index, item;
+
         if (!this.hasListener(eventName)) {
             return true;
         }
 
-        var args = Array.prototype.slice.call(arguments, 1),
-            self = this,
-            result = true,
-            existy = tui.util.isExisty;
+        events = this._safeEvent(eventName);
+        args = Array.prototype.slice.call(arguments, 1);
+        index = 0;
 
-        this._eachEventByEventName(eventName, function(item) {
-            if (existy(item) && item.fn.apply(self, args) === false) {
-                result = false;
+        while (events[index]) {
+            item = events[index];
+
+            if (item.handler.apply(item.context, args) === false) {
+                return false;
             }
-        });
 
-        this._eachCtxEventByEventName(eventName, function(item) {
-            if (existy(item) && item.fn.apply(item.ctx, args) === false) {
-                result = false;
-            }
-        });
+            index += 1;
+        }
 
-        return result;
+        return true;
     };
 
     /**
-     * Fire a event by event name with data.
+     * Return whether at least one of the handlers is registered in the given
+     *  event name.
      * @param {string} eventName - Custom event name
-     * @param {...*} data - Data for event
-     * @return {Object} this
-     * @example
-     *  instance.on('move', function(direction) {
-     *      var direction = direction;
-     *  });
-     *  instance.fire('move', 'left');
+     * @returns {boolean} Is there at least one handler in event name?
      */
-    CustomEvents.prototype.fire = function(eventName, data) {
-        this.invoke.apply(this, arguments);
-        return this;
+    CustomEvents.prototype.hasListener = function(eventName) {
+        return this.getListenerLength(eventName) > 0;
     };
 
     /**
-     * Attach a one-shot event.
-     * @param {(object|string)} eventName - Custom event name or an object {eventName: handler}
-     * @param {function} fn - Handler function
-     * @param {*} [context] - Context for binding
+     * Return a count of events registered.
+     * @param {string} eventName - Custom event name
+     * @returns {number} number of event
      */
-    CustomEvents.prototype.once = function(eventName, fn, context) {
-        var that = this;
-
-        if (tui.util.isObject(eventName)) {
-            tui.util.forEachOwnProperties(eventName, function(handler, eventName) {
-                this.once(eventName, handler, fn);
-            }, this);
-
-            return;
-        }
-
-        function onceHandler() {
-            fn.apply(context, arguments);
-            that.off(eventName, onceHandler, context);
-        }
-
-        this.on(eventName, onceHandler, context);
+    CustomEvents.prototype.getListenerLength = function(eventName) {
+        var events = this._safeEvent(eventName);
+        return events.length;
     };
 
     tui.util.CustomEvents = CustomEvents;
-
 })(window.tui);
 
 /**********
@@ -1421,7 +1248,7 @@
 /**
  * @fileoverview Define module
  * @author NHN Ent.
- *         FE Development Team <e0242@nhnent.com>
+ *         FE Development Team <dl_javscript@nhnent.com>
  * @dependency type.js, defineNamespace.js
  */
 (function(tui) {
@@ -1464,10 +1291,9 @@
 
         if (util.isFunction(base[INITIALIZATION_METHOD_NAME])) {
             base[INITIALIZATION_METHOD_NAME]();
-            delete base[INITIALIZATION_METHOD_NAME];
         }
 
-        return util.defineNamespace(namespace, base, true);
+        return util.defineNamespace(namespace, base);
     }
     tui.util.defineModule = defineModule;
 })(window.tui);
@@ -1494,75 +1320,45 @@
         tui.util = window.tui.util = {};
     }
 
+    var util = tui.util;
+
     /**
      * Define namespace
-     * @param {string} name - Module name
+     * @param {string} namespace - Namespace (ex- 'foo.bar.baz')
      * @param {(object|function)} props - A set of modules or one module
-     * @param {boolean} isOverride flag - What if module already define, override or not
+     * @param {boolean} [isOverride] - Override the props to the namespace.<br>
+     *                                  (It removes previous properties of this namespace)
      * @returns {(object|function)} Defined namespace
      * @memberof tui.util
      * @example
-     * var neComp = defineNamespace('ne.component');
+     * var neComp = tui.util.defineNamespace('ne.component');
      * neComp.listMenu = tui.util.defineClass({
      *      init: function() {
      *          // code
      *      }
      * });
      */
-    var defineNamespace = function(name, props, isOverride) {
-        var namespace,
-            lastspace,
-            result,
-            module = getNamespace(name);
+    tui.util.defineNamespace = function(namespace, props, isOverride) {
+        var names, result, prevLast, last;
 
-        if (!isOverride && isValidType(module)) {
-            return module;
-        }
+        names = namespace.split('.');
+        names.unshift(window);
 
-        namespace = name.split('.');
-        lastspace = namespace.pop();
-        namespace.unshift(window);
-
-        result = tui.util.reduce(namespace, function(obj, name) {
+        result = util.reduce(names, function(obj, name) {
             obj[name] = obj[name] || {};
             return obj[name];
         });
 
-        result[lastspace] = isValidType(props) ? props : {};
+        if (isOverride) {
+            last = names.pop();
+            prevLast = util.pick.apply(null, names);
+            result = prevLast[last] = props;
+        } else {
+            util.extend(result, props);
+        }
 
-        return result[lastspace];
-
-    };
-
-    /**
-     * Get namespace
-     * @param {string} name - namespace
-     * @returns {*}
-     */
-    var getNamespace = function(name) {
-        var namespace,
-            result;
-
-        namespace = name.split('.');
-        namespace.unshift(window);
-
-        result = tui.util.reduce(namespace, function(obj, name) {
-            return obj && obj[name];
-        });
         return result;
     };
-
-    /**
-     * Check valid type
-     * @param {*} module
-     * @returns {boolean}
-     */
-    var isValidType = function(module) {
-        return (tui.util.isObject(module) || tui.util.isFunction(module));
-    };
-
-    tui.util.defineNamespace = defineNamespace;
-
 })(window.tui);
 
 /**********
@@ -3266,7 +3062,7 @@ tui.util.Enum = Enum;
      * @return {boolean}
      */
     function hasEncodableString(string) {
-        return /[<>&"']/.test(string);
+        return (/[<>&"']/).test(string);
     }
 
     /**
@@ -3374,7 +3170,7 @@ tui.util.Enum = Enum;
         delay = delay || 0;
 
         function debounced() {
-            args = arguments;
+            args = aps.call(arguments);
 
             window.clearTimeout(timer);
             timer = window.setTimeout(function() {
@@ -3453,7 +3249,12 @@ tui.util.Enum = Enum;
 
             base = base || stamp;
 
-            debounced();
+            // pass array directly because `debounce()`, `tick()` are already use
+            // `apply()` method to invoke developer's `fn` handler.
+            //
+            // also, this `debounced` line invoked every time for implements 
+            // `trailing` features.
+            debounced(args);
 
             if ((stamp - base) >= interval) {
                 tick(args);
@@ -3873,7 +3674,7 @@ tui.util.Enum = Enum;
          * Post data bridge for IE11 popup
          * @type {string}
          */
-        this.postDataBridgeUrl = '';
+        this.postBridgeUrl = '';
     }
 
     /**********
@@ -3898,7 +3699,7 @@ tui.util.Enum = Enum;
     /**
      * Open popup
      * Caution:
-     *  In IE11, when transfer data to popup by POST, must set the postDataBridgeUrl.
+     *  In IE11, when transfer data to popup by POST, must set the postBridgeUrl.
      *
      * @param {string} url - popup url
      * @param {Object} options
@@ -3916,7 +3717,7 @@ tui.util.Enum = Enum;
      *      If true, the popup will be reloaded when you try to re-open the popup that has been opened.<br>
      *      When transmit the POST-data, some browsers alert a message for confirming whether retransmit or not.
      *
-     *     @param {string} [options.postDataBridgeUrl=''] - Use this url to avoid a certain bug occuring when transmitting POST data to the popup in IE11.<br>
+     *     @param {string} [options.postBridgeUrl=''] - Use this url to avoid a certain bug occuring when transmitting POST data to the popup in IE11.<br>
      *      This specific buggy situation is known to happen because IE11 tries to open the requested url not in a new popup window as intended, but in a new tab.<br>
      *      See {@link http://wiki.nhnent.com/pages/viewpage.action?pageId=240562844}
      *
@@ -3936,7 +3737,7 @@ tui.util.Enum = Enum;
 
         options.method = options.method.toUpperCase();
 
-        this.postDataBridgeUrl = options.postDataBridgeUrl || this.postDataBridgeUrl;
+        this.postBridgeUrl = options.postBridgeUrl || this.postBridgeUrl;
 
         var popup,
             formElement,
@@ -3944,7 +3745,7 @@ tui.util.Enum = Enum;
                 tui.util.browser.msie && tui.util.browser.version === 11;
 
         if (!tui.util.isExisty(url)) {
-            throw new Error('Popup#open() 팝업 URL이 입력되지 않았습니다');
+            throw new Error('Popup#open() need popup url.');
         }
 
         popup_id += 1;
@@ -3988,7 +3789,7 @@ tui.util.Enum = Enum;
         this.closeWithParentPopup[options.popupName] = options.closeWithParent;
 
         if (!popup || popup.closed || tui.util.isUndefined(popup.closed)) {
-            alert('브라우저에 팝업을 막는 기능이 활성화 상태이기 때문에 서비스 이용에 문제가 있을 수 있습니다. 해당 기능을 비활성화 해 주세요');
+            alert('please enable popup windows for this website');
         }
 
         if (options.param && options.method === 'POST' && !useIEPostBridge) {
@@ -4131,16 +3932,10 @@ tui.util.Enum = Enum;
         var popup;
 
         if (useIEPostBridge) {
-            url = this.postDataBridgeUrl + '?storageKey=' + encodeURIComponent(popupName) +
-            '&redirectUrl=' + encodeURIComponent(url);
-            if (!window.localStorage) {
-                alert('IE11브라우저의 문제로 인해 이 기능은 브라우저의 LocalStorage 기능을 활성화 하셔야 이용하실 수 있습니다');
-            } else {
-                localStorage.removeItem(popupName);
-                localStorage.setItem(popupName, JSON.stringify(param));
-
-                popup = window.open(url, popupName, optionStr);
-            }
+            popup = window.open(this.postBridgeUrl, popupName, optionStr);
+            setTimeout(function() {
+                popup.redirect(url, param);
+            }, 100);
         } else {
             popup = window.open(url, popupName, optionStr);
         }
@@ -4149,5 +3944,4 @@ tui.util.Enum = Enum;
     };
 
     tui.util.popup = new Popup();
-
 })(window.tui);
