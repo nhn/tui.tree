@@ -8,25 +8,37 @@
 
     <title>트리컴포넌트</title>
     <link rel="stylesheet" href="css/tree.css" />
+    <link rel="stylesheet" href="css/contextmenu.css" />
 </head>
 <body>
     <div class="wrap" style="height:500px;">
         <div class="treeWrap" style="position:relative;border:1px solid #eaeaea;">
             <ul id="treeRoot1" class="tree"></ul>
         </div>
-        <div style="position:absolute;top:0;left:305px;">
-            <div>
-                <button id="addChildBtn">addChild</button>
-                <button id="removeChildBtn">removeChild</button>
-                <button id="sortBtn">sortBtn</button>
+        <div style="position:absolute;top:-32px;left:305px;text-align:center;">
+            <p><b>This sample page is not working below IE7!</b></p>
+            <div style="border:3px solid #eee;margin:5px;padding:0 10px 10px 10px;text-align:left;">
+                <p>feature test 1 : default, selectable, draggable (support IE7+)</p>
+                <div>
+                    <button id="addChildBtn">addChild</button>
+                    <button id="removeChildBtn">removeChild</button>
+                    <button id="sortBtn">sortBtn</button>
+                </div>
+                <div>
+                    <button id="enableSelectionBtn">enableSelection</button>
+                    <button id="disableSelectionBtn">disableSelection</button>
+                </div>
+                <div>
+                    <button id="enableDNDBtn">enableDragAndDrop</button>
+                    <button id="disableDNDBtn">disableDragAndDrop</button>
+                </div>
             </div>
-            <div>
-                <button id="enableSelectionBtn">enableSelection</button>
-                <button id="disableSelectionBtn">disableSelection</button>
-            </div>
-            <div>
-                <button id="enableDNDBtn">enableDragAndDrop</button>
-                <button id="disableDNDBtn">disableDragAndDrop</button>
+            <div style="border:3px solid #eee;margin:5px;padding:0 10px 10px 10px;text-align:left;">
+                <p>feature test 2 : context-menu (support IE8+)</p>
+                <div>
+                    <button id="enableContextMenuBtn">enableContextMenu</button>
+                    <button id="disableContextMenuBtn">disableContextMenu</button>
+                </div>
             </div>
         </div>
     </div>
@@ -34,6 +46,11 @@
     <div class="codeArea"></div>
 
     <script type="text/javascript" src="js/code-snippet.js"></script>
+    <!-- library files for context-menu feature -->
+    <script type="text/javascript" src="js/domutil.js"></script>
+    <script type="text/javascript" src="js/floatinglayer.js"></script>
+    <script type="text/javascript" src="js/contextmenu.js"></script>
+    <!-- // library files for context-menu feature -->
     <script type="text/javascript" src="js/tree.js"></script>
 
     <script src="../scripts/prettify/prettify.js"></script>
@@ -93,6 +110,8 @@
             disableSelectionBtn = document.getElementById('disableSelectionBtn'),
             enableDNDBtn = document.getElementById('enableDNDBtn'),
             disableDNDBtn = document.getElementById('disableDNDBtn'),
+            enableContextMenuBtn = document.getElementById('enableContextMenuBtn'),
+            disableContextMenuBtn = document.getElementById('disableContextMenuBtn'),
             rootNodeId = tree.getRootNodeId(),
             firstChildId = tree.getChildIds(rootNodeId)[0];
 
@@ -128,6 +147,7 @@
         util.addEventListener(enableDNDBtn, 'click', function() {
             tree.enableFeature('Draggable', {
                 isSortable: true,
+                lineClassName: 'tui-tree-marker',
                 lineBoundary: {
                     top: 10,
                     bottom: 10
@@ -139,6 +159,27 @@
             tree.disableFeature('Draggable');
         });
 
+        util.addEventListener(enableContextMenuBtn, 'click', function() {
+            tree.enableFeature('ContextMenu', {
+                menuData: [
+                    {title: 'menu1', command: 'copy'},
+                    {title: 'menu2', command: 'paste'},
+                    {separator: true},
+                    {
+                        title: 'menu3',
+                        menu: [
+                            {title: 'submenu1'},
+                            {title: 'submenu2'}
+                        ]
+                    }
+                ]
+            });
+        });
+
+        util.addEventListener(disableContextMenuBtn, 'click', function() {
+            tree.disableFeature('ContextMenu');
+        });
+
         tree.on('select', function(nodeId) {
             if (window.console) {
                 console.log('select! - ' + nodeId);
@@ -147,20 +188,9 @@
             }
         });
 
-        tree.on('move', function(e) {
-            var msg;
-
-            msg = 'nodeId: ' + e.nodeId + '\n';
-            msg += 'originalParentId: ' + e.originalParentId + '\n';
-            msg += 'newParentId: ' + e.newParentId + '\n';
-            msg += 'index: ' + e.index + '\n';
-
-            if (window.console) {
-                console.log(msg);
-            } else {
-                alert(msg);
-            }
+        tree.on('selectContextMenu', function(e) {
+            //alert('"' + e.cmd + '" is selected on "' + e.nodeId + '" item.');
         });
     </script>
-    </body>
+</body>
 </html>

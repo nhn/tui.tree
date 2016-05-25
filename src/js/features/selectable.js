@@ -161,6 +161,7 @@ var Selectable = tui.util.defineClass(/** @lends Selectable.prototype */{/*eslin
     /**
      * Get selected node id
      * @api
+     * @memberOf Tree.prototype
      * @returns {string} selected node id
      */
     getSelectedNodeId: function() {

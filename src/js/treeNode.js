@@ -257,6 +257,47 @@ var TreeNode = tui.util.defineClass(/** @lends TreeNode.prototype */{ /*eslint-d
      */
     isRoot: function() {
         return tui.util.isFalsy(this._parentId);
+    },
+
+    /**
+     * Get index of child
+     * @api
+     * @param {string} id - Node id
+     * @returns {number} Index of child in children list
+     */
+    getChildIndex: function(id) {
+        return inArray(id, this._childIds);
+    },
+
+    /**
+     * Insert child id
+     * @param {string} id - Child node id
+     * @param {number} index - Index number of insert position
+     */
+    insertChildId: function(id, index) {
+        var childIds = this._childIds;
+
+        if (inArray(id, childIds) === -1) {
+            childIds.splice(index, 0, id);
+        }
+    },
+
+    /**
+     * Move child id
+     * @param {string} id - Child node id
+     * @param {number} index - Index number of insert position
+     */
+    moveChildId: function(id, index) {
+        var childIds = this._childIds;
+        var originIdx = this.getChildIndex(id);
+
+        if (inArray(id, childIds) !== -1) {
+            if (originIdx < index) {
+                index -= 1;
+            }
+
+            childIds.splice(index, 0, childIds.splice(originIdx, 1)[0]);
+        }
     }
 });
 module.exports = TreeNode;
