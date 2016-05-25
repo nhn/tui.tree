@@ -17,9 +17,24 @@ module.exports = function(config) {
         ],
 
         files: [
+            {
+                pattern: 'bower_components/tui-code-snippet/code-snippet.js',
+                watched: false
+            },
+            {
+                pattern: 'bower_components/tui-domutil/domutil.js',
+                watched: false
+            },
+            {
+                pattern: 'bower_components/tui-component-floatinglayer/floatinglayer.js',
+                watched: false
+            },
+            {
+                pattern: 'bower_components/tui-component-contextmenu/contextmenu.js',
+                watched: false
+            },
             'bower_components/jquery/jquery.min.js',
             'node_modules/jasmine-jquery/lib/jasmine-jquery.js',
-            'bower_components/tui-code-snippet/code-snippet.min.js',
             'test/preparation.js',
             'test/**/*.test.js',
             'src/**/*.js',
@@ -75,7 +90,6 @@ module.exports = function(config) {
         autoWatch: true,
 
         browsers: [
-            'IE7',
             'IE8',
             'IE9',
             'IE10',

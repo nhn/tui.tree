@@ -690,7 +690,18 @@ module.exports = Checkbox;
 var util = require('./../util');
 
 var API_LIST = [];
+var TuiContextMenu = tui && tui.component && tui.component.ContextMenu;
+var styleKeys = ['userSelect', 'WebkitUserSelect', 'OUserSelect', 'MozUserSelect', 'msUserSelect'];
+var enableProp = util.testProp(styleKeys);
 
+/**
+ * Set context-menu feature on tree
+ * @class ContextMenu
+ * @constructor
+ * @param {Tree} tree - Tree
+ * @param {object} options - Options
+ *     @param {Array.<object>} options.menuData - Context menu data
+ */
 var ContextMenu = tui.util.defineClass(/** @lends ContextMenu.prototype */{/*eslint-disable*/
     static: {
         /**
@@ -702,63 +713,162 @@ var ContextMenu = tui.util.defineClass(/** @lends ContextMenu.prototype */{/*esl
             return API_LIST.slice();
         }
     },
-
-    init: function(tree, menus) { /*eslint-enable*/
+    init: function(tree, options) { /*eslint-enable*/
+        /**
+         * Tree data
+         * @type {Tree}
+         */
         this.tree = tree;
-        this.isOpened = false;
-        this.layer = document.createElement('DIV');
 
-        this.makeLayer(menus);
-        this.attachEvent();
+        /**
+         * Id of floating layer in tree
+         * @type {string}
+         */
+        this.flId = this.tree.rootElement.id + '-fl';
+
+        /**
+         * Info of context menu in tree
+         * @type {object}
+         */
+        this.menu = this._generateContextMenu();
+
+        /**
+         * Floating layer element
+         * @type {HTMLElement}
+         */
+        this.flElement = document.getElementById(this.flId);
+
+        /**
+         * Id of selected tree item
+         * @type {string}
+         */
+        this.selectedNodeId = null;
+
+        this._preventTextSelection();
+
+        this._attachEvent(options.menuData || {});
     },
 
-    makeLayer: function(menus) {
-        var style = this.layer.style;
-
-        style.position = 'absolute';
-        style.backgroundColor = 'white';
-        style.border = '1px solid black';
-        this.layer.innerHTML = 'test';
-    },
-
-    attachEvent: function() {
-        var tree = this.tree;
-
-        tree.on('_contextMenu', function(event) {
-            var nodeId = tree.getNodeIdFromElement(util.getTarget(event)),
-                layer = this.layer,
-                self = this;
-
-            event.preventDefault();
-            layer.style.top = event.clientY + 10 + 'px';
-            layer.style.left = event.clientX + 10 + 'px';
-
-            if (!this.isOpened) {
-                this.isOpened = true;
-                document.body.appendChild(layer);
-
-                util.addEventListener(document.body, 'click', function closeLayer() {
-                    self.isOpened = false;
-                    document.body.removeChild(layer);
-                    util.removeEventListener(document.body, 'click', closeLayer);
-                });
-            }
-
-            /**
-             * @api
-             * @events Tree#contextMenu
-             * @param {object} data - Data
-             *  @param {data.nodeId} nodeId - selected node id
-             */
-            tree.fire('openContextMenu', {
-                nodeId: nodeId
-            });
-        }, this);
-    },
-
+    /**
+     * Disable context-menu feature
+     */
     destroy: function() {
+        var treeSelector = this._getTreeSelector();
+
+        this.menu.unregister(treeSelector);
         this.tree.off(this);
-        this.tree.off('_contextMenu');
+
+        this._restoreTextSelection();
+        this._removeFloatingLayer();
+    },
+
+    /**
+     * Create floating layer for context menu
+     * @private
+     */
+    _createFloatingLayer: function() {
+        this.flElement = document.createElement('div');
+        this.flElement.id = this.flId;
+
+        document.body.appendChild(this.flElement);
+    },
+
+    /**
+     * Remove floating layer for context menu
+     * @private
+     */
+    _removeFloatingLayer: function() {
+        document.body.removeChild(this.flElement);
+        this.flElement = null;
+    },
+
+    /**
+     * Generate context menu in tree
+     * @returns {TuiContextMenu} Instance of TuiContextMenu
+     * @private
+     */
+    _generateContextMenu: function() {
+        if (!this.flElement) {
+            this._createFloatingLayer();
+        }
+
+        return new TuiContextMenu(this.flElement);
+    },
+
+    /**
+     * Prevent text selection on selected tree item
+     * @private
+     */
+    _preventTextSelection: function() {
+        if (enableProp) {
+            this.tree.rootElement.style[enableProp] = 'none';
+        }
+    },
+
+    /**
+     * Restore text selection on selected tree item
+     * @private
+     */
+    _restoreTextSelection: function() {
+        if (enableProp) {
+            this.tree.rootElement.style[enableProp] = '';
+        }
+    },
+
+    /**
+     * Get selector of tree
+     * @returns {string} Selector based on id of root tree element
+     * @private
+     */
+    _getTreeSelector: function() {
+        return '#' + this.tree.rootElement.id;
+    },
+
+    /**
+     * Attach event on tree
+     * @param {Array.<object>} menuData - Context menu data
+     * @private
+     */
+    _attachEvent: function(menuData) {
+        var treeSelector = this._getTreeSelector();
+
+        this.menu.register(treeSelector, tui.util.bind(this._onSelect, this), menuData);
+        this.tree.on('contextmenu', this._onMouseClick, this);
+    },
+
+    /**
+     * Event handler on context menu
+     * @param {MouseEvent} e - Mouse event
+     * @param {string} cmd - Options value of selected context menu ("title"|"command")
+     * @private
+     */
+    _onSelect: function(e, cmd) {
+        /**
+         * @api
+         * @event Tree#selectContextMenu
+         * @param {{cmd: string, nodeId: string}} treeEvent - Tree event
+         * @example
+         * tree.on('selectContextMenu', function(treeEvent) {
+         *     var cmd = treeEvent.cmd,
+         *     var nodeId = treeEvent.nodeId;
+         *
+         *     console.log(cmd, nodeId);
+         * });
+         */
+        this.tree.fire('selectContextMenu', {
+            cmd: cmd,
+            nodeId: this.selectedNodeId
+        });
+    },
+
+    /**
+     * Event handler on tree item
+     * @param {MouseEvent} e - Mouse event
+     */
+    _onMouseClick: function(e) {
+        var target = util.getTarget(e);
+
+        this.selectedNodeId = this.tree.getNodeIdFromElement(target);
     }
 });
 
@@ -773,6 +883,14 @@ var defaultOptions = {
         helperPos: {
             y: 2,
             x: 5
+        },
+        autoOpenDelay: 1500,
+        isSortable: false,
+        hoverClassName: 'tui-tree-hover',
+        lineClassName: 'tui-tree-line',
+        lineBoundary: {
+            top: 2,
+            bottom: 2
         }
     },
     rejectedTagNames = [
@@ -793,6 +911,11 @@ var defaultOptions = {
  *  @param {{x: number, y:number}} options.helperPos - Helper position
  *  @param {Array.<string>} options.rejectedTagNames - No draggable tag names
  *  @param {Array.<string>} options.rejectedClassNames - No draggable class names
+ *  @param {number} options.autoOpenDelay - Delay time while dragging to be opened
+ *  @param {boolean} options.isSortable - Flag of whether using sortable dragging
+ *  @param {string} options.hoverClassName - Class name for hovered node
+ *  @param {string} options.lineClassName - Class name for moving position line
+ *  @param {{top: number, bottom: number}} options.lineBoundary - Boundary value for visible moving line
  */
 var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{/*eslint-disable*/
     static: {
@@ -829,10 +952,22 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{/*eslint-
         this.userSelectPropertyKey = null;
         this.userSelectPropertyValue = null;
         this.currentNodeId = null;
+        this.autoOpenDelay = options.autoOpenDelay;
+        this.isSortable = options.isSortable;
+        this.hoverClassName = options.hoverClassName;
+        this.lineClassName = options.lineClassName;
+        this.lineBoundary = options.lineBoundary;
+        this.hoveredElement = null;
+        this.movingLineType = null;
+        this.timer = null;
 
         style.position = 'absolute';
         style.display = 'none';
         this.tree.rootElement.parentNode.appendChild(helperElement);
+
+        if (this.isSortable) {
+            this._setMovingLine();
+        }
     },
 
     /**
@@ -915,16 +1050,24 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{/*eslint-
      * @param {MouseEvent} event - Mouse event
      */
     onMousemove: function(event) {
-        var tree = this.tree,
-            helperEl = this.helperElement,
-            pos = tree.rootElement.getBoundingClientRect();
+        var tree = this.tree;
+        var helperEl = this.helperElement;
+        var mousePos = util.getMousePos(event);
+        var target = util.getTarget(event);
+        var nodeId = tree.getNodeIdFromElement(target);
+        var pos = tree.rootElement.getBoundingClientRect();
+
         if (!this.useHelper) {
             return;
         }
 
-        helperEl.style.top = event.clientY - pos.top + this.helperPos.y + 'px';
-        helperEl.style.left = event.clientX - pos.left + this.helperPos.x + 'px';
+        helperEl.style.top = mousePos.y - pos.top + this.helperPos.y + 'px';
+        helperEl.style.left = mousePos.x - pos.left + this.helperPos.x + 'px';
         helperEl.style.display = '';
+
+        if (nodeId) {
+            this._applyMoveAction(nodeId, mousePos);
+        }
     },
 
     /**
@@ -932,13 +1075,24 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{/*eslint-
      * @param {MouseEvent} event - Mouse event
      */
     onMouseup: function(event) {
-        var tree = this.tree,
-            target = util.getTarget(event),
-            nodeId = tree.getNodeIdFromElement(target);
+        var tree = this.tree;
+        var target = util.getTarget(event);
+        var nodeId = tree.getNodeIdFromElement(target);
+        var index = -1;
+
+        if (this.isSortable) {
+            this.lineElement.style.visibility = 'hidden';
+
+            if (nodeId && this.movingLineType) {
+                index = this._getIndexForInserting(nodeId);
+                nodeId = tree.getParentId(nodeId);
+            }
+        }
 
         this.helperElement.style.display = 'none';
-        tree.move(this.currentNodeId, nodeId);
+        tree.move(this.currentNodeId, nodeId, index);
         this.currentNodeId = null;
+        this.movingLineType = null;
 
         tree.off(this, 'mousemove');
         tree.off(this, 'mouseup');
@@ -976,6 +1130,159 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{/*eslint-
     destroy: function() {
         this.restoreTextSelection();
         this.detachMousedown();
+    },
+
+    /**
+     * Set moving line element
+     */
+    _setMovingLine: function() {
+        var lineElement = document.createElement('div');
+        var lineStyle = lineElement.style;
+
+        lineStyle.position = 'absolute';
+        lineStyle.visibility = 'hidden';
+
+        lineElement.className = this.lineClassName;
+
+        this.tree.rootElement.parentNode.appendChild(lineElement);
+
+        this.lineElement = lineElement;
+    },
+
+    /**
+     * Apply move action that are delay effect and sortable moving node
+     * @param {strig} nodeId - Selected tree node id
+     * @param {object} mousePos - Current mouse position
+     */
+    _applyMoveAction: function(nodeId, mousePos) {
+        var currentElement = document.getElementById(nodeId);
+        var targetPos = currentElement.getBoundingClientRect();
+        var hasClass = util.hasClass(currentElement, this.hoverClassName);
+        var isContain = this._isContain(targetPos, mousePos);
+        var boundaryType;
+
+        if (!this.hoveredElement && isContain) {
+            this._hover(nodeId);
+        } else if (!hasClass || (hasClass && !isContain)) {
+            this._unhover();
+        }
+
+        if (this.isSortable) {
+            boundaryType = this._getBoundaryType(targetPos, mousePos);
+            this._drawBoundaryLine(targetPos, boundaryType);
+        }
+    },
+
+    /**
+     * Act to hover on tree item
+     * @param {string} nodeId - Tree node id
+     */
+    _hover: function(nodeId) {
+        var tree = this.tree;
+        var hoverEl = document.getElementById(nodeId);
+
+        this.hoveredElement = hoverEl;
+
+        util.addClass(hoverEl, this.hoverClassName);
+
+        if (!tree.isLeaf(nodeId)) {
+            this.timer = setTimeout(function() {
+                if (tree.getNodeIdFromElement(hoverEl) === nodeId) {
+                    tree.open(nodeId);
+                }
+            }, this.autoOpenDelay);
+        }
+    },
+
+    /**
+     * Act to unhover on tree item
+     */
+    _unhover: function() {
+        clearTimeout(this.timer);
+
+        util.removeClass(this.hoveredElement, this.hoverClassName);
+
+        this.hoveredElement = null;
+        this.timer = null;
+    },
+
+    /**
+     * Check contained state of current target
+     * @param {object} targetPos - Position of tree item
+     * @param {object} mousePos - Position of moved mouse
+     * @returns {boolean} Contained state
+     */
+    _isContain: function(targetPos, mousePos) {
+        var top = targetPos.top;
+        var bottom = targetPos.bottom;
+
+        if (this.isSortable) {
+            top += this.lineBoundary.top;
+            bottom -= this.lineBoundary.bottom;
+        }
+
+        if (targetPos.left < mousePos.x && targetPos.right > mousePos.x &&
+            top < mousePos.y && bottom > mousePos.y) {
+            return true;
+        }
+
+        return false;
+    },
+
+    /**
+     * Get boundary type by mouse position
+     * @param {object} targetPos - Position of tree item
+     * @param {object} mousePos - Position of moved mouse
+     * @returns {string} Position type in boundary
+     */
+    _getBoundaryType: function(targetPos, mousePos) {
+        var type;
+
+        if (mousePos.y < targetPos.top + this.lineBoundary.top) {
+            type = 'top';
+        } else if (mousePos.y > targetPos.bottom - this.lineBoundary.bottom) {
+            type = 'bottom';
+        }
+
+        return type;
+    },
+
+    /**
+     * Draw boundary line on tree
+     * @param {object} targetPos - Position of tree item
+     * @param {string} boundaryType - Position type in boundary
+     */
+    _drawBoundaryLine: function(targetPos, boundaryType) {
+        var style = this.lineElement.style;
+        var lineHeight;
+        var scrollTop;
+
+        if (boundaryType) {
+            scrollTop = this.tree.rootElement.parentNode.scrollTop + util.getWindowScrollTop();
+            lineHeight = Math.round(this.lineElement.offsetHeight / 2);
+
+            style.top = Math.round(targetPos[boundaryType]) - lineHeight + scrollTop + 'px';
+            style.visibility = 'visible';
+            this.movingLineType = boundaryType;
+        } else {
+            style.visibility = 'hidden';
+            this.movingLineType = null;
+        }
+    },
+
+    /**
+     * Get index for inserting
+     * @param {string} nodeId - Current selected helper node id
+     * @returns {number} Index number
+     */
+    _getIndexForInserting: function(nodeId) {
+        var index = this.tree.getNodeIndex(nodeId);
+
+        if (this.movingLineType === 'bottom') {
+            index += 1;
+        }
+
+        return index;
     }
 });
 
@@ -1541,29 +1848,32 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * @param {string} nodeId - Node id
      * @param {string} originalParentId - Original parent node id
      * @param {string} newParentId - New parent node id
+     * @param {number} [index] - Start index number for inserting
      * @private
      */
-    _onMove: function(nodeId, originalParentId, newParentId) {
+    _onMove: function(nodeId, originalParentId, newParentId, index) {
         this._draw(originalParentId);
         this._draw(newParentId);
 
         /**
          * @api
          * @event Tree#move
-         * @param {{nodeId: string, originalParentId: string, newParentId: string}} treeEvent - Tree event
+         * @param {{nodeId: string, originalParentId: string, newParentId: string, index: number}} treeEvent - Event
          * @example
          * tree.on('move', function(treeEvent) {
          *     var nodeId = treeEvent.nodeId,
          *         originalParentId = treeEvent.originalParentId,
-         *         newParentId = treeEvent.newParentId;
+         *         newParentId = treeEvent.newParentId,
+         *         index = treeEvent.index;
          *
-         *     console.log(nodeId, originalParentId, newParentId);
+         *     console.log(nodeId, originalParentId, newParentId, index);
          * });
          */
         this.fire('move', {
             nodeId: nodeId,
             originalParentId: originalParentId,
-            newParentId: newParentId
+            newParentId: newParentId,
+            index: index
         });
     },
 
@@ -1582,8 +1892,13 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
         util.addEventListener(this.rootElement, 'contextmenu', snippet.bind(this._onContextMenu, this));
     },
 
-    _onContextMenu: function(event) {
-        this.fire('_contextMenu', event);
+    /**
+     * Event handler - contextmenu
+     * @param {MouseEvent} mouseEvent - Contextmenu event
+     * @private
+     */
+    _onContextMenu: function(mouseEvent) {
+        this.fire('contextmenu', mouseEvent);
     },
 
     /**
@@ -2253,14 +2568,15 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * @api
      * @param {string} nodeId - Node id
      * @param {string} newParentId - New parent id
+     * @param {number} index - Index number of selected node
      * @param {boolean} [isSilent] - If true, it doesn't redraw children
      * @example
      * tree.move(myNodeId, newParentId); // mode node with redrawing
      * tree.move(myNodeId, newParentId, true); // move node without redrawing
      */
-    move: function(nodeId, newParentId, isSilent) {
+    move: function(nodeId, newParentId, index, isSilent) {
         this.isMovingNode = true;
-        this.model.move(nodeId, newParentId, isSilent);
+        this.model.move(nodeId, newParentId, index, isSilent);
         this.isMovingNode = false;
     },
 
@@ -2364,7 +2680,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
     /**
      * Enable facility of tree
      * @api
-     * @param {string} featureName - 'Selectable', 'Draggable', 'Editable'
+     * @param {string} featureName - 'Selectable', 'Draggable', 'Editable', 'ContextMenu'
      * @param {object} [options] - Feature options
      * @returns {Tree} this
      * @example
@@ -2381,13 +2697,33 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      *      useHelper: true,
      *      helperPos: {x: 5, y: 2},
      *      rejectedTagNames: ['UL', 'INPUT', 'BUTTON'],
-     *      rejectedClassNames: ['notDraggable', 'notDraggable-2']
+     *      rejectedClassNames: ['notDraggable', 'notDraggable-2'],
+     *      autoOpenDelay: 1500,
+     *      isSortable: true,
+     *      hoverClassName: 'tui-tree-hover'
+     *      lineClassName: 'tui-tree-line',
+     *      lineBoundary: {
+     *      	top: 10,
+     *       	bottom: 10
+     *      }
      *  })
      *  .enableFeature('Checkbox', {
      *      checkboxClassName: 'tui-tree-checkbox'
      *  })
      *  .enableFeature('ContextMenu, {
-     *  });
+     *  	menuData: [
+     *   		{title: 'menu1', command: 'copy'},
+     *     		{title: 'menu2', command: 'paste'},
+     *       	{separator: true},
+     *        	{
+     *         		title: 'menu3',
+     *           	menu: [
+     *            		{title: 'submenu1'},
+     *              	{title: 'submenu2'}
+     *              ]
+     *          }
+     *      }
+     *  })
      */
     enableFeature: function(featureName, options) {
         var Feature = features[featureName];
@@ -2422,6 +2758,18 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
         }
 
         return this;
+    },
+
+    /**
+     * Get index number of selected node
+     * @api
+     * @param {string} nodeId - Id of selected node
+     * @returns {number} Index number of attached node
+     */
+    getNodeIndex: function(nodeId) {
+        var parentId = this.model.getParentId(nodeId);
+
+        return this.model.getNode(parentId).getChildIndex(nodeId);
     }
 });
 
@@ -2750,29 +3098,43 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
      * Move a node to new parent's child
      * @param {string} nodeId - Node id
      * @param {string} newParentId - New parent id
+     * @param {number} [index] - Start index number for inserting
      * @param {boolean} [isSilent] - If true, it doesn't trigger the 'update' event
      */
-    move: function(nodeId, newParentId, isSilent) {
-        var node = this.getNode(nodeId),
-            originalParent, originalParentId, newParent;
+    move: function(nodeId, newParentId, index, isSilent) {
+        var node = this.getNode(nodeId);
+        var originalParent, originalParentId, newParent;
 
         if (!node) {
             return;
         }
+
         newParent = this.getNode(newParentId) || this.rootNode;
         newParentId = newParent.getId();
         originalParentId = node.getParentId();
         originalParent = this.getNode(originalParentId);
+        index = tui.util.isUndefined(index) ? -1 : index;
 
         if (nodeId === newParentId || this.contains(nodeId, newParentId)) {
             return;
         }
-        originalParent.removeChildId(nodeId);
+
+        if (index !== -1) {
+            if (newParentId === originalParentId) {
+                newParent.moveChildId(nodeId, index);
+            } else {
+                newParent.insertChildId(nodeId, index);
+                originalParent.removeChildId(nodeId);
+            }
+        } else {
+            newParent.addChildId(nodeId);
+            originalParent.removeChildId(nodeId);
+        }
+
         node.setParentId(newParentId);
-        newParent.addChildId(nodeId);
 
         if (!isSilent) {
-            this.fire('move', nodeId, originalParentId, newParentId);
+            this.fire('move', nodeId, originalParentId, newParentId, index);
         }
     },
 
@@ -3131,6 +3493,47 @@ var TreeNode = tui.util.defineClass(/** @lends TreeNode.prototype */{ /*eslint-d
      */
     isRoot: function() {
         return tui.util.isFalsy(this._parentId);
+    },
+
+    /**
+     * Get index of child
+     * @api
+     * @param {string} id - Node id
+     * @returns {number} Index of child in children list
+     */
+    getChildIndex: function(id) {
+        return inArray(id, this._childIds);
+    },
+
+    /**
+     * Insert child id
+     * @param {string} id - Child node id
+     * @param {number} index - Index number of insert position
+     */
+    insertChildId: function(id, index) {
+        var childIds = this._childIds;
+
+        if (inArray(id, childIds) === -1) {
+            childIds.splice(index, 0, id);
+        }
+    },
+
+    /**
+     * Move child id
+     * @param {string} id - Child node id
+     * @param {number} index - Index number of insert position
+     */
+    moveChildId: function(id, index) {
+        var childIds = this._childIds;
+        var originIdx = this.getChildIndex(id);
+
+        if (inArray(id, childIds) !== -1) {
+            if (originIdx < index) {
+                index -= 1;
+            }
+
+            childIds.splice(index, 0, childIds.splice(originIdx, 1)[0]);
+        }
     }
 });
 module.exports = TreeNode;
@@ -3148,7 +3551,9 @@ var isUndefined = tui.util.isUndefined,
     isValidDotNotation = function(str) {
         return isValidDotNotationRe.test(str);
     },
-    isArray = tui.util.isArraySafe;
+    isArray = tui.util.isArraySafe,
+    isSupportPageOffset = typeof window.pageXOffset !== 'undefined',
+    isCSS1Compat = document.compatMode === 'CSS1Compat';
 
 var util = {
     /**
@@ -3398,6 +3803,34 @@ var util = {
         }
 
         return null;
+    },
+
+    /**
+     * Get mouse position
+     * @param {MouseEvet} event - Event object
+     * @returns {object} X, Y position of mouse
+     */
+    getMousePos: function(event) {
+        return {
+            x: event.clientX,
+            y: event.clientY
+        };
+    },
+
+    /**
+     * Get value of scroll top on document.body (cross browsing)
+     * @returns {number} Value of scroll top
+     */
+    getWindowScrollTop: function() {
+        var scrollTop;
+
+        if (isSupportPageOffset) {
+            scrollTop = window.pageYOffset;
+        } else {
+            scrollTop = isCSS1Compat ? document.documentElement.scrollTop : document.body.scrollTop;
+        }
+
+        return scrollTop;
     }
 };
 

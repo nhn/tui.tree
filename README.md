@@ -8,9 +8,10 @@ Each node can be moved by drag and drop.
 * Display hierarchical data by tree UI
 * Fold sub tree
 * Edit node
-* Drag and drop
+* Drag and drop (extend)
 * Tri-state checkbox
 * Custom events
+* Context menu
 
 ## Documentation
 * **API** : https://nhnent.github.io/tui.component.tree/latest
@@ -21,10 +22,15 @@ Each node can be moved by drag and drop.
 * Default<br>
 ![alt tag](https://nhnent.github.io/tui.component.tree/tree.png)<br>
 * Label Apply<br>
-![alt tag](https://nhnent.github.io/tui.component.tree/tree_edit.png)
+![alt tag](https://nhnent.github.io/tui.component.tree/tree_edit.png)<br>
+* Daraggable<br>
+![alt tag](https://nhnent.github.io/tui.component.tree/tree_drag.png)<br>
+* Context Menu<br>
+![alt tag](https://nhnent.github.io/tui.component.tree/tree_contextmenu.png)<br>
 
 ## Dependency
-* tui-code-snippet: 1.0.4
+* tui-code-snippet: ~1.0.4
+* tui-contextmenu: 1.0.0 (for using ContextMenu feature)
 
 ## Test environment
 * PC
