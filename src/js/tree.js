@@ -734,6 +734,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
 
     /**
      * Get node state.
+     * @api
      * @param {string} nodeId - Node id
      * @returns {string|null} Node state(('opened', 'closed', null)
      * @example
