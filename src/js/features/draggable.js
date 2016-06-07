@@ -2,27 +2,31 @@
 var util = require('./../util');
 
 var defaultOptions = {
-        useHelper: true,
-        helperPos: {
-            y: 2,
-            x: 5
-        },
-        autoOpenDelay: 1500,
-        isSortable: false,
-        hoverClassName: 'tui-tree-hover',
-        lineClassName: 'tui-tree-line',
-        lineBoundary: {
-            top: 2,
-            bottom: 2
-        }
+    useHelper: true,
+    helperPos: {
+        y: 2,
+        x: 5
     },
-    rejectedTagNames = [
-        'INPUT',
-        'BUTTON',
-        'UL'
-    ],
-    API_LIST = [],
-    inArray = tui.util.inArray;
+    autoOpenDelay: 1500,
+    isSortable: false,
+    hoverClassName: 'tui-tree-hover',
+    lineClassName: 'tui-tree-line',
+    lineBoundary: {
+        top: 2,
+        bottom: 2
+    }
+};
+var rejectedTagNames = [
+    'INPUT',
+    'BUTTON',
+    'UL'
+];
+var selectKey = util.testProp(
+    ['userSelect', 'WebkitUserSelect', 'OUserSelect', 'MozUserSelect', 'msUserSelect']
+);
+var inArray = tui.util.inArray;
+var forEach = tui.util.forEach;
+var API_LIST = [];
 
 /**
  * Set the tree draggable
@@ -53,212 +57,65 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{/*eslint-
     },
 
     init: function(tree, options) { /*eslint-enable*/
+        options = tui.util.extend({}, defaultOptions, options);
+
         this.tree = tree;
+        this.helperElement = null;
+        this.userSelectPropertyKey = null;
+        this.userSelectPropertyValue = null;
+        this.currentNodeId = null;
+        this.hoveredElement = null;
+        this.movingLineType = null;
+        this.timer = null;
+
         this.setMembers(options);
+
+        this.initHelper();
+
+        if (this.isSortable) {
+            this.initMovingLine();
+        }
+
         this.attachMousedown();
     },
 
     /**
      * Set members of this module
      * @param {Object} options - input options
+     * @private
      */
     setMembers: function(options) {
-        var helperElement = document.createElement('span'),
-            style = helperElement.style;
-        options = tui.util.extend({}, defaultOptions, options);
+        forEach(options, function(value, key) {
+            if (!(key === 'rejectedTagNames' || key === 'rejectedClassNames')) {
+                this[key] = value;
+            }
+        }, this);
 
-        this.useHelper = options.useHelper;
-        this.helperPos = options.helperPos;
         this.rejectedTagNames = rejectedTagNames.concat(options.rejectedTagNames);
         this.rejectedClassNames = [].concat(options.rejectedClassNames);
-        this.helperElement = helperElement;
-        this.userSelectPropertyKey = null;
-        this.userSelectPropertyValue = null;
-        this.currentNodeId = null;
-        this.autoOpenDelay = options.autoOpenDelay;
-        this.isSortable = options.isSortable;
-        this.hoverClassName = options.hoverClassName;
-        this.lineClassName = options.lineClassName;
-        this.lineBoundary = options.lineBoundary;
-        this.hoveredElement = null;
-        this.movingLineType = null;
-        this.timer = null;
+    },
 
-        style.position = 'absolute';
-        style.display = 'none';
+    /**
+     * Init helper element
+     * @private
+     */
+    initHelper: function() {
+        var helperElement = document.createElement('span');
+        var helperStyle = helperElement.style;
+
+        helperStyle.position = 'absolute';
+        helperStyle.display = 'none';
+
         this.tree.rootElement.parentNode.appendChild(helperElement);
 
-        if (this.isSortable) {
-            this._setMovingLine();
-        }
+        this.helperElement = helperElement;
     },
 
     /**
-     * Attach mouse down event
+     * Init moving line element
+     * @private
      */
-    attachMousedown: function() {
-        this.preventTextSelection();
-        this.tree.on('mousedown', this.onMousedown, this);
-    },
-
-    /**
-     * Prevent text-selection
-     */
-    preventTextSelection: function() {
-        var tree = this.tree,
-            style = tree.rootElement.style,
-            selectKey = util.testProp(
-                ['userSelect', 'WebkitUserSelect', 'OUserSelect', 'MozUserSelect', 'msUserSelect']
-            );
-
-        util.addEventListener(tree.rootElement, 'selectstart', util.preventDefault);
-
-        this.userSelectPropertyKey = selectKey;
-        this.userSelectPropertyValue = style[selectKey];
-        style[selectKey] = 'none';
-    },
-
-    /**
-     * Return whether the target element is in rejectedTagNames or in rejectedClassNames
-     * @param {HTMLElement} target - Target element
-     * @returns {boolean} Whether the target is not draggable or draggable
-     */
-    isNotDraggable: function(target) {
-        var tagName = target.tagName.toUpperCase(),
-            classNames = util.getClass(target).split(/\s+/),
-            result;
-
-        if (inArray(tagName, this.rejectedTagNames) !== -1) {
-            return true;
-        }
-
-        tui.util.forEach(classNames, function(className) {
-            result = inArray(className, this.rejectedClassNames) !== -1;
-
-            return !result;
-        }, this);
-
-        return result;
-    },
-
-    /**
-     * Event handler - mousedown
-     * @param {MouseEvent} event - Mouse event
-     */
-    onMousedown: function(event) {
-        var target = util.getTarget(event),
-            tree = this.tree,
-            nodeId;
-
-        if (util.isRightButton(event) || this.isNotDraggable(target)) {
-            return;
-        }
-        util.preventDefault(event);
-
-        target = util.getTarget(event);
-        nodeId = tree.getNodeIdFromElement(target);
-        this.currentNodeId = nodeId;
-        if (this.useHelper) {
-            this.setHelper(target.innerText || target.textContent);
-        }
-
-        tree.on({
-            mousemove: this.onMousemove,
-            mouseup: this.onMouseup
-        }, this);
-    },
-
-    /**
-     * Event handler - mousemove
-     * @param {MouseEvent} event - Mouse event
-     */
-    onMousemove: function(event) {
-        var tree = this.tree;
-        var helperEl = this.helperElement;
-        var mousePos = util.getMousePos(event);
-        var target = util.getTarget(event);
-        var nodeId = tree.getNodeIdFromElement(target);
-        var pos = tree.rootElement.getBoundingClientRect();
-
-        if (!this.useHelper) {
-            return;
-        }
-
-        helperEl.style.top = mousePos.y - pos.top + this.helperPos.y + 'px';
-        helperEl.style.left = mousePos.x - pos.left + this.helperPos.x + 'px';
-        helperEl.style.display = '';
-
-        if (nodeId) {
-            this._applyMoveAction(nodeId, mousePos);
-        }
-    },
-
-    /**
-     * Event handler - mouseup
-     * @param {MouseEvent} event - Mouse event
-     */
-    onMouseup: function(event) {
-        var tree = this.tree;
-        var target = util.getTarget(event);
-        var nodeId = tree.getNodeIdFromElement(target);
-        var index = -1;
-
-        if (this.isSortable) {
-            this.lineElement.style.visibility = 'hidden';
-
-            if (nodeId && this.movingLineType) {
-                index = this._getIndexForInserting(nodeId);
-                nodeId = tree.getParentId(nodeId);
-            }
-        }
-
-        this.helperElement.style.display = 'none';
-        tree.move(this.currentNodeId, nodeId, index);
-        this.currentNodeId = null;
-        this.movingLineType = null;
-
-        tree.off(this, 'mousemove');
-        tree.off(this, 'mouseup');
-    },
-
-    /**
-     * Restore text-selection
-     */
-    restoreTextSelection: function() {
-        var tree = this.tree;
-        util.removeEventListener(tree.rootElement, 'selectstart', util.preventDefault);
-        if (this.userSelectPropertyKey) {
-            tree.rootElement.style[this.userSelectPropertyKey] = this.userSelectPropertyValue;
-        }
-    },
-
-    /**
-     * Set helper contents
-     * @param {string} text - Helper contents
-     */
-    setHelper: function(text) {
-        this.helperElement.innerHTML = text;
-    },
-
-    /**
-     * Detach mousedown event
-     */
-    detachMousedown: function() {
-        this.tree.off(this);
-    },
-
-    /**
-     * Disable this module
-     */
-    destroy: function() {
-        this.restoreTextSelection();
-        this.detachMousedown();
-    },
-
-    /**
-     * Set moving line element
-     */
-    _setMovingLine: function() {
+    initMovingLine: function() {
         var lineElement = document.createElement('div');
         var lineStyle = lineElement.style;
 
@@ -273,54 +130,263 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{/*eslint-
     },
 
     /**
+     * Attach mouse down event
+     * @private
+     */
+    attachMousedown: function() {
+        this.preventTextSelection();
+        this.tree.on('mousedown', this.onMousedown, this);
+    },
+
+    /**
+     * Prevent text-selection
+     * @private
+     */
+    preventTextSelection: function() {
+        var style = this.tree.rootElement.style;
+
+        util.addEventListener(this.tree.rootElement, 'selectstart', util.preventDefault);
+
+        this.userSelectPropertyKey = selectKey;
+        this.userSelectPropertyValue = style[selectKey];
+
+        style[selectKey] = 'none';
+    },
+
+    /**
+     * Return whether the target element is in rejectedTagNames or in rejectedClassNames
+     * @param {HTMLElement} target - Target element
+     * @returns {boolean} Whether the target is not draggable or draggable
+     * @private
+     */
+    isNotDraggable: function(target) {
+        var tagName = target.tagName.toUpperCase();
+        var classNames = util.getClass(target).split(/\s+/);
+        var result;
+
+        if (inArray(tagName, this.rejectedTagNames) !== -1) {
+            return true;
+        }
+
+        forEach(classNames, function(className) {
+            result = inArray(className, this.rejectedClassNames) !== -1;
+
+            return !result;
+        }, this);
+
+        return result;
+    },
+
+    /**
+     * Event handler - mousedown
+     * @param {MouseEvent} event - Mouse event
+     * @private
+     */
+    onMousedown: function(event) {
+        var tree = this.tree;
+        var target = util.getTarget(event);
+        var nodeId;
+
+        if (util.isRightButton(event) || this.isNotDraggable(target)) {
+            return;
+        }
+
+        util.preventDefault(event);
+
+        target = util.getTarget(event);
+        nodeId = tree.getNodeIdFromElement(target);
+
+        this.currentNodeId = nodeId;
+
+        if (this.useHelper) {
+            this.setHelper(target.innerText || target.textContent);
+        }
+
+        tree.on({
+            mousemove: this.onMousemove,
+            mouseup: this.onMouseup
+        }, this);
+    },
+
+    /**
+     * Event handler - mousemove
+     * @param {MouseEvent} event - Mouse event
+     * @private
+     */
+    onMousemove: function(event) {
+        var mousePos = util.getMousePos(event);
+        var target = util.getTarget(event);
+        var nodeId = this.tree.getNodeIdFromElement(target);
+
+        if (!this.useHelper) {
+            return;
+        }
+
+        this.changeHelperPosition(mousePos);
+
+        if (nodeId) {
+            this.applyMoveAction(nodeId, mousePos);
+        }
+    },
+
+    /**
+     * Event handler - mouseup
+     * @param {MouseEvent} event - Mouse event
+     * @private
+     */
+    onMouseup: function(event) {
+        var tree = this.tree;
+        var target = util.getTarget(event);
+        var nodeId = tree.getNodeIdFromElement(target);
+        var index = -1;
+
+        if (nodeId && this.isSortable && this.movingLineType) {
+            index = this.getIndexForInserting(nodeId);
+            nodeId = tree.getParentId(nodeId);
+        }
+
+        /**
+         * @api
+         * @event Tree#beforeMove
+         * @param {string} nodeId - Current dragging node id
+         * @param {string} parentId - New parent id
+         * @example
+         * tree
+         * 	.enableFeature('Draggable')
+         * 	.on('beforeMove', function(nodeId, parentId) {
+         *  	console.log('dragging node: ' + nodeId);
+         *  	console.log('parent node: ' + parentId');
+         *
+         *  	return false; // Cancel "move" event
+         *  	// return true; // Fire "move" event
+         * });
+         */
+        if (tree.invoke('beforeMove', this.currentNodeId, nodeId)) {
+            tree.move(this.currentNodeId, nodeId, index);
+        }
+
+        this.reset();
+    },
+
+    /**
+     * Restore text-selection
+     * @private
+     */
+    restoreTextSelection: function() {
+        util.removeEventListener(this.tree.rootElement, 'selectstart', util.preventDefault);
+
+        if (this.userSelectPropertyKey) {
+            this.tree.rootElement.style[this.userSelectPropertyKey] = this.userSelectPropertyValue;
+        }
+    },
+
+    /**
+     * Set helper contents
+     * @param {string} text - Helper contents
+     * @private
+     */
+    setHelper: function(text) {
+        this.helperElement.innerHTML = text;
+    },
+
+    /**
+     * Detach mousedown event
+     * @private
+     */
+    detachMousedown: function() {
+        this.tree.off(this);
+    },
+
+    /**
+     * Reset properties and remove event
+     * @private
+     */
+    reset: function() {
+        if (this.isSortable) {
+            this.lineElement.style.visibility = 'hidden';
+        }
+
+        this.helperElement.style.display = 'none';
+
+        this.currentNodeId = null;
+        this.movingLineType = null;
+
+        this.tree.off(this, 'mousemove');
+        this.tree.off(this, 'mouseup');
+    },
+
+    /**
+     * Disable this module
+     */
+    destroy: function() {
+        this.restoreTextSelection();
+        this.detachMousedown();
+    },
+
+    /**
+     * Change helper element position
+     * @param {object} mousePos - Current mouse position
+     * @private
+     */
+    changeHelperPosition: function(mousePos) {
+        var helperEl = this.helperElement;
+        var pos = this.tree.rootElement.getBoundingClientRect();
+
+        helperEl.style.top = mousePos.y - pos.top + this.helperPos.y + 'px';
+        helperEl.style.left = mousePos.x - pos.left + this.helperPos.x + 'px';
+        helperEl.style.display = '';
+    },
+
+    /**
      * Apply move action that are delay effect and sortable moving node
      * @param {strig} nodeId - Selected tree node id
      * @param {object} mousePos - Current mouse position
+     * @private
      */
-    _applyMoveAction: function(nodeId, mousePos) {
+    applyMoveAction: function(nodeId, mousePos) {
         var currentElement = document.getElementById(nodeId);
         var targetPos = currentElement.getBoundingClientRect();
         var hasClass = util.hasClass(currentElement, this.hoverClassName);
-        var isContain = this._isContain(targetPos, mousePos);
+        var isContain = this.isContain(targetPos, mousePos);
         var boundaryType;
 
         if (!this.hoveredElement && isContain) {
-            this._hover(nodeId);
+            this.hoveredElement = currentElement;
+            this.hover(nodeId);
         } else if (!hasClass || (hasClass && !isContain)) {
-            this._unhover();
+            this.unhover();
         }
 
         if (this.isSortable) {
-            boundaryType = this._getBoundaryType(targetPos, mousePos);
-            this._drawBoundaryLine(targetPos, boundaryType);
+            boundaryType = this.getBoundaryType(targetPos, mousePos);
+            this.drawBoundaryLine(targetPos, boundaryType);
         }
     },
 
     /**
      * Act to hover on tree item
      * @param {string} nodeId - Tree node id
+     * @private
      */
-    _hover: function(nodeId) {
+    hover: function(nodeId) {
         var tree = this.tree;
-        var hoverEl = document.getElementById(nodeId);
 
-        this.hoveredElement = hoverEl;
+        util.addClass(this.hoveredElement, this.hoverClassName);
 
-        util.addClass(hoverEl, this.hoverClassName);
-
-        if (!tree.isLeaf(nodeId)) {
-            this.timer = setTimeout(function() {
-                if (tree.getNodeIdFromElement(hoverEl) === nodeId) {
-                    tree.open(nodeId);
-                }
-            }, this.autoOpenDelay);
+        if (tree.isLeaf(nodeId)) {
+            return;
         }
+
+        this.timer = setTimeout(function() {
+            tree.open(nodeId);
+        }, this.autoOpenDelay);
     },
 
     /**
      * Act to unhover on tree item
+     * @private
      */
-    _unhover: function() {
+    unhover: function() {
         clearTimeout(this.timer);
 
         util.removeClass(this.hoveredElement, this.hoverClassName);
@@ -334,8 +400,9 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{/*eslint-
      * @param {object} targetPos - Position of tree item
      * @param {object} mousePos - Position of moved mouse
      * @returns {boolean} Contained state
+     * @private
      */
-    _isContain: function(targetPos, mousePos) {
+    isContain: function(targetPos, mousePos) {
         var top = targetPos.top;
         var bottom = targetPos.bottom;
 
@@ -344,7 +411,8 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{/*eslint-
             bottom -= this.lineBoundary.bottom;
         }
 
-        if (targetPos.left < mousePos.x && targetPos.right > mousePos.x &&
+        if (targetPos.left < mousePos.x &&
+            targetPos.right > mousePos.x &&
             top < mousePos.y && bottom > mousePos.y) {
             return true;
         }
@@ -357,8 +425,9 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{/*eslint-
      * @param {object} targetPos - Position of tree item
      * @param {object} mousePos - Position of moved mouse
      * @returns {string} Position type in boundary
+     * @private
      */
-    _getBoundaryType: function(targetPos, mousePos) {
+    getBoundaryType: function(targetPos, mousePos) {
         var type;
 
         if (mousePos.y < targetPos.top + this.lineBoundary.top) {
@@ -374,8 +443,9 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{/*eslint-
      * Draw boundary line on tree
      * @param {object} targetPos - Position of tree item
      * @param {string} boundaryType - Position type in boundary
+     * @private
      */
-    _drawBoundaryLine: function(targetPos, boundaryType) {
+    drawBoundaryLine: function(targetPos, boundaryType) {
         var style = this.lineElement.style;
         var lineHeight;
         var scrollTop;
@@ -397,8 +467,9 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{/*eslint-
      * Get index for inserting
      * @param {string} nodeId - Current selected helper node id
      * @returns {number} Index number
+     * @private
      */
-    _getIndexForInserting: function(nodeId) {
+    getIndexForInserting: function(nodeId) {
         var index = this.tree.getNodeIndex(nodeId);
 
         if (this.movingLineType === 'bottom') {

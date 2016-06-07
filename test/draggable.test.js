@@ -56,7 +56,7 @@ describe('Tree', function() {
         treeDraggable = tree.enabledFeatures.Draggable;
     });
 
-    describe('when _applyMoveAction() is called,', function() {
+    describe('when applyMoveAction() is called,', function() {
         var currentElement, nodeId, mousePos;
 
         beforeEach(function() {
@@ -69,55 +69,56 @@ describe('Tree', function() {
         });
 
         it('mouse overed tree item is changed to hover style.', function() {
-            spyOn(treeDraggable, '_isContain').and.returnValue(true);
-            spyOn(treeDraggable, '_hover');
+            spyOn(treeDraggable, 'isContain').and.returnValue(true);
+            spyOn(treeDraggable, 'hover');
 
-            treeDraggable._applyMoveAction(nodeId, mousePos);
+            treeDraggable.applyMoveAction(nodeId, mousePos);
 
-            expect(treeDraggable._hover).toHaveBeenCalledWith(nodeId);
+            expect(treeDraggable.hover).toHaveBeenCalledWith(nodeId);
         });
 
         it('mouse overed tree item is changed to unhover style.', function() {
-            spyOn(treeDraggable, '_isContain').and.returnValue(false);
-            spyOn(treeDraggable, '_unhover');
+            spyOn(treeDraggable, 'isContain').and.returnValue(false);
+            spyOn(treeDraggable, 'unhover');
 
-            treeDraggable._applyMoveAction(nodeId, mousePos);
+            treeDraggable.applyMoveAction(nodeId, mousePos);
 
-            expect(treeDraggable._unhover).toHaveBeenCalled();
+            expect(treeDraggable.unhover).toHaveBeenCalled();
         });
 
         it('when drag type is sortable, drawing boundary line on tree items.', function() {
-            spyOn(treeDraggable, '_getBoundaryType').and.returnValue('top');
-            spyOn(treeDraggable, '_drawBoundaryLine');
+            spyOn(treeDraggable, 'getBoundaryType').and.returnValue('top');
+            spyOn(treeDraggable, 'drawBoundaryLine');
 
             treeDraggable.isSortable = true;
 
-            treeDraggable._applyMoveAction(nodeId, mousePos);
+            treeDraggable.applyMoveAction(nodeId, mousePos);
 
-            expect(treeDraggable._drawBoundaryLine).toHaveBeenCalled();
+            expect(treeDraggable.drawBoundaryLine).toHaveBeenCalled();
         });
     });
 
-    it('Mouse position is contained tree item, _hover() add hover style.', function() {
+    it('Mouse position is contained tree item, hover() add hover style.', function() {
         var currentElement = rootElement.getElementsByTagName('li')[0];
         var nodeId = tree.getNodeIdFromElement(currentElement);
         var hasClass;
 
         spyOn(tree, 'isLeaf').and.returnValue(true);
 
-        treeDraggable._hover(nodeId);
+        treeDraggable.hoveredElement = currentElement;
+        treeDraggable.hover(nodeId);
 
         hasClass = $(currentElement).hasClass(treeDraggable.hoverClassName);
 
         expect(hasClass).toEqual(true);
     });
 
-    it('Mouse position is out of tree item, _unhover() remove hover style.', function() {
+    it('Mouse position is out of tree item, unhover() remove hover style.', function() {
         var currentElement = rootElement.getElementsByTagName('li')[0];
         var nodeId = tree.getNodeIdFromElement(currentElement);
         var hasClass;
 
-        treeDraggable._unhover(nodeId);
+        treeDraggable.unhover(nodeId);
 
         hasClass = $(currentElement).hasClass(treeDraggable.hoverClassName);
 
@@ -137,7 +138,7 @@ describe('Tree', function() {
         spyOn(tree, 'getNodeIdFromElement').and.returnValue(nodeId);
         spyOn(tree, 'open');
 
-        treeDraggable._hover(nodeId);
+        treeDraggable.hover(nodeId);
 
         jasmine.clock().tick(1501);
 
@@ -146,7 +147,7 @@ describe('Tree', function() {
         jasmine.clock().uninstall();
     });
 
-    describe('_isContain method is called,', function() {
+    describe('isContain method is called,', function() {
         var targetPos, mousePos, state;
 
         beforeEach(function() {
@@ -164,7 +165,7 @@ describe('Tree', function() {
                 y: 20
             };
 
-            state = treeDraggable._isContain(targetPos, mousePos);
+            state = treeDraggable.isContain(targetPos, mousePos);
 
             expect(state).toEqual(true);
         });
@@ -175,13 +176,13 @@ describe('Tree', function() {
                 y: 3
             };
 
-            state = treeDraggable._isContain(targetPos, mousePos);
+            state = treeDraggable.isContain(targetPos, mousePos);
 
             expect(state).toEqual(false);
         });
     });
 
-    describe('_getBoundaryType method is called,', function() {
+    describe('getBoundaryType method is called,', function() {
         var targetPos, mousePos, type;
 
         beforeEach(function() {
@@ -199,7 +200,7 @@ describe('Tree', function() {
                 y: 3
             };
 
-            type = treeDraggable._getBoundaryType(targetPos, mousePos);
+            type = treeDraggable.getBoundaryType(targetPos, mousePos);
 
             expect(type).toEqual('top');
         });
@@ -210,13 +211,13 @@ describe('Tree', function() {
                 y: 97
             };
 
-            type = treeDraggable._getBoundaryType(targetPos, mousePos);
+            type = treeDraggable.getBoundaryType(targetPos, mousePos);
 
             expect(type).toEqual('bottom');
         });
     });
 
-    it('when boundary type has value, _drawBoundaryLine() draw boundary line on tree.', function() {
+    it('when boundary type has value, drawBoundaryLine() draw boundary line on tree.', function() {
         var targetPos = {
             left: 10,
             top: 10,
@@ -225,14 +226,14 @@ describe('Tree', function() {
         };
         var boundaryType = 'top';
 
-        treeDraggable._setMovingLine();
+        treeDraggable.initMovingLine();
 
-        treeDraggable._drawBoundaryLine(targetPos, boundaryType);
+        treeDraggable.drawBoundaryLine(targetPos, boundaryType);
 
         expect(treeDraggable.lineElement.style.visibility).toEqual('visible');
     });
 
-    describe('_getIndexForInserting() is called,', function() {
+    describe('getIndexForInserting() is called,', function() {
         var currentElement, helperId, nodeId, index;
 
         beforeEach(function() {
@@ -246,7 +247,7 @@ describe('Tree', function() {
             treeDraggable.currentNodeId = helperId;
             treeDraggable.movingLineType = 'top';
 
-            index = treeDraggable._getIndexForInserting(nodeId);
+            index = treeDraggable.getIndexForInserting(nodeId);
 
             expect(index).toEqual(2);
         });
@@ -258,9 +259,25 @@ describe('Tree', function() {
             treeDraggable.currentNodeId = helperId;
             treeDraggable.movingLineType = 'bottom';
 
-            index = treeDraggable._getIndexForInserting(nodeId);
+            index = treeDraggable.getIndexForInserting(nodeId);
 
             expect(index).toEqual(1);
         });
+    });
+
+    it('When invoking "beforeMove", dragging action is cancel.', function() {
+        var eventMock = {
+            target: null
+        };
+
+        spyOn(tree, 'move');
+
+        tree.on('beforeMove', function() {
+            return false;
+        });
+
+        treeDraggable.onMouseup(eventMock);
+
+        expect(tree.move).not.toHaveBeenCalled();
     });
 });

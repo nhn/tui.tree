@@ -160,20 +160,7 @@
         });
 
         util.addEventListener(enableContextMenuBtn, 'click', function() {
-            tree.enableFeature('ContextMenu', {
-                menuData: [
-                    {title: 'menu1', command: 'copy'},
-                    {title: 'menu2', command: 'paste'},
-                    {separator: true},
-                    {
-                        title: 'menu3',
-                        menu: [
-                            {title: 'submenu1'},
-                            {title: 'submenu2'}
-                        ]
-                    }
-                ]
-            });
+            tree.enableFeature('ContextMenu');
         });
 
         util.addEventListener(disableContextMenuBtn, 'click', function() {
@@ -188,8 +175,45 @@
             }
         });
 
+        tree.on('beforeMove', function(nodeId, parentId) {
+            if (nodeId !== 'tui-tree-node-2') { // sub-A1 node
+                return true;
+            }
+
+            return false;
+        });
+
+        tree.on('beforeOpenContextMenu', function(nodeId) {
+            var menuData = [];
+
+            if (nodeId === 'tui-tree-node-2') { // sub-A1 node
+                menuData = [
+                    {title: 'menu'}
+                ];
+            } else {
+                menuData = [
+                    {title: 'menu1'},
+                    {title: 'menu2', disable: true},
+                    {title: 'menu3', menu: [
+                        {title: 'submenu1', disable: true},
+                        {title: 'submenu2'}
+                    ]}
+                ];
+            }
+
+            tree.changeContextMenu(menuData); // change menu api
+
+            tree.select(nodeId); // with selectable feature
+        });
+
         tree.on('selectContextMenu', function(e) {
-            //alert('"' + e.cmd + '" is selected on "' + e.nodeId + '" item.');
+            var msg = '"' + e.cmd + '" is selected on "' + e.nodeId + '" item.';
+
+            if (window.console) {
+                console.log(msg);
+            } else {
+                alert(msg);
+            }
         });
     </script>
 </body>

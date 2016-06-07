@@ -147,6 +147,13 @@
             }
         });
 
+        tree.on('beforeMove', function(nodeId, parentId) {
+            if (nodeId !== 'tui-tree-node-2') {
+                return true;
+            }
+            return false;
+        });
+
         tree.on('move', function(e) {
             var msg;
 
