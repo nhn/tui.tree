@@ -69,7 +69,7 @@ var ContextMenu = tui.util.defineClass(/** @lends ContextMenu.prototype */{/*esl
         this.menu.register(this.treeSelector, bind(this._onSelect, this),
                             options.menuData || {});
 
-        this.tree.on('contextmenu', this._onMouseClick, this);
+        this.tree.on('contextmenu', this._onContextMenu, this);
 
         this._preventTextSelection();
 
@@ -77,9 +77,20 @@ var ContextMenu = tui.util.defineClass(/** @lends ContextMenu.prototype */{/*esl
     },
 
     /**
-     * Change ContextMenu
-     * @param {Array.<Object>} newMenuData - New context menu data
+     * Change current context-menu view
      * @api
+     * @memberOf Tree.prototype
+     * @requires ContextMenu
+     * @param {Array.<Object>} newMenuData - New context menu data
+     * @example
+     * tree.changeContextMenu([
+     *      {title: 'menu1'},
+     *      {title: 'menu2', disable: true},
+     *      {title: 'menu3', menu: [
+     *      	{title: 'submenu1', disable: true},
+     *      	{title: 'submenu2'}
+     *      ]}
+     * ]);
      */
     changeContextMenu: function(newMenuData) {
         this.menu.unregister(this.treeSelector);
@@ -88,14 +99,20 @@ var ContextMenu = tui.util.defineClass(/** @lends ContextMenu.prototype */{/*esl
 
     /**
      * Disable ContextMenu feature
-     * @api
      */
     destroy: function() {
+        var tree = this.tree;
+
         this.menu.destroy();
-        this.tree.off(this);
 
         this._restoreTextSelection();
         this._removeFloatingLayer();
+
+        tree.off(this);
+
+        tui.util.forEach(API_LIST, function(apiName) {
+            delete tree[apiName];
+        });
     },
 
     /**
@@ -156,7 +173,7 @@ var ContextMenu = tui.util.defineClass(/** @lends ContextMenu.prototype */{/*esl
      * @param {MouseEvent} e - Mouse event
      * @private
      */
-    _onMouseClick: function(e) {
+    _onContextMenu: function(e) {
         var target = util.getTarget(e);
 
         this.selectedNodeId = this.tree.getNodeIdFromElement(target);
@@ -164,10 +181,10 @@ var ContextMenu = tui.util.defineClass(/** @lends ContextMenu.prototype */{/*esl
         /**
          * @api
          * @event Tree#beforeOpenContextMenu
-         * @param {string} nodeId
+         * @param {string} nodeId - Current selected node id
          * @example
          * tree.on('beforeOpenContextMenu', function(nodeId) {
-         * 		console.log('nodeId: ' + nodeId);
+         *     console.log('nodeId: ' + nodeId);
          * });
          */
         this.tree.fire('beforeOpenContextMenu', this.selectedNodeId);
@@ -186,7 +203,7 @@ var ContextMenu = tui.util.defineClass(/** @lends ContextMenu.prototype */{/*esl
          * @param {{cmd: string, nodeId: string}} treeEvent - Tree event
          * @example
          * tree.on('selectContextMenu', function(treeEvent) {
-         *     var cmd = treeEvent.cmd,
+         *     var cmd = treeEvent.cmd; // key of context menu's data
          *     var nodeId = treeEvent.nodeId;
          *
          *     console.log(cmd, nodeId);

@@ -250,10 +250,10 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
          * @param {{nodeId: string, originalParentId: string, newParentId: string, index: number}} treeEvent - Event
          * @example
          * tree.on('move', function(treeEvent) {
-         *     var nodeId = treeEvent.nodeId,
-         *         originalParentId = treeEvent.originalParentId,
-         *         newParentId = treeEvent.newParentId,
-         *         index = treeEvent.index;
+         *     var nodeId = treeEvent.nodeId;
+         *     var originalParentId = treeEvent.originalParentId;
+         *     var newParentId = treeEvent.newParentId;
+         *     var index = treeEvent.index;
          *
          *     console.log(nodeId, originalParentId, newParentId, index);
          * });
@@ -314,12 +314,19 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
             self.fire('mouseup', upEvent);
             util.removeEventListener(document, 'mousemove', onMouseMove);
             util.removeEventListener(document, 'mouseup', onMouseUp);
+            util.removeEventListener(document, 'mouseout', onMouseOut);
+        }
+        function onMouseOut(event) {
+            if (event.toElement === null) {
+                self.fire('mouseup', event);
+            }
         }
 
         this._mouseMovingFlag = false;
         this.fire('mousedown', downEvent);
         util.addEventListener(document, 'mousemove', onMouseMove);
         util.addEventListener(document, 'mouseup', onMouseUp);
+        util.addEventListener(document, 'mouseout', onMouseOut);
     },
 
     /**
@@ -965,6 +972,26 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * tree.move(myNodeId, newParentId, true); // move node without redrawing
      */
     move: function(nodeId, newParentId, index, isSilent) {
+        /**
+         * @api
+         * @event Tree#beforeMove
+         * @param {string} nodeId - Current dragging node id
+         * @param {string} parentId - New parent id
+         * @example
+         * tree
+         *  .enableFeature('Draggable')
+         *  .on('beforeMove', function(nodeId, parentId) {
+         *      console.log('dragging node: ' + nodeId);
+         *      console.log('parent node: ' + parentId);
+         *
+         *      return false; // Cancel "move" event
+         *      // return true; // Fire "move" event
+         *  });
+         */
+        if (!this.invoke('beforeMove', nodeId, newParentId)) {
+            return;
+        }
+
         this.isMovingNode = true;
         this.model.move(nodeId, newParentId, index, isSilent);
         this.isMovingNode = false;

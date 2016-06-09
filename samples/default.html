@@ -148,7 +148,7 @@
         });
 
         tree.on('beforeMove', function(nodeId, parentId) {
-            if (nodeId !== 'tui-tree-node-2') {
+            if (nodeId !== 'tui-tree-node-2') { // sub-A1 node
                 return true;
             }
             return false;

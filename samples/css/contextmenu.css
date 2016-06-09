@@ -7,15 +7,19 @@
     background-color: #eee;
 }
 
+.js-menu-disable {
+    color: #999;
+}
+
 .js-menu-item {
     position: relative;
+    cursor: pointer;
 }
 
 .js-menu-button {
-    padding: 5px;
+    width: 100%;
     border: none;
     background-color: #eee;
-    cursor: pointer;
 }
 
 .js-menu-button:hover {
@@ -30,6 +34,7 @@
 }
 
 .js-menu-separator {
+    margin-bottom: 2px;
     height: 2px;
     border-bottom: 1px solid #ccc;
 }

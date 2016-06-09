@@ -1,6 +1,5 @@
 {
-  "name": "component-tree",
-  "version": "1.3.0",
+  "name": "tui-component-tree",
   "authors": [
     "NHN ent. FE dev team.<dl_javascript@nhnent.com>"
   ],
@@ -17,6 +16,7 @@
     "Gruntfile.js",
     "conf.json",
     "karma.conf.js",
+    "karma.conf.*.js",
     "package.json",
     ".gitignore",
     "samples"

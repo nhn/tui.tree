@@ -1139,21 +1139,37 @@ module.exports = HandlebarsCompiler.template({"1":function(container,depth0,help
 },"5":function(container,depth0,helpers,partials,data) {
     var stack1;
 
-  return ((stack1 = helpers["if"].call(depth0 != null ? depth0 : {},(depth0 != null ? depth0.menu : depth0),{"name":"if","hash":{},"fn":container.program(6, data, 0),"inverse":container.program(8, data, 0),"data":data})) != null ? stack1 : "");
+  return ((stack1 = helpers["if"].call(depth0 != null ? depth0 : {},(depth0 != null ? depth0.menu : depth0),{"name":"if","hash":{},"fn":container.program(6, data, 0),"inverse":container.program(11, data, 0),"data":data})) != null ? stack1 : "");
 },"6":function(container,depth0,helpers,partials,data) {
-    var stack1, helper, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
+    var stack1;
 
-  return "    <div class=\"js-menu-button js-menu-has-submenu\" data-command=\""
+  return ((stack1 = helpers["if"].call(depth0 != null ? depth0 : {},(depth0 != null ? depth0.disable : depth0),{"name":"if","hash":{},"fn":container.program(7, data, 0),"inverse":container.program(9, data, 0),"data":data})) != null ? stack1 : "");
+},"7":function(container,depth0,helpers,partials,data) {
+    var helper, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
+
+  return "        <div class=\"js-menu-disable\" data-command=\""
     + alias4(((helper = (helper = helpers.command || (depth0 != null ? depth0.command : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"command","hash":{},"data":data}) : helper)))
     + "\">"
     + alias4(((helper = (helper = helpers.title || (depth0 != null ? depth0.title : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"title","hash":{},"data":data}) : helper)))
-    + "</div>\n    <div class=\"js-menu js-menu-submenu\" style=\"display:none\">\n"
-    + ((stack1 = container.invokePartial(partials.menuItem,(depth0 != null ? depth0.menu : depth0),{"name":"menuItem","data":data,"indent":"        ","helpers":helpers,"partials":partials,"decorators":container.decorators})) != null ? stack1 : "")
-    + "    </div>\n";
-},"8":function(container,depth0,helpers,partials,data) {
+    + "</div>\n";
+},"9":function(container,depth0,helpers,partials,data) {
+    var stack1, helper, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
+
+  return "        <div class=\"js-menu-button js-menu-has-submenu\" data-command=\""
+    + alias4(((helper = (helper = helpers.command || (depth0 != null ? depth0.command : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"command","hash":{},"data":data}) : helper)))
+    + "\">"
+    + alias4(((helper = (helper = helpers.title || (depth0 != null ? depth0.title : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"title","hash":{},"data":data}) : helper)))
+    + "</div>\n        <div class=\"js-menu js-menu-submenu\" style=\"display:none\">\n"
+    + ((stack1 = container.invokePartial(partials.menuItem,(depth0 != null ? depth0.menu : depth0),{"name":"menuItem","data":data,"indent":"            ","helpers":helpers,"partials":partials,"decorators":container.decorators})) != null ? stack1 : "")
+    + "        </div>\n";
+},"11":function(container,depth0,helpers,partials,data) {
+    var stack1;
+
+  return ((stack1 = helpers["if"].call(depth0 != null ? depth0 : {},(depth0 != null ? depth0.disable : depth0),{"name":"if","hash":{},"fn":container.program(7, data, 0),"inverse":container.program(12, data, 0),"data":data})) != null ? stack1 : "");
+},"12":function(container,depth0,helpers,partials,data) {
     var helper, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
-  return "    <div class=\"js-menu-button\" data-command=\""
+  return "        <div class=\"js-menu-button\" data-command=\""
     + alias4(((helper = (helper = helpers.command || (depth0 != null ? depth0.command : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"command","hash":{},"data":data}) : helper)))
     + "\">"
     + alias4(((helper = (helper = helpers.title || (depth0 != null ? depth0.title : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"title","hash":{},"data":data}) : helper)))
@@ -1344,6 +1360,13 @@ var ContextMenu = function () {
         var isMenuButton = dom.hasClass(target, 'js-menu-button');
         var isSeparator = dom.hasClass(target, 'js-menu-separator');
         var hasSubmenu = dom.hasClass(target, 'js-menu-has-submenu');
+        var isDisableButton = dom.hasClass(target, 'js-menu-disable');
+
+        if (isDisableButton) {
+            this._hideContextMenu();
+
+            return;
+        }
 
         if (!(container && isMenuButton)) {
             return;

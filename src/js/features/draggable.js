@@ -34,15 +34,15 @@ var API_LIST = [];
  * @constructor
  * @param {Tree} tree - Tree
  * @param {Object} options - Options
- *  @param {boolean} options.useHelper - Using helper flag
- *  @param {{x: number, y:number}} options.helperPos - Helper position
- *  @param {Array.<string>} options.rejectedTagNames - No draggable tag names
- *  @param {Array.<string>} options.rejectedClassNames - No draggable class names
- *  @param {number} options.autoOpenDelay - Delay time while dragging to be opened
- *  @param {boolean} options.isSortable - Flag of whether using sortable dragging
- *  @param {string} options.hoverClassName - Class name for hovered node
- *  @param {string} options.lineClassName - Class name for moving position line
- *  @param {{top: number, bottom: number}} options.lineBoundary - Boundary value for visible moving line
+ *     @param {boolean} options.useHelper - Using helper flag
+ *     @param {{x: number, y:number}} options.helperPos - Helper position
+ *     @param {Array.<string>} options.rejectedTagNames - No draggable tag names
+ *     @param {Array.<string>} options.rejectedClassNames - No draggable class names
+ *     @param {number} options.autoOpenDelay - Delay time while dragging to be opened
+ *     @param {boolean} options.isSortable - Flag of whether using sortable dragging
+ *     @param {string} options.hoverClassName - Class name for hovered node
+ *     @param {string} options.lineClassName - Class name for moving position line
+ *     @param {{top: number, bottom: number}} options.lineBoundary - Boundary value for visible moving line
  */
 var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{/*eslint-disable*/
     static: {
@@ -59,47 +59,144 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{/*eslint-
     init: function(tree, options) { /*eslint-enable*/
         options = tui.util.extend({}, defaultOptions, options);
 
+        /**
+         * Tree data
+         * @type {Tree}
+         */
         this.tree = tree;
+
+        /**
+         * Drag helper element
+         * @type {HTMLElement}
+         */
         this.helperElement = null;
+
+        /**
+         * Selectable element's property
+         * @type {string}
+         */
         this.userSelectPropertyKey = null;
+
+        /**
+         * Selectable element's property value
+         * @type {string}
+         */
         this.userSelectPropertyValue = null;
+
+        /**
+         * Dragging element's node id
+         * @type {string}
+         */
         this.currentNodeId = null;
+
+        /**
+         * Current mouse overed element
+         * @type {HTMLElement}
+         */
         this.hoveredElement = null;
+
+        /**
+         * Moving line type ("top" or "bottom")
+         * @type {string}
+         */
         this.movingLineType = null;
+
+        /**
+         * Invoking time for setTimeout()
+         * @type {number}
+         */
         this.timer = null;
 
-        this.setMembers(options);
+        /**
+         * Tag list for rejecting to drag
+         * @param {Array.<string>}
+         */
+        this.rejectedTagNames = rejectedTagNames.concat(options.rejectedTagNames);
 
-        this.initHelper();
+        /**
+         * Class name list for rejecting to drag
+         * @param {Array.<string>}
+         */
+        this.rejectedClassNames = [].concat(options.rejectedClassNames);
+
+        /**
+         * Using helper flag
+         * @type {boolean}
+         */
+        this.useHelper = options.useHelper;
+
+        /**
+         * Helper position
+         * @type {Object}
+         */
+        this.helperPos = options.helperPos;
+
+        /**
+         * Delay time while dragging to be opened
+         * @type {number}
+         */
+        this.autoOpenDelay = options.autoOpenDelay;
+
+        /**
+         * Flag of whether using sortable dragging
+         * @type {boolean}
+         */
+        this.isSortable = options.isSortable;
+
+        /**
+         * Class name for mouse overed node
+         * @type {string}
+         */
+        this.hoverClassName = options.hoverClassName;
+
+        /**
+         * Class name for moving position line
+         * @type {string}
+         */
+        this.lineClassName = options.lineClassName;
+
+        /**
+         * Boundary value for visible moving line
+         * @type {Object}
+         */
+        this.lineBoundary = options.lineBoundary;
+
+        this._initHelper();
 
         if (this.isSortable) {
-            this.initMovingLine();
+            this._initMovingLine();
         }
 
-        this.attachMousedown();
+        this._attachMousedown();
     },
 
     /**
-     * Set members of this module
-     * @param {Object} options - input options
+     * Disable this module
+     */
+    destroy: function() {
+        this._restoreTextSelection();
+        this._detachMousedown();
+    },
+
+    /**
+     * Change helper element position
+     * @param {object} mousePos - Current mouse position
      * @private
      */
-    setMembers: function(options) {
-        forEach(options, function(value, key) {
-            if (!(key === 'rejectedTagNames' || key === 'rejectedClassNames')) {
-                this[key] = value;
-            }
-        }, this);
+    _changeHelperPosition: function(mousePos) {
+        var helperStyle = this.helperElement.style;
+        var pos = this.tree.rootElement.getBoundingClientRect();
 
-        this.rejectedTagNames = rejectedTagNames.concat(options.rejectedTagNames);
-        this.rejectedClassNames = [].concat(options.rejectedClassNames);
+        helperStyle.top = (mousePos.y - pos.top + this.helperPos.y) + 'px';
+        helperStyle.left = (mousePos.x - pos.left + this.helperPos.x) + 'px';
+        helperStyle.display = '';
     },
 
     /**
      * Init helper element
      * @private
      */
-    initHelper: function() {
+    _initHelper: function() {
         var helperElement = document.createElement('span');
         var helperStyle = helperElement.style;
 
@@ -115,7 +212,7 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{/*eslint-
      * Init moving line element
      * @private
      */
-    initMovingLine: function() {
+    _initMovingLine: function() {
         var lineElement = document.createElement('div');
         var lineStyle = lineElement.style;
 
@@ -130,19 +227,36 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{/*eslint-
     },
 
     /**
+     * Set helper contents
+     * @param {string} text - Helper contents
+     * @private
+     */
+    _setHelper: function(text) {
+        this.helperElement.innerHTML = text;
+    },
+
+    /**
      * Attach mouse down event
      * @private
      */
-    attachMousedown: function() {
-        this.preventTextSelection();
-        this.tree.on('mousedown', this.onMousedown, this);
+    _attachMousedown: function() {
+        this._preventTextSelection();
+        this.tree.on('mousedown', this._onMousedown, this);
+    },
+
+    /**
+     * Detach mousedown event
+     * @private
+     */
+    _detachMousedown: function() {
+        this.tree.off(this);
     },
 
     /**
      * Prevent text-selection
      * @private
      */
-    preventTextSelection: function() {
+    _preventTextSelection: function() {
         var style = this.tree.rootElement.style;
 
         util.addEventListener(this.tree.rootElement, 'selectstart', util.preventDefault);
@@ -154,12 +268,24 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{/*eslint-
     },
 
     /**
+     * Restore text-selection
+     * @private
+     */
+    _restoreTextSelection: function() {
+        util.removeEventListener(this.tree.rootElement, 'selectstart', util.preventDefault);
+
+        if (this.userSelectPropertyKey) {
+            this.tree.rootElement.style[this.userSelectPropertyKey] = this.userSelectPropertyValue;
+        }
+    },
+
+    /**
      * Return whether the target element is in rejectedTagNames or in rejectedClassNames
      * @param {HTMLElement} target - Target element
      * @returns {boolean} Whether the target is not draggable or draggable
      * @private
      */
-    isNotDraggable: function(target) {
+    _isNotDraggable: function(target) {
         var tagName = target.tagName.toUpperCase();
         var classNames = util.getClass(target).split(/\s+/);
         var result;
@@ -182,29 +308,25 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{/*eslint-
      * @param {MouseEvent} event - Mouse event
      * @private
      */
-    onMousedown: function(event) {
+    _onMousedown: function(event) {
         var tree = this.tree;
         var target = util.getTarget(event);
-        var nodeId;
 
-        if (util.isRightButton(event) || this.isNotDraggable(target)) {
+        if (util.isRightButton(event) || this._isNotDraggable(target)) {
             return;
         }
 
         util.preventDefault(event);
 
-        target = util.getTarget(event);
-        nodeId = tree.getNodeIdFromElement(target);
-
-        this.currentNodeId = nodeId;
+        this.currentNodeId = tree.getNodeIdFromElement(target);
 
         if (this.useHelper) {
-            this.setHelper(target.innerText || target.textContent);
+            this._setHelper(target.innerText || target.textContent);
         }
 
         tree.on({
-            mousemove: this.onMousemove,
-            mouseup: this.onMouseup
+            mousemove: this._onMousemove,
+            mouseup: this._onMouseup
         }, this);
     },
 
@@ -213,19 +335,21 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{/*eslint-
      * @param {MouseEvent} event - Mouse event
      * @private
      */
-    onMousemove: function(event) {
+    _onMousemove: function(event) {
         var mousePos = util.getMousePos(event);
         var target = util.getTarget(event);
-        var nodeId = this.tree.getNodeIdFromElement(target);
+        var nodeId;
 
         if (!this.useHelper) {
             return;
         }
 
-        this.changeHelperPosition(mousePos);
+        this._changeHelperPosition(mousePos);
+
+        nodeId = this.tree.getNodeIdFromElement(target);
 
         if (nodeId) {
-            this.applyMoveAction(nodeId, mousePos);
+            this._applyMoveAction(nodeId, mousePos);
         }
     },
 
@@ -234,107 +358,20 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{/*eslint-
      * @param {MouseEvent} event - Mouse event
      * @private
      */
-    onMouseup: function(event) {
+    _onMouseup: function(event) {
         var tree = this.tree;
         var target = util.getTarget(event);
         var nodeId = tree.getNodeIdFromElement(target);
         var index = -1;
 
         if (nodeId && this.isSortable && this.movingLineType) {
-            index = this.getIndexForInserting(nodeId);
+            index = this._getIndexForInserting(nodeId);
             nodeId = tree.getParentId(nodeId);
         }
 
-        /**
-         * @api
-         * @event Tree#beforeMove
-         * @param {string} nodeId - Current dragging node id
-         * @param {string} parentId - New parent id
-         * @example
-         * tree
-         * 	.enableFeature('Draggable')
-         * 	.on('beforeMove', function(nodeId, parentId) {
-         *  	console.log('dragging node: ' + nodeId);
-         *  	console.log('parent node: ' + parentId');
-         *
-         *  	return false; // Cancel "move" event
-         *  	// return true; // Fire "move" event
-         * });
-         */
-        if (tree.invoke('beforeMove', this.currentNodeId, nodeId)) {
-            tree.move(this.currentNodeId, nodeId, index);
-        }
+        tree.move(this.currentNodeId, nodeId, index);
 
-        this.reset();
-    },
-
-    /**
-     * Restore text-selection
-     * @private
-     */
-    restoreTextSelection: function() {
-        util.removeEventListener(this.tree.rootElement, 'selectstart', util.preventDefault);
-
-        if (this.userSelectPropertyKey) {
-            this.tree.rootElement.style[this.userSelectPropertyKey] = this.userSelectPropertyValue;
-        }
-    },
-
-    /**
-     * Set helper contents
-     * @param {string} text - Helper contents
-     * @private
-     */
-    setHelper: function(text) {
-        this.helperElement.innerHTML = text;
-    },
-
-    /**
-     * Detach mousedown event
-     * @private
-     */
-    detachMousedown: function() {
-        this.tree.off(this);
-    },
-
-    /**
-     * Reset properties and remove event
-     * @private
-     */
-    reset: function() {
-        if (this.isSortable) {
-            this.lineElement.style.visibility = 'hidden';
-        }
-
-        this.helperElement.style.display = 'none';
-
-        this.currentNodeId = null;
-        this.movingLineType = null;
-
-        this.tree.off(this, 'mousemove');
-        this.tree.off(this, 'mouseup');
-    },
-
-    /**
-     * Disable this module
-     */
-    destroy: function() {
-        this.restoreTextSelection();
-        this.detachMousedown();
-    },
-
-    /**
-     * Change helper element position
-     * @param {object} mousePos - Current mouse position
-     * @private
-     */
-    changeHelperPosition: function(mousePos) {
-        var helperEl = this.helperElement;
-        var pos = this.tree.rootElement.getBoundingClientRect();
-
-        helperEl.style.top = mousePos.y - pos.top + this.helperPos.y + 'px';
-        helperEl.style.left = mousePos.x - pos.left + this.helperPos.x + 'px';
-        helperEl.style.display = '';
+        this._reset();
     },
 
     /**
@@ -343,23 +380,23 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{/*eslint-
      * @param {object} mousePos - Current mouse position
      * @private
      */
-    applyMoveAction: function(nodeId, mousePos) {
+    _applyMoveAction: function(nodeId, mousePos) {
         var currentElement = document.getElementById(nodeId);
         var targetPos = currentElement.getBoundingClientRect();
         var hasClass = util.hasClass(currentElement, this.hoverClassName);
-        var isContain = this.isContain(targetPos, mousePos);
+        var isContain = this._isContain(targetPos, mousePos);
         var boundaryType;
 
         if (!this.hoveredElement && isContain) {
             this.hoveredElement = currentElement;
-            this.hover(nodeId);
+            this._hover(nodeId);
         } else if (!hasClass || (hasClass && !isContain)) {
-            this.unhover();
+            this._unhover();
         }
 
         if (this.isSortable) {
-            boundaryType = this.getBoundaryType(targetPos, mousePos);
-            this.drawBoundaryLine(targetPos, boundaryType);
+            boundaryType = this._getBoundaryType(targetPos, mousePos);
+            this._drawBoundaryLine(targetPos, boundaryType);
         }
     },
 
@@ -368,7 +405,7 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{/*eslint-
      * @param {string} nodeId - Tree node id
      * @private
      */
-    hover: function(nodeId) {
+    _hover: function(nodeId) {
         var tree = this.tree;
 
         util.addClass(this.hoveredElement, this.hoverClassName);
@@ -386,7 +423,7 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{/*eslint-
      * Act to unhover on tree item
      * @private
      */
-    unhover: function() {
+    _unhover: function() {
         clearTimeout(this.timer);
 
         util.removeClass(this.hoveredElement, this.hoverClassName);
@@ -402,7 +439,7 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{/*eslint-
      * @returns {boolean} Contained state
      * @private
      */
-    isContain: function(targetPos, mousePos) {
+    _isContain: function(targetPos, mousePos) {
         var top = targetPos.top;
         var bottom = targetPos.bottom;
 
@@ -427,7 +464,7 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{/*eslint-
      * @returns {string} Position type in boundary
      * @private
      */
-    getBoundaryType: function(targetPos, mousePos) {
+    _getBoundaryType: function(targetPos, mousePos) {
         var type;
 
         if (mousePos.y < targetPos.top + this.lineBoundary.top) {
@@ -445,7 +482,7 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{/*eslint-
      * @param {string} boundaryType - Position type in boundary
      * @private
      */
-    drawBoundaryLine: function(targetPos, boundaryType) {
+    _drawBoundaryLine: function(targetPos, boundaryType) {
         var style = this.lineElement.style;
         var lineHeight;
         var scrollTop;
@@ -469,7 +506,7 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{/*eslint-
      * @returns {number} Index number
      * @private
      */
-    getIndexForInserting: function(nodeId) {
+    _getIndexForInserting: function(nodeId) {
         var index = this.tree.getNodeIndex(nodeId);
 
         if (this.movingLineType === 'bottom') {
@@ -477,6 +514,29 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{/*eslint-
         }
 
         return index;
+    },
+
+    /**
+     * _reset properties and remove event
+     * @private
+     */
+    _reset: function() {
+        if (this.isSortable) {
+            this.lineElement.style.visibility = 'hidden';
+        }
+
+        if (this.hoveredElement) {
+            util.removeClass(this.hoveredElement, this.hoverClassName);
+            this.hoveredElement = null;
+        }
+
+        this.helperElement.style.display = 'none';
+
+        this.currentNodeId = null;
+        this.movingLineType = null;
+
+        this.tree.off(this, 'mousemove');
+        this.tree.off(this, 'mouseup');
     }
 });
 

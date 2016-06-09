@@ -203,7 +203,9 @@
 
             tree.changeContextMenu(menuData); // change menu api
 
-            tree.select(nodeId); // with selectable feature
+            if (tree.enabledFeatures['Selectable']) {
+                tree.select(nodeId); // with selectable feature
+            }
         });
 
         tree.on('selectContextMenu', function(e) {

@@ -304,6 +304,7 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
      * @param {number} [index] - Start index number for inserting
      * @param {boolean} [isSilent] - If true, it doesn't trigger the 'update' event
      */
+    /*eslint-disable complexity*/
     move: function(nodeId, newParentId, index, isSilent) {
         var node = this.getNode(nodeId);
         var originalParent, originalParentId, newParent;
