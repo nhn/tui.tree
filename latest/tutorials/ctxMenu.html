@@ -160,7 +160,12 @@
         });
 
         util.addEventListener(enableContextMenuBtn, 'click', function() {
-            tree.enableFeature('ContextMenu');
+            tree.enableFeature('ContextMenu', {
+                menuData: [
+                    {title: 'menu1'},
+                    {title: 'menu2', disable: true}
+                ]
+            });
         });
 
         util.addEventListener(disableContextMenuBtn, 'click', function() {
