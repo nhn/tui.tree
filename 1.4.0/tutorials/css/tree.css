@@ -1,0 +1,109 @@
+body {
+    margin: 0;
+    padding: 0;
+    height: 500px;
+    font-family: malgun gothic,verdana,consolas;
+    font-size: 12px;
+    min-width: 950px;
+}
+
+h3 {
+    margin-left:25px;
+    font-weight: normal;
+}
+
+/* default tree style */
+.treeWrap {
+    overflow: auto;
+    width: 300px;
+    height: 500px;
+    font-size: 11px;
+}
+
+.treeWrap ul {
+    margin: 0;
+    padding-left: 15px;
+}
+
+.treeWrap ul li {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 150px;
+    cursor: pointer;
+}
+
+.treeWrap ul li em {
+    font-weight: bold;
+    font-style: normal;
+}
+
+.treeWrap ul li.tui-tree-leaf {
+    padding-left: 17px;
+}
+
+.treeWrap button {
+    margin-top: 12px;
+    margin-right: 5px;
+    width: 13px;
+    height: 13px;
+    font-size: 0px;
+    padding: 0;
+    color: #000000;
+    vertical-align: top;
+    background:url('../sp_floor.png') no-repeat left;
+    border: 0;
+}
+
+.treeWrap .tui-tree-opened button {
+    background-position: -107px 0;
+}
+
+.treeWrap .tui-tree-closed button {
+    background-position: -92px 0;
+}
+
+.tui-tree-text {
+    display: inline-block;
+    padding: 10px;
+    *display:inline;
+    zoom: 1;
+}
+
+/*.treeWrap .tui-tree-closed > .tui-tree-subtree {display: none;}*/
+/*.treeWrap .tui-tree-opened > .tui-tree-subtree {display: block;}*/
+
+/* selectable feature style */
+input {
+    border: 2px dotted;
+    outline: none;
+}
+
+.tui-tree-selected > .tui-tree-text {
+    background-color:#F49999;
+}
+
+/* draggable feature style */
+.tui-tree-hover > .tui-tree-text {
+    background-color:#ccc;
+}
+
+.tui-tree-line {
+    margin: 0;
+    padding: 0;
+    width: 300px;
+    height: 2px;
+    background-color: #ccc;
+    font-size: 0;
+    z-index: -9999;
+}
+
+.tui-tree-marker {
+    padding: 0;
+    left: 48px;
+    width: 6px;
+    height: 10px;
+    background: url('../sp_floor.png') no-repeat left;
+    background-position: -19px -161px;
+    font-size: 0px;
+}
