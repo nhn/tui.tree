@@ -15,7 +15,7 @@ var connect = require('gulp-connect');
 var uglify = require('gulp-uglify');
 var concat = require('gulp-concat');
 var eslint = require('gulp-eslint');
-var filename = require('./package.json').name.replace('component-', '');
+var filename = require('./package.json').name.replace('tui-component-', '');
 
 /**
  * Paths

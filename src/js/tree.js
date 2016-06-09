@@ -978,9 +978,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
          * @param {string} nodeId - Current dragging node id
          * @param {string} parentId - New parent id
          * @example
-         * tree
-         *  .enableFeature('Draggable')
-         *  .on('beforeMove', function(nodeId, parentId) {
+         * tree.on('beforeMove', function(nodeId, parentId) {
          *      console.log('dragging node: ' + nodeId);
          *      console.log('parent node: ' + parentId);
          *
