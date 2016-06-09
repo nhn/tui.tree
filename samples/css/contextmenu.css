@@ -7,19 +7,21 @@
     background-color: #eee;
 }
 
-.js-menu-disable {
-    color: #999;
-}
-
 .js-menu-item {
     position: relative;
     cursor: pointer;
 }
 
 .js-menu-button {
+    padding: 5px;
     width: 100%;
     border: none;
     background-color: #eee;
+}
+
+.js-menu-disable {
+    padding: 5px;
+    color: #999;
 }
 
 .js-menu-button:hover {
