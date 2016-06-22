@@ -29,8 +29,8 @@ Each node can be moved by drag and drop.
 ![alt tag](https://cloud.githubusercontent.com/assets/18183560/15561915/8582a616-2335-11e6-9e25-8b521e11292b.png)<br>
 
 ## Dependency
-* tui-code-snippet: 1.1.3
-* tui-contextmenu: 1.1.0 (for using ContextMenu feature)
+* tui-code-snippet: 1.2.0
+* tui-contextmenu: 1.1.1 (for using ContextMenu feature)
 
 ## Test environment
 * PC

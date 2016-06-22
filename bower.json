@@ -22,8 +22,8 @@
     "samples"
   ],
   "dependencies": {
-    "tui-code-snippet": "^1.0.4",
-    "tui-component-contextmenu": "^1.0.0"
+    "tui-code-snippet": "^1.2.0",
+    "tui-component-contextmenu": "^1.1.1"
   },
   "devDependencies": {
     "jquery": "1.8.3"

@@ -1,4 +1,4 @@
-/*!code-snippet v1.1.3 | NHN Entertainment*/
+/*!code-snippet v1.2.0 | NHN Entertainment*/
 /**********
  * array.js
  **********/
@@ -1223,22 +1223,21 @@
             parent = null;
         }
 
-        obj = props.init || function(){};
+        obj = props.init || function() {};
 
-        if(parent) {
+        if (parent) {
             tui.util.inherit(obj, parent);
         }
 
         if (props.hasOwnProperty('static')) {
-            tui.util.extend(obj, props.static);
-            delete props.static;
+            tui.util.extend(obj, props['static']);
+            delete props['static'];
         }
 
         tui.util.extend(obj.prototype, props);
 
         return obj;
     };
-
 })(window.tui);
 
 /**********
@@ -1649,86 +1648,86 @@ tui.util.Enum = Enum;
  * @fileoverview This module has a function for date format.
  * @author NHN Ent.
  *         FE Development Team <e0242@nhnent.com>
- * @dependency type.js
+ * @dependency type.js, object.js
  */
 
 (function(tui) {
     'use strict';
 
-    var tokens = /[\\]*YYYY|[\\]*YY|[\\]*MMMM|[\\]*MMM|[\\]*MM|[\\]*M|[\\]*DD|[\\]*D|[\\]*HH|[\\]*H|[\\]*A/gi,
-        MONTH_STR = ["Invalid month", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
-        MONTH_DAYS = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31],
-        replaceMap = {
-            M: function(date) {
-                return Number(date.month);
-            },
-            MM: function(date) {
-                var month = date.month;
-                return (Number(month) < 10) ? '0' + month : month;
-            },
-            MMM: function(date) {
-                return MONTH_STR[Number(date.month)].substr(0, 3);
-            },
-            MMMM: function(date) {
-                return MONTH_STR[Number(date.month)];
-            },
-            D: function(date) {
-                return Number(date.date);
-            },
-            d: function(date) {
-                return replaceMap.D(date);
-            },
-            DD: function(date) {
-                var dayInMonth = date.date;
-                return (Number(dayInMonth) < 10) ? '0' + dayInMonth : dayInMonth;
-            },
-            dd: function(date) {
-                return replaceMap.DD(date);
-            },
-            YY: function(date) {
-                return Number(date.year) % 100;
-            },
-            yy: function(date) {
-                return replaceMap.YY(date);
-            },
-            YYYY: function(date) {
-                var prefix = '20',
-                    year = date.year;
-                if (year > 69 && year < 100) {
-                    prefix = '19';
-                }
-                return (Number(year) < 100) ? prefix + String(year) : year;
-            },
-            yyyy: function(date) {
-                return replaceMap.YYYY(date);
-            },
-            A: function(date) {
-                return date.meridian;
-            },
-            a: function(date) {
-                return date.meridian.toLowerCase();
-            },
-            hh: function(date) {
-                var hour = date.hour;
-                return (Number(hour) < 10) ? '0' + hour : hour;
-            },
-            HH: function(date) {
-                return replaceMap.hh(date);
-            },
-            h: function(date) {
-                return String(Number(date.hour));
-            },
-            H: function(date) {
-                return replaceMap.h(date);
-            },
-            m: function(date) {
-                return String(Number(date.minute));
-            },
-            mm: function(date) {
-                var minute = date.minute;
-                return (Number(minute) < 10) ? '0' + minute : minute;
+    var tokens = /[\\]*YYYY|[\\]*YY|[\\]*MMMM|[\\]*MMM|[\\]*MM|[\\]*M|[\\]*DD|[\\]*D|[\\]*HH|[\\]*H|[\\]*A/gi;
+    var MONTH_STR = ["Invalid month", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    var MONTH_DAYS = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    var replaceMap = {
+        M: function(date) {
+            return Number(date.month);
+        },
+        MM: function(date) {
+            var month = date.month;
+            return (Number(month) < 10) ? '0' + month : month;
+        },
+        MMM: function(date) {
+            return MONTH_STR[Number(date.month)].substr(0, 3);
+        },
+        MMMM: function(date) {
+            return MONTH_STR[Number(date.month)];
+        },
+        D: function(date) {
+            return Number(date.date);
+        },
+        d: function(date) {
+            return replaceMap.D(date);
+        },
+        DD: function(date) {
+            var dayInMonth = date.date;
+            return (Number(dayInMonth) < 10) ? '0' + dayInMonth : dayInMonth;
+        },
+        dd: function(date) {
+            return replaceMap.DD(date);
+        },
+        YY: function(date) {
+            return Number(date.year) % 100;
+        },
+        yy: function(date) {
+            return replaceMap.YY(date);
+        },
+        YYYY: function(date) {
+            var prefix = '20',
+                year = date.year;
+            if (year > 69 && year < 100) {
+                prefix = '19';
             }
-        };
+            return (Number(year) < 100) ? prefix + String(year) : year;
+        },
+        yyyy: function(date) {
+            return replaceMap.YYYY(date);
+        },
+        A: function(date) {
+            return date.meridiem;
+        },
+        a: function(date) {
+            return date.meridiem;
+        },
+        hh: function(date) {
+            var hour = date.hour;
+            return (Number(hour) < 10) ? '0' + hour : hour;
+        },
+        HH: function(date) {
+            return replaceMap.hh(date);
+        },
+        h: function(date) {
+            return String(Number(date.hour));
+        },
+        H: function(date) {
+            return replaceMap.h(date);
+        },
+        m: function(date) {
+            return String(Number(date.minute));
+        },
+        mm: function(date) {
+            var minute = date.minute;
+            return (Number(minute) < 10) ? '0' + minute : minute;
+        }
+    };
 
     /* istanbul ignore if */
     if (!tui) {
@@ -1778,18 +1777,19 @@ tui.util.Enum = Enum;
      * Return a string that transformed from the given form and date.
      * @param {string} form - Date form
      * @param {Date|Object} date - Date object
+     * @param {{meridiemSet: {AM: string, PM: string}}} option - Option
      * @returns {boolean|string} A transformed string or false.
      * @memberOf tui.util
      * @example
-     *  // key         | Shorthand
-     *  // ------------|-----------------------
-     *  // years       | YY / YYYY / yy / yyyy
-     *  // months(n)   | M / MM
-     *  // months(str) | MMM / MMMM
-     *  // days        | D / DD / d / dd
-     *  // hours       | H / HH / h / hh
-     *  // minutes     | m / mm
-     *  // AM/PM       | A / a
+     *  // key             | Shorthand
+     *  // --------------- |-----------------------
+     *  // years           | YY / YYYY / yy / yyyy
+     *  // months(n)       | M / MM
+     *  // months(str)     | MMM / MMMM
+     *  // days            | D / DD / d / dd
+     *  // hours           | H / HH / h / hh
+     *  // minutes         | m / mm
+     *  // meridiem(AM,PM) | A / a
      *
      *  var dateStr1 = formatDate('yyyy-MM-dd', {
      *      year: 2014,
@@ -1811,11 +1811,20 @@ tui.util.Enum = Enum;
      *      dateStr3 = formatDate('yyyy년 M월 dd일', dt);
      *
      *  alert(dateStr3); // '2010년 3월 13일'
+     *
+     *  var option4 = {
+     *      meridiemSet: {
+     *          AM: '오전',
+     *          PM: '오후'
+     *      }
+     *  };
+     *  var date4 = {year: 1999, month: 9, date: 9, hour: 13, minute: 2};
+     *  var dateStr4 = formatDate('yyyy-MM-dd A hh:mm', date4, option4));
+     *
+     *  alert(dateStr4); // '1999-09-09 오후 01:02'
      */
-    function formatDate(form, date) {
-        var meridian,
-            nDate,
-            resultStr;
+    function formatDate(form, date, option) {
+        var meridiem, nDate, resultStr;
 
         if (tui.util.isDate(date)) {
             nDate = {
@@ -1839,15 +1848,17 @@ tui.util.Enum = Enum;
             return false;
         }
 
-        nDate.meridian = '';
+        nDate.meridiem = '';
         if (/[^\\][aA]\b/g.test(form)) {
-            meridian = (nDate.hour > 12) ? 'PM' : 'AM';
+            meridiem = (nDate.hour > 12) ?
+                tui.util.pick(option, 'meridiemSet', 'PM') || 'PM'
+                : tui.util.pick(option, 'meridiemSet', 'AM') || 'AM';
             nDate.hour %= 12;
-            nDate.meridian = meridian;
+            nDate.meridiem = meridiem;
         }
 
         resultStr = form.replace(tokens, function(key) {
-            if (key.indexOf('\\') > -1) {
+            if (key.indexOf('\\') > -1) { // escape character
                 return key.replace(/\\/g, '');
             } else {
                 return replaceMap[key](nDate) || '';
