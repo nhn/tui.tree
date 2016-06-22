@@ -6,20 +6,23 @@
   "license": "MIT",
   "ignore": [
     "**/.*",
+    ".gitignore",
     "node_modules",
     "bower_components",
     "test",
     "tests",
+    "samples",
     "src",
     "server",
     "data.js",
-    "Gruntfile.js",
+    "index.js",
+    "gulpfile.js",
     "conf.json",
     "karma.conf.js",
     "karma.conf.*.js",
     "package.json",
-    ".gitignore",
-    "samples"
+    "bower.json",
+    "jsdoc-conf.json"
   ],
   "dependencies": {
     "tui-code-snippet": "^1.2.0",
