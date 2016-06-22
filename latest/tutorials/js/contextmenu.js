@@ -1607,8 +1607,10 @@ var ContextMenu = function () {
 
         this.activeLayer = relatedLayer;
 
-        var left = clickEvent.clientX;
-        var top = clickEvent.clientY;
+        var position = dom.getMousePosition(clickEvent, document.body || document.documentElement);
+
+        var left = position[0]; //clickEvent.clientX;
+        var top = position[1]; //clickEvent.clientY;
         var debouncedMouseMove = util.debounce(util.bind(this._onMouseMove, this), opt.delay);
 
         this.cloneMouseMoveEvent = function (mouseMoveEvent) {
