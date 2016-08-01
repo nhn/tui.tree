@@ -30,8 +30,7 @@ var SOURCE_DIR = './src/**/*',
  */
 var config = {};
 config.browserify = {
-    entries: ENTRY,
-    debug: true
+    entries: ENTRY
 };
 config.browserSync = {
     server: {
