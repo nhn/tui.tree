@@ -1,0 +1,26 @@
+[
+    {
+        "cateNum": "001",
+        "text": "rootA",
+        "children": [
+            {
+                "cateNum": "002",
+                "text": "sub-A1",
+                "hasChild": true,
+                "state": "closed"
+            },
+            {
+                "cateNum": "003",
+                "text": "sub-A2"
+            },
+            {
+                "cateNum": "004",
+                "text": "sub-A3"
+            },
+            {
+                "cateNum": "005",
+                "text": "sub-A4"
+            }
+        ]
+    }
+]

@@ -50,7 +50,8 @@ module.exports = {
         'closed',
         'subtree',
         'toggleBtn',
-        'text'
+        'text',
+        'loader'
     ]),
     template: {
         internalNode:

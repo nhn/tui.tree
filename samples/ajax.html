@@ -1,0 +1,208 @@
+ <!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <link type="text/css" rel="stylesheet" href="../styles/prettify-jsdoc.css" />
+    <link type="text/css" rel="stylesheet" href="../styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="../styles/tui.css">
+
+    <title>트리컴포넌트</title>
+    <!-- Use in service -->
+    <link rel="stylesheet" href="css/samplepage.css" />
+    <link rel="stylesheet" href="css/tree.css" />
+    <link rel="stylesheet" href="css/contextmenu.css" />
+    <!-- // Use in service -->
+</head>
+<body>
+    <div class="wrap">
+        <div class="treeWrap">
+            <ul id="treeRoot" class="tree"></ul>
+        </div>
+        <textarea id="infoArea"></textarea>
+    </div>
+
+    <div class="codeArea"></div>
+
+    <!-- Use in service -->
+    <script type="text/javascript" src="js/jquery.js"></script>
+    <script type="text/javascript" src="js/code-snippet.js"></script>
+    <script type="text/javascript" src="js/domutil.js"></script>
+    <script type="text/javascript" src="js/floatinglayer.js"></script>
+    <script type="text/javascript" src="js/contextmenu.js"></script>
+    <script type="text/javascript" src="js/tree.js"></script>
+    <!-- // Use in service -->
+
+    <script src="../scripts/prettify/prettify.js"></script>
+    <script src="../scripts/prettify/lang-css.js"></script>
+    <script src="../scripts/jquery.js"></script>
+    <script src="../scripts/samplecode.js"></script>
+    <script class="serviceCode">
+
+        var infoArea = document.getElementById('infoArea');
+
+        var util = {
+            addEventListener: function(element, eventName, handler) {
+                if (element.addEventListener) {
+                    element.addEventListener(eventName, handler, false);
+                } else {
+                    element.attachEvent('on' + eventName, handler);
+                }
+            }
+        };
+
+        // create tree component
+        var tree = new tui.component.Tree([], {
+            nodeDefaultState: 'opened',
+            rootElement: document.getElementById('treeRoot')
+        });
+
+        // Add features
+        tree.enableFeature('Selectable')
+            .enableFeature('Editable', {
+            editableClassName: tree.classNames.textClass,
+            dataKey: 'text'
+        }).enableFeature('Draggable', {
+            isSortable: true,
+            lineClassName: 'tui-tree-marker',
+            lineBoundary: {
+                top: 10,
+                bottom: 10
+            }
+        }).enableFeature('ContextMenu', {
+            menuData: [
+                {title: 'create', command: 'create'},
+                {title: 'update', command: 'update'},
+                {title: 'remove', command: 'remove'}
+            ]
+        }).enableFeature('Ajax', {
+            command: {
+                read: {
+                    url: 'test.json',
+                    dataType: 'json'
+                },
+                create: {
+                    url: 'test.json',
+                    dataType: 'json',
+                },
+                update: {
+                    url: 'test.json',
+                    dataType: 'json',
+                },
+                remove: {
+                    url: 'test.json',
+                    dataType: 'json',
+                },
+                removeAllChildren: {
+                    url: 'test.json',
+                    dataType: 'json'
+                },
+                move: {
+                    url: 'test.json',
+                    dataType: 'json',
+                }
+            },
+            dataMap: function(type, params) {
+                var data;
+
+                if (type === 'read') {
+                    data = {
+                        productId: tree.getNodeData(params.nodeId).pid
+                    };
+                } else if (type === 'create') {
+                    data = {
+                        targetId: tree.getNodeData(params.parentId).pid,
+                        productName: params.data.text
+                    };
+                } else if (type === 'update') {
+                    data = {
+                        productId: tree.getNodeData(params.nodeId).pid,
+                        productName: params.data.text
+                    };
+                } else if (type === 'remove') {
+                    data = {
+                        productId: tree.getNodeData(params.nodeId).pid
+                    }
+                } else if (type === 'move') {
+                    data = {
+                        productId: tree.getNodeData(params.nodeId).pid,
+                        targetId: tree.getNodeData(params.newParentId).pid,
+                        moveIdx: params.index
+                    };
+                }
+
+                return data;
+            },
+            parseData: function(type, response) {
+                if (type === 'read') {
+                    return (response.code == '200') ? response.tree : false;
+                } else {
+                    return true;
+                }
+            }
+        });
+
+        // Bind custom event
+        tree.on('selectContextMenu', function(e) {
+            var cmd = e.cmd;
+            var nodeId = e.nodeId;
+            var currentElement;
+            var inputElement;
+            var createdNodeId;
+
+            switch (cmd) {
+                case 'create':
+                    tree.createChildNode(nodeId);
+                    break;
+                case 'update':
+                    tree.editNode(nodeId);
+                    break;
+                case 'remove':
+                    tree.remove(nodeId);
+                    break;
+            }
+        });
+
+        tree.on('select', function(nodeId) {
+            console.log(nodeId);
+            console.log(tree.getNodeData(nodeId));
+        });
+
+        tree.on('beforeRequest', function(type, data) {
+            var state = true;
+
+            if (type === 'create' || type === 'update') {
+                if (!data.data.text) {
+                    alert('empty!');
+                    state = false;
+                } else {
+                    state = (confirm(type + '?'));
+                }
+
+                if (!state) {
+                    tree.refresh(data.parentId);
+                }
+            } else if (type === 'remove') {
+                state = (confirm(type + '?'));
+            }
+
+            return state;
+        });
+
+        tree.on('successResponse', function(type, data) {
+            var message;
+
+            if (type === 'create') {
+                console.log('created node id : ' + data);
+            }
+
+            // Next code is only for this sample page! Don't copy it!
+            message = 'command type : ' + type  + '\n';
+            message += 'jQuery request options : \n';
+            message += JSON.stringify(tree.enabledFeatures.Ajax.command[type], null, 8);
+
+            infoArea.value = message;
+        });
+
+    </script>
+    </body>
+</html>

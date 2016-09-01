@@ -250,7 +250,10 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
             eventName = 'uncheck';
         }
         DATA[DATA_KEY_FOR_CHECKBOX_STATE] = state;
-        tree.setNodeData(nodeId, DATA, true);
+        //tree.setNodeData(nodeId, DATA, true);
+        tree.setNodeData(nodeId, DATA, {
+            isSilent: true
+        });
 
         if (!stopPropagation) {
             this._propagateState(nodeId, state);

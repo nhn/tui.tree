@@ -169,7 +169,7 @@ describe('Tree', function() {
                 ]},
                 {text: 'new world'}
             ],
-            ids = tree.add(data, firstChildId);
+            ids = tree.add(data, firstChildId, false, false);
 
         expect(ids).toEqual(jasmine.any(Array));
         expect(ids.length).toEqual(2);
@@ -279,5 +279,17 @@ describe('Tree', function() {
         var prevNodeIdx = tree.getNodeIndex(newChildIds[1]);
 
         expect(prevNodeIdx).toEqual(1);
+    });
+
+    it('When "resetAllData()" have nodeId parameter, it should reset children data of nodeId', function() {
+        var data = [
+            {text: 'A'},
+            {text: 'B'}
+        ];
+        var nodeId = tree.getChildIds(tree.getRootNodeId())[0];
+        var newChildIds = tree.resetAllData(data, nodeId);
+
+        expect(tree.getNodeData(newChildIds[0])).toEqual({text: 'A'});
+        expect(tree.getNodeData(newChildIds[1])).toEqual({text: 'B'});
     });
 });

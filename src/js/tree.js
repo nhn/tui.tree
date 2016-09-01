@@ -10,12 +10,14 @@ var util = require('./util'),
     states = require('./consts/states'),
     messages = require('./consts/messages'),
     outerTemplate = require('./consts/outerTemplate'),
+    ajaxCommand = require('./consts/ajaxCommand'),
     TreeModel = require('./treeModel'),
     Selectable = require('./features/selectable'),
     Draggable = require('./features/draggable'),
     Editable = require('./features/editable'),
     Checkbox = require('./features/checkbox'),
-    ContextMenu = require('./features/contextMenu');
+    ContextMenu = require('./features/contextMenu'),
+    Ajax = require('./features/ajax');
 
 var nodeStates = states.node,
     features = {
@@ -23,7 +25,8 @@ var nodeStates = states.node,
         Draggable: Draggable,
         Editable: Editable,
         Checkbox: Checkbox,
-        ContextMenu: ContextMenu
+        ContextMenu: ContextMenu,
+        Ajax: Ajax
     },
     snippet = tui.util,
     extend = snippet.extend,
@@ -383,6 +386,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
         }
         label = this.stateLabels[state];
         nodeElement = document.getElementById(nodeId);
+
         btnElement = util.getElementsByClassName(
             nodeElement,
             this.classNames.toggleBtnClass
@@ -580,6 +584,8 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
             element = document.getElementById(nodeId),
             classNames = this.classNames;
 
+        util.removeClass(element, classNames.leafClass);
+
         if (node.isLeaf()) {
             util.removeClass(element, classNames.openedClass);
             util.removeClass(element, classNames.closedClass);
@@ -716,12 +722,39 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * @api
      * @param {string} nodeId - Node id
      * @param {object} data - Properties
-     * @param {boolean} [isSilent] - If true, it doesn't trigger the 'update' event
+     * @param {object} [options] - Options
+     *     @param {boolean} [isSilent] - If true, it doesn't redraw children
+     *     @param {boolean} [useAjax] - State of using Ajax
      * @exmaple
      * tree.setNodeData(nodeId, {foo: 'bar'}); // auto refresh
      * tree.setNodeData(nodeId, {foo: 'bar'}, true); // not refresh
      */
-    setNodeData: function(nodeId, data, isSilent) {
+    setNodeData: function(nodeId, data, options) {
+        var self = this;
+        var treeAjax = this.enabledFeatures.Ajax;
+        var useAjax = options ? options.useAjax : (treeAjax);
+        var isSilent = options ? options.isSilent : false;
+
+        if (useAjax) {
+            treeAjax.loadData(ajaxCommand.UPDATE, function() {
+                self._setNodeData(nodeId, data);
+            }, {
+                nodeId: nodeId,
+                data: data,
+                type: 'set'
+            });
+        } else {
+            this._setNodeData(nodeId, data, isSilent);
+        }
+    },
+
+    /**
+     * Set data properties of a node (Core method)
+     * @param {string} nodeId - Node id
+     * @param {object} data - Properties
+     * @param {boolean} [isSilent] - If true, it doesn't trigger the 'update' event
+     */
+    _setNodeData: function(nodeId, data, isSilent) {
         this.model.setNodeData(nodeId, data, isSilent);
     },
 
@@ -730,12 +763,40 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * @api
      * @param {string} nodeId - Node id
      * @param {string|Array} names - Names of properties
-     * @param {boolean} [isSilent] - If true, it doesn't trigger the 'update' event
+     * @param {object} [options] - Options
+     *     @param {boolean} [isSilent] - If true, it doesn't redraw children
+     *     @param {boolean} [useAjax] - State of using Ajax
      * @example
      * tree.setNodeData(nodeId, 'foo'); // auto refresh
      * tree.setNodeData(nodeId, 'foo', true); // not refresh
      */
-    removeNodeData: function(nodeId, names, isSilent) {
+    removeNodeData: function(nodeId, names, options) {
+        var self = this;
+        var treeAjax = this.enabledFeatures.Ajax;
+        var useAjax = options ? options.useAjax : (treeAjax);
+        var isSilent = options ? options.isSilent : false;
+
+        if (useAjax) {
+            treeAjax.loadData(ajaxCommand.UPDATE, function() {
+                self._removeNodeData(nodeId, names);
+            }, {
+                nodeId: nodeId,
+                names: names,
+                type: 'remove'
+            });
+        } else {
+            this._removeNodeData(nodeId, names, isSilent);
+        }
+    },
+
+    /**
+     * Remove node data (Core method)
+     * @param {string} nodeId - Node id
+     * @param {string|Array} names - Names of properties
+     * @param {boolean} [isSilent] - If true, it doesn't trigger the 'update' event
+     * @private
+     */
+    _removeNodeData: function(nodeId, names, isSilent) {
         this.model.removeNodeData(nodeId, names, isSilent);
     },
 
@@ -771,6 +832,10 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
             node.setState(state);
             this._setDisplayFromNodeState(nodeId, state);
         }
+
+        if (this.enabledFeatures.Ajax) {
+            this._reload(nodeId);
+        }
     },
 
     /**
@@ -794,13 +859,42 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * @param {string} nodeId - Node id
      */
     toggle: function(nodeId) {
-        var node = this.model.getNode(nodeId),
-            state;
+        var node = this.model.getNode(nodeId);
+        var state;
 
-        if (node && !node.isRoot()) {
-            node.toggleState();
-            state = node.getState();
-            this._setDisplayFromNodeState(nodeId, state);
+        if (!node || node.isRoot()) {
+            return;
+        }
+
+        node.toggleState();
+        state = node.getState();
+        this._setDisplayFromNodeState(nodeId, state);
+
+        if (this.enabledFeatures.Ajax) {
+            this._reload(nodeId);
+        }
+    },
+
+    /**
+     * Reload children nodes while "stateLable" is clicked
+     * @param {string} nodeId - Node id
+     * @private
+     */
+    _reload: function(nodeId) {
+        var node = this.model.getNode(nodeId);
+        var state = node.getState();
+        var isReload = (snippet.isUndefined(node.getData('reload')) ||
+                        node.getData('reload'));
+
+        if (state === nodeStates.CLOSED) { // open -> close action
+            this.model.setNodeData(nodeId, {reload: false}, true);
+        }
+
+        if (state === nodeStates.OPENED && isReload) { // close -> open action
+            this.resetAllData(null, {
+                nodeId: nodeId,
+                useAjax: true
+            });
         }
     },
 
@@ -886,7 +980,9 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * @api
      * @param {Array|object} data - Raw-data
      * @param {*} [parentId] - Parent id
-     * @param {boolean} [isSilent] - If true, it doesn't redraw children
+     * @param {object} [options] - Options
+     *     @param {boolean} [isSilent] - If true, it doesn't redraw children
+     *     @param {boolean} [useAjax] - State of using Ajax
      * @returns {Array.<string>} Added node ids
      * @example
      * // add node with redrawing
@@ -900,7 +996,38 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * ], parentId, true);
      * console.log(secondAddedIds); // ["tui-tree-node-11", "tui-tree-node-12"]
      */
-    add: function(data, parentId, isSilent) {
+    add: function(data, parentId, options) {
+        var self = this;
+        var treeAjax = this.enabledFeatures.Ajax;
+        var useAjax = options ? options.useAjax : (treeAjax);
+        var isSilent = options ? options.isSilent : false;
+        var newChildIds;
+
+        if (useAjax) {
+            newChildIds = treeAjax.loadData(ajaxCommand.CREATE, function() {
+                return self._add(data, parentId);
+            }, {
+                parentId: parentId,
+                data: data
+            });
+        } else {
+            newChildIds = this._add(data, parentId, isSilent);
+        }
+
+        return newChildIds;
+    },
+
+    /**
+     * Add node(s). (Core method)
+     * - If the parentId is falsy, the node will be appended to rootNode.
+     * - If 'isSilent' is not true, it redraws the tree
+     * @param {Array|object} data - Raw-data
+     * @param {*} [parentId] - Parent id
+     * @param {boolean} [isSilent] - If true, it doesn't redraw children
+     * @returns {Array.<string>} Added node ids
+     * @private
+     */
+    _add: function(data, parentId, isSilent) {
         return this.model.add(data, parentId, isSilent);
     },
 
@@ -908,6 +1035,9 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * Reset all data
      * @api
      * @param {Array|object} data - Raw data for all nodes
+     * @param {object} [options] - Options
+     *     @param {string} [nodeId] - Parent node id to reset all child data
+     *     @param {boolean} [useAjax] - State of using Ajax
      * @returns {Array.<string>} Added node ids
      * @example
      * tree.resetAllData([
@@ -915,29 +1045,87 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      *      {text: 'foo'},
      *      {text: 'bar'}
      *  ]},
-     *  {text: 'wolrd'}
+     *  {text: 'world'}
      * ]);
+     * tree.resetAllData([
+     *  {text: 'hello world'}
+     * ], {
+     *  nodeId: 'tui-tree-node-5',
+     *  useAjax: true
+     * });
      */
-    resetAllData: function(data) {
-        this.removeAllChildren(this.getRootNodeId(), true);
+    resetAllData: function(data, options) {
+        var self = this;
+        var treeAjax = this.enabledFeatures.Ajax;
+        var nodeId = options ? options.nodeId : this.getRootNodeId();
+        var useAjax = options ? options.useAjax : (treeAjax);
+        var newChildIds;
 
-        return this.add(data);
+        if (useAjax) {
+            newChildIds = treeAjax.loadData(ajaxCommand.READ, function(response) {
+                return self._resetAllData(response, nodeId);
+            }, {
+                nodeId: nodeId
+            });
+        } else {
+            newChildIds = this._resetAllData(data, nodeId);
+        }
+
+        return newChildIds;
+    },
+
+    /**
+     * Reset all data (Core method)
+     * @param {Array|object} data - Raw data for all nodes
+     * @param {string} nodeId - Node id to reset data
+     * @returns {Array.<string>} Added node ids
+     * @private
+     */
+    _resetAllData: function(data, nodeId) {
+        this._removeAllChildren(nodeId, {isSilent: true});
+
+        return this._add(data, nodeId);
     },
 
     /**
      * Remove all children
      * @api
      * @param {string} nodeId - Parent node id
-     * @param {boolean} [isSilent] - If true, it doesn't redraw the node
+     * @param {object} [options] - Options
+     *     @param {boolean} [isSilent] - If true, it doesn't redraw children
+     *     @param {boolean} [useAjax] - State of using Ajax
      * @example
      * tree.removeAllChildren(nodeId); // Redraws the node
      * tree.removeAllChildren(nodId, true); // Doesn't redraw the node
      */
-    removeAllChildren: function(nodeId, isSilent) {
+    removeAllChildren: function(nodeId, options) {
+        var self = this;
+        var treeAjax = this.enabledFeatures.Ajax;
+        var useAjax = options ? options.useAjax : (treeAjax);
+        var isSilent = options ? options.isSilent : false;
+
+        if (useAjax) {
+            treeAjax.loadData(ajaxCommand.DELETE_ALL_CHILDREN, function() {
+                self._removeAllChildren(nodeId);
+            }, {
+                nodeId: nodeId
+            });
+        } else {
+            this._removeAllChildren(nodeId, isSilent);
+        }
+    },
+
+    /**
+     * Remove all children (Core method)
+     * @param {string} nodeId - Parent node id
+     * @param {boolean} [isSilent] - If true, it doesn't redraw the node
+     * @private
+     */
+    _removeAllChildren: function(nodeId, isSilent) {
         var children = this.getChildIds(nodeId);
 
-        tui.util.forEach(children, function(childId) {
-            this.remove(childId, true);
+        snippet.forEach(children, function(childId) {
+            this._remove(childId, true);
         }, this);
 
         if (!isSilent) {
@@ -950,12 +1138,38 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * - If 'isSilent' is not true, it redraws the tree
      * @api
      * @param {string} nodeId - Node id to remove
-     * @param {boolean} [isSilent] - If true, it doesn't redraw children
+     * @param {object} [options] - Options
+     *     @param {boolean} [isSilent] - If true, it doesn't redraw children
+     *     @param {boolean} [useAjax] - State of using Ajax
      * @example
      * tree.remove(myNodeId); // remove node with redrawing
      * tree.remove(myNodeId, true); // remove node without redrawing
      */
-    remove: function(nodeId, isSilent) {
+    remove: function(nodeId, options) {
+        var self = this;
+        var treeAjax = this.enabledFeatures.Ajax;
+        var useAjax = options ? options.useAjax : (treeAjax);
+        var isSilent = options ? options.isSilent : false;
+
+        if (useAjax) {
+            treeAjax.loadData(ajaxCommand.DELETE, function() {
+                self._remove(nodeId);
+            }, {
+                nodeId: nodeId
+            });
+        } else {
+            this._remove(nodeId, isSilent);
+        }
+    },
+
+    /**
+     * Remove a node with children. (Core method)
+     * - If 'isSilent' is not true, it redraws the tree
+     * @param {string} nodeId - Node id to remove
+     * @param {boolean} [isSilent] - If true, it doesn't redraw children
+     * @private
+     */
+    _remove: function(nodeId, isSilent) {
         this.model.remove(nodeId, isSilent);
     },
 
@@ -966,12 +1180,45 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * @param {string} nodeId - Node id
      * @param {string} newParentId - New parent id
      * @param {number} index - Index number of selected node
-     * @param {boolean} [isSilent] - If true, it doesn't redraw children
+     * @param {object} [options] - Options
+     *     @param {boolean} [isSilent] - If true, it doesn't redraw children
+     *     @param {boolean} [useAjax] - State of using Ajax
      * @example
      * tree.move(myNodeId, newParentId); // mode node with redrawing
      * tree.move(myNodeId, newParentId, true); // move node without redrawing
      */
-    move: function(nodeId, newParentId, index, isSilent) {
+    move: function(nodeId, newParentId, index, options) {
+        var self = this;
+        var treeAjax = this.enabledFeatures.Ajax;
+        var useAjax = options ? options.useAjax : (treeAjax);
+        var isSilent = options ? options.isSilent : false;
+
+        if (useAjax) {
+            treeAjax.loadData(ajaxCommand.MOVE, function() {
+                if (self.getParentId(nodeId) !== newParentId) { // just move, not sort!
+                    self.setNodeData(newParentId, {reload: true}, true);
+                }
+                self._move(nodeId, newParentId, index);
+            }, {
+                nodeId: nodeId,
+                newParentId: newParentId,
+                index: index
+            });
+        } else {
+            this._move(nodeId, newParentId, index, isSilent);
+        }
+    },
+
+    /**
+     * Move a node to new parent (Core method)
+     * - If 'isSilent' is not true, it redraws the tree
+     * @param {string} nodeId - Node id
+     * @param {string} newParentId - New parent id
+     * @param {number} index - Index number of selected node
+     * @param {boolean} [isSilent] - If true, it doesn't redraw children
+     * @private
+     */
+    _move: function(nodeId, newParentId, index, isSilent) {
         /**
          * @api
          * @event Tree#beforeMove
@@ -984,7 +1231,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
          *
          *      return false; // Cancel "move" event
          *      // return true; // Fire "move" event
-         *  });
+         * });
          */
         if (!this.invoke('beforeMove', nodeId, newParentId)) {
             return;
@@ -1106,6 +1353,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      *  .enableFeature('Editable', {
      *      enableClassName: tree.classNames.textClass,
      *      dataKey: 'text',
+     *      defaultValue: 'new node',
      *      inputClassName: 'myInput'
      *  })
      *  .enableFeature('Draggable', {
@@ -1125,7 +1373,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      *  .enableFeature('Checkbox', {
      *      checkboxClassName: 'tui-tree-checkbox'
      *  })
-     *  .enableFeature('ContextMenu, {
+     *  .enableFeature('ContextMenu', {
      *  	menuData: [
      *   		{title: 'menu1', command: 'copy'},
      *     		{title: 'menu2', command: 'paste'},
@@ -1139,13 +1387,58 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      *          }
      *      }
      *  })
+     *  .enableFeature('Ajax', {
+     *      command: {
+     *          read: {
+     *              url: 'api/read',
+     *              dataType: 'json',
+     *              type: 'get'
+     *          },
+     *          create: {
+     *              url: 'api/create',
+     *              dataType: 'json',
+     *              type: 'post'
+     *          },
+     *          update: {
+     *              url: 'api/update',
+     *              dataType: 'json',
+     *              type: 'post'
+     *          },
+     *          remove: {
+     *              url: 'api/remove',
+     *              dataType: 'json',
+     *              type: 'post'
+     *          },
+     *          removeAllChildren: {
+     *              url: 'api/remove_all',
+     *              dataType: 'json',
+     *              type: 'post'
+     *          },
+     *          move: {
+     *              url: 'api/move',
+     *              dataType: 'json',
+     *              type: 'post'
+     *          }
+     *      },
+     *      dataMap: function(type, params) {
+     *          console.log('params of ' + type:' + params);
+     *          return params;
+     *      },
+     *      parseData: function(type, response) {
+     *          if (type === 'read' && response.code === '200') {
+     *              return response;
+     *          } else {
+     *              return false;
+     *          }
+     *      }
+     *  });
      */
     enableFeature: function(featureName, options) {
         var Feature = features[featureName];
-
         this.disableFeature(featureName);
         if (Feature) {
             this.enabledFeatures[featureName] = new Feature(this, options);
+            this.fire('initFeature');
         }
 
         return this;

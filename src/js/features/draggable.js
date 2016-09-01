@@ -369,7 +369,9 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{/*eslint-
             nodeId = tree.getParentId(nodeId);
         }
 
-        tree.move(this.currentNodeId, nodeId, index);
+        if (this.currentNodeId !== nodeId) {
+            tree.move(this.currentNodeId, nodeId, index);
+        }
 
         this._reset();
     },
@@ -407,6 +409,7 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{/*eslint-
      */
     _hover: function(nodeId) {
         var tree = this.tree;
+        var node = tree.model.getNode(nodeId);
 
         util.addClass(this.hoveredElement, this.hoverClassName);
 
