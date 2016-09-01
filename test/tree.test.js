@@ -169,7 +169,7 @@ describe('Tree', function() {
                 ]},
                 {text: 'new world'}
             ],
-            ids = tree.add(data, firstChildId, false, false);
+            ids = tree.add(data, firstChildId);
 
         expect(ids).toEqual(jasmine.any(Array));
         expect(ids.length).toEqual(2);
