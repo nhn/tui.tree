@@ -21,7 +21,7 @@
     "gulp-util": "^3.0.7",
     "jasmine-core": "latest",
     "jasmine-jquery": "latest",
-    "karma": "0.13.21",
+    "karma": "1.1.1",
     "karma-browserify": "^4.4.2",
     "karma-browserstack-launcher": "^0.1.9",
     "karma-chrome-launcher": "^0.2.2",
