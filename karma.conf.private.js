@@ -35,14 +35,23 @@ module.exports = function(config) {
             },
             'bower_components/jquery/jquery.min.js',
             'node_modules/jasmine-jquery/lib/jasmine-jquery.js',
+            'node_modules/jasmine-ajax/lib/mock-ajax.js',
             'test/preparation.js',
-            'test/**/*.test.js',
+            'test/*.test.js',
             'src/**/*.js',
             {
-                pattern: 'test/fixtures/**/*.html',
+                pattern: 'test/fixtures/*.html',
+                included: false
+            },
+            {
+                pattern: 'test/fixtures/*.json',
                 included: false
             }
         ],
+
+        proxies: {
+            '/': '/base/test/fixtures/'
+        },
 
         exclude: [
         ],

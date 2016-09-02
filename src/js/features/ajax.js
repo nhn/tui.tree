@@ -118,6 +118,8 @@ var Ajax = tui.util.defineClass(/** @lends Ajax.prototype */{/*eslint-disable*/
          * @example
          * tree.on('beforeRequest', function(type, data) {
          *     console.log('before' + type + ' request!');
+         *     return false; // It cancels request
+         *     // return true; // It fires request
          * });
          */
         if (!this.tree.invoke('beforeRequest', type, params)) {
