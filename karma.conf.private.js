@@ -49,10 +49,6 @@ module.exports = function(config) {
             }
         ],
 
-        proxies: {
-            '/': '/base/test/fixtures/'
-        },
-
         exclude: [
         ],
 
