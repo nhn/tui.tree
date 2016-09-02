@@ -35,6 +35,7 @@ module.exports = function(config) {
             },
             'bower_components/jquery/jquery.min.js',
             'node_modules/jasmine-jquery/lib/jasmine-jquery.js',
+            'node_modules/jasmine-ajax/lib/mock-ajax.js',
             'test/preparation.js',
             'test/**/*.test.js',
             'src/**/*.js',
@@ -45,7 +46,6 @@ module.exports = function(config) {
         ],
 
         exclude: [
-            'test/ajax.test.js'
         ],
 
         preprocessors: {
