@@ -887,12 +887,13 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
                         node.getData('reload');
 
         if (state === nodeStates.CLOSED) { // open -> close action
-            this._setNodeData(nodeId, {reload: true}, true);
+            this._setNodeData(nodeId, {reload: false}, true);
         }
 
         if (state === nodeStates.OPENED && isReload) { // close -> open action
             this.resetAllData(null, {
-                nodeId: nodeId
+                nodeId: nodeId,
+                useAjax: true
             });
         }
     },
@@ -1180,7 +1181,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * @param {string} newParentId - New parent id
      * @param {number} index - Index number of selected node
      * @param {object} [options] - Options
-     *     @param {boolean} [options.isSilent] - If true, it doesn't redraw children
+     *     @param {boolean} [options.isSilent] - If true, it doesn't trigger the 'update' event
      *     @param {boolean} [options.useAjax] - State of using Ajax
      * @example
      * tree.move(myNodeId, newParentId); // mode node with redrawing
