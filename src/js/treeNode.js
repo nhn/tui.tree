@@ -247,8 +247,7 @@ var TreeNode = tui.util.defineClass(/** @lends TreeNode.prototype */{ /*eslint-d
      * @returns {boolean} Node is leaf or not.
      */
     isLeaf: function() {
-        return this._childIds.length === 0 &&
-                !this.getData('hasChild');
+        return !this._childIds.length && !this.getData('hasChild');
     },
 
     /**

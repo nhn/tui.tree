@@ -126,7 +126,7 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
         this.mode = EDIT_TYPE.CREATE;
 
         if (useAjax) {
-            tree.on('successResponse', this._onSuccessResponse, this);
+            tree.on('successAjaxResponse', this._onSuccessResponse, this);
         }
 
         if (!tree.isLeaf(parentId)) {

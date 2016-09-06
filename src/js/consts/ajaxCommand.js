@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * States in tree
+ * Ajax comman in tree
  * @type {Object.<string, string>}
  */
 module.exports = {

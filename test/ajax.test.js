@@ -20,18 +20,23 @@ describe('Tree', function() {
     });
 
     it('When Ajax feature is enabled, the loader is created in tree.', function() {
-        var className = tree.classNames.loaderClass;
+        var className;
 
         tree.enableFeature('Ajax');
+
+        className = tree.enabledFeatures.Ajax.loaderClassName;
 
         expect($('.' + className).length).toBe(1);
     });
 
     it('When Ajax feature is disabled, the loader is removed in tree.', function() {
-        var className = tree.classNames.loaderClass;
+        var className;
 
-        tree.enableFeature('Ajax')
-            .disableFeature('Ajax');
+        tree.enableFeature('Ajax');
+
+        className = tree.enabledFeatures.Ajax.loaderClassName;
+
+        tree.disableFeature('Ajax');
 
         expect($('.' + className).length).toBe(0);
     });
@@ -87,17 +92,19 @@ describe('Tree', function() {
         var request, treeAjax;
 
         beforeEach(function() {
-            tree.enableFeature('Ajax');
+            tree.enableFeature('Ajax', {
+                command: {
+                    remove: {
+                        url: 'api/test'
+                    }
+                }
+            });
 
             treeAjax = tree.enabledFeatures.Ajax;
         });
 
         it('When request url is empty, request is not executed.', function() {
-            spyOn(treeAjax, '_getDefaultRequestOptions').and.returnValue({
-
-            });
-
-            treeAjax.loadData();
+            treeAjax.loadData('read');
 
             request = jasmine.Ajax.requests.mostRecent();
 
@@ -105,12 +112,7 @@ describe('Tree', function() {
         });
 
         it('When request options are valid, request is executed.', function() {
-            spyOn(treeAjax, '_getDefaultRequestOptions').and.returnValue({
-                url: 'api/test',
-                type: 'get'
-            });
-
-            treeAjax.loadData();
+            treeAjax.loadData('remove');
 
             request = jasmine.Ajax.requests.mostRecent();
 
@@ -131,7 +133,7 @@ describe('Tree', function() {
                 }
             });
 
-            treeAjax.loadData();
+            treeAjax.loadData('remove');
 
             request = jasmine.Ajax.requests.mostRecent();
 
@@ -149,7 +151,7 @@ describe('Tree', function() {
                 }
             });
 
-            treeAjax.loadData();
+            treeAjax.loadData('remove');
 
             request = jasmine.Ajax.requests.mostRecent();
 
@@ -161,14 +163,16 @@ describe('Tree', function() {
         var callback, treeAjax;
 
         beforeEach(function() {
-            tree.enableFeature('Ajax');
+            tree.enableFeature('Ajax', {
+                command: {
+                    read: {
+                        url: 'api/test'
+                    }
+                }
+            });
 
             treeAjax = tree.enabledFeatures.Ajax;
             callback = jasmine.createSpy('callback function');
-
-            spyOn(treeAjax, '_getDefaultRequestOptions').and.returnValue({
-                url: 'api/test'
-            });
         });
 
         it('When response is success, callback function is executed.', function() {
@@ -176,47 +180,47 @@ describe('Tree', function() {
                 e.success({});
             });
 
-            treeAjax.loadData('', callback);
+            treeAjax.loadData('read', callback);
 
             expect(callback).toHaveBeenCalled();
         });
 
         it('When response is success, the loader is hidden.', function() {
-            var className = tree.classNames.loaderClass;
+            var className = treeAjax.loaderClassName;
 
             spyOn($, 'ajax').and.callFake(function(e) {
                 e.success({});
             });
 
-            treeAjax._showLoader(true);
-            treeAjax.loadData('', callback);
+            treeAjax._showLoader();
+            treeAjax.loadData('read', callback);
 
             expect($('.' + className).css('display')).toBe('none');
         });
 
         it('When response is failed, the Ajax loader is hidden.', function() {
-            var className = tree.classNames.loaderClass;
+            var className = treeAjax.loaderClassName;
 
             spyOn($, 'ajax').and.callFake(function(e) {
                 e.error({});
             });
 
-            treeAjax._showLoader(true);
-            treeAjax.loadData('', callback);
+            treeAjax._showLoader();
+            treeAjax.loadData('read', callback);
 
             expect($('.' + className).css('display')).toBe('none');
         });
 
-        it('When response is failed, the "errorResponse" custom event is fired.', function() {
+        it('When response is failed, the "errorAjaxResponse" custom event is fired.', function() {
             var handler = jasmine.createSpy('error event handler');
 
             spyOn($, 'ajax').and.callFake(function(e) {
                 e.error({});
             });
 
-            tree.on('errorResponse', handler);
+            tree.on('errorAjaxResponse', handler);
 
-            treeAjax.loadData('', callback);
+            treeAjax.loadData('read', callback);
 
             expect(handler).toHaveBeenCalled();
         });
@@ -244,7 +248,7 @@ describe('Tree', function() {
                 }
             });
 
-            tree.on('successResponse', function(type, data) {
+            tree.on('successAjaxResponse', function(type, data) {
                 newChildIds = data;
             });
         });
@@ -283,7 +287,7 @@ describe('Tree', function() {
                 e.success(true);
             });
 
-            tree.on('successResponse', function(type, data) {
+            tree.on('successAjaxResponse', function(type, data) {
                 newChildIds = data;
             });
 

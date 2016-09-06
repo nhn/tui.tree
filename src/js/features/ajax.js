@@ -2,6 +2,7 @@
 
 var snippet = tui.util;
 var API_LIST = [];
+var LOADER_CLASSNAME = 'tui-tree-loader';
 
 /**
  * Set Ajax feature on tree
@@ -9,16 +10,18 @@ var API_LIST = [];
  * @constructor
  * @param {Tree} tree - Tree
  * @param {Object} options - Options
- *  @param {Object} [command] - Each Ajax request command options
- *  @param {Function} [dataMap] - Function to remake and return the request option "data"
- *  @param {Function} [parseData] - Function to parse and return the response data
+ *  @param {Object} options.command - Each Ajax request command options
+ *  @param {Function} [options.dataMap] - Function to remake and return the request option "data"
+ *  @param {Function} [options.parseData] - Function to parse and return the response data
+ *  @param {string} [options.loaderClassName] - Classname of loader element
+ *  @param {boolean} [options.isLoadRoot] - Whether load data from root node or not
  */
 var Ajax = tui.util.defineClass(/** @lends Ajax.prototype */{/*eslint-disable*/
     static: {
         /**
          * @static
-         * @memberOf Selectable
-         * @returns {Array.<string>} API list of Selectable
+         * @memberOf Ajax
+         * @returns {Array.<string>} API list of Ajax
          */
         getAPIList: function() {
             return API_LIST.slice();
@@ -37,7 +40,7 @@ var Ajax = tui.util.defineClass(/** @lends Ajax.prototype */{/*eslint-disable*/
          * Option for each request command
          * @type {Object}
          */
-        this.command = options.command || {};
+        this.command = options.command;
 
         /**
          * Callback for remake the request option "data"
@@ -52,10 +55,16 @@ var Ajax = tui.util.defineClass(/** @lends Ajax.prototype */{/*eslint-disable*/
         this.parseData = options.parseData || null;
 
         /**
+         * Classname of loader element
+         * @type {string}
+         */
+        this.loaderClassName = options.loaderClassName || LOADER_CLASSNAME;
+
+        /**
          * State of loading root data or not
          * @type {boolean}
          */
-        this.isLoadRoot = (!snippet.isUndefined(options.isLoadRoot)) ?
+        this.isLoadRoot = !snippet.isUndefined(options.isLoadRoot) ?
                             options.isLoadRoot : true;
 
         /**
@@ -90,10 +99,6 @@ var Ajax = tui.util.defineClass(/** @lends Ajax.prototype */{/*eslint-disable*/
         this._removeLoader();
 
         tree.off(this);
-
-        tui.util.forEach(API_LIST, function(apiName) {
-            delete tree[apiName];
-        });
     },
 
     /**
@@ -104,29 +109,32 @@ var Ajax = tui.util.defineClass(/** @lends Ajax.prototype */{/*eslint-disable*/
      */
     loadData: function(type, callback, params) {
         var self = this;
-        var options = this._getDefaultRequestOptions(type, params);
+        var options;
 
-        if (!options.url) {
+        if (!this.command || !this.command[type] ||
+            !this.command[type].url) {
             return;
         }
 
+        options = this._getDefaultRequestOptions(type, params);
+
         /**
          * @api
-         * @event Tree#beforeRequest
+         * @event Tree#beforeAjaxRequest
          * @param {string} type - Command type
          * @param {string} [data] - Request data
          * @example
-         * tree.on('beforeRequest', function(type, data) {
-         *     console.log('before' + type + ' request!');
+         * tree.on('beforeAjaxRequest', function(type, data) {
+         *     console.log('before ' + type + ' request!');
          *     return false; // It cancels request
          *     // return true; // It fires request
          * });
          */
-        if (!this.tree.invoke('beforeRequest', type, params)) {
+        if (!this.tree.invoke('beforeAjaxRequest', type, params)) {
             return;
         }
 
-        this._showLoader(true);
+        this._showLoader();
 
         options.success = function(response) {
             self._responseSuccess(type, callback, response);
@@ -150,7 +158,7 @@ var Ajax = tui.util.defineClass(/** @lends Ajax.prototype */{/*eslint-disable*/
         var tree = this.tree;
         var data;
 
-        this._showLoader(false);
+        this._hideLoader();
 
         if (this.parseData) {
             response = this.parseData(type, response);
@@ -161,29 +169,29 @@ var Ajax = tui.util.defineClass(/** @lends Ajax.prototype */{/*eslint-disable*/
 
             /**
              * @api
-             * @event Tree#successResponse
+             * @event Tree#successAjaxResponse
              * @param {string} type - Command type
              * @param {string} [data] - Return value of executed command callback
              * @example
-             * tree.on('successResponse', function(type, data) {
+             * tree.on('successAjaxResponse', function(type, data) {
              *     console.log(type + ' response is success!');
              *     if (data) {
              *           console.log('new add ids :' + data);
              *     }
              * });
              */
-            tree.fire('successResponse', type, data);
+            tree.fire('successAjaxResponse', type, data);
         } else {
             /**
              * @api
-             * @event Tree#failResponse
+             * @event Tree#failAjaxResponse
              * @param {string} type - Command type
              * @example
-             * tree.on('failResponse', function(type) {
+             * tree.on('failAjaxResponse', function(type) {
              *     console.log(type + ' response is fail!');
              * });
              */
-            tree.fire('failResponse', type);
+            tree.fire('failAjaxResponse', type);
         }
     },
 
@@ -193,18 +201,18 @@ var Ajax = tui.util.defineClass(/** @lends Ajax.prototype */{/*eslint-disable*/
      * @private
      */
     _responseError: function(type) {
-        this._showLoader(false);
+        this._hideLoader();
 
         /**
          * @api
-         * @event Tree#errorResponse
+         * @event Tree#errorAjaxResponse
          * @param {string} type - Command type
          * @example
-         * tree.on('errorResponse', function(type) {
+         * tree.on('errorAjaxResponse', function(type) {
          *     console.log(type + ' response is error!');
          * });
          */
-        this.tree.fire('errorResponse', type);
+        this.tree.fire('errorAjaxResponse', type);
     },
 
     /**
@@ -215,7 +223,7 @@ var Ajax = tui.util.defineClass(/** @lends Ajax.prototype */{/*eslint-disable*/
      * @private
      */
     _getDefaultRequestOptions: function(type, params) {
-        var options = this.command[type] || {};
+        var options = this.command[type];
 
         options.type = (options.type) ? options.type.toLowerCase() : 'get';
         options.dataType = options.dataType || 'json';
@@ -235,7 +243,7 @@ var Ajax = tui.util.defineClass(/** @lends Ajax.prototype */{/*eslint-disable*/
         var tree = this.tree;
         var loader = document.createElement('span');
 
-        loader.className = tree.classNames.loaderClass;
+        loader.className = this.loaderClassName;
         loader.style.display = 'none';
 
         tree.rootElement.parentNode.appendChild(loader);
@@ -258,11 +266,18 @@ var Ajax = tui.util.defineClass(/** @lends Ajax.prototype */{/*eslint-disable*/
 
     /**
      * Show loader element on tree
-     * @param {boolean} state - Loader display state
      * @private
      */
-    _showLoader: function(state) {
-        this.loader.style.display = state ? 'block' : 'none';
+    _showLoader: function() {
+        this.loader.style.display = 'block';
+    },
+
+    /**
+     * Hide loader element on tree
+     * @private
+     */
+    _hideLoader: function() {
+        this.loader.style.display = 'none';
     }
 });
 

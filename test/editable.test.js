@@ -98,13 +98,23 @@ describe('Tree', function() {
         });
 
         it('should fire "successResponse" when Ajax feature is enabled.', function() {
+            jasmine.Ajax.install();
+
             spyOn(treeEditable, '_onSuccessResponse');
 
-            tree.enableFeature('Ajax');
+            tree.enableFeature('Ajax', {
+                command: {
+                    read: {
+                        url: 'api/test'
+                    }
+                }
+            });
             tree.createChildNode(lastChildId);
-            tree.fire('successResponse');
+            tree.fire('successAjaxResponse');
 
             expect(treeEditable._onSuccessResponse).toHaveBeenCalled();
+
+            jasmine.Ajax.uninstall();
         });
     });
 

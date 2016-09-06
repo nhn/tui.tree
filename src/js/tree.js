@@ -732,7 +732,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
     setNodeData: function(nodeId, data, options) {
         var self = this;
         var treeAjax = this.enabledFeatures.Ajax;
-        var useAjax = options ? options.useAjax : (treeAjax);
+        var useAjax = options ? options.useAjax : !!treeAjax;
         var isSilent = options ? options.isSilent : false;
 
         if (useAjax) {
@@ -773,7 +773,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
     removeNodeData: function(nodeId, names, options) {
         var self = this;
         var treeAjax = this.enabledFeatures.Ajax;
-        var useAjax = options ? options.useAjax : (treeAjax);
+        var useAjax = options ? options.useAjax : !!treeAjax;
         var isSilent = options ? options.isSilent : false;
 
         if (useAjax) {
@@ -983,7 +983,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * @param {object} [options] - Options
      *     @param {boolean} [isSilent] - If true, it doesn't redraw children
      *     @param {boolean} [useAjax] - State of using Ajax
-     * @returns {Array.<string>} Added node ids
+     * @returns {?Array.<string>} Added node ids
      * @example
      * // add node with redrawing
      * var firstAddedIds = tree.add({text:'FE development team1'}, parentId);
@@ -999,12 +999,12 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
     add: function(data, parentId, options) {
         var self = this;
         var treeAjax = this.enabledFeatures.Ajax;
-        var useAjax = options ? options.useAjax : (treeAjax);
+        var useAjax = options ? options.useAjax : !!treeAjax;
         var isSilent = options ? options.isSilent : false;
         var newChildIds;
 
         if (useAjax) {
-            newChildIds = treeAjax.loadData(ajaxCommand.CREATE, function() {
+            treeAjax.loadData(ajaxCommand.CREATE, function() {
                 return self._add(data, parentId);
             }, {
                 parentId: parentId,
@@ -1038,7 +1038,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * @param {object} [options] - Options
      *     @param {string} [nodeId] - Parent node id to reset all child data
      *     @param {boolean} [useAjax] - State of using Ajax
-     * @returns {Array.<string>} Added node ids
+     * @returns {?Array.<string>} Added node ids
      * @example
      * tree.resetAllData([
      *  {text: 'hello', children: [
@@ -1058,11 +1058,11 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
         var self = this;
         var treeAjax = this.enabledFeatures.Ajax;
         var nodeId = options ? options.nodeId : this.getRootNodeId();
-        var useAjax = options ? options.useAjax : (treeAjax);
+        var useAjax = options ? options.useAjax : !!treeAjax;
         var newChildIds;
 
         if (useAjax) {
-            newChildIds = treeAjax.loadData(ajaxCommand.READ, function(response) {
+            treeAjax.loadData(ajaxCommand.READ, function(response) {
                 return self._resetAllData(response, nodeId);
             }, {
                 nodeId: nodeId
@@ -1101,7 +1101,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
     removeAllChildren: function(nodeId, options) {
         var self = this;
         var treeAjax = this.enabledFeatures.Ajax;
-        var useAjax = options ? options.useAjax : (treeAjax);
+        var useAjax = options ? options.useAjax : !!treeAjax;
         var isSilent = options ? options.isSilent : false;
 
         if (useAjax) {
@@ -1148,7 +1148,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
     remove: function(nodeId, options) {
         var self = this;
         var treeAjax = this.enabledFeatures.Ajax;
-        var useAjax = options ? options.useAjax : (treeAjax);
+        var useAjax = options ? options.useAjax : !!treeAjax;
         var isSilent = options ? options.isSilent : false;
 
         if (useAjax) {
@@ -1190,7 +1190,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
     move: function(nodeId, newParentId, index, options) {
         var self = this;
         var treeAjax = this.enabledFeatures.Ajax;
-        var useAjax = options ? options.useAjax : (treeAjax);
+        var useAjax = options ? options.useAjax : !!treeAjax;
         var isSilent = options ? options.isSilent : false;
 
         if (useAjax) {
@@ -1234,6 +1234,10 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
          * });
          */
         if (!this.invoke('beforeMove', nodeId, newParentId)) {
+            return;
+        }
+
+        if (this.currentNodeId === nodeId) {
             return;
         }
 
