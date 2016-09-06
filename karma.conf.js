@@ -34,20 +34,13 @@ module.exports = function(config) {
             'test/*.test.js',
             'src/**/*.js',
             {
-                pattern: 'test/fixtures/*.html',
-                included: false
-            },
-            {
-                pattern: 'test/fixtures/*.json',
+                pattern: 'test/fixtures/**/*.html',
                 included: false
             }
         ],
 
-        proxies: {
-            '/': '/base/test/fixtures/'
-        },
-
         exclude: [
+            'test/ajax.test.js'
         ],
 
         preprocessors: {
@@ -93,7 +86,7 @@ module.exports = function(config) {
         autoWatch: true,
 
         browsers: [
-            'Chrome'
+            'PhantomJS'
         ],
 
         singleRun: false
