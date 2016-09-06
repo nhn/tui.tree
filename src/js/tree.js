@@ -723,8 +723,8 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * @param {string} nodeId - Node id
      * @param {object} data - Properties
      * @param {object} [options] - Options
-     *     @param {boolean} [isSilent] - If true, it doesn't redraw children
-     *     @param {boolean} [useAjax] - State of using Ajax
+     *     @param {boolean} [options.isSilent] - If true, it doesn't trigger the 'update' event
+     *     @param {boolean} [options.useAjax] - State of using Ajax
      * @exmaple
      * tree.setNodeData(nodeId, {foo: 'bar'}); // auto refresh
      * tree.setNodeData(nodeId, {foo: 'bar'}, true); // not refresh
@@ -764,8 +764,8 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * @param {string} nodeId - Node id
      * @param {string|Array} names - Names of properties
      * @param {object} [options] - Options
-     *     @param {boolean} [isSilent] - If true, it doesn't redraw children
-     *     @param {boolean} [useAjax] - State of using Ajax
+     *     @param {boolean} [options.isSilent] - If true, it doesn't trigger the 'update' event
+     *     @param {boolean} [options.useAjax] - State of using Ajax
      * @example
      * tree.setNodeData(nodeId, 'foo'); // auto refresh
      * tree.setNodeData(nodeId, 'foo', true); // not refresh
@@ -883,17 +883,16 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
     _reload: function(nodeId) {
         var node = this.model.getNode(nodeId);
         var state = node.getState();
-        var isReload = (snippet.isUndefined(node.getData('reload')) ||
-                        node.getData('reload'));
+        var isReload = snippet.isUndefined(node.getData('reload')) ||
+                        node.getData('reload');
 
         if (state === nodeStates.CLOSED) { // open -> close action
-            this.model.setNodeData(nodeId, {reload: false}, true);
+            this._setNodeData(nodeId, {reload: true}, true);
         }
 
         if (state === nodeStates.OPENED && isReload) { // close -> open action
             this.resetAllData(null, {
-                nodeId: nodeId,
-                useAjax: true
+                nodeId: nodeId
             });
         }
     },
@@ -981,8 +980,8 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * @param {Array|object} data - Raw-data
      * @param {*} [parentId] - Parent id
      * @param {object} [options] - Options
-     *     @param {boolean} [isSilent] - If true, it doesn't redraw children
-     *     @param {boolean} [useAjax] - State of using Ajax
+     *     @param {boolean} [options.isSilent] - If true, it doesn't redraw children
+     *     @param {boolean} [options.useAjax] - State of using Ajax
      * @returns {?Array.<string>} Added node ids
      * @example
      * // add node with redrawing
@@ -1036,8 +1035,8 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * @api
      * @param {Array|object} data - Raw data for all nodes
      * @param {object} [options] - Options
-     *     @param {string} [nodeId] - Parent node id to reset all child data
-     *     @param {boolean} [useAjax] - State of using Ajax
+     *     @param {string} [options.nodeId] - Parent node id to reset all child data
+     *     @param {boolean} [options.useAjax] - State of using Ajax
      * @returns {?Array.<string>} Added node ids
      * @example
      * tree.resetAllData([
@@ -1092,8 +1091,8 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * @api
      * @param {string} nodeId - Parent node id
      * @param {object} [options] - Options
-     *     @param {boolean} [isSilent] - If true, it doesn't redraw children
-     *     @param {boolean} [useAjax] - State of using Ajax
+     *     @param {boolean} [options.isSilent] - If true, it doesn't redraw the node
+     *     @param {boolean} [options.useAjax] - State of using Ajax
      * @example
      * tree.removeAllChildren(nodeId); // Redraws the node
      * tree.removeAllChildren(nodId, true); // Doesn't redraw the node
@@ -1139,8 +1138,8 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * @api
      * @param {string} nodeId - Node id to remove
      * @param {object} [options] - Options
-     *     @param {boolean} [isSilent] - If true, it doesn't redraw children
-     *     @param {boolean} [useAjax] - State of using Ajax
+     *     @param {boolean} [options.isSilent] - If true, it doesn't redraw children
+     *     @param {boolean} [options.useAjax] - State of using Ajax
      * @example
      * tree.remove(myNodeId); // remove node with redrawing
      * tree.remove(myNodeId, true); // remove node without redrawing
@@ -1181,8 +1180,8 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * @param {string} newParentId - New parent id
      * @param {number} index - Index number of selected node
      * @param {object} [options] - Options
-     *     @param {boolean} [isSilent] - If true, it doesn't redraw children
-     *     @param {boolean} [useAjax] - State of using Ajax
+     *     @param {boolean} [options.isSilent] - If true, it doesn't redraw children
+     *     @param {boolean} [options.useAjax] - State of using Ajax
      * @example
      * tree.move(myNodeId, newParentId); // mode node with redrawing
      * tree.move(myNodeId, newParentId, true); // move node without redrawing
