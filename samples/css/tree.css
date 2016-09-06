@@ -22,14 +22,13 @@ h3 {
 
 .treeWrap ul {
     margin: 0;
-    padding-left: 15px;
+    padding-left: 20px;
 }
 
 .treeWrap ul li {
     list-style: none;
     padding: 0;
     margin: 0;
-    width: 150px;
     cursor: pointer;
 }
 
@@ -75,6 +74,8 @@ h3 {
 
 /* selectable feature style */
 input {
+    margin: 5px;
+    padding: 5px;
     border: 2px dotted;
     outline: none;
 }
@@ -105,5 +106,19 @@ input {
     height: 10px;
     background: url('../sp_floor.png') no-repeat left;
     background-position: -19px -161px;
+    font-size: 0px;
+}
+
+.tui-tree-loader {
+    position: absolute;
+    margin-left: -16px;
+    margin-top: -16px;
+    left: 50%;
+    top: 50%;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    background: url('../img/ajax-loader.gif') no-repeat left;
+    background-position: 0px 0px;
     font-size: 0px;
 }

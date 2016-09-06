@@ -2,9 +2,9 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-    <link type="text/css" rel="stylesheet" href="../styles/prettify-jsdoc.css" />
-    <link type="text/css" rel="stylesheet" href="../styles/prettify-tomorrow.css">
-    <link type="text/css" rel="stylesheet" href="../styles/tui.css">
+    <link command="text/css" rel="stylesheet" href="../styles/prettify-jsdoc.css" />
+    <link command="text/css" rel="stylesheet" href="../styles/prettify-tomorrow.css">
+    <link command="text/css" rel="stylesheet" href="../styles/tui.css">
 
     <title>트리컴포넌트</title>
     <!-- Use in service -->
@@ -24,12 +24,12 @@
     <div class="codeArea"></div>
 
     <!-- Use in service -->
-    <script type="text/javascript" src="js/jquery.js"></script>
-    <script type="text/javascript" src="js/code-snippet.js"></script>
-    <script type="text/javascript" src="js/domutil.js"></script>
-    <script type="text/javascript" src="js/floatinglayer.js"></script>
-    <script type="text/javascript" src="js/contextmenu.js"></script>
-    <script type="text/javascript" src="js/tree.js"></script>
+    <script command="text/javascript" src="js/jquery.js"></script>
+    <script command="text/javascript" src="js/code-snippet.js"></script>
+    <script command="text/javascript" src="js/domutil.js"></script>
+    <script command="text/javascript" src="js/floatinglayer.js"></script>
+    <script command="text/javascript" src="js/contextmenu.js"></script>
+    <script command="text/javascript" src="js/tree.js"></script>
     <!-- // Use in service -->
 
     <script src="../scripts/prettify/prettify.js"></script>
@@ -101,28 +101,28 @@
                     dataType: 'json',
                 }
             },
-            dataMap: function(type, params) {
+            dataMap: function(command, params) {
                 var data;
 
-                if (type === 'read') {
+                if (command === 'read') {
                     data = {
                         productId: tree.getNodeData(params.nodeId).pid
                     };
-                } else if (type === 'create') {
+                } else if (command === 'create') {
                     data = {
                         targetId: tree.getNodeData(params.parentId).pid,
                         productName: params.data.text
                     };
-                } else if (type === 'update') {
+                } else if (command === 'update') {
                     data = {
                         productId: tree.getNodeData(params.nodeId).pid,
                         productName: params.data.text
                     };
-                } else if (type === 'remove') {
+                } else if (command === 'remove') {
                     data = {
                         productId: tree.getNodeData(params.nodeId).pid
                     }
-                } else if (type === 'move') {
+                } else if (command === 'move') {
                     data = {
                         productId: tree.getNodeData(params.nodeId).pid,
                         targetId: tree.getNodeData(params.newParentId).pid,
@@ -132,8 +132,8 @@
 
                 return data;
             },
-            parseData: function(type, response) {
-                if (type === 'read') {
+            parseData: function(command, response) {
+                if (command === 'read') {
                     return (response.code == '200') ? response.tree : false;
                 } else {
                     return true;
@@ -167,38 +167,38 @@
             console.log(tree.getNodeData(nodeId));
         });
 
-        tree.on('beforeRequest', function(type, data) {
+        tree.on('beforeAjaxRequest', function(command, data) {
             var state = true;
 
-            if (type === 'create' || type === 'update') {
+            if (command === 'create' || command === 'update') {
                 if (!data.data.text) {
                     alert('empty!');
                     state = false;
                 } else {
-                    state = (confirm(type + '?'));
+                    state = (confirm(command + '?'));
                 }
 
                 if (!state) {
                     tree.refresh(data.parentId);
                 }
-            } else if (type === 'remove') {
-                state = (confirm(type + '?'));
+            } else if (command === 'remove') {
+                state = (confirm(command + '?'));
             }
 
             return state;
         });
 
-        tree.on('successResponse', function(type, data) {
+        tree.on('successAjaxResponse', function(command, data) {
             var message;
 
-            if (type === 'create') {
+            if (command === 'create') {
                 console.log('created node id : ' + data);
             }
 
             // Next code is only for this sample page! Don't copy it!
-            message = 'command type : ' + type  + '\n';
+            message = 'command command : ' + command  + '\n';
             message += 'jQuery request options : \n';
-            message += JSON.stringify(tree.enabledFeatures.Ajax.command[type], null, 8);
+            message += JSON.stringify(tree.enabledFeatures.Ajax.command[command], null, 8);
 
             infoArea.value = message;
         });

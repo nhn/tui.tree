@@ -37,8 +37,7 @@ module.exports = function(config) {
             'node_modules/jasmine-jquery/lib/jasmine-jquery.js',
             'node_modules/jasmine-ajax/lib/mock-ajax.js',
             'test/preparation.js',
-            'test/**/*.test.js',
-            //'test/editable.test.js',
+            'test/*.test.js',
             'src/**/*.js',
             {
                 pattern: 'test/fixtures/**/*.html',
@@ -51,7 +50,7 @@ module.exports = function(config) {
 
         preprocessors: {
             'src/**/*.js': ['browserify', 'coverage'],
-            'test/**/*.js': ['browserify']
+            'test/*.js': ['browserify']
         },
 
         coverageReporter: {
@@ -93,12 +92,12 @@ module.exports = function(config) {
 
         browsers: [
             //'IE8',
-            'IE9'//,
-            // 'IE10',
-            // 'IE11',
-            // 'Edge',
-            // 'Chrome-WebDriver',
-            // 'Firefox-WebDriver'
+            'IE9',
+            'IE10',
+            'IE11',
+            'Edge',
+            'Chrome-WebDriver',
+            'Firefox-WebDriver'
         ],
 
         customLaunchers: {
