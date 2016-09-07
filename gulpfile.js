@@ -34,7 +34,7 @@ config.browserify = {
 };
 config.browserSync = {
     server: {
-        index: './default.html',
+        index: './ajax.html',
         baseDir: './samples'
     },
     port: 3000,

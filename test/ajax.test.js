@@ -42,38 +42,46 @@ describe('Tree', function() {
     });
 
     describe('Options test', function() {
-        var defaultOptions, treeAjax;
+        var treeAjax, urlMock, dataMock;
 
         beforeEach(function() {
+            urlMock = jasmine.createSpy('urlMockSpy').and.returnValue('api/id');
+            dataMock = jasmine.createSpy('dataMockSpy').and.returnValue({
+                param1: 'a',
+                param2: 'b'
+            });
+
             tree.enableFeature('Ajax', {
                 command: {
                     read: {
-                        url: 'api/test'
+                        url: urlMock,
+                        data: dataMock
                     }
-                },
-                dataMap: function() {
-                    return {
-                        param1: 'a',
-                        param2: 'b'
-                    };
                 },
                 isLoadRoot: false
             });
 
             treeAjax = tree.enabledFeatures.Ajax;
-            defaultOptions = treeAjax._getDefaultRequestOptions('read');
         });
 
         it('When default command option have not "type" property, default value set to "get".', function() {
-            expect(defaultOptions.type).toBe('get');
+            treeAjax._getDefaultRequestOptions('read');
+            expect(treeAjax.command.read.type).toBe('get');
         });
 
         it('When default command option have not "dataType" property, default value set to "json".', function() {
-            expect(defaultOptions.dataType).toBe('json');
+            treeAjax._getDefaultRequestOptions('read');
+            expect(treeAjax.command.read.dataType).toBe('json');
         });
 
-        it('When feature option have "dataMap" function, "data" value set to return value of "dataMap".', function() {
-            expect(defaultOptions.data).toEqual({
+        it('When default command option have "url" property and it is function, "url" value set to return value.', function() {
+            treeAjax._getDefaultRequestOptions('read');
+            expect(treeAjax.command.read.url).toBe('api/id');
+        });
+
+        it('When default command option have "data" property and it is function, "data" value set to return value.', function() {
+            treeAjax._getDefaultRequestOptions('read');
+            expect(treeAjax.command.read.data).toEqual({
                 param1: 'a',
                 param2: 'b'
             });

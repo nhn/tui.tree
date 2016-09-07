@@ -152,7 +152,6 @@ var LOADER_CLASSNAME = 'tui-tree-loader';
  * @param {Tree} tree - Tree
  * @param {Object} options - Options
  *  @param {Object} options.command - Each Ajax request command options
- *  @param {Function} [options.dataMap] - Function to remake and return the request option "data"
  *  @param {Function} [options.parseData] - Function to parse and return the response data
  *  @param {string} [options.loaderClassName] - Classname of loader element
  *  @param {boolean} [options.isLoadRoot] - Whether load data from root node or not
@@ -182,12 +181,6 @@ var Ajax = tui.util.defineClass(/** @lends Ajax.prototype */{/*eslint-disable*/
          * @type {Object}
          */
         this.command = options.command;
-
-        /**
-         * Callback for remake the request option "data"
-         * @type {?Function}
-         */
-        this.dataMap = options.dataMap || null;
 
         /**
          * Callback for parsing the response data
@@ -366,12 +359,16 @@ var Ajax = tui.util.defineClass(/** @lends Ajax.prototype */{/*eslint-disable*/
     _getDefaultRequestOptions: function(type, params) {
         var options = this.command[type];
 
+        if (snippet.isFunction(options.url)) { // for restful API url
+            options.url = options.url(params);
+        }
+
+        if (snippet.isFunction(options.data)) { // for custom request data
+            options.data = options.data(params);
+        }
+
         options.type = (options.type) ? options.type.toLowerCase() : 'get';
         options.dataType = options.dataType || 'json';
-
-        if (this.dataMap) {
-            options.data = this.dataMap(type, params);
-        }
 
         return options;
     },
@@ -1596,7 +1593,9 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{/*eslint-
             nodeId = tree.getParentId(nodeId);
         }
 
-        tree.move(this.currentNodeId, nodeId, index);
+        if (this.currentNodeId !== nodeId) {
+            tree.move(this.currentNodeId, nodeId, index);
+        }
 
         this._reset();
     },
@@ -1774,13 +1773,12 @@ module.exports = Draggable;
 
 var util = require('./../util');
 var ajaxCommand = require('./../consts/ajaxCommand');
-var snippet = tui.util;
+var states = require('./../consts/states');
+
 var API_LIST = [
     'createChildNode',
     'editNode'
 ];
-var INPUT_TEMPLATE = '<input type="text">';
-var WRAPPER_TEMPLATE = '<li class="{{nodeClass}} {{leafClass}}">{{innerTemplate}}</li>';
 var EDIT_TYPE = {
     CREATE: 'create',
     UPDATE: 'update'
@@ -1861,9 +1859,6 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
 
         tree.on('doubleClick', this._onDoubleClick, this);
 
-        util.addEventListener(this.inputElement, 'keyup', this.boundOnKeyup);
-        util.addEventListener(this.inputElement, 'blur', this.boundOnBlur);
-
         this._setAPIs();
     },
 
@@ -1878,8 +1873,6 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
         tui.util.forEach(API_LIST, function(apiName) {
             delete tree[apiName];
         });
-        util.removeEventListener(this.inputElement, 'keyup', this.boundOnKeyup);
-        util.removeEventListener(this.inputElement, 'blur', this.boundOnBlur);
     },
 
     /**
@@ -1894,6 +1887,7 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
     createChildNode: function(parentId) {
         var tree = this.tree;
         var useAjax = tree.enabledFeatures.Ajax;
+        var nodeId;
 
         this.mode = EDIT_TYPE.CREATE;
 
@@ -1901,10 +1895,12 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
             tree.on('successAjaxResponse', this._onSuccessResponse, this);
         }
 
-        if (!tree.isLeaf(parentId)) {
+        if (!tree.isLeaf(parentId) &&
+            tree.getState(parentId) === states.node.CLOSED) {
             tree.open(parentId);
         } else {
-            this._attachInputElement(parentId);
+            nodeId = tree._add({}, parentId)[0];
+            this._attachInputElement(nodeId);
         }
     },
 
@@ -1918,38 +1914,24 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
      * tree.editNode('tui-tree-node-1');
      */
     editNode: function(nodeId) {
-        var inputElement;
-        var tree = this.tree;
-        var target = document.getElementById(nodeId);
-        var textElement = util.getElementsByClassName(target, tree.classNames.textClass)[0];
-
         this.mode = EDIT_TYPE.UPDATE;
-
-        inputElement = this.inputElement;
-        inputElement.value = tree.getNodeData(nodeId)[this.dataKey] || '';
-
-        textElement.parentNode.insertBefore(inputElement, textElement);
-        textElement.style.display = 'none';
-
-        inputElement.focus();
-
-        util.addEventListener(this.inputElement, 'blur', this.boundOnBlur);
+        this._attachInputElement(nodeId);
     },
 
     /**
      * Custom event handler "successResponse"
      * @param {string} type - Ajax command type
-     * @param {Array.<string>} newNodeIds - Added node ids on tree
+     * @param {Array.<string>} nodeIds - Added node ids on tree
      * @private
      */
-    _onSuccessResponse: function(type, newNodeIds) {
-        var parentId;
+    _onSuccessResponse: function(type, nodeIds) {
         var tree = this.tree;
+        var parentId, nodeId;
 
-        if (type === ajaxCommand.READ && newNodeIds) {
-            parentId = tree.getParentId(newNodeIds[0]);
-
-            this._attachInputElement(parentId);
+        if (type === ajaxCommand.READ && nodeIds) {
+            parentId = tree.getParentId(nodeIds[0]);
+            nodeId = tree._add({}, parentId)[0];
+            this._attachInputElement(nodeId);
         }
     },
 
@@ -2024,15 +2006,14 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
     _attachInputElement: function(nodeId) {
         var tree = this.tree;
         var target = document.getElementById(nodeId);
-        var subtree;
+        var textElement = util.getElementsByClassName(target, tree.classNames.textClass)[0];
+        var inputElement;
 
-        if (tree.isLeaf(nodeId)) {
-            target.innerHTML = this._getOuterTemplate(nodeId);
-            util.removeClass(target, tree.classNames.leafClass);
-        } else {
-            subtree = util.getElementsByClassName(target, tree.classNames.subtreeClass);
-            subtree[0].innerHTML = subtree[0].innerHTML + this._getInnerTemplate();
-        }
+        inputElement = this.inputElement;
+        inputElement.value = tree.getNodeData(nodeId)[this.dataKey] || '';
+
+        textElement.parentNode.insertBefore(inputElement, textElement);
+        textElement.style.display = 'none';
 
         this.inputElement = target.getElementsByTagName('input')[0];
         this.inputElement.focus();
@@ -2055,8 +2036,11 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
         }
 
         if (tree.enabledFeatures.Ajax) {
-            tree.off(this, 'successResponse');
+            tree.off(this, 'successAjaxResponse');
         }
+
+        util.removeEventListener(this.inputElement, 'keyup', this.boundOnKeyup);
+        util.removeEventListener(this.inputElement, 'blur', this.boundOnBlur);
     },
 
     /**
@@ -2066,11 +2050,17 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
     _addData: function() {
         var tree = this.tree;
         var nodeId = tree.getNodeIdFromElement(this.inputElement);
+        var parentId = tree.getParentId(nodeId);
         var data = {};
+
+        if (!this.tree.invoke('beforeCreateChildNode')) {
+            return;
+        }
 
         if (nodeId) {
             data[this.dataKey] = this.inputElement.value || this.defaultValue;
-            tree.add(data, nodeId);
+            tree._remove(nodeId);
+            tree.add(data, parentId);
         }
         this._detachInputElement();
     },
@@ -2084,46 +2074,15 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
         var nodeId = tree.getNodeIdFromElement(this.inputElement);
         var data = {};
 
+        if (!this.tree.invoke('beforeEditNode')) {
+            return;
+        }
+
         if (nodeId) {
             data[this.dataKey] = this.inputElement.value;
             tree.setNodeData(nodeId, data);
         }
         this._detachInputElement();
-    },
-
-    /**
-     * Get inner template to create warpper of input element
-     * @returns {HTMLElement} Inner template
-     * @private
-     */
-    _getInnerTemplate: function() {
-        var classNames = this.tree.classNames;
-        var props = {
-            innerTemplate: INPUT_TEMPLATE
-        };
-
-        return util.renderTemplate(WRAPPER_TEMPLATE, snippet.extend(props, classNames));
-    },
-
-    /**
-     * Get outer template to create warpper of input element
-     * @param {string} nodeId - Selected node id
-     * @returns {HTMLElement} Outer template
-     * @private
-     */
-    _getOuterTemplate: function(nodeId) {
-        var tree = this.tree;
-        var state = tree.getState(nodeId);
-        var nodeData = tree.getNodeData(nodeId);
-        var template = tree.template.internalNode;
-        var classNames = tree.classNames;
-        var props = {
-            stateClass: classNames[state + 'Class'],
-            stateLabel: tree.stateLabels[state],
-            children: this._getInnerTemplate()
-        };
-
-        return util.renderTemplate(template, snippet.extend(props, classNames, nodeData));
     },
 
     /**
@@ -2142,7 +2101,7 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
 
 module.exports = Editable;
 
-},{"./../consts/ajaxCommand":2,"./../util":16}],12:[function(require,module,exports){
+},{"./../consts/ajaxCommand":2,"./../consts/states":6,"./../util":16}],12:[function(require,module,exports){
 'use strict';
 
 var util = require('./../util');
@@ -2454,11 +2413,11 @@ var nodeStates = states.node,
  *
  *     template: { // template for Mustache engine
  *         internalNode:
- *             '<button type="button" class="{{toggleBtnClass}}">{{{stateLabel}}}</button>' +
- *             '<span class="{{textClass}}">{{{text}}}</span>' +
- *             '<ul class="{{subtreeClass}}">{{{children}}}</ul>'
+ *             '<button type="button" class="{{toggleBtnClass}}">{{stateLabel}}</button>' +
+ *             '<span class="{{textClass}}">{{text}}</span>' +
+ *             '<ul class="{{subtreeClass}}">{{children}}</ul>',
  *         leafNode:
- *             '<span class="{{textClass}}">{{{text}}}</span>' +
+ *             '<span class="{{textClass}}">{{text}}</span>'
  *     },
  *     renderTemplate: function(source, props) {
  *         // Mustache template engine
@@ -3564,10 +3523,6 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
          * });
          */
         if (!this.invoke('beforeMove', nodeId, newParentId)) {
-            return;
-        }
-
-        if (this.currentNodeId === nodeId) {
             return;
         }
 

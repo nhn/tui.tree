@@ -124,11 +124,11 @@ var nodeStates = states.node,
  *
  *     template: { // template for Mustache engine
  *         internalNode:
- *             '<button type="button" class="{{toggleBtnClass}}">{{{stateLabel}}}</button>' +
- *             '<span class="{{textClass}}">{{{text}}}</span>' +
- *             '<ul class="{{subtreeClass}}">{{{children}}}</ul>'
+ *             '<button type="button" class="{{toggleBtnClass}}">{{stateLabel}}</button>' +
+ *             '<span class="{{textClass}}">{{text}}</span>' +
+ *             '<ul class="{{subtreeClass}}">{{children}}</ul>',
  *         leafNode:
- *             '<span class="{{textClass}}">{{{text}}}</span>' +
+ *             '<span class="{{textClass}}">{{text}}</span>'
  *     },
  *     renderTemplate: function(source, props) {
  *         // Mustache template engine
@@ -1234,10 +1234,6 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
          * });
          */
         if (!this.invoke('beforeMove', nodeId, newParentId)) {
-            return;
-        }
-
-        if (this.currentNodeId === nodeId) {
             return;
         }
 
