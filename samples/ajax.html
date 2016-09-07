@@ -89,7 +89,7 @@
         }).enableFeature('Ajax', {
             command: {
                 read: {
-                    url: 'test.json',
+                    url: 'tree.json',
                     dataType: 'json',
                     data: function(params) {
                         return {
@@ -98,7 +98,7 @@
                     }
                 },
                 create: {
-                    url: 'test.json',
+                    url: 'tree.json',
                     dataType: 'json',
                     data: function(params) {
                         return {
@@ -108,7 +108,7 @@
                     }
                 },
                 update: {
-                    url: 'test.json',
+                    url: 'tree.json',
                     dataType: 'json',
                     data: function(params) {
                         return {
@@ -118,7 +118,7 @@
                     }
                 },
                 remove: {
-                    url: 'test.json',
+                    url: 'tree.json',
                     dataType: 'json',
                     data: function(params) {
                         return {
@@ -127,7 +127,7 @@
                     }
                 },
                 move: {
-                    url: 'test.json',
+                    url: 'tree.json',
                     dataType: 'json',
                     data: function(params) {
                         return {
@@ -140,9 +140,9 @@
             },
             parseData: function(command, response) {
                 if (command === 'read') {
-                    return (response.code == '200') ? response.tree : false;
+                    return (response.code === '200' ? response.tree : false);
                 } else {
-                    return true;
+                    return !!response.code === '200';
                 }
             }
         });
