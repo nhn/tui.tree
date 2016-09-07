@@ -1402,15 +1402,27 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      *          update: {
      *              url: 'api/update',
      *              dataType: 'json',
-     *              type: 'post'
+     *              type: 'post',
+     *              data: {
+     *                  paramA: 'a',
+     *                  paramB: 'b'
+     *              }
      *          },
      *          remove: {
      *              url: 'api/remove',
      *              dataType: 'json',
-     *              type: 'post'
+     *              type: 'post',
+     *              data: function(params) {
+     *                  return {
+     *                      paramA: params.a,
+     *                      paramB: params.b
+     *                  };
+     *              }
      *          },
      *          removeAllChildren: {
-     *              url: 'api/remove_all',
+     *              url: function(params) {
+     *                  return 'api/' + params.id + '/remove_all',
+     *              },
      *              dataType: 'json',
      *              type: 'post'
      *          },
@@ -1419,10 +1431,6 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      *              dataType: 'json',
      *              type: 'post'
      *          }
-     *      },
-     *      dataMap: function(type, params) {
-     *          console.log('params of ' + type:' + params);
-     *          return params;
      *      },
      *      parseData: function(type, response) {
      *          if (type === 'read' && response.code === '200') {
@@ -1455,7 +1463,8 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      *  .disableFeature('Draggable')
      *  .disableFeature('Editable')
      *  .disableFeature('Checkbox')
-     *  .disableFeature('ContextMenu');
+     *  .disableFeature('ContextMenu')
+     *  .disableFeature('Ajax');
      */
     disableFeature: function(featureName) {
         var feature = this.enabledFeatures[featureName];
