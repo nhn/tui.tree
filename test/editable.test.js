@@ -45,32 +45,6 @@ describe('Tree', function() {
         treeEditable = tree.enabledFeatures.Editable;
     });
 
-    it('_getInnerTemplate() should return html string by template.', function() {
-        var nodeClass = tree.classNames.nodeClass;
-        var leafClass = tree.classNames.leafClass;
-        var input = '<input type="text">';
-        var expected = '<li class="' + nodeClass + ' ' + leafClass + '">' + input + '</li>';
-        var template = treeEditable._getInnerTemplate();
-
-        expect(template).toBe(expected);
-    });
-
-    it('_getOuterTemplate() should return html string included return value of _getInnerTemplate().', function() {
-        var nodeId = tree.getChildIds(rootNodeId)[0];
-        var title = tree.getNodeData(nodeId).title;
-        var state = tree.getState(nodeId);
-        var toggleBtnClass = tree.classNames.toggleBtnClass;
-        var textClass = tree.classNames.textClass;
-        var stateLabel = tree.stateLabels[state];
-        var children = treeEditable._getInnerTemplate();
-        var expected = '<button type="button" class="' + toggleBtnClass + '">' + stateLabel + '</button>' +
-                        '<span class="' + textClass + '">' + title + '</span>' +
-                        '<ul>' + children + '</ul>';
-        var template = treeEditable._getOuterTemplate(nodeId);
-
-        expect(template).toBe(expected);
-    });
-
     describe('createChildNode()', function() {
         it('should show children nodes when parent node is not leaf node.', function() {
             var stateLabel;

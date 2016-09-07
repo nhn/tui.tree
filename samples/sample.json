@@ -13,5 +13,8 @@
   },
   "ctxMenu": {
     "title": "ContextMenu"
+  },
+  "ajax": {
+    "title": "Ajax"
   }
 }

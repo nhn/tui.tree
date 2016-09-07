@@ -11,7 +11,6 @@ var LOADER_CLASSNAME = 'tui-tree-loader';
  * @param {Tree} tree - Tree
  * @param {Object} options - Options
  *  @param {Object} options.command - Each Ajax request command options
- *  @param {Function} [options.dataMap] - Function to remake and return the request option "data"
  *  @param {Function} [options.parseData] - Function to parse and return the response data
  *  @param {string} [options.loaderClassName] - Classname of loader element
  *  @param {boolean} [options.isLoadRoot] - Whether load data from root node or not
@@ -41,12 +40,6 @@ var Ajax = tui.util.defineClass(/** @lends Ajax.prototype */{/*eslint-disable*/
          * @type {Object}
          */
         this.command = options.command;
-
-        /**
-         * Callback for remake the request option "data"
-         * @type {?Function}
-         */
-        this.dataMap = options.dataMap || null;
 
         /**
          * Callback for parsing the response data
@@ -225,12 +218,16 @@ var Ajax = tui.util.defineClass(/** @lends Ajax.prototype */{/*eslint-disable*/
     _getDefaultRequestOptions: function(type, params) {
         var options = this.command[type];
 
+        if (snippet.isFunction(options.url)) { // for restful API url
+            options.url = options.url(params);
+        }
+
+        if (snippet.isFunction(options.data)) { // for custom request data
+            options.data = options.data(params);
+        }
+
         options.type = (options.type) ? options.type.toLowerCase() : 'get';
         options.dataType = options.dataType || 'json';
-
-        if (this.dataMap) {
-            options.data = this.dataMap(type, params);
-        }
 
         return options;
     },
