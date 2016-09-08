@@ -1108,7 +1108,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
             treeAjax.loadData(ajaxCommand.DELETE_ALL_CHILDREN, function() {
                 self._removeAllChildren(nodeId);
             }, {
-                nodeId: nodeId
+                parentId: nodeId
             });
         } else {
             this._removeAllChildren(nodeId, isSilent);
@@ -1421,7 +1421,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      *          },
      *          removeAllChildren: {
      *              url: function(params) {
-     *                  return 'api/' + params.id + '/remove_all',
+     *                  return 'api/remove_all/' + params.nodeId,
      *              },
      *              dataType: 'json',
      *              type: 'post'

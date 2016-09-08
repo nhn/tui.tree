@@ -1,4 +1,4 @@
-{
+dataCallback({
     "code": "200",
     "tree": [
         {
@@ -28,4 +28,4 @@
             "hasChild": true
         }
     ]
-}
+});

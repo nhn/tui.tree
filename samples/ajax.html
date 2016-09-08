@@ -56,7 +56,7 @@
         var tree = new tui.component.Tree([], {
             nodeDefaultState: 'opened',
             rootElement: document.getElementById('treeRoot'),
-            template: {
+            template: { // User custom template
                 internalNode:
                     '<button type="button" class="{{toggleBtnClass}}">{{stateLabel}}</button>' +
                     '<span>@@@</span>' +
@@ -89,8 +89,9 @@
         }).enableFeature('Ajax', {
             command: {
                 read: {
-                    url: 'tree.json',
-                    dataType: 'json',
+                    url: 'data/tree.js',
+                    dataType: 'jsonp',
+                    jsonpCallback: 'dataCallback',
                     data: function(params) {
                         return {
                             productId: tree.getNodeData(params.nodeId).pid
@@ -98,8 +99,9 @@
                     }
                 },
                 create: {
-                    url: 'tree.json',
-                    dataType: 'json',
+                    url: 'data/response.js',
+                    dataType: 'jsonp',
+                    jsonpCallback: 'dataCallback',
                     data: function(params) {
                         return {
                             targetId: tree.getNodeData(params.parentId).pid,
@@ -108,8 +110,9 @@
                     }
                 },
                 update: {
-                    url: 'tree.json',
-                    dataType: 'json',
+                    url: 'data/response.js',
+                    dataType: 'jsonp',
+                    jsonpCallback: 'dataCallback',
                     data: function(params) {
                         return {
                             productId: tree.getNodeData(params.nodeId).pid,
@@ -118,8 +121,9 @@
                     }
                 },
                 remove: {
-                    url: 'tree.json',
-                    dataType: 'json',
+                    url: 'data/response.js',
+                    dataType: 'jsonp',
+                    jsonpCallback: 'dataCallback',
                     data: function(params) {
                         return {
                             productId: tree.getNodeData(params.nodeId).pid
@@ -127,8 +131,9 @@
                     }
                 },
                 move: {
-                    url: 'tree.json',
-                    dataType: 'json',
+                    url: 'data/response.js',
+                    dataType: 'jsonp',
+                    jsonpCallback: 'dataCallback',
                     data: function(params) {
                         return {
                             productId: tree.getNodeData(params.nodeId).pid,
@@ -140,9 +145,9 @@
             },
             parseData: function(command, response) {
                 if (command === 'read') {
-                    return (response.code === '200' ? response.tree : false);
+                    return response.code === '200' ? response.tree : false;
                 } else {
-                    return !!response.code === '200';
+                    return response.code === '200';
                 }
             }
         });

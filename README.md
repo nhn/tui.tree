@@ -7,11 +7,12 @@ Each node can be moved by drag and drop.
 ## Feature
 * Display hierarchical data by tree UI
 * Fold sub tree
-* Edit node
+* Create & Edit node
 * Drag and drop (extend)
 * Tri-state checkbox
 * Custom events
 * Context menu
+* Ajax
 
 ## Documentation
 * **API** : https://nhnent.github.io/tui.component.tree/latest
@@ -29,8 +30,9 @@ Each node can be moved by drag and drop.
 ![alt tag](https://cloud.githubusercontent.com/assets/18183560/15561915/8582a616-2335-11e6-9e25-8b521e11292b.png)<br>
 
 ## Dependency
-* tui-code-snippet: 1.2.0
-* tui-contextmenu: 1.1.1 (for using ContextMenu feature)
+* tui-code-snippet: ~1.2.0
+* tui-contextmenu: ~1.1.1 (for using ContextMenu feature)
+* jquery : ~1.8.3 (for using Ajax feature)
 
 ## Test environment
 * PC
@@ -42,7 +44,7 @@ Each node can be moved by drag and drop.
 
 ## Download/Install
 * Bower:
-   * latest : `bower install tui-component-tree#master`
+   * latest : `bower install tui-component-tree`
    * each version : `bower install tui-component-tree[#tag]`
 * Download: https://github.com/nhnent/tui.component.tree
 

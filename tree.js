@@ -254,11 +254,11 @@ var Ajax = tui.util.defineClass(/** @lends Ajax.prototype */{/*eslint-disable*/
         /**
          * @api
          * @event Tree#beforeAjaxRequest
-         * @param {string} type - Command type
+         * @param {string} command - Command type
          * @param {string} [data] - Request data
          * @example
-         * tree.on('beforeAjaxRequest', function(type, data) {
-         *     console.log('before ' + type + ' request!');
+         * tree.on('beforeAjaxRequest', function(command, data) {
+         *     console.log('before ' + command + ' request!');
          *     return false; // It cancels request
          *     // return true; // It fires request
          * });
@@ -303,11 +303,11 @@ var Ajax = tui.util.defineClass(/** @lends Ajax.prototype */{/*eslint-disable*/
             /**
              * @api
              * @event Tree#successAjaxResponse
-             * @param {string} type - Command type
+             * @param {string} command - Command type
              * @param {string} [data] - Return value of executed command callback
              * @example
-             * tree.on('successAjaxResponse', function(type, data) {
-             *     console.log(type + ' response is success!');
+             * tree.on('successAjaxResponse', function(command, data) {
+             *     console.log(command + ' response is success!');
              *     if (data) {
              *           console.log('new add ids :' + data);
              *     }
@@ -318,10 +318,10 @@ var Ajax = tui.util.defineClass(/** @lends Ajax.prototype */{/*eslint-disable*/
             /**
              * @api
              * @event Tree#failAjaxResponse
-             * @param {string} type - Command type
+             * @param {string} command - Command type
              * @example
-             * tree.on('failAjaxResponse', function(type) {
-             *     console.log(type + ' response is fail!');
+             * tree.on('failAjaxResponse', function(command) {
+             *     console.log(command + ' response is fail!');
              * });
              */
             tree.fire('failAjaxResponse', type);
@@ -339,10 +339,10 @@ var Ajax = tui.util.defineClass(/** @lends Ajax.prototype */{/*eslint-disable*/
         /**
          * @api
          * @event Tree#errorAjaxResponse
-         * @param {string} type - Command type
+         * @param {string} command - Command type
          * @example
-         * tree.on('errorAjaxResponse', function(type) {
-         *     console.log(type + ' response is error!');
+         * tree.on('errorAjaxResponse', function(command) {
+         *     console.log(command + ' response is error!');
          * });
          */
         this.tree.fire('errorAjaxResponse', type);
@@ -2050,14 +2050,28 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
         var tree = this.tree;
         var nodeId = tree.getNodeIdFromElement(this.inputElement);
         var parentId = tree.getParentId(nodeId);
+        var value = this.inputElement.value || this.defaultValue;
         var data = {};
 
-        if (!this.tree.invoke('beforeCreateChildNode')) {
+        /**
+         * @api
+         * @event Tree#beforeCreateChildNode
+         * @param {string} value - Return value of creating input element
+         * @example
+         * tree
+         *  .enableFeature('Editable')
+         *  .on('beforeCreateChildNode', function(value) {
+         *      console.log(value);
+         *      return false; // It cancels
+         *      // return true; // It execute next
+         *  });
+         */
+        if (!this.tree.invoke('beforeCreateChildNode', value)) {
             return;
         }
 
         if (nodeId) {
-            data[this.dataKey] = this.inputElement.value || this.defaultValue;
+            data[this.dataKey] = value;
             tree._remove(nodeId);
             tree.add(data, parentId);
         }
@@ -2071,14 +2085,28 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
     _setData: function() {
         var tree = this.tree;
         var nodeId = tree.getNodeIdFromElement(this.inputElement);
+        var value = this.inputElement.value;
         var data = {};
 
-        if (!this.tree.invoke('beforeEditNode')) {
+        /**
+         * @api
+         * @event Tree#beforeEditNode
+         * @param {string} value - Return value of editing input element
+         * @example
+         * tree
+         *  .enableFeature('Editable')
+         *  .on('beforeEditNode', function(value) {
+         *      console.log(value);
+         *      return false; // It cancels
+         *      // return true; // It execute next
+         *  });
+         */
+        if (!this.tree.invoke('beforeEditNode', value)) {
             return;
         }
 
         if (nodeId) {
-            data[this.dataKey] = this.inputElement.value;
+            data[this.dataKey] = value;
             tree.setNodeData(nodeId, data);
         }
         this._detachInputElement();
@@ -3396,7 +3424,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
             treeAjax.loadData(ajaxCommand.DELETE_ALL_CHILDREN, function() {
                 self._removeAllChildren(nodeId);
             }, {
-                nodeId: nodeId
+                parentId: nodeId
             });
         } else {
             this._removeAllChildren(nodeId, isSilent);
@@ -3709,7 +3737,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      *          },
      *          removeAllChildren: {
      *              url: function(params) {
-     *                  return 'api/' + params.id + '/remove_all',
+     *                  return 'api/remove_all/' + params.nodeId,
      *              },
      *              dataType: 'json',
      *              type: 'post'

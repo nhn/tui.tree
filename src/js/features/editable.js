@@ -280,14 +280,28 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
         var tree = this.tree;
         var nodeId = tree.getNodeIdFromElement(this.inputElement);
         var parentId = tree.getParentId(nodeId);
+        var value = this.inputElement.value || this.defaultValue;
         var data = {};
 
-        if (!this.tree.invoke('beforeCreateChildNode')) {
+        /**
+         * @api
+         * @event Tree#beforeCreateChildNode
+         * @param {string} value - Return value of creating input element
+         * @example
+         * tree
+         *  .enableFeature('Editable')
+         *  .on('beforeCreateChildNode', function(value) {
+         *      console.log(value);
+         *      return false; // It cancels
+         *      // return true; // It execute next
+         *  });
+         */
+        if (!this.tree.invoke('beforeCreateChildNode', value)) {
             return;
         }
 
         if (nodeId) {
-            data[this.dataKey] = this.inputElement.value || this.defaultValue;
+            data[this.dataKey] = value;
             tree._remove(nodeId);
             tree.add(data, parentId);
         }
@@ -301,14 +315,28 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
     _setData: function() {
         var tree = this.tree;
         var nodeId = tree.getNodeIdFromElement(this.inputElement);
+        var value = this.inputElement.value;
         var data = {};
 
-        if (!this.tree.invoke('beforeEditNode')) {
+        /**
+         * @api
+         * @event Tree#beforeEditNode
+         * @param {string} value - Return value of editing input element
+         * @example
+         * tree
+         *  .enableFeature('Editable')
+         *  .on('beforeEditNode', function(value) {
+         *      console.log(value);
+         *      return false; // It cancels
+         *      // return true; // It execute next
+         *  });
+         */
+        if (!this.tree.invoke('beforeEditNode', value)) {
             return;
         }
 
         if (nodeId) {
-            data[this.dataKey] = this.inputElement.value;
+            data[this.dataKey] = value;
             tree.setNodeData(nodeId, data);
         }
         this._detachInputElement();
