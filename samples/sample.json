@@ -14,7 +14,7 @@
   "ctxMenu": {
     "title": "ContextMenu"
   },
-  "ajax": {
+  "ajaxFeature": {
     "title": "Ajax"
   }
 }
