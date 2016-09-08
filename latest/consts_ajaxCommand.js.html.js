@@ -1,0 +1,2 @@
+tui.util.defineNamespace("fedoc.content", {});
+fedoc.content["consts_ajaxCommand.js.html"] = "      <div id=\"main\" class=\"main\">\n\n\n\n    \n    <section>\n        <article>\n            <pre class=\"prettyprint source linenums\"><code>'use strict';\n\n/**\n * Ajax comman in tree\n * @type {Object.&lt;string, string>}\n */\nmodule.exports = {\n    READ: 'read',\n    CREATE: 'create',\n    UPDATE: 'update',\n    DELETE: 'remove',\n    DELETE_ALL_CHILDREN: 'removeAllChildren',\n    MOVE: 'move'\n};\n</code></pre>\n        </article>\n    </section>\n\n\n\n</div>\n\n"

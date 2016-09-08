@@ -1,0 +1,19 @@
+.wrap {
+    height: 500px;
+}
+.treeWrap {
+    float: left;
+    position: relative;
+    border: 1px solid #eaeaea;
+}
+#infoArea {
+    float: left;
+    margin-left: 10px;
+    padding: 5px 15px;
+    width: 300px;
+    height: 490px;
+    resize: none;
+    font-size: 12px;
+    line-height: 2em;
+    border: 1px solid #eaeaea;
+}
