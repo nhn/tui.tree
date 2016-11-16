@@ -13,9 +13,7 @@ var API_LIST = [
     'getBottomCheckedList'
 ];
 
-/**
- * Checkbox tri-states
- */
+/* Checkbox tri-states */
 var STATE_CHECKED = 1,
     STATE_UNCHECKED = 2,
     STATE_INDETERMINATE = 3,
@@ -27,10 +25,10 @@ var filter = tui.util.filter,
 /**
  * Set the checkbox-api
  * @class Checkbox
- * @constructor
  * @param {Tree} tree - Tree
  * @param {Object} option - Option
  *  @param {string} option.checkboxClassName - Classname of checkbox element
+ * @ignore
  */
 var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-disable*/
     static: {

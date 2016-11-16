@@ -32,7 +32,6 @@ bower_components
 .idea
 
 # compress
-dist
 doc
 latest
 

@@ -1,6 +1,6 @@
 /**
  * @fileoverview Helper object to make easy tree elements
- * @author NHN Ent. FE dev team.<dl_javascript@nhnent.com>
+ * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
  */
 'use strict';
 var isUndefined = tui.util.isUndefined,
@@ -14,6 +14,9 @@ var isUndefined = tui.util.isUndefined,
     isSupportPageOffset = typeof window.pageXOffset !== 'undefined',
     isCSS1Compat = document.compatMode === 'CSS1Compat';
 
+/**
+ * @ignore
+ */
 var util = {
     /**
      * Remove first specified item from array, if it exists

@@ -1,6 +1,6 @@
 /**
  * @fileoverview Render tree and update tree.
- * @author NHN Ent. FE dev team.<dl_javascript@nhnent.com>
+ * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
  */
 
 'use strict';
@@ -35,7 +35,6 @@ var nodeStates = states.node,
 /**
  * Create tree model and inject data to model
  * @class Tree
- * @constructor
  * @mixes tui.util.CustomEvents
  * @param {Object} data A data to be used on tree
  * @param {Object} options The options
@@ -130,11 +129,18 @@ var nodeStates = states.node,
  *         leafNode:
  *             '<span class="{{textClass}}">{{text}}</span>'
  *     },
- *     renderTemplate: function(source, props) {
+ *     renderTemplate: function(tmpl, props) {
  *         // Mustache template engine
- *         return Mustache.render(template, props);
+ *         return Mustache.render(tmpl, props);
  *     }
  * });
+ *
+ * @tutorial default
+ * @tutorial depthLabel
+ * @tutorial selectableNodes
+ * @tutorial check
+ * @tutorial ctxMenu
+ * @tutorial ajaxFeature
  **/
 var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
     init: function(data, options) { /*eslint-enable*/
@@ -167,24 +173,28 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
         /**
          * Make tree model
          * @type {TreeModel}
+         * @private
          */
         this.model = new TreeModel(data, options);
 
         /**
          * Enabled features
          * @type {Object.<string, object>}
+         * @private
          */
         this.enabledFeatures = {};
 
         /**
          * Click timer to prevent click-duplication with double click
          * @type {number}
+         * @private
          */
         this.clickTimer = null;
 
         /**
          * To prevent click event if mouse moved before mouseup.
          * @type {number}
+         * @private
          */
         this._mouseMovingFlag = false;
 
@@ -198,7 +208,6 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
 
         /**
          * True when a node is moving
-         * @api
          * @type {boolean}
          * @example
          * tree.on({
@@ -753,6 +762,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * @param {string} nodeId - Node id
      * @param {object} data - Properties
      * @param {boolean} [isSilent] - If true, it doesn't trigger the 'update' event
+     * @private
      */
     _setNodeData: function(nodeId, data, isSilent) {
         this.model.setNodeData(nodeId, data, isSilent);
@@ -1494,6 +1504,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
  * Set abstract apis to tree prototype
  * @param {string} featureName - Feature name
  * @param {object} feature - Feature
+ * @ignore
  */
 function setAbstractAPIs(featureName, feature) {
     var messageName = 'INVALID_API_' + featureName.toUpperCase(),

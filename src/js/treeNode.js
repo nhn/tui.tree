@@ -19,9 +19,10 @@ var lastIndex = 0,
 
 /**
  * TreeNode
- * @Constructor TreeNode
+ * @Class TreeNode
  * @param {Object} nodeData - Node data
  * @param {string} [parentId] - Parent node id
+ * @ignore
  */
 var TreeNode = tui.util.defineClass(/** @lends TreeNode.prototype */{ /*eslint-disable*/
     static: {

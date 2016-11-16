@@ -17,22 +17,11 @@ module.exports = function(config) {
         ],
 
         files: [
-            {
-                pattern: 'bower_components/tui-code-snippet/code-snippet.js',
-                watched: false
-            },
-            {
-                pattern: 'bower_components/tui-domutil/domutil.js',
-                watched: false
-            },
-            {
-                pattern: 'bower_components/tui-component-floatinglayer/floatinglayer.js',
-                watched: false
-            },
-            {
-                pattern: 'bower_components/tui-component-contextmenu/contextmenu.js',
-                watched: false
-            },
+            'node_modules/babel-polyfill/dist/polyfill.js',
+            'bower_components/tui-code-snippet/code-snippet.js',
+            'bower_components/tui-dom/dist/tui-dom.js',
+            'bower_components/tui-component-floatinglayer/dist/floatingLayer.js',
+            'bower_components/tui-component-contextmenu/dist/tui-component-contextmenu.js',
             'bower_components/jquery/jquery.min.js',
             'node_modules/jasmine-jquery/lib/jasmine-jquery.js',
             'node_modules/jasmine-ajax/lib/mock-ajax.js',

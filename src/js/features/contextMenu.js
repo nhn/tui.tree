@@ -12,10 +12,10 @@ var bind = tui.util.bind;
 /**
  * Set ContextMenu feature on tree
  * @class ContextMenu
- * @constructor
  * @param {Tree} tree - Tree
  * @param {Object} options - Options
  *     @param {Array.<Object>} options.menuData - Context menu data
+ * @ignore
  */
 var ContextMenu = tui.util.defineClass(/** @lends ContextMenu.prototype */{/*eslint-disable*/
     static: {

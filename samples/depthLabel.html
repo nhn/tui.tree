@@ -2,20 +2,16 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-    <link type="text/css" rel="stylesheet" href="../styles/prettify-jsdoc.css" />
-    <link type="text/css" rel="stylesheet" href="../styles/prettify-tomorrow.css">
-    <link type="text/css" rel="stylesheet" href="../styles/tui.css">
-    <title>트리컴포넌트</title>
-
+    <title>Tree Component</title>
     <link rel="stylesheet" href="css/tree.css" />
 </head>
 <body>
-    <div class="wrap" style="height: 600px; float:left">
+    <div class="code-html" style="display:inline-block;">
         <div class="treeWrap" style="position:relative;border:1px solid #eaeaea;">
             <ul id="treeRoot1" class="tree"></ul>
         </div>
     </div>
-    <div class="explain">
+    <div class="explain" style="display:inline-block; margin-left: 30px;">
         <p>트리요소 뒤에 뎁스에 맞는 레이블 ['층', '열', '구역', '블록'] 을 설정한다.</p>
         <p>트리가 생성될때 자동으로 설정된 레이블을 부여한다.</p>
         <p>뎁스별로 Label이 적용되어 노드명과 함께 노출됩니다.<br />
@@ -36,16 +32,9 @@
     </div>
 
 
-    <div class="codeArea" style="clear:both;"></div>
-
-    <script type="text/javascript" src="js/code-snippet.js"></script>
-    <script type="text/javascript" src="js/tree.js"></script>
-
-    <script src="../scripts/prettify/prettify.js"></script>
-    <script src="../scripts/prettify/lang-css.js"></script>
-    <script src="../scripts/jquery.js"></script>
-    <script src="../scripts/samplecode.js"></script>
-    <script class="serviceCode">
+    <script src="//cdn.rawgit.com/nhnent/tui.code-snippet/1.2.1/code-snippet.js"></script>
+    <script src="../dist/tui-component-tree.js"></script>
+    <script class="code-js">
         var data = [
             {text: 'rootA', children: [
                 {text: 'root-1A'},

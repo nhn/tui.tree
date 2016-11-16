@@ -13,10 +13,10 @@ var API_LIST = [
 /**
  * Set the tree selectable
  * @class Selectable
- * @constructor
  * @param {Tree} tree - Tree
  * @param {Object} options
  *  @param {string} options.selectedClassName - Classname for selected node.
+ * @ignore
  */
 var Selectable = tui.util.defineClass(/** @lends Selectable.prototype */{/*eslint-disable*/
     static: {

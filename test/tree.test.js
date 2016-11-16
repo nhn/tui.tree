@@ -103,12 +103,13 @@ describe('Tree', function() {
         expect(firstChild.getState()).toEqual('opened');
     });
 
-    xit('should fire singleClick event', function() {
+    it('should fire singleClick event', function() {
         var handler = jasmine.createSpy('singleClick handler'),
             eventMock = {
                 target: document.createElement('DIV')
             };
 
+        jasmine.clock().uninstall();
         jasmine.clock().install();
 
         tree.on('singleClick', handler);

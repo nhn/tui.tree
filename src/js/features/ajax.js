@@ -7,13 +7,13 @@ var LOADER_CLASSNAME = 'tui-tree-loader';
 /**
  * Set Ajax feature on tree
  * @class Ajax
- * @constructor
  * @param {Tree} tree - Tree
  * @param {Object} options - Options
  *  @param {Object} options.command - Each Ajax request command options
  *  @param {Function} [options.parseData] - Function to parse and return the response data
  *  @param {string} [options.loaderClassName] - Classname of loader element
  *  @param {boolean} [options.isLoadRoot] - Whether load data from root node or not
+ * @ignore
  */
 var Ajax = tui.util.defineClass(/** @lends Ajax.prototype */{/*eslint-disable*/
     static: {

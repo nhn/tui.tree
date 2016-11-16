@@ -31,7 +31,6 @@ var API_LIST = [];
 /**
  * Set the tree draggable
  * @class Draggable
- * @constructor
  * @param {Tree} tree - Tree
  * @param {Object} options - Options
  *     @param {boolean} options.useHelper - Using helper flag
@@ -43,6 +42,7 @@ var API_LIST = [];
  *     @param {string} options.hoverClassName - Class name for hovered node
  *     @param {string} options.lineClassName - Class name for moving position line
  *     @param {{top: number, bottom: number}} options.lineBoundary - Boundary value for visible moving line
+ * @ignore
  */
 var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{/*eslint-disable*/
     static: {

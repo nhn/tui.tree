@@ -2,16 +2,12 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-    <link type="text/css" rel="stylesheet" href="../styles/prettify-jsdoc.css" />
-    <link type="text/css" rel="stylesheet" href="../styles/prettify-tomorrow.css">
-    <link type="text/css" rel="stylesheet" href="../styles/tui.css">
-
-    <title>트리컴포넌트</title>
+    <title>Tree Component</title>
     <link rel="stylesheet" href="css/tree.css" />
-    <link rel="stylesheet" href="css/contextmenu.css" />
+    <link rel="stylesheet" href="//cdn.rawgit.com/nhnent/tui.component.contextmenu/1.1.2/dist/contextmenu.css" />
 </head>
 <body>
-    <div class="wrap" style="height:500px;">
+    <div class="code-html">
         <div class="treeWrap" style="position:relative;border:1px solid #eaeaea;">
             <ul id="treeRoot1" class="tree"></ul>
         </div>
@@ -43,21 +39,12 @@
         </div>
     </div>
 
-    <div class="codeArea"></div>
-
-    <script type="text/javascript" src="js/code-snippet.js"></script>
-    <!-- library files for context-menu feature -->
-    <script type="text/javascript" src="js/domutil.js"></script>
-    <script type="text/javascript" src="js/floatinglayer.js"></script>
-    <script type="text/javascript" src="js/contextmenu.js"></script>
-    <!-- // library files for context-menu feature -->
-    <script type="text/javascript" src="js/tree.js"></script>
-
-    <script src="../scripts/prettify/prettify.js"></script>
-    <script src="../scripts/prettify/lang-css.js"></script>
-    <script src="../scripts/jquery.js"></script>
-    <script src="../scripts/samplecode.js"></script>
-    <script class="serviceCode">
+    <script src="//cdn.rawgit.com/nhnent/tui.code-snippet/1.2.1/code-snippet.js"></script>
+    <script src="//cdn.rawgit.com/nhnent/tui.dom/2.1.0/dist/domutil.js"></script>
+    <script src="//cdn.rawgit.com/nhnent/tui.component.floatinglayer/1.0.1/dist/floatingLayer.js"></script>
+    <script src="//cdn.rawgit.com/nhnent/tui.component.contextmenu/1.1.2/dist/tui-component-contextmenu.js"></script>
+    <script src="../dist/tui-component-tree.js"></script>
+    <script class="code-js">
         var util = {
             addEventListener: function(element, eventName, handler) {
                 if (element.addEventListener) {

@@ -1,6 +1,6 @@
 /**
  * @fileoverview Update view and control tree data
- * @author NHN Ent. FE dev team.<dl_javascript@nhnent.com>
+ * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
  */
 'use strict';
 
@@ -13,9 +13,10 @@ var extend = tui.util.extend,
 
 /**
  * Tree model
- * @constructor TreeModel
+ * @class TreeModel
  * @param {Array} data - Data
  * @param {Object} options - Options for defaultState and nodeIdPrefix
+ * @ignore
  **/
 var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslint-disable */
     init: function(data, options) {/*eslint-enable*/

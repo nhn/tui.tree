@@ -5,6 +5,7 @@
  * @param {string} prefix - Prefix of class name
  * @param {Array.<string>} keys - Keys of class names
  * @returns {object.<string, string>} Class names map
+ * @ignore
  */
 function makeClassNames(prefix, keys) {
     var obj = {};

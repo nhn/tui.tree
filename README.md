@@ -31,8 +31,8 @@ Each node can be moved by drag and drop.
 
 ## Dependency
 * tui-code-snippet: ~1.2.0
-* tui-contextmenu: ~1.1.1 (for using ContextMenu feature)
-* jquery : ~1.8.3 (for using Ajax feature)
+* tui-contextmenu: ~1.1.2 (optional, for using ContextMenu feature)
+* jquery : ~1.8.3 (optional, for using Ajax feature)
 
 ## Test environment
 * PC
