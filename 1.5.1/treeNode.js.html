@@ -1,0 +1,385 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Tree</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-jsdoc.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/tui-doc.css">
+</head>
+<body>
+<nav class="lnb" id="lnb">
+    <div class="logo" style="width: 150px">
+        <img src="https://cloud.githubusercontent.com/assets/12269563/20029815/01133928-a39a-11e6-80f3-12500a91c755.png" width="100%" height="100%">
+    </div>
+    <div class="title">
+        <h1><a href="index.html" class="link">Tree</a></h1>
+        
+    </div>
+    <div class="search-container" id="search-container">
+        <input type="text" placeholder="Search">
+        <ul></ul>
+    </div>
+    
+        <ol class="lnb-tab">
+            <li id="api-tab">
+                <a href="#"><h4>API</h4></a>
+            </li>
+            <li id="examples-tab">
+                <a href="#"><h4>Examples</h4></a>
+            </li>
+        </ol>
+    
+    <div class="lnb-examples hidden"><h3>Examples</h3><ul><li><a href="tutorial-ajaxFeature.html">Ajax</a><div class="hidden" id="ajaxFeature_sub"></div></li><li><a href="tutorial-check.html">Checkbox</a><div class="hidden" id="check_sub"></div></li><li><a href="tutorial-ctxMenu.html">ContextMenu</a><div class="hidden" id="ctxMenu_sub"></div></li><li><a href="tutorial-default.html">Default, Draggable, Selectable</a><div class="hidden" id="default_sub"></div></li><li><a href="tutorial-depthLabel.html">Custom_DepthLabel</a><div class="hidden" id="depthLabel_sub"></div></li><li><a href="tutorial-selectableNodes.html">Selectable, Editable</a><div class="hidden" id="selectableNodes_sub"></div></li></ul></div><div class="lnb-api hidden"><h3>Classes</h3><ul><li><a href="Tree.html">Tree</a><div class="hidden" id="Tree_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="Tree.html#add">add</a></li><li><a href="Tree.html#changeContextMenu">changeContextMenu</a></li><li><a href="Tree.html#check">check</a></li><li><a href="Tree.html#close">close</a></li><li><a href="Tree.html#contains">contains</a></li><li><a href="Tree.html#createChildNode">createChildNode</a></li><li><a href="Tree.html#disableFeature">disableFeature</a></li><li><a href="Tree.html#each">each</a></li><li><a href="Tree.html#eachAll">eachAll</a></li><li><a href="Tree.html#editNode">editNode</a></li><li><a href="Tree.html#enableFeature">enableFeature</a></li><li><a href="Tree.html#getBottomCheckedList">getBottomCheckedList</a></li><li><a href="Tree.html#getCheckedList">getCheckedList</a></li><li><a href="Tree.html#getChildIds">getChildIds</a></li><li><a href="Tree.html#getDepth">getDepth</a></li><li><a href="Tree.html#getLastDepth">getLastDepth</a></li><li><a href="Tree.html#getNodeData">getNodeData</a></li><li><a href="Tree.html#getNodeIdFromElement">getNodeIdFromElement</a></li><li><a href="Tree.html#getNodeIdPrefix">getNodeIdPrefix</a></li><li><a href="Tree.html#getNodeIndex">getNodeIndex</a></li><li><a href="Tree.html#getParentId">getParentId</a></li><li><a href="Tree.html#getRootNodeId">getRootNodeId</a></li><li><a href="Tree.html#getSelectedNodeId">getSelectedNodeId</a></li><li><a href="Tree.html#getState">getState</a></li><li><a href="Tree.html#getTopCheckedList">getTopCheckedList</a></li><li><a href="Tree.html#isChecked">isChecked</a></li><li><a href="Tree.html#isIndeterminate">isIndeterminate</a></li><li><a href="Tree.html#isLeaf">isLeaf</a></li><li><a href="Tree.html#isUnchecked">isUnchecked</a></li><li><a href="Tree.html#move">move</a></li><li><a href="Tree.html#open">open</a></li><li><a href="Tree.html#refresh">refresh</a></li><li><a href="Tree.html#remove">remove</a></li><li><a href="Tree.html#removeAllChildren">removeAllChildren</a></li><li><a href="Tree.html#removeNodeData">removeNodeData</a></li><li><a href="Tree.html#resetAllData">resetAllData</a></li><li><a href="Tree.html#resetClickTimer">resetClickTimer</a></li><li><a href="Tree.html#search">search</a></li><li><a href="Tree.html#select">select</a></li><li><a href="Tree.html#setNodeData">setNodeData</a></li><li><a href="Tree.html#sort">sort</a></li><li><a href="Tree.html#toggle">toggle</a></li><li><a href="Tree.html#toggleCheck">toggleCheck</a></li><li><a href="Tree.html#uncheck">uncheck</a></li></ul><div class="member-type">Events</div><ul class="inner"><li><a href="Tree.html#event:afterDraw">afterDraw</a></li><li><a href="Tree.html#event:beforeAjaxRequest">beforeAjaxRequest</a></li><li><a href="Tree.html#event:beforeCreateChildNode">beforeCreateChildNode</a></li><li><a href="Tree.html#event:beforeDraw">beforeDraw</a></li><li><a href="Tree.html#event:beforeEditNode">beforeEditNode</a></li><li><a href="Tree.html#event:beforeMove">beforeMove</a></li><li><a href="Tree.html#event:beforeOpenContextMenu">beforeOpenContextMenu</a></li><li><a href="Tree.html#event:beforeSelect">beforeSelect</a></li><li><a href="Tree.html#event:check">check</a></li><li><a href="Tree.html#event:errorAjaxResponse">errorAjaxResponse</a></li><li><a href="Tree.html#event:failAjaxResponse">failAjaxResponse</a></li><li><a href="Tree.html#event:move">move</a></li><li><a href="Tree.html#event:select">select</a></li><li><a href="Tree.html#event:selectContextMenu">selectContextMenu</a></li><li><a href="Tree.html#event:successAjaxResponse">successAjaxResponse</a></li><li><a href="Tree.html#event:uncheck">uncheck</a></li></ul></div></li></ul></div>
+</nav>
+<div id="resizer"></div>
+
+<div class="main" id="main">
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use strict';
+
+var states = require('./consts/states').node,
+    util = require('./util');
+
+var lastIndex = 0,
+    getNextIndex = function() {
+        var index = lastIndex;
+        lastIndex += 1;
+
+        return index;
+    },
+    RESERVED_PROPERTIES = {
+        id: '',
+        state: 'setState',
+        children: ''
+    },
+    inArray = tui.util.inArray;
+
+/**
+ * TreeNode
+ * @Class TreeNode
+ * @param {Object} nodeData - Node data
+ * @param {string} [parentId] - Parent node id
+ * @ignore
+ */
+var TreeNode = tui.util.defineClass(/** @lends TreeNode.prototype */{ /*eslint-disable*/
+    static: {
+        /**
+         * Set prefix of id
+         * @param {string} prefix - Prefix of id
+         */
+        setIdPrefix: function(prefix) {
+            this.idPrefix = prefix || this.idPrefix;
+        },
+
+        /**
+         * Prefix of id
+         * @type {string}
+         */
+        idPrefix: ''
+    },
+    init: function(nodeData, parentId) { /*eslint-enable*/
+        /**
+         * Node id
+         * @type {string}
+         * @private
+         */
+        this._id = this.constructor.idPrefix + getNextIndex();
+
+        /**
+         * Parent node id
+         * @type {string}
+         * @private
+         */
+        this._parentId = parentId;
+
+        /**
+         * Id list of children
+         * @type {Array.&lt;number>}
+         * @private
+         */
+        this._childIds = [];
+
+        /**
+         * Node data
+         * @type {object}
+         * @private
+         */
+        this._data = {};
+
+        /**
+         * Node state
+         * @type {string}
+         * @private
+         */
+        this._state = states.CLOSED;
+
+        this.setData(nodeData);
+    },
+
+    /**
+     * Set reserved properties from data
+     * @param {object} data - Node data
+     * @returns {object} Node data
+     * @private
+     */
+    _setReservedProperties: function(data) {
+        tui.util.forEachOwnProperties(RESERVED_PROPERTIES, function(setter, name) {
+            var value = data[name];
+
+            if (value &amp;&amp; setter) {
+                this[setter](value);
+            }
+            delete data[name];
+        }, this);
+
+        return data;
+    },
+
+    /**
+     * Toggle state
+     * @api
+     */
+    toggleState: function() {
+        if (this._state === states.CLOSED) {
+            this._state = states.OPENED;
+        } else {
+            this._state = states.CLOSED;
+        }
+    },
+
+    /**
+     * Set state
+     * @api
+     * @param {string} state - State of node ('closed', 'opened')
+     */
+    setState: function(state) {
+        state = String(state);
+        this._state = states[state.toUpperCase()] || this._state;
+    },
+
+    /**
+     * Get state
+     * @api
+     * @returns {string} state ('opened' or 'closed')
+     */
+    getState: function() {
+        return this._state;
+    },
+
+    /**
+     * Get id
+     * @api
+     * @returns {string} Node id
+     */
+    getId: function() {
+        return this._id;
+    },
+
+    /**
+     * Get parent id
+     * @api
+     * @returns {string} Parent node id
+     */
+    getParentId: function() {
+        return this._parentId;
+    },
+
+    /**
+     * Set parent id
+     * @param {string} parentId - Parent node id
+     */
+    setParentId: function(parentId) {
+        this._parentId = parentId;
+    },
+
+    /**
+     * Replace childIds
+     * @param {Array.&lt;number>} childIds - Id list of children
+     */
+    replaceChildIds: function(childIds) {
+        this._childIds = childIds;
+    },
+
+    /**
+     * Get id list of children
+     * @api
+     * @returns {Array.&lt;number>} Id list of children
+     */
+    getChildIds: function() {
+        return this._childIds.slice();
+    },
+
+    /**
+     * Add child id
+     * @param {string} id - Child node id
+     */
+    addChildId: function(id) {
+        var childIds = this._childIds;
+
+        if (tui.util.inArray(childIds, id) === -1) {
+            childIds.push(id);
+        }
+    },
+
+    /**
+     * Remove child id
+     * @param {string} id - Child node id
+     */
+    removeChildId: function(id) {
+        util.removeItemFromArray(id, this._childIds);
+    },
+
+    /**
+     * Get data
+     * @api
+     * @param {string} name - Property name of data
+     * @returns {*} Data
+     */
+    getData: function(name) {
+        return this._data[name];
+    },
+
+    /**
+     * Get all data
+     * @api
+     * @returns {Object} Data
+     */
+    getAllData: function() {
+        return tui.util.extend({}, this._data);
+    },
+
+    /**
+     * Set data
+     * @api
+     * @param {Object} data - Data for adding
+     */
+    setData: function(data) {
+        data = this._setReservedProperties(data);
+        tui.util.extend(this._data, data);
+    },
+
+    /**
+     * Remove data
+     * @api
+     * @param {...string} names - Names of data
+     */
+    removeData: function() {
+        tui.util.forEachArray(arguments, function(name) {
+            delete this._data[name];
+        }, this);
+    },
+
+    /**
+     * Return true if this node has a provided child id.
+     * @api
+     * @param {string} id - Node id
+     * @returns {boolean} - Whether this node has a provided child id.
+     */
+    hasChild: function(id) {
+        return inArray(id, this._childIds) !== -1;
+    },
+
+    /**
+     * Return whether this node is leaf.
+     * @api
+     * @returns {boolean} Node is leaf or not.
+     */
+    isLeaf: function() {
+        return !this._childIds.length &amp;&amp; !this.getData('hasChild');
+    },
+
+    /**
+     * Return whether this node is root.
+     * @api
+     * @returns {boolean} Node is root or not.
+     */
+    isRoot: function() {
+        return tui.util.isFalsy(this._parentId);
+    },
+
+    /**
+     * Get index of child
+     * @api
+     * @param {string} id - Node id
+     * @returns {number} Index of child in children list
+     */
+    getChildIndex: function(id) {
+        return inArray(id, this._childIds);
+    },
+
+    /**
+     * Insert child id
+     * @param {string} id - Child node id
+     * @param {number} index - Index number of insert position
+     */
+    insertChildId: function(id, index) {
+        var childIds = this._childIds;
+
+        if (inArray(id, childIds) === -1) {
+            childIds.splice(index, 0, id);
+        }
+    },
+
+    /**
+     * Move child id
+     * @param {string} id - Child node id
+     * @param {number} index - Index number of insert position
+     */
+    moveChildId: function(id, index) {
+        var childIds = this._childIds;
+        var originIdx = this.getChildIndex(id);
+
+        if (inArray(id, childIds) !== -1) {
+            if (originIdx &lt; index) {
+                index -= 1;
+            }
+
+            childIds.splice(index, 0, childIds.splice(originIdx, 1)[0]);
+        }
+    }
+});
+module.exports = TreeNode;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<footer>
+    <img class="logo" src="https://cloud.githubusercontent.com/assets/12269563/20029815/01133928-a39a-11e6-80f3-12500a91c755.png" style="width: 150px">
+    <div class="footer-text">NHN Entertainment. Frontend Development Lab</div>
+</footer>
+<script>prettyPrint();</script>
+<script src="scripts/jquery.min.js"></script>
+<script src="scripts/tui-doc.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+    <script>
+        var id = '_sub'.replace(/"/g, '_');
+        var element = document.getElementById(id); // do not use jquery selector
+
+        $(element).removeClass('hidden');
+        showLnbApi();
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,520 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Tree</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-jsdoc.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/tui-doc.css">
+</head>
+<body>
+<nav class="lnb" id="lnb">
+    <div class="logo" style="width: 150px">
+        <img src="https://cloud.githubusercontent.com/assets/12269563/20029815/01133928-a39a-11e6-80f3-12500a91c755.png" width="100%" height="100%">
+    </div>
+    <div class="title">
+        <h1><a href="index.html" class="link">Tree</a></h1>
+        
+    </div>
+    <div class="search-container" id="search-container">
+        <input type="text" placeholder="Search">
+        <ul></ul>
+    </div>
+    
+        <ol class="lnb-tab">
+            <li id="api-tab">
+                <a href="#"><h4>API</h4></a>
+            </li>
+            <li id="examples-tab">
+                <a href="#"><h4>Examples</h4></a>
+            </li>
+        </ol>
+    
+    <div class="lnb-examples hidden"><h3>Examples</h3><ul><li><a href="tutorial-ajaxFeature.html">Ajax</a><div class="hidden" id="ajaxFeature_sub"></div></li><li><a href="tutorial-check.html">Checkbox</a><div class="hidden" id="check_sub"></div></li><li><a href="tutorial-ctxMenu.html">ContextMenu</a><div class="hidden" id="ctxMenu_sub"></div></li><li><a href="tutorial-default.html">Default, Draggable, Selectable</a><div class="hidden" id="default_sub"></div></li><li><a href="tutorial-depthLabel.html">Custom_DepthLabel</a><div class="hidden" id="depthLabel_sub"></div></li><li><a href="tutorial-selectableNodes.html">Selectable, Editable</a><div class="hidden" id="selectableNodes_sub"></div></li></ul></div><div class="lnb-api hidden"><h3>Classes</h3><ul><li><a href="Tree.html">Tree</a><div class="hidden" id="Tree_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="Tree.html#add">add</a></li><li><a href="Tree.html#changeContextMenu">changeContextMenu</a></li><li><a href="Tree.html#check">check</a></li><li><a href="Tree.html#close">close</a></li><li><a href="Tree.html#contains">contains</a></li><li><a href="Tree.html#createChildNode">createChildNode</a></li><li><a href="Tree.html#disableFeature">disableFeature</a></li><li><a href="Tree.html#each">each</a></li><li><a href="Tree.html#eachAll">eachAll</a></li><li><a href="Tree.html#editNode">editNode</a></li><li><a href="Tree.html#enableFeature">enableFeature</a></li><li><a href="Tree.html#getBottomCheckedList">getBottomCheckedList</a></li><li><a href="Tree.html#getCheckedList">getCheckedList</a></li><li><a href="Tree.html#getChildIds">getChildIds</a></li><li><a href="Tree.html#getDepth">getDepth</a></li><li><a href="Tree.html#getLastDepth">getLastDepth</a></li><li><a href="Tree.html#getNodeData">getNodeData</a></li><li><a href="Tree.html#getNodeIdFromElement">getNodeIdFromElement</a></li><li><a href="Tree.html#getNodeIdPrefix">getNodeIdPrefix</a></li><li><a href="Tree.html#getNodeIndex">getNodeIndex</a></li><li><a href="Tree.html#getParentId">getParentId</a></li><li><a href="Tree.html#getRootNodeId">getRootNodeId</a></li><li><a href="Tree.html#getSelectedNodeId">getSelectedNodeId</a></li><li><a href="Tree.html#getState">getState</a></li><li><a href="Tree.html#getTopCheckedList">getTopCheckedList</a></li><li><a href="Tree.html#isChecked">isChecked</a></li><li><a href="Tree.html#isIndeterminate">isIndeterminate</a></li><li><a href="Tree.html#isLeaf">isLeaf</a></li><li><a href="Tree.html#isUnchecked">isUnchecked</a></li><li><a href="Tree.html#move">move</a></li><li><a href="Tree.html#open">open</a></li><li><a href="Tree.html#refresh">refresh</a></li><li><a href="Tree.html#remove">remove</a></li><li><a href="Tree.html#removeAllChildren">removeAllChildren</a></li><li><a href="Tree.html#removeNodeData">removeNodeData</a></li><li><a href="Tree.html#resetAllData">resetAllData</a></li><li><a href="Tree.html#resetClickTimer">resetClickTimer</a></li><li><a href="Tree.html#search">search</a></li><li><a href="Tree.html#select">select</a></li><li><a href="Tree.html#setNodeData">setNodeData</a></li><li><a href="Tree.html#sort">sort</a></li><li><a href="Tree.html#toggle">toggle</a></li><li><a href="Tree.html#toggleCheck">toggleCheck</a></li><li><a href="Tree.html#uncheck">uncheck</a></li></ul><div class="member-type">Events</div><ul class="inner"><li><a href="Tree.html#event:afterDraw">afterDraw</a></li><li><a href="Tree.html#event:beforeAjaxRequest">beforeAjaxRequest</a></li><li><a href="Tree.html#event:beforeCreateChildNode">beforeCreateChildNode</a></li><li><a href="Tree.html#event:beforeDraw">beforeDraw</a></li><li><a href="Tree.html#event:beforeEditNode">beforeEditNode</a></li><li><a href="Tree.html#event:beforeMove">beforeMove</a></li><li><a href="Tree.html#event:beforeOpenContextMenu">beforeOpenContextMenu</a></li><li><a href="Tree.html#event:beforeSelect">beforeSelect</a></li><li><a href="Tree.html#event:check">check</a></li><li><a href="Tree.html#event:errorAjaxResponse">errorAjaxResponse</a></li><li><a href="Tree.html#event:failAjaxResponse">failAjaxResponse</a></li><li><a href="Tree.html#event:move">move</a></li><li><a href="Tree.html#event:select">select</a></li><li><a href="Tree.html#event:selectContextMenu">selectContextMenu</a></li><li><a href="Tree.html#event:successAjaxResponse">successAjaxResponse</a></li><li><a href="Tree.html#event:uncheck">uncheck</a></li></ul></div></li></ul></div>
+</nav>
+<div id="resizer"></div>
+
+<div class="main" id="main">
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @fileoverview Update view and control tree data
+ * @author NHN Ent. FE dev Lab &lt;dl_javascript@nhnent.com>
+ */
+'use strict';
+
+var TreeNode = require('./treeNode');
+
+var extend = tui.util.extend,
+    keys = tui.util.keys,
+    forEach = tui.util.forEach,
+    map = tui.util.map;
+
+/**
+ * Tree model
+ * @class TreeModel
+ * @param {Array} data - Data
+ * @param {Object} options - Options for defaultState and nodeIdPrefix
+ * @ignore
+ **/
+var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslint-disable */
+    init: function(data, options) {/*eslint-enable*/
+        TreeNode.setIdPrefix(options.nodeIdPrefix);
+
+        /**
+         * Default state of node
+         * @type {String}
+         */
+        this.nodeDefaultState = options.nodeDefaultState;
+
+        /**
+         * Root node
+         * @type {TreeNode}
+         */
+        this.rootNode = new TreeNode({
+            state: 'opened'
+        }, null);
+
+        /**
+         * Tree hash having all nodes
+         * @type {object.&lt;string, TreeNode>}
+         */
+        this.treeHash = {};
+
+        this._setData(data);
+    },
+
+    /**
+     * Return prefix of node id
+     * @returns {string} Prefix
+     */
+    getNodeIdPrefix: function() {
+        return TreeNode.idPrefix;
+    },
+
+    /**
+     * Set model with tree data
+     * @param {Array} data - Tree data
+     */
+    _setData: function(data) {
+        var root = this.rootNode,
+            rootId = root.getId();
+
+        this.treeHash[rootId] = root;
+        this._makeTreeHash(data, root);
+    },
+
+    /**
+     * Make tree hash from data and parentNode
+     * @param {Array} data - Tree data
+     * @param {TreeNode} parent - Parent node id
+     * @returns {Array.&lt;string>} Added node ids
+     * @private
+     */
+    _makeTreeHash: function(data, parent) {
+        var parentId = parent.getId(),
+            ids = [];
+
+        forEach(data, function(datum) {
+            var childrenData = datum.children,
+                node = this._createNode(datum, parentId),
+                nodeId = node.getId();
+
+            ids.push(nodeId);
+            this.treeHash[nodeId] = node;
+            parent.addChildId(nodeId);
+            this._makeTreeHash(childrenData, node);
+        }, this);
+
+        return ids;
+    },
+
+    /**
+     * Create node
+     * @param {object} nodeData - Datum of node
+     * @param {string} parentId - Parent id
+     * @returns {TreeNode} TreeNode
+     */
+    _createNode: function(nodeData, parentId) {
+        nodeData = extend({
+            state: this.nodeDefaultState
+        }, nodeData);
+
+        return new TreeNode(nodeData, parentId);
+    },
+
+    /**
+     * Get children
+     * @param {string} nodeId - Node id
+     * @returns {?Array.&lt;TreeNode>} children
+     */
+    getChildren: function(nodeId) {
+        var childIds = this.getChildIds(nodeId);
+
+        if (!childIds) {
+            return null;
+        }
+
+        return map(childIds, function(childId) {
+            return this.getNode(childId);
+        }, this);
+    },
+
+    /**
+     * Get child ids
+     * @param {string} nodeId - Node id
+     * @returns {?Array.&lt;string>} Child ids
+     */
+    getChildIds: function(nodeId) {
+        var node = this.getNode(nodeId);
+
+        if (!node) {
+            return null;
+        }
+
+        return node.getChildIds();
+    },
+
+    /**
+     * Get the number of nodes
+     * @returns {number} The number of nodes
+     */
+    getCount: function() {
+        return keys(this.treeHash).length;
+    },
+
+    /**
+     * Get last depth
+     * @returns {number} The last depth
+     */
+    getLastDepth: function() {
+        var depths = map(this.treeHash, function(node) {
+            return this.getDepth(node.getId());
+        }, this);
+
+        return Math.max.apply(null, depths);
+    },
+
+    /**
+     * Find node
+     * @param {string} id - A node id to find
+     * @returns {?TreeNode} Node
+     */
+    getNode: function(id) {
+        return this.treeHash[id];
+    },
+
+    /**
+     * Get depth from node id
+     * @param {string} id - A node id to find
+     * @returns {?number} Depth
+     */
+    getDepth: function(id) {
+        var node = this.getNode(id),
+            depth = 0,
+            parent;
+
+        if (!node) {
+            return null;
+        }
+
+        parent = this.getNode(node.getParentId());
+        while (parent) {
+            depth += 1;
+            parent = this.getNode(parent.getParentId());
+        }
+
+        return depth;
+    },
+
+    /**
+     * Return parent id of node
+     * @param {string} id - Node id
+     * @returns {?string} Parent id
+     */
+    getParentId: function(id) {
+        var node = this.getNode(id);
+
+        if (!node) {
+            return null;
+        }
+
+        return node.getParentId();
+    },
+
+    /**
+     * Remove a node with children.
+     * - The update event will be fired with parent node.
+     * @param {string} id - Node id to remove
+     * @param {boolean} [isSilent] - If true, it doesn't trigger the 'update' event
+     */
+    remove: function(id, isSilent) {
+        var node = this.getNode(id),
+            parent;
+
+        if (!node) {
+            return;
+        }
+
+        parent = this.getNode(node.getParentId());
+
+        forEach(node.getChildIds(), function(childId) {
+            this.remove(childId, true);
+        }, this);
+
+        parent.removeChildId(id);
+        delete this.treeHash[id];
+
+        if (!isSilent) {
+            this.fire('update', parent.getId());
+        }
+    },
+
+    /**
+     * Add node(s).
+     * - If the parentId is falsy, the node will be appended to rootNode.
+     * - The update event will be fired with parent node.
+     * @param {Array|object} data - Raw-data
+     * @param {string} parentId - Parent id
+     * @param {boolean} [isSilent] - If true, it doesn't trigger the 'update' event
+     * @returns {Array.&lt;string>} New added node ids
+     */
+    add: function(data, parentId, isSilent) {
+        var parent = this.getNode(parentId) || this.rootNode,
+            ids;
+
+        data = [].concat(data);
+        ids = this._makeTreeHash(data, parent);
+
+        if (!isSilent) {
+            this.fire('update', parent.getId());
+        }
+
+        return ids;
+    },
+
+    /**
+     * Set data properties of a node
+     * @param {string} id - Node id
+     * @param {object} props - Properties
+     * @param {boolean} [isSilent] - If true, it doesn't trigger the 'update' event
+     */
+    setNodeData: function(id, props, isSilent) {
+        var node = this.getNode(id);
+
+        if (!node || !props) {
+            return;
+        }
+
+        node.setData(props);
+
+        if (!isSilent) {
+            this.fire('update', id);
+        }
+    },
+
+    /**
+     * Remove node data
+     * @param {string} id - Node id
+     * @param {string|Array} names - Names of properties
+     * @param {boolean} [isSilent] - If true, it doesn't trigger the 'update' event
+     */
+    removeNodeData: function(id, names, isSilent) {
+        var node = this.getNode(id);
+
+        if (!node || !names) {
+            return;
+        }
+
+        if (tui.util.isArray(names)) {
+            node.removeData.apply(node, names);
+        } else {
+            node.removeData(names);
+        }
+
+        if (!isSilent) {
+            this.fire('update', id);
+        }
+    },
+
+    /**
+     * Move a node to new parent's child
+     * @param {string} nodeId - Node id
+     * @param {string} newParentId - New parent id
+     * @param {number} [index] - Start index number for inserting
+     * @param {boolean} [isSilent] - If true, it doesn't trigger the 'update' event
+     */
+    /*eslint-disable complexity*/
+    move: function(nodeId, newParentId, index, isSilent) {
+        var node = this.getNode(nodeId);
+        var originalParent, originalParentId, newParent;
+
+        if (!node) {
+            return;
+        }
+
+        newParent = this.getNode(newParentId) || this.rootNode;
+        newParentId = newParent.getId();
+        originalParentId = node.getParentId();
+        originalParent = this.getNode(originalParentId);
+        index = tui.util.isUndefined(index) ? -1 : index;
+
+        if (nodeId === newParentId || this.contains(nodeId, newParentId)) {
+            return;
+        }
+
+        if (index !== -1) {
+            if (newParentId === originalParentId) {
+                newParent.moveChildId(nodeId, index);
+            } else {
+                newParent.insertChildId(nodeId, index);
+                originalParent.removeChildId(nodeId);
+            }
+        } else {
+            newParent.addChildId(nodeId);
+            originalParent.removeChildId(nodeId);
+        }
+
+        node.setParentId(newParentId);
+
+        if (!isSilent) {
+            this.fire('move', nodeId, originalParentId, newParentId, index);
+        }
+    },
+
+    /**
+     * Whether a node is a ancestor of another node.
+     * @param {string} containerId - Id of a node that may contain the other node
+     * @param {string} containedId - Id of a node that may be contained by the other node
+     * @returns {boolean} Whether a node contains another node
+     */
+    contains: function(containerId, containedId) {
+        var parentId = this.getParentId(containedId),
+            isContained = false;
+
+        while (!isContained &amp;&amp; parentId) {
+            isContained = (containerId === parentId);
+            parentId = this.getParentId(parentId);
+        }
+
+        return isContained;
+    },
+
+    /**
+     * Sort nodes
+     * @param {Function} comparator - Comparator function
+     */
+    sort: function(comparator) {
+        this.eachAll(function(node, nodeId) {
+            var children = this.getChildren(nodeId),
+                childIds;
+
+            if (children.length > 1) {
+                children.sort(comparator);
+
+                childIds = map(children, function(child) {
+                    return child.getId();
+                });
+                node.replaceChildIds(childIds);
+            }
+        });
+    },
+
+    /**
+     * Get node data (all)
+     * @param {string} nodeId - Node id
+     * @returns {?object} Node data
+     */
+    getNodeData: function(nodeId) {
+        var node = this.getNode(nodeId);
+
+        if (!node) {
+            return null;
+        }
+
+        return node.getAllData();
+    },
+
+    /**
+     * Traverse this tree iterating over all nodes.
+     * @param {Function} iteratee - Iteratee function
+     * @param {object} [context] - Context of iteratee
+     */
+    eachAll: function(iteratee, context) {
+        context = context || this;
+
+        forEach(this.treeHash, function() {
+            iteratee.apply(context, arguments);
+        });
+    },
+
+    /**
+     * Traverse this tree iterating over all descendants of a node.
+     * @param {Function} iteratee - Iteratee function
+     * @param {string} parentId - Parent node id
+     * @param {object} [context] - Context of iteratee
+     */
+    each: function(iteratee, parentId, context) { //depth-first
+        var stack, nodeId, node;
+
+        node = this.getNode(parentId);
+        if (!node) {
+            return;
+        }
+        stack = node.getChildIds();
+
+        context = context || this;
+        while (stack.length) {
+            nodeId = stack.pop();
+            node = this.getNode(nodeId);
+            iteratee.call(context, node, nodeId);
+
+            stack = stack.concat(node.getChildIds());
+        }
+    }
+});
+
+tui.util.CustomEvents.mixin(TreeModel);
+module.exports = TreeModel;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<footer>
+    <img class="logo" src="https://cloud.githubusercontent.com/assets/12269563/20029815/01133928-a39a-11e6-80f3-12500a91c755.png" style="width: 150px">
+    <div class="footer-text">NHN Entertainment. Frontend Development Lab</div>
+</footer>
+<script>prettyPrint();</script>
+<script src="scripts/jquery.min.js"></script>
+<script src="scripts/tui-doc.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+    <script>
+        var id = '_sub'.replace(/"/g, '_');
+        var element = document.getElementById(id); // do not use jquery selector
+
+        $(element).removeClass('hidden');
+        showLnbApi();
+    </script>
+
+</body>
+</html>
