@@ -147,5 +147,28 @@ describe('Tree', function() {
             tree.select(targetId);
             expect(tree.getSelectedNodeId()).toEqual(targetId);
         });
+
+        it('deselect() should reset node state after selecting.', function() {
+            var nodeId = $(rootElement).find('.tui-tree-node')[0].id;
+            var className = treeSelection.selectedClassName;
+            var selectedNode;
+
+            tree.select(nodeId);
+            tree.deselect(nodeId);
+
+            selectedNode = $(rootElement).find('#' + nodeId);
+
+            expect(selectedNode.hasClass(className)).toBe(false);
+        });
+
+        it('deselect() should invoke "deselect" event.', function() {
+            var nodeId = $(rootElement).find('.tui-tree-node')[0].id;
+            var handler = jasmine.createSpy();
+
+            tree.on('deselect', handler);
+            tree.deselect(nodeId);
+
+            expect(handler).toHaveBeenCalled();
+        });
     });
 });

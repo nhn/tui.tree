@@ -4,7 +4,8 @@ var util = require('./../util');
 
 var API_LIST = [
         'select',
-        'getSelectedNodeId'
+        'getSelectedNodeId',
+        'deselect'
     ],
     defaults = {
         selectedClassName: 'tui-tree-selected'
@@ -166,6 +167,40 @@ var Selectable = tui.util.defineClass(/** @lends Selectable.prototype */{/*eslin
      */
     getSelectedNodeId: function() {
         return this.selectedNodeId;
+    },
+
+    /**
+     * Deselect node by id
+     * @memberOf Tree.prototype
+     * @requires Selectable
+     * @param {string} nodeId - Node id
+     * @example
+     * tree.deselect('tui-tree-node-3');
+     */
+    deselect: function(nodeId) {
+        var nodeElement;
+        var tree = this.tree;
+
+        if (!nodeId) {
+            return;
+        }
+
+        nodeElement = document.getElementById(nodeId);
+
+        util.removeClass(nodeElement, this.selectedClassName);
+        this.selectedNodeId = null;
+
+        /**
+         * @event Tree#deselect
+         * @param {string} nodeId - Deselected node id
+         * @example
+         * tree
+         *  .enableFeature('Selectable')
+         *  .on('deselect', function(nodeId) {
+         *      console.log('deselected node: ' + nodeId);
+         *  });
+         */
+        tree.fire('deselect', nodeId);
     },
 
     /**
