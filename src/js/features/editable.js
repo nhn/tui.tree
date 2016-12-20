@@ -81,6 +81,12 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
         this.boundOnKeyup = tui.util.bind(this._onKeyup, this);
 
         /**
+         * Whether invoking custom event or not
+         * @type {Boolean}
+         */
+        this.isInvokingCustomEvent = false;
+
+        /**
          * Blur event handler
          * @type {Function}
          */
@@ -185,17 +191,8 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
      * @private
      */
     _onKeyup: function(event) {
-        /**
-         * To prevent firing blur event after enter event is fired.
-         */
-        util.removeEventListener(this.inputElement, 'blur', this.boundOnBlur);
-
         if (event.keyCode === 13) { // keyup "enter"
-            if (this.mode === EDIT_TYPE.CREATE) {
-                this._addData();
-            } else {
-                this._setData();
-            }
+            this.inputElement.blur();
         }
     },
 
@@ -204,6 +201,13 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
      * @private
      */
     _onBlur: function() {
+        if (this.isInvokingCustomEvent ||
+            !this.inputElement) {
+            this.isInvokingCustomEvent = false;
+
+            return;
+        }
+
         if (this.mode === EDIT_TYPE.CREATE) {
             this._addData();
         } else {
@@ -245,10 +249,11 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
         textElement.style.display = 'none';
 
         this.inputElement = target.getElementsByTagName('input')[0];
-        this.inputElement.focus();
 
         util.addEventListener(this.inputElement, 'keyup', this.boundOnKeyup);
         util.addEventListener(this.inputElement, 'blur', this.boundOnBlur);
+
+        this.inputElement.focus();
     },
 
     /**
@@ -267,6 +272,8 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
         if (tree.enabledFeatures.Ajax) {
             tree.off(this, 'successAjaxResponse');
         }
+
+        this.isInvokingCustomEvent = false;
 
         util.removeEventListener(this.inputElement, 'keyup', this.boundOnKeyup);
         util.removeEventListener(this.inputElement, 'blur', this.boundOnBlur);
@@ -297,6 +304,9 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
          *  });
          */
         if (!this.tree.invoke('beforeCreateChildNode', value)) {
+            this.isInvokingCustomEvent = true;
+            this.inputElement.focus();
+
             return;
         }
 
@@ -332,6 +342,9 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
          *  });
          */
         if (!this.tree.invoke('beforeEditNode', value)) {
+            this.isInvokingCustomEvent = true;
+            this.inputElement.focus();
+
             return;
         }
 
