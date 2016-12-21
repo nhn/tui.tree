@@ -311,8 +311,11 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{/*eslint-
     _onMousedown: function(event) {
         var tree = this.tree;
         var target = util.getTarget(event);
+        var hasEditableElement = (tree.enabledFeatures.Editable &&
+                                tree.enabledFeatures.Editable.inputElement);
 
-        if (util.isRightButton(event) || this._isNotDraggable(target)) {
+        if (util.isRightButton(event) || this._isNotDraggable(target) ||
+            hasEditableElement) {
             return;
         }
 

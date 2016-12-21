@@ -308,7 +308,7 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
     /*eslint-disable complexity*/
     move: function(nodeId, newParentId, index, isSilent) {
         var node = this.getNode(nodeId);
-        var originalParent, originalParentId, newParent;
+        var originalParentId, newParent;
 
         if (!node) {
             return;
@@ -317,30 +317,46 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
         newParent = this.getNode(newParentId) || this.rootNode;
         newParentId = newParent.getId();
         originalParentId = node.getParentId();
-        originalParent = this.getNode(originalParentId);
         index = tui.util.isUndefined(index) ? -1 : index;
 
         if (nodeId === newParentId || this.contains(nodeId, newParentId)) {
             return;
         }
 
+        this._changeOrderOfIds(nodeId, newParentId, originalParentId, index);
+
+        if (!isSilent) {
+            this.fire('move', nodeId, originalParentId, newParentId, index);
+        }
+    }, /*eslint-enable complexity*/
+
+    /**
+     * Change order of ids
+     * @param {string} nodeId - Node id
+     * @param {string} newParentId - New parent id
+     * @param {string} originalParentId - Original parent id
+     * @param {number} index - Moving index (When child node is moved on parent node, the value is -1)
+     * @private
+     */
+    _changeOrderOfIds: function(nodeId, newParentId, originalParentId, index) {
+        var node = this.getNode(nodeId);
+        var newParent = this.getNode(newParentId) || this.rootNode;
+        var originalParent = this.getNode(originalParentId);
+        var isSameParentIds = (newParentId === originalParentId);
+
         if (index !== -1) {
-            if (newParentId === originalParentId) {
+            if (isSameParentIds) {
                 newParent.moveChildId(nodeId, index);
             } else {
                 newParent.insertChildId(nodeId, index);
                 originalParent.removeChildId(nodeId);
             }
-        } else {
+        } else if (!isSameParentIds) {
             newParent.addChildId(nodeId);
             originalParent.removeChildId(nodeId);
         }
 
         node.setParentId(newParentId);
-
-        if (!isSilent) {
-            this.fire('move', nodeId, originalParentId, newParentId, index);
-        }
     },
 
     /**
