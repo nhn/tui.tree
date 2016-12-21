@@ -177,15 +177,14 @@ var Selectable = tui.util.defineClass(/** @lends Selectable.prototype */{/*eslin
      * @example
      * tree.deselect('tui-tree-node-3');
      */
-    deselect: function(nodeId) {
-        var nodeElement;
+    deselect: function() {
+        var nodeId = this.selectedNodeId;
+        var nodeElement = document.getElementById(nodeId);
         var tree = this.tree;
 
-        if (!nodeId) {
+        if (!nodeElement) {
             return;
         }
-
-        nodeElement = document.getElementById(nodeId);
 
         util.removeClass(nodeElement, this.selectedClassName);
         this.selectedNodeId = null;

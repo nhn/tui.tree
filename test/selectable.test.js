@@ -154,7 +154,7 @@ describe('Tree', function() {
             var selectedNode;
 
             tree.select(nodeId);
-            tree.deselect(nodeId);
+            tree.deselect();
 
             selectedNode = $(rootElement).find('#' + nodeId);
 
@@ -165,10 +165,23 @@ describe('Tree', function() {
             var nodeId = $(rootElement).find('.tui-tree-node')[0].id;
             var handler = jasmine.createSpy();
 
+            tree.select(nodeId);
             tree.on('deselect', handler);
-            tree.deselect(nodeId);
+            tree.deselect();
 
             expect(handler).toHaveBeenCalled();
+        });
+
+        it('deselect() should not invoke "deselect" event when node is removed.', function() {
+            var nodeId = $(rootElement).find('.tui-tree-node')[0].id;
+            var handler = jasmine.createSpy();
+
+            tree.select(nodeId);
+            tree.remove(nodeId);
+            tree.on('deselect', handler);
+            tree.deselect();
+
+            expect(handler).not.toHaveBeenCalled();
         });
     });
 });
