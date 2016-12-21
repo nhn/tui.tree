@@ -323,8 +323,7 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
             return;
         }
 
-        this._changeOrderOfChildId(nodeId, newParentId, originalParentId, index);
-        node.setParentId(newParentId);
+        this._changeOrderOfIds(nodeId, newParentId, originalParentId, index);
 
         if (!isSilent) {
             this.fire('move', nodeId, originalParentId, newParentId, index);
@@ -332,14 +331,15 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
     }, /*eslint-enable complexity*/
 
     /**
-     * Change order of child id by moving index
+     * Change order of ids
      * @param {string} nodeId - Node id
      * @param {string} newParentId - New parent id
      * @param {string} originalParentId - Original parent id
      * @param {number} index - Moving index (When child node is moved on parent node, the value is -1)
      * @private
      */
-    _changeOrderOfChildId: function(nodeId, newParentId, originalParentId, index) {
+    _changeOrderOfIds: function(nodeId, newParentId, originalParentId, index) {
+        var node = this.getNode(nodeId);
         var newParent = this.getNode(newParentId) || this.rootNode;
         var originalParent = this.getNode(originalParentId);
         var isSameParentIds = (newParentId === originalParentId);
@@ -355,6 +355,8 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
             newParent.addChildId(nodeId);
             originalParent.removeChildId(nodeId);
         }
+
+        node.setParentId(newParentId);
     },
 
     /**

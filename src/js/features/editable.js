@@ -81,10 +81,10 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
         this.boundOnKeyup = tui.util.bind(this._onKeyup, this);
 
         /**
-         * Whether invoking custom event or not
+         * Whether custom event is ignored or not
          * @type {Boolean}
          */
-        this.isInvokingCustomEvent = false;
+        this.isCustomEventIgnored = false;
 
         /**
          * Blur event handler
@@ -201,9 +201,8 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
      * @private
      */
     _onBlur: function() {
-        if (this.isInvokingCustomEvent ||
-            !this.inputElement) {
-            this.isInvokingCustomEvent = false;
+        if (this.isCustomEventIgnored || !this.inputElement) {
+            this.isCustomEventIgnored = false;
 
             return;
         }
@@ -273,7 +272,7 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
             tree.off(this, 'successAjaxResponse');
         }
 
-        this.isInvokingCustomEvent = false;
+        this.isCustomEventIgnored = false;
 
         util.removeEventListener(this.inputElement, 'keyup', this.boundOnKeyup);
         util.removeEventListener(this.inputElement, 'blur', this.boundOnBlur);
@@ -304,7 +303,7 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
          *  });
          */
         if (!this.tree.invoke('beforeCreateChildNode', value)) {
-            this.isInvokingCustomEvent = true;
+            this.isCustomEventIgnored = true;
             this.inputElement.focus();
 
             return;
@@ -342,7 +341,7 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
          *  });
          */
         if (!this.tree.invoke('beforeEditNode', value)) {
-            this.isInvokingCustomEvent = true;
+            this.isCustomEventIgnored = true;
             this.inputElement.focus();
 
             return;
