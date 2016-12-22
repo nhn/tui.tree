@@ -51,6 +51,12 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
         this.editableClassName = options.editableClassName;
 
         /**
+         * Classname of input element
+         * @type {string}
+         */
+        this.inputClassName = options.inputClassName;
+
+        /**
          * Key of node data to set value
          * @type {string}
          */
@@ -66,7 +72,7 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
          * Input element for create or edit
          * @type {HTMLElement}
          */
-        this.inputElement = this._createInputElement(options.inputClassName);
+        this.inputElement = null;
 
         /**
          * Action mode - create or edit
@@ -241,13 +247,13 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
         var textElement = util.getElementsByClassName(target, tree.classNames.textClass)[0];
         var inputElement;
 
-        inputElement = this.inputElement;
+        inputElement = this._createInputElement(this.inputClassName);
         inputElement.value = tree.getNodeData(nodeId)[this.dataKey] || '';
 
         textElement.parentNode.insertBefore(inputElement, textElement);
         textElement.style.display = 'none';
 
-        this.inputElement = target.getElementsByTagName('input')[0];
+        this.inputElement = inputElement;
 
         util.addEventListener(this.inputElement, 'keyup', this.boundOnKeyup);
         util.addEventListener(this.inputElement, 'blur', this.boundOnBlur);
@@ -264,6 +270,9 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
         var inputEl = this.inputElement;
         var parentNode = inputEl.parentNode;
 
+        util.removeEventListener(this.inputElement, 'keyup', this.boundOnKeyup);
+        util.removeEventListener(this.inputElement, 'blur', this.boundOnBlur);
+
         if (parentNode) {
             parentNode.removeChild(inputEl);
         }
@@ -273,9 +282,7 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
         }
 
         this.isCustomEventIgnored = false;
-
-        util.removeEventListener(this.inputElement, 'keyup', this.boundOnKeyup);
-        util.removeEventListener(this.inputElement, 'blur', this.boundOnBlur);
+        this.inputElement = null;
     },
 
     /**

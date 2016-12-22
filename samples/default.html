@@ -129,11 +129,7 @@
         });
 
         tree.on('select', function(nodeId) {
-            if (window.console) {
-                console.log('select! - ' + nodeId);
-            } else {
-                alert('select! - ' + nodeId);
-            }
+            console.log('select! - ' + nodeId);
         });
 
         tree.on('beforeMove', function(nodeId, parentId) {
@@ -151,11 +147,7 @@
             msg += 'newParentId: ' + e.newParentId + '\n';
             msg += 'index: ' + e.index + '\n';
 
-            if (window.console) {
-                console.log(msg);
-            } else {
-                alert(msg);
-            }
+            console.log(msg);
         });
     </script>
     </body>
