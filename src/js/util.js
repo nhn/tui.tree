@@ -217,9 +217,11 @@ var util = {
      * @returns {string} html
      */
     renderTemplate: function(source, props) {
+        /* eslint-disable require-jsdoc */
         function pickValue(names) {
             return pick.apply(null, [props].concat(names));
         }
+        /* eslint-enable require-jsdoc */
 
         return source.replace(templateMaskRe, function(match, name) {
             var value;

@@ -15,9 +15,9 @@ Each node can be moved by drag and drop.
 * Ajax
 
 ## Documentation
-* **API** : https://nhnent.github.io/tui.component.tree/latest
-* **Tutorial** : https://github.com/nhnent/tui.component.tree/wiki/Tree-Tutorial
-* **Example** - http://nhnent.github.io/tui.component.tree/latest/tutorial-default.html
+* API: [https://nhnent.github.io/tui.component.tree/latest](https://nhnent.github.io/tui.component.tree/latest)
+* Tutorial: [https://github.com/nhnent/tui.component.tree/wiki/Tree-Tutorial](https://github.com/nhnent/tui.component.tree/wiki/Tree-Tutorial)
+* Examples: [http://nhnent.github.io/tui.component.tree/latest/tutorial-default.html](http://nhnent.github.io/tui.component.tree/latest/tutorial-default.html)
 
 ## Sample Image
 * Default<br>
@@ -32,9 +32,9 @@ Each node can be moved by drag and drop.
 ## Dependency
 * tui-code-snippet: ~1.2.0
 * tui-contextmenu: ~1.1.2 (optional, for using ContextMenu feature)
-* jquery : ~1.8.3 (optional, for using Ajax feature)
+* jQuery: ~1.8.3 (optional, for using Ajax feature)
 
-## Test environment
+## Test Environment
 * PC
     * IE7~11
     * Edge
@@ -44,8 +44,8 @@ Each node can be moved by drag and drop.
 
 ## Download/Install
 * Bower:
-   * latest : `bower install tui-component-tree`
-   * each version : `bower install tui-component-tree[#tag]`
+   * Latest: `bower install tui-component-tree`
+   * Each version: `bower install tui-component-tree[#tag]`
 * Download: https://github.com/nhnent/tui.component.tree
 
 ## LICENSE

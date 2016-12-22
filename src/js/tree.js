@@ -313,6 +313,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
             clientY = downEvent.clientY,
             abs = Math.abs;
 
+        /* eslint-disable require-jsdoc */
         function onMouseMove(moveEvent) {
             var newClientX = moveEvent.clientX,
                 newClientY = moveEvent.clientY;
@@ -333,6 +334,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
                 self.fire('mouseup', event);
             }
         }
+        /* eslint-enable require-jsdoc */
 
         this._mouseMovingFlag = false;
         this.fire('mousedown', downEvent);
