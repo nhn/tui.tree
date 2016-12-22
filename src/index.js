@@ -1,5 +1,5 @@
 'use strict';
-var Tree = require('./src/js/tree');
+var Tree = require('./js/tree');
 tui.util.defineNamespace('tui.component', {
     Tree: Tree
 });
