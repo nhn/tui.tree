@@ -8,7 +8,7 @@ var enableProp = util.testProp(styleKeys);
 
 describe('contextMenu.js', function() {
     var $rootElement, tree, contextMenu, menuData;
-    var nodeData = [
+    var data = [
         {text: 'A', children: [
             {text: '1'},
             {text: '2'},
@@ -43,10 +43,9 @@ describe('contextMenu.js', function() {
     beforeEach(function() {
         loadFixtures('basicFixture.html');
 
-        $rootElement = $('#treeRoot');
-
-        tree = new Tree(nodeData, {
-            rootElement: 'treeRoot'
+        tree = new Tree('tree', {
+            rootElement: 'treeRoot',
+            data: data
         });
 
         menuData = [
@@ -65,12 +64,9 @@ describe('contextMenu.js', function() {
             menuData: menuData
         });
 
-        contextMenu = tree.enabledFeatures.ContextMenu;
-    });
+        $rootElement = $(tree.rootElement);
 
-    afterEach(function() {
-        jasmine.getFixtures().clearCache();
-        jasmine.getFixtures().cleanUp();
+        contextMenu = tree.enabledFeatures.ContextMenu;
     });
 
     it('When context-menu feature is enabled, element is not selected by style.', function() {
@@ -81,7 +77,7 @@ describe('contextMenu.js', function() {
         });
 
         if (enableProp) {
-            expect(tree.rootElement.style[enableProp]).toEqual('none');
+            expect($rootElement[0].style[enableProp]).toEqual('none');
         }
     });
 
@@ -144,7 +140,7 @@ describe('contextMenu.js', function() {
 
         it('text selection property restore.', function() {
             if (enableProp) {
-                expect(tree.rootElement.style[enableProp]).not.toEqual('none');
+                expect($rootElement[0].style[enableProp]).not.toEqual('none');
             }
         });
     });

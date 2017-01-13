@@ -33,12 +33,13 @@ describe('Tree', function() {
                 {title: '3'}
             ]}
         ],
-        rootElement, tree;
+        tree;
 
     beforeEach(function() {
         loadFixtures('basicFixture.html');
-        tree = new Tree(data, {
+        tree = new Tree('tree', {
             rootElement: 'treeRoot',
+            data: data,
             template: {
                 internalNode:
                     '<button type="button" class="{{toggleBtnClass}}">{{stateLabel}}</button>' +
@@ -51,7 +52,6 @@ describe('Tree', function() {
             }
         });
 
-        rootElement = document.getElementById('treeRoot');
         tree.enableFeature('Checkbox', {
             checkboxClassName: 'tui-tree-checkbox'
         });
@@ -77,7 +77,9 @@ describe('Tree', function() {
         tree.on('check', spy);
         tree.check(firstChildId);
 
-        expect(spy).toHaveBeenCalledWith(firstChildId);
+        expect(spy).toHaveBeenCalledWith({
+            nodeId: firstChildId
+        });
     });
 
     it('should fire "uncheck"-event when a node is unchecked', function() {
@@ -90,7 +92,9 @@ describe('Tree', function() {
 
         tree.check(firstChildId);
         tree.uncheck(firstChildId);
-        expect(spy).toHaveBeenCalledWith(firstChildId);
+        expect(spy).toHaveBeenCalledWith({
+            nodeId: firstChildId
+        });
     });
 
     it('should check with all descendants', function() {

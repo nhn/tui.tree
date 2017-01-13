@@ -1,6 +1,6 @@
 /*!
  * tui-component-tree.js
- * @version 1.6.0
+ * @version 2.0.0
  * @author NHNEnt FE Development Lab <dl_javascript@nhnent.com>
  * @license MIT
  */
@@ -40,7 +40,7 @@
 /******/ 	__webpack_require__.c = installedModules;
 
 /******/ 	// __webpack_public_path__
-/******/ 	__webpack_require__.p = "dist";
+/******/ 	__webpack_require__.p = "";
 
 /******/ 	// Load entry module and return exports
 /******/ 	return __webpack_require__(0);
@@ -95,13 +95,14 @@
 	    extend = snippet.extend,
 	    TIMEOUT_TO_DIFFERENTIATE_CLICK_AND_DBLCLICK = 200,
 	    MOUSE_MOVING_THRESHOLD = 5;
+
 	/**
 	 * Create tree model and inject data to model
 	 * @class Tree
 	 * @mixes tui.util.CustomEvents
-	 * @param {Object} data A data to be used on tree
+	 * @param {string|HTMLElement|jQueryObject} conatiner - Tree container element or id string value
 	 * @param {Object} options The options
-	 *     @param {HTMLElement} [options.rootElement] Root element (It should be 'UL' element)
+	 *     @param {Object} [options.data] A data to be used on tree
 	 *     @param {string} [options.nodeIdPrefix] A default prefix of a node
 	 *     @param {Object} [options.nodeDefaultState] A default state of a node
 	 *     @param {Object} [options.template] A markup set to make element
@@ -110,17 +111,9 @@
 	 *     @param {Object} [options.stateLabels] Toggle button state label
 	 *         @param {string} [options.stateLabels.opened] State-OPENED label (Text or HTML)
 	 *         @param {string} [options.stateLabels.closed] State-CLOSED label (Text or HTML)
-	 *     @param {Object} [options.classNames] Class names for tree
-	 *         @param {string} [options.classNames.nodeClass] A class name for node
-	 *         @param {string} [options.classNames.leafClass] A class name for leaf node
-	 *         @param {string} [options.classNames.openedClass] A class name for opened node
-	 *         @param {string} [options.classNames.closedClass] A class name for closed node
-	 *         @param {string} [options.classNames.textClass] A class name that for textElement in node
-	 *         @param {string} [options.classNames.subtreeClass] A class name for subtree in internal node
-	 *         @param {string} [options.classNames.toggleBtnClass] A class name for toggle button in internal node
 	 *     @param {Function} [options.renderTemplate] Function for rendering template
 	 * @example
-	 * //Default options:
+	 * // Default options:
 	 * // {
 	 * //     nodeIdPrefix: 'tui-tree-node-'
 	 * //     nodeDefaultState: 'closed',
@@ -128,26 +121,31 @@
 	 * //         opened: '-',
 	 * //         closed: '+'
 	 * //     },
-	 * //     classNames: {
-	 * //         nodeClass: 'tui-tree-node',
-	 * //         leafClass: 'tui-tree-leaf',
-	 * //         openedClass: 'tui-tree-opened',
-	 * //         closedClass: 'tui-tree-closed',
-	 * //         subtreeClass: 'tui-tree-subtree',
-	 * //         toggleBtnClass: 'tui-tree-toggleBtn',
-	 * //         textClass: 'tui-tree-text',
-	 * //     },
 	 * //     template: {
 	 * //         internalNode:
-	 * //             '<button type="button" class="{{toggleBtnClass}}">{{stateLabel}}</button>' +
-	 * //             '<span class="{{textClass}}">{{text}}</span>' +
-	 * //             '<ul class="{{subtreeClass}}">{{children}}</ul>'
+	 * //             '<div class="tui-tree-btn">' +
+	 * //                 '<button type="button" class="tui-tree-toggle-btn tui-js-tree-toggle-btn">' +
+	 * //                     '<span class="tui-ico-tree"></span>' +
+	 * //                     '{{stateLabel}}' +
+	 * //                 '</button>' +
+	 * //                 '<span class="tui-tree-text tui-js-tree-text">' +
+	 * //                     '<span class="tui-tree-ico tui-ico-folder"></span>' +
+	 * //                     '{{text}}' +
+	 * //                 '</span>' +
+	 * //             '</div>' +
+	 * //             '<ul class="tui-tree-subtree tui-js-tree-subtree">' +
+	 * //                 '{{children}}' +
+	 * //              '</ul>',
 	 * //         leafNode:
-	 * //             '<span class="{{textClass}}">{{text}}</span>' +
+	 * //             '<div class="tui-tree-btn">' +
+	 * //                 '<span class="tui-tree-text tui-js-tree-text">' +
+	 * //                     '<span class="tui-tree-ico tui-ico-file"></span>' +
+	 * //                     '{{text}}' +
+	 * //                 '</span>' +
+	 * //             '</div>'
 	 * //     }
 	 * // }
-	 * //
-	 *
+	 * var container = document.getElementById('tree');
 	 * var data = [
 	 *     {text: 'rootA', children: [
 	 *         {text: 'root-1A'},
@@ -177,36 +175,43 @@
 	 *         {text:'b'}
 	 *     ]}
 	 * ];
-	 *
-	 * var tree1 = new tui.component.Tree(data, {
-	 *     rootElement: 'treeRoot', // or document.getElementById('treeRoot')
+	 * var tree = new tui.component.Tree(container, {
+	 *     data: data,
 	 *     nodeDefaultState: 'opened',
 	 *
 	 *     // ========= Option: Override template renderer ===========
 	 *
 	 *     template: { // template for Mustache engine
 	 *         internalNode:
-	 *             '<button type="button" class="{{toggleBtnClass}}">{{stateLabel}}</button>' +
-	 *             '<span class="{{textClass}}">{{text}}</span>' +
-	 *             '<ul class="{{subtreeClass}}">{{children}}</ul>',
+	 *             '<div class="tui-tree-btn">' +
+	 *                 '<button type="button" class="tui-tree-toggle-btn tui-js-tree-toggle-btn">' +
+	 *                     '<span class="tui-ico-tree"></span>' +
+	 *                     '{{stateLabel}}' +
+	 *                 '</button>' +
+	 *                 '<span class="tui-tree-text tui-js-tree-text">' +
+	 *                     '<span class="tui-tree-ico tui-ico-folder"></span>' +
+	 *                     '{{text}}' +
+	 *                 '</span>' +
+	 *             '</div>' +
+	 *             '<ul class="tui-tree-subtree tui-js-tree-subtree">' +
+	 *                  '{{{children}}}' +
+	 *             '</ul>',
 	 *         leafNode:
-	 *             '<span class="{{textClass}}">{{text}}</span>'
+	 *             '<div class="tui-tree-btn">' +
+	 *                 '<span class="tui-tree-text tui-js-tree-text">' +
+	 *                     '<span class="tui-tree-ico tui-ico-file"></span>' +
+	 *                     '{{text}}' +
+	 *                 '</span>' +
+	 *             '</div>'
 	 *     },
 	 *     renderTemplate: function(tmpl, props) {
 	 *         // Mustache template engine
 	 *         return Mustache.render(tmpl, props);
 	 *     }
 	 * });
-	 *
-	 * @tutorial default
-	 * @tutorial depthLabel
-	 * @tutorial selectableNodes
-	 * @tutorial check
-	 * @tutorial ctxMenu
-	 * @tutorial ajaxFeature
-	 **/
-	var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
-	    init: function(data, options) { /*eslint-enable*/
+	 */
+	var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
+	    init: function(container, options) {
 	        options = extend({}, defaultOption, options);
 
 	        /**
@@ -225,7 +230,7 @@
 	         * Root element
 	         * @type {HTMLElement}
 	         */
-	        this.rootElement = options.rootElement;
+	        this.rootElement = null;
 
 	        /**
 	         * Toggle button state label
@@ -238,7 +243,7 @@
 	         * @type {TreeModel}
 	         * @private
 	         */
-	        this.model = new TreeModel(data, options);
+	        this.model = new TreeModel(options);
 
 	        /**
 	         * Enabled features
@@ -286,25 +291,31 @@
 	         */
 	        this.isMovingNode = false;
 
-	        this._setRoot();
+	        this._setRoot(container);
 	        this._draw(this.getRootNodeId());
 	        this._setEvents();
 	    },
 
 	    /**
 	     * Set root element of tree
+	     * @param {string|HTMLElement|jQueryObject} container - Container element or id selector
 	     * @private
 	     */
-	    _setRoot: function() {
-	        var rootEl = this.rootElement;
+	    _setRoot: function(container) {
+	        var rootElement = outerTemplate.ROOT;
 
-	        if (snippet.isString(rootEl)) {
-	            rootEl = this.rootElement = document.getElementById(rootEl);
+	        if (snippet.isString(container)) {
+	            container = document.getElementById(container);
+	        } else if (container.jquery) {
+	            container = container[0];
 	        }
 
-	        if (!snippet.isHTMLNode(rootEl)) {
-	            throw new Error(messages.INVALID_ROOT_ELEMENT);
+	        if (!snippet.isHTMLNode(container)) {
+	            throw new Error(messages.INVALID_CONTAINER_ELEMENT);
 	        }
+
+	        container.innerHTML = rootElement;
+	        this.rootElement = container.firstChild;
 	    },
 
 	    /**
@@ -322,13 +333,17 @@
 	        /**
 	         * @api
 	         * @event Tree#move
-	         * @param {{nodeId: string, originalParentId: string, newParentId: string, index: number}} treeEvent - Event
+	         * @param {{nodeId: string, originalParentId: string, newParentId: string, index: number}} evt - Event data
+	         *     @param {string} evt.nodeId - Current node id to move
+	         *     @param {string} evt.originalParentId - Original parent node id of moved node
+	         *     @param {string} evt.newParentId - New parent node id of moved node
+	         *     @param {number} evt.index - Moved index number
 	         * @example
-	         * tree.on('move', function(treeEvent) {
-	         *     var nodeId = treeEvent.nodeId;
-	         *     var originalParentId = treeEvent.originalParentId;
-	         *     var newParentId = treeEvent.newParentId;
-	         *     var index = treeEvent.index;
+	         * tree.on('move', function(evt) {
+	         *     var nodeId = evt.nodeId;
+	         *     var originalParentId = evt.originalParentId;
+	         *     var newParentId = evt.newParentId;
+	         *     var index = evt.index;
 	         *
 	         *     console.log(nodeId, originalParentId, newParentId, index);
 	         * });
@@ -386,12 +401,14 @@
 	                self._mouseMovingFlag = true;
 	            }
 	        }
+
 	        function onMouseUp(upEvent) {
 	            self.fire('mouseup', upEvent);
 	            util.removeEventListener(document, 'mousemove', onMouseMove);
 	            util.removeEventListener(document, 'mouseup', onMouseUp);
 	            util.removeEventListener(document, 'mouseout', onMouseOut);
 	        }
+
 	        function onMouseOut(event) {
 	            if (event.toElement === null) {
 	                self.fire('mouseup', event);
@@ -412,8 +429,8 @@
 	     * @private
 	     */
 	    _onClick: function(event) {
-	        var target = util.getTarget(event),
-	            self = this;
+	        var target = util.getTarget(event);
+	        var self = this;
 
 	        if (util.isRightButton(event)) {
 	            this.clickTimer = null;
@@ -421,7 +438,7 @@
 	            return;
 	        }
 
-	        if (util.hasClass(target, this.classNames.toggleBtnClass)) {
+	        if (this._isClickedToggleButton(target)) {
 	            this.toggle(this.getNodeIdFromElement(target));
 
 	            return;
@@ -446,6 +463,28 @@
 	    },
 
 	    /**
+	     * Whether target element is toggle button or not
+	     * @param {HTMLElement} target - Tree node element
+	     * @returns {boolean} State
+	     * @private
+	     */
+	    _isClickedToggleButton: function(target) {
+	        var nodeId = this.getNodeIdFromElement(target);
+	        var nodeElement;
+
+	        if (!nodeId) {
+	            return false;
+	        }
+
+	        nodeElement = util.getElementsByClassName(
+	            document.getElementById(nodeId),
+	            this.classNames.toggleBtnClass
+	        )[0];
+
+	        return (nodeElement && nodeElement.contains(target));
+	    },
+
+	    /**
 	     * Set node state - opened or closed
 	     * @param {string} nodeId - Node id
 	     * @param {string} state - Node state
@@ -453,7 +492,7 @@
 	     */
 	    _setDisplayFromNodeState: function(nodeId, state) {
 	        var subtreeElement = this._getSubtreeElement(nodeId),
-	            label, btnElement, nodeElement;
+	            label, btnElement, nodeElement, firstTextNode;
 
 	        if (!subtreeElement || subtreeElement === this.rootElement) {
 	            return;
@@ -474,7 +513,8 @@
 	        this._setNodeClassNameFromState(nodeElement, state);
 
 	        if (btnElement) {
-	            btnElement.innerHTML = label;
+	            firstTextNode = util.getFirstTextNode(btnElement);
+	            firstTextNode.nodeValue = label;
 	        }
 	    },
 
@@ -612,16 +652,17 @@
 	        /**
 	         * @api
 	         * @event Tree#beforeDraw
-	         * @param {string} nodeId - Node id
+	         * @param {{nodeId: string}} evt - Event data
+	         *     @param {string} evt.nodeId - Node id
 	         * @example
-	         * tree.on('beforeDraw', function(nodeId) {
+	         * tree.on('beforeDraw', function(evt) {
 	         *     if (tree.isMovingNode) {
 	         *         console.log('isMovingNode');
 	         *     }
-	         *     console.log('beforeDraw: ' + nodeId);
+	         *     console.log('beforeDraw: ' + evt.nodeId);
 	         * });
 	         */
-	        this.fire('beforeDraw', nodeId);
+	        this.fire('beforeDraw', {nodeId: nodeId});
 
 	        if (node.isRoot()) {
 	            html = this._makeHtml(node.getChildIds());
@@ -636,16 +677,17 @@
 	        /**
 	         * @api
 	         * @event Tree#afterDraw
-	         * @param {string} nodeId - Node id
+	         * @param {{nodeId: string}} evt - Event data
+	         *     @param {string} evt.nodeId - Node id
 	         * @example
-	         * tree.on('afterDraw', function(nodeId) {
+	         * tree.on('afterDraw', function(evt) {
 	         *     if (tree.isMovingNode) {
 	         *         console.log('isMovingNode');
 	         *     }
-	         *     console.log('afterDraw: ' + nodeId);
+	         *     console.log('afterDraw: ' + evt.nodeId);
 	         * });
 	         */
-	        this.fire('afterDraw', nodeId);
+	        this.fire('afterDraw', {nodeId: nodeId});
 	    },
 
 	    /**
@@ -959,10 +1001,12 @@
 	        var node = this.model.getNode(nodeId);
 	        var state = node.getState();
 	        var isReload = snippet.isUndefined(node.getData('reload')) ||
-	                        node.getData('reload');
+	            node.getData('reload');
 
 	        if (state === nodeStates.CLOSED) { // open -> close action
-	            this._setNodeData(nodeId, {reload: false}, true);
+	            this._setNodeData(nodeId, {
+	                reload: false
+	            }, true);
 	        }
 
 	        if (state === nodeStates.OPENED && isReload) { // close -> open action
@@ -1157,7 +1201,9 @@
 	     * @private
 	     */
 	    _resetAllData: function(data, nodeId) {
-	        this._removeAllChildren(nodeId, {isSilent: true});
+	        this._removeAllChildren(nodeId, {
+	            isSilent: true
+	        });
 
 	        return this._add(data, nodeId);
 	    },
@@ -1271,7 +1317,9 @@
 	        if (useAjax) {
 	            treeAjax.loadData(ajaxCommand.MOVE, function() {
 	                if (self.getParentId(nodeId) !== newParentId) { // just move, not sort!
-	                    self.setNodeData(newParentId, {reload: true}, true);
+	                    self.setNodeData(newParentId, {
+	                        reload: true
+	                    }, true);
 	                }
 	                self._move(nodeId, newParentId, index);
 	            }, {
@@ -1297,18 +1345,22 @@
 	        /**
 	         * @api
 	         * @event Tree#beforeMove
-	         * @param {string} nodeId - Current dragging node id
-	         * @param {string} parentId - New parent id
+	         * @param {{nodeId: string, parentId: string}} evt - Event data
+	         *     @param {string} evt.nodeId - Current dragging node id
+	         *     @param {string} evt.parentId - New parent id
 	         * @example
-	         * tree.on('beforeMove', function(nodeId, parentId) {
-	         *      console.log('dragging node: ' + nodeId);
-	         *      console.log('parent node: ' + parentId);
+	         * tree.on('beforeMove', function(evt) {
+	         *      console.log('dragging node: ' + evt.nodeId);
+	         *      console.log('parent node: ' + evt.parentId);
 	         *
 	         *      return false; // Cancel "move" event
 	         *      // return true; // Fire "move" event
 	         * });
 	         */
-	        if (!this.invoke('beforeMove', nodeId, newParentId)) {
+	        if (!this.invoke('beforeMove', {
+	            nodeId: nodeId,
+	            newParentId: newParentId
+	        })) {
 	            return;
 	        }
 
@@ -1585,6 +1637,7 @@
 	    setAbstractAPIs(name, Feature);
 	});
 	snippet.CustomEvents.mixin(Tree);
+
 	module.exports = Tree;
 
 
@@ -1605,8 +1658,11 @@
 	        return isValidDotNotationRe.test(str);
 	    },
 	    isArray = tui.util.isArraySafe,
+	    forEach = tui.util.forEach,
+	    browser = tui.util.browser,
 	    isSupportPageOffset = typeof window.pageXOffset !== 'undefined',
-	    isCSS1Compat = document.compatMode === 'CSS1Compat';
+	    isCSS1Compat = document.compatMode === 'CSS1Compat',
+	    isOlderIE = (browser.msie && browser.version < 9);
 
 	/**
 	 * @ignore
@@ -1706,6 +1762,17 @@
 	        target = e.target || e.srcElement;
 
 	        return target;
+	    },
+
+	    /**
+	     * Get key code from event object
+	     * @param {Event} e Event object
+	     * @returns {Number} KeyCode
+	     */
+	    getKeyCode: function(e) {
+	        e = e || window.event;
+
+	        return e.which || e.keyCode;
 	    },
 
 	    /**
@@ -1889,6 +1956,54 @@
 	        }
 
 	        return scrollTop;
+	    },
+
+	    /**
+	     * Get first text node in target element
+	     * @param {HTMLElement} element - Target element to find
+	     * @returns {HTMLElement} Text node
+	     */
+	    getFirstTextNode: function(element) {
+	        var childElements = tui.util.toArray(element.childNodes);
+	        var firstTextNode = '';
+
+	        forEach(childElements, function(childElement) {
+	            if (childElement.nodeName === '#text') {
+	                firstTextNode = childElement;
+
+	                return false;
+	            }
+
+	            return true;
+	        });
+
+	        return firstTextNode;
+	    },
+
+	    /**
+	     * Remove element from parent element
+	     * @param {HTMLElement} element - Target element to remove
+	     */
+	    removeElement: function(element) {
+	        if (element && element.parentNode) {
+	            element.parentNode.removeChild(element);
+	        }
+	    },
+
+	    /**
+	     * Get change event name as browser
+	     * @returns {string} Event name
+	     */
+	    getChangeEventName: function() {
+	        var changeEventName;
+
+	        if (isOlderIE) {
+	            changeEventName = 'propertychange';
+	        } else {
+	            changeEventName = 'change';
+	        }
+
+	        return changeEventName;
 	    }
 	};
 
@@ -1902,25 +2017,10 @@
 	'use strict';
 
 	/**
-	 * Make class names
-	 * @param {string} prefix - Prefix of class name
-	 * @param {Array.<string>} keys - Keys of class names
-	 * @returns {object.<string, string>} Class names map
-	 * @ignore
-	 */
-	function makeClassNames(prefix, keys) {
-	    var obj = {};
-	    tui.util.forEach(keys, function(key) {
-	        obj[key + 'Class'] = prefix + key;
-	    });
-
-	    return obj;
-	}
-
-	/**
 	 * A default values for tree
 	 * @const
 	 * @type {Object}
+	 * @property {array} data - A data to be used on tree
 	 * @property {string} nodeDefaultState - Node state
 	 * @property {string} nodeIdPrefix - Node id prefix
 	 * @property {object} stateLabel - State label in node
@@ -1939,28 +2039,42 @@
 	 *  @property {string} textClass - Class name for text element in a node
 	 */
 	module.exports = {
+	    data: [],
 	    nodeDefaultState: 'closed',
 	    stateLabels: {
 	        opened: '-',
 	        closed: '+'
 	    },
 	    nodeIdPrefix: 'tui-tree-node-',
-	    classNames: makeClassNames('tui-tree-', [
-	        'node',
-	        'leaf',
-	        'opened',
-	        'closed',
-	        'subtree',
-	        'toggleBtn',
-	        'text'
-	    ]),
+	    classNames: {
+	        nodeClass: 'tui-tree-node',
+	        leafClass: 'tui-tree-leaf',
+	        openedClass: 'tui-tree-opened',
+	        closedClass: 'tui-tree-closed',
+	        subtreeClass: 'tui-js-tree-subtree',
+	        toggleBtnClass: 'tui-js-tree-toggle-btn',
+	        textClass: 'tui-js-tree-text'
+	    },
 	    template: {
 	        internalNode:
-	            '<button type="button" class="{{toggleBtnClass}}">{{stateLabel}}</button>' +
-	            '<span class="{{textClass}}">{{text}}</span>' +
-	            '<ul class="{{subtreeClass}}">{{children}}</ul>',
+	            '<div class="tui-tree-btn">' +
+	                '<button type="button" class="tui-tree-toggle-btn {{toggleBtnClass}}">' +
+	                    '<span class="tui-ico-tree"></span>' +
+	                    '{{stateLabel}}' +
+	                '</button>' +
+	                '<span class="tui-tree-text {{textClass}}">' +
+	                    '<span class="tui-tree-ico tui-ico-folder"></span>' +
+	                    '{{text}}' +
+	                '</span>' +
+	            '</div>' +
+	            '<ul class="tui-tree-subtree {{subtreeClass}}">{{children}}</ul>',
 	        leafNode:
-	            '<span class="{{textClass}}">{{text}}</span>'
+	            '<div class="tui-tree-btn">' +
+	                '<span class="tui-tree-text {{textClass}}">' +
+	                    '<span class="tui-tree-ico tui-ico-file"></span>' +
+	                    '{{text}}' +
+	                '</span>' +
+	            '</div>'
 	    }
 	};
 
@@ -1998,7 +2112,7 @@
 	 * @type {Object.<string, string>}
 	 */
 	module.exports = {
-	    INVALID_ROOT_ELEMENT: '"tui-component-tree": Root element is invalid.',
+	    INVALID_CONTAINER_ELEMENT: '"tui-component-tree": The container element is invalid.',
 	    INVALID_API: '"tui-component-tree": INVALID_API',
 	    INVALID_API_SELECTABLE: '"tui-component-tree": The feature-"Selectable" is not enabled.',
 	    INVALID_API_EDITABLE: '"tui-component-tree": The feature-"Editable" is not enabled.',
@@ -2018,6 +2132,7 @@
 	 * @type {{internalNode: string, leafNode: string}}
 	 */
 	module.exports = {
+	    ROOT: '<ul class="tui-tree tui-tree-root"></ul>',
 	    INTERNAL_NODE:
 	        '<li id="{{id}}" class="{{nodeClass}} {{stateClass}}">' +
 	            '{{innerTemplate}}' +
@@ -2074,7 +2189,7 @@
 	 * @ignore
 	 **/
 	var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslint-disable */
-	    init: function(data, options) {/*eslint-enable*/
+	    init: function(options) {/*eslint-enable*/
 	        TreeNode.setIdPrefix(options.nodeIdPrefix);
 
 	        /**
@@ -2097,7 +2212,7 @@
 	         */
 	        this.treeHash = {};
 
-	        this._setData(data);
+	        this._setData(options.data);
 	    },
 
 	    /**
@@ -2939,40 +3054,50 @@
 	        /**
 	         * @api
 	         * @event Tree#beforeSelect
-	         * @param {string} nodeId - Selected node id
-	         * @param {string} prevNodeId - Previous selected node id
-	         * @param {Element|undefined} target - Target element
+	         * @param {{nodeId: string, prevNodeId: string, target: HTMLElement|undefined}} evt - Event data
+	         *     @param {string} evt.nodeId - Selected node id
+	         *     @param {string} evt.prevNodeId - Previous selected node id
+	         *     @param {HTMLElement|undefined} evt.target - Target element
 	         * @example
 	         * tree
 	         *  .enableFeature('Selectable')
-	         *  .on('beforeSelect', function(nodeId, prevNodeId, target) {
-	         *      console.log('selected node: ' + nodeId);
-	         *      console.log('previous selected node: ' + prevNodeId);
-	         *      console.log('target element: ' + target);
+	         *  .on('beforeSelect', function(evt) {
+	         *      console.log('selected node: ' + evt.nodeId);
+	         *      console.log('previous selected node: ' + evt.prevNodeId);
+	         *      console.log('target element: ' + evt.target);
 	         *      return false; // It cancels "select"
 	         *      // return true; // It fires "select"
 	         *  });
 	         */
-	        if (tree.invoke('beforeSelect', nodeId, prevNodeId, target)) {
+	        if (tree.invoke('beforeSelect', {
+	            nodeId: nodeId,
+	            prevNodeId: prevNodeId,
+	            target: target
+	        })) {
 	            util.removeClass(prevElement, selectedClassName);
 	            util.addClass(nodeElement, selectedClassName);
 
 	            /**
 	             * @api
 	             * @event Tree#select
-	             * @param {string} nodeId - Selected node id
-	             * @param {string} prevNodeId - Previous selected node id
-	             * @param {Element|undefined} target - Target element
+	             * @param {{nodeId: string, prevNodeId: string, target: HTMLElement|undefined}} evt - Event data
+	             *     @param {string} evt.nodeId - Selected node id
+	             *     @param {string} evt.prevNodeId - Previous selected node id
+	             *     @param {HTMLElement|undefined} evt.target - Target element
 	             * @example
 	             * tree
 	             *  .enableFeature('Selectable')
-	             *  .on('select', function(nodeId, prevNodeId, target) {
-	             *      console.log('selected node: ' + nodeId);
-	             *      console.log('previous selected node: ' + prevNodeId);
-	             *      console.log('target element: ' + target);
+	             *  .on('select', function(evt) {
+	             *      console.log('selected node: ' + evt.nodeId);
+	             *      console.log('previous selected node: ' + evt.prevNodeId);
+	             *      console.log('target element: ' + evt.target);
 	             *  });
 	             */
-	            tree.fire('select', nodeId, prevNodeId, target);
+	            tree.fire('select', {
+	                nodeId: nodeId,
+	                prevNodeId: prevNodeId,
+	                target: target
+	            });
 	            this.selectedNodeId = nodeId;
 	        }
 	    },
@@ -3017,15 +3142,16 @@
 
 	        /**
 	         * @event Tree#deselect
-	         * @param {string} nodeId - Deselected node id
+	         * @param {{nodeId: string}} evt - Event data
+	         *     @param {string} evt.nodeId - Deselected node id
 	         * @example
 	         * tree
 	         *  .enableFeature('Selectable')
-	         *  .on('deselect', function(nodeId) {
-	         *      console.log('deselected node: ' + nodeId);
+	         *  .on('deselect', function(evt) {
+	         *      console.log('deselected node: ' + evt.nodeId);
 	         *  });
 	         */
-	        tree.fire('deselect', nodeId);
+	        tree.fire('deselect', {nodeId: nodeId});
 	    },
 
 	    /**
@@ -3056,14 +3182,16 @@
 	        y: 2,
 	        x: 5
 	    },
-	    autoOpenDelay: 1500,
-	    isSortable: false,
+	    helperClassName: 'tui-tree-drop',
+	    dragItemClassName: 'tui-tree-drag',
 	    hoverClassName: 'tui-tree-hover',
 	    lineClassName: 'tui-tree-line',
 	    lineBoundary: {
-	        top: 2,
-	        bottom: 2
-	    }
+	        top: 4,
+	        bottom: 4
+	    },
+	    autoOpenDelay: 1500,
+	    isSortable: false
 	};
 	var rejectedTagNames = [
 	    'INPUT',
@@ -3083,13 +3211,15 @@
 	 * @param {Tree} tree - Tree
 	 * @param {Object} options - Options
 	 *     @param {boolean} options.useHelper - Using helper flag
-	 *     @param {{x: number, y:number}} options.helperPos - Helper position
+	 *     @param {{x: number, y:number}} options.helperPos - Helper position (each minimum value is 4)
 	 *     @param {Array.<string>} options.rejectedTagNames - No draggable tag names
 	 *     @param {Array.<string>} options.rejectedClassNames - No draggable class names
 	 *     @param {number} options.autoOpenDelay - Delay time while dragging to be opened
 	 *     @param {boolean} options.isSortable - Flag of whether using sortable dragging
 	 *     @param {string} options.hoverClassName - Class name for hovered node
 	 *     @param {string} options.lineClassName - Class name for moving position line
+	 *     @param {string} options.helperClassName - Class name for helper's outer element
+	 *     @param {string} options.helperTemplate - Template string for helper's inner contents
 	 *     @param {{top: number, bottom: number}} options.lineBoundary - Boundary value for visible moving line
 	 * @ignore
 	 */
@@ -3210,6 +3340,12 @@
 	         */
 	        this.lineBoundary = options.lineBoundary;
 
+	        /**
+	         * Helper's outer element class name
+	         * @type {string}
+	         */
+	        this.helperClassName = options.helperClassName;
+
 	        this._initHelper();
 
 	        if (this.isSortable) {
@@ -3220,9 +3356,12 @@
 	    },
 
 	    /**
-	     * Disable this module
+	     * Disable this module (remove attached elements and unbind event)
 	     */
 	    destroy: function() {
+	        util.removeElement(this.helperElement);
+	        util.removeElement(this.lineElement);
+
 	        this._restoreTextSelection();
 	        this._detachMousedown();
 	    },
@@ -3252,6 +3391,8 @@
 	        helperStyle.position = 'absolute';
 	        helperStyle.display = 'none';
 
+	        util.addClass(helperElement, this.helperClassName);
+
 	        this.tree.rootElement.parentNode.appendChild(helperElement);
 
 	        this.helperElement = helperElement;
@@ -3268,7 +3409,7 @@
 	        lineStyle.position = 'absolute';
 	        lineStyle.visibility = 'hidden';
 
-	        lineElement.className = this.lineClassName;
+	        util.addClass(lineElement, this.lineClassName);
 
 	        this.tree.rootElement.parentNode.appendChild(lineElement);
 
@@ -3277,11 +3418,12 @@
 
 	    /**
 	     * Set helper contents
-	     * @param {string} text - Helper contents
+	     * @param {string} contents - Helper contents
 	     * @private
 	     */
-	    _setHelper: function(text) {
-	        this.helperElement.innerHTML = text;
+	    _setHelper: function(contents) {
+	        this.helperElement.innerHTML = contents;
+	        util.removeElement(this.helperElement.getElementsByTagName('label')[0]);
 	    },
 
 	    /**
@@ -3360,11 +3502,10 @@
 	    _onMousedown: function(event) {
 	        var tree = this.tree;
 	        var target = util.getTarget(event);
-	        var hasEditableElement = (tree.enabledFeatures.Editable &&
-	                                tree.enabledFeatures.Editable.inputElement);
+	        var isEditing = (tree.enabledFeatures.Editable && tree.enabledFeatures.Editable.inputElement);
+	        var nodeElement;
 
-	        if (util.isRightButton(event) || this._isNotDraggable(target) ||
-	            hasEditableElement) {
+	        if (util.isRightButton(event) || this._isNotDraggable(target) || isEditing) {
 	            return;
 	        }
 
@@ -3373,7 +3514,11 @@
 	        this.currentNodeId = tree.getNodeIdFromElement(target);
 
 	        if (this.useHelper) {
-	            this._setHelper(target.innerText || target.textContent);
+	            nodeElement = util.getElementsByClassName(
+	                document.getElementById(this.currentNodeId),
+	                tree.classNames.textClass
+	            )[0];
+	            this._setHelper(nodeElement.innerHTML);
 	        }
 
 	        tree.on({
@@ -3396,6 +3541,7 @@
 	            return;
 	        }
 
+	        this._setClassNameOnDragItem('add');
 	        this._changeHelperPosition(mousePos);
 
 	        nodeId = this.tree.getNodeIdFromElement(target);
@@ -3538,14 +3684,12 @@
 	     */
 	    _drawBoundaryLine: function(targetPos, boundaryType) {
 	        var style = this.lineElement.style;
-	        var lineHeight;
 	        var scrollTop;
 
 	        if (boundaryType) {
-	            scrollTop = this.tree.rootElement.parentNode.scrollTop + util.getWindowScrollTop();
-	            lineHeight = Math.round(this.lineElement.offsetHeight / 2);
+	            scrollTop = util.getWindowScrollTop();
 
-	            style.top = Math.round(targetPos[boundaryType]) - lineHeight + scrollTop + 'px';
+	            style.top = targetPos[boundaryType] + scrollTop + 'px';
 	            style.visibility = 'visible';
 	            this.movingLineType = boundaryType;
 	        } else {
@@ -3584,6 +3728,8 @@
 	            this.hoveredElement = null;
 	        }
 
+	        this._setClassNameOnDragItem('remove');
+
 	        this.helperElement.style.display = 'none';
 
 	        this.currentNodeId = null;
@@ -3591,6 +3737,21 @@
 
 	        this.tree.off(this, 'mousemove');
 	        this.tree.off(this, 'mouseup');
+	    },
+
+	    /**
+	     * Set class name on drag item's element
+	     * @param {string} type - Set type ('add' or 'remove')
+	     */
+	    _setClassNameOnDragItem: function(type) {
+	        var dragItemElement = document.getElementById(this.currentNodeId);
+	        var dragItemClassName = defaultOptions.dragItemClassName;
+
+	        if (type === 'add') {
+	            util.addClass(dragItemElement, dragItemClassName);
+	        } else {
+	            util.removeClass(dragItemElement, dragItemClassName);
+	        }
 	    }
 	});
 
@@ -3615,6 +3776,8 @@
 	    CREATE: 'create',
 	    UPDATE: 'update'
 	};
+	var WRAPPER_CLASSNAME = 'tui-input-wrap';
+	var INPUT_CLASSNAME = 'tui-tree-input';
 
 	/**
 	 * Set the tree selectable
@@ -3651,13 +3814,7 @@
 	         * Classname of editable element
 	         * @type {string}
 	         */
-	        this.editableClassName = options.editableClassName;
-
-	        /**
-	         * Classname of input element
-	         * @type {string}
-	         */
-	        this.inputClassName = options.inputClassName;
+	        this.editableClassName = options.editableClassName || tree.classNames.textClass;
 
 	        /**
 	         * Key of node data to set value
@@ -3684,16 +3841,16 @@
 	        this.mode = null;
 
 	        /**
-	         * Keyup event handler
-	         * @type {Function}
-	         */
-	        this.boundOnKeyup = tui.util.bind(this._onKeyup, this);
-
-	        /**
 	         * Whether custom event is ignored or not
 	         * @type {Boolean}
 	         */
 	        this.isCustomEventIgnored = false;
+
+	        /**
+	         * Keyup event handler
+	         * @type {Function}
+	         */
+	        this.boundOnKeyup = tui.util.bind(this._onKeyup, this);
 
 	        /**
 	         * Blur event handler
@@ -3800,7 +3957,7 @@
 	     * @private
 	     */
 	    _onKeyup: function(event) {
-	        if (event.keyCode === 13) { // keyup "enter"
+	        if (util.getKeyCode(event) === 13) {
 	            this.inputElement.blur();
 	        }
 	    },
@@ -3825,18 +3982,15 @@
 
 	    /**
 	     * Create input element
-	     * @param {string} inputClassName - Classname of input element
 	     * @returns {HTMLElement} Input element
 	     * @private
 	     */
-	    _createInputElement: function(inputClassName) {
-	        var el = document.createElement('INPUT');
-	        if (inputClassName) {
-	            el.className = inputClassName;
-	        }
-	        el.setAttribute('type', 'text');
+	    _createInputElement: function() {
+	        var element = document.createElement('INPUT');
+	        element.setAttribute('type', 'text');
+	        util.addClass(element, INPUT_CLASSNAME);
 
-	        return el;
+	        return element;
 	    },
 
 	    /**
@@ -3847,21 +4001,21 @@
 	    _attachInputElement: function(nodeId) {
 	        var tree = this.tree;
 	        var target = document.getElementById(nodeId);
-	        var textElement = util.getElementsByClassName(target, tree.classNames.textClass)[0];
-	        var inputElement;
+	        var wrapperElement = document.createElement('DIV');
+	        var inputElement = this._createInputElement();
 
-	        inputElement = this._createInputElement(this.inputClassName);
+	        util.addClass(wrapperElement, WRAPPER_CLASSNAME);
 	        inputElement.value = tree.getNodeData(nodeId)[this.dataKey] || '';
 
-	        textElement.parentNode.insertBefore(inputElement, textElement);
-	        textElement.style.display = 'none';
+	        wrapperElement.appendChild(inputElement);
+	        target.appendChild(wrapperElement);
+
+	        util.addEventListener(inputElement, 'keyup', this.boundOnKeyup);
+	        util.addEventListener(inputElement, 'blur', this.boundOnBlur);
 
 	        this.inputElement = inputElement;
 
-	        util.addEventListener(this.inputElement, 'keyup', this.boundOnKeyup);
-	        util.addEventListener(this.inputElement, 'blur', this.boundOnBlur);
-
-	        this.inputElement.focus();
+	        inputElement.focus();
 	    },
 
 	    /**
@@ -3870,15 +4024,12 @@
 	     */
 	    _detachInputElement: function() {
 	        var tree = this.tree;
-	        var inputEl = this.inputElement;
-	        var parentNode = inputEl.parentNode;
+	        var inputElement = this.inputElement;
 
-	        util.removeEventListener(this.inputElement, 'keyup', this.boundOnKeyup);
-	        util.removeEventListener(this.inputElement, 'blur', this.boundOnBlur);
+	        util.removeEventListener(inputElement, 'keyup', this.boundOnKeyup);
+	        util.removeEventListener(inputElement, 'blur', this.boundOnBlur);
 
-	        if (parentNode) {
-	            parentNode.removeChild(inputEl);
-	        }
+	        util.removeElement(inputElement);
 
 	        if (tree.enabledFeatures.Ajax) {
 	            tree.off(this, 'successAjaxResponse');
@@ -3902,17 +4053,18 @@
 	        /**
 	         * @api
 	         * @event Tree#beforeCreateChildNode
-	         * @param {string} value - Return value of creating input element
+	         * @param {{value: string}} evt - Event data
+	         *     @param {string} evt.value - Return value of creating input element
 	         * @example
 	         * tree
 	         *  .enableFeature('Editable')
-	         *  .on('beforeCreateChildNode', function(value) {
-	         *      console.log(value);
+	         *  .on('beforeCreateChildNode', function(evt) {
+	         *      console.log(evt.value);
 	         *      return false; // It cancels
 	         *      // return true; // It execute next
 	         *  });
 	         */
-	        if (!this.tree.invoke('beforeCreateChildNode', value)) {
+	        if (!this.tree.invoke('beforeCreateChildNode', {value: value})) {
 	            this.isCustomEventIgnored = true;
 	            this.inputElement.focus();
 
@@ -3940,17 +4092,18 @@
 	        /**
 	         * @api
 	         * @event Tree#beforeEditNode
-	         * @param {string} value - Return value of editing input element
+	         * @param {{value: string}} evt - Event data
+	         *     @param {string} evt.value - Return value of editing input element
 	         * @example
 	         * tree
 	         *  .enableFeature('Editable')
-	         *  .on('beforeEditNode', function(value) {
-	         *      console.log(value);
+	         *  .on('beforeEditNode', function(evt) {
+	         *      console.log(evt.value);
 	         *      return false; // It cancels
 	         *      // return true; // It execute next
 	         *  });
 	         */
-	        if (!this.tree.invoke('beforeEditNode', value)) {
+	        if (!this.tree.invoke('beforeEditNode', {value: value})) {
 	            this.isCustomEventIgnored = true;
 	            this.inputElement.focus();
 
@@ -4005,7 +4158,9 @@
 	    STATE_UNCHECKED = 2,
 	    STATE_INDETERMINATE = 3,
 	    DATA_KEY_FOR_CHECKBOX_STATE = '__CheckBoxState__',
-	    DATA = {};
+	    DATA = {},
+	    CHECKED_CLASSNAME = 'tui-is-checked',
+	    INDETERMINATE_CLASSNAME = 'tui-checkbox-root';
 
 	var filter = tui.util.filter,
 	    forEach = tui.util.forEach;
@@ -4073,13 +4228,10 @@
 	    _attachEvents: function() {
 	        this.tree.on({
 	            singleClick: function(event) {
-	                var target = util.getTarget(event),
-	                    nodeId, state;
+	                var target = util.getTarget(event);
 
-	                if (util.hasClass(target, this.checkboxClassName)) {
-	                    nodeId = this.tree.getNodeIdFromElement(target);
-	                    state = this._getStateFromCheckbox(target);
-	                    this._continuePostprocessing(nodeId, state);
+	                if (util.getElementsByClassName(target, this.checkboxClassName)) {
+	                    this._changeCustomCheckbox(target);
 	                }
 	            },
 	            afterDraw: function(nodeId) {
@@ -4094,6 +4246,29 @@
 	                this._reflectChanges(data.newParentId);
 	            }
 	        }, this);
+	    },
+
+	    /**
+	     * Change custom checkbox
+	     * @param {HTMLElement} target - Label element
+	     */
+	    _changeCustomCheckbox: function(target) {
+	        var self = this;
+	        var nodeId = this.tree.getNodeIdFromElement(target);
+	        var inputElement = target.getElementsByTagName('input')[0];
+	        var eventType = util.getChangeEventName();
+	        var state;
+
+	        /**
+	         * Change event handler
+	         */
+	        function onChange() {
+	            state = self._getStateFromCheckbox(inputElement);
+	            util.removeEventListener(inputElement, eventType, onChange);
+	            self._continuePostprocessing(nodeId, state);
+	        }
+
+	        util.addEventListener(inputElement, eventType, onChange);
 	    },
 
 	    /**
@@ -4215,10 +4390,11 @@
 	            /**
 	             * @api
 	             * @event Tree#check
-	             * @param {string} nodeId - Checked node id
+	             * @param {{nodeId: string}} evt - Event data
+	             *     @param {string} evt.nodeId - Checked node id
 	             * @example
-	             * tree.on('check', function(nodeId) {
-	             *     console.log('checked: ' + nodeId);
+	             * tree.on('check', function(evt) {
+	             *     console.log('checked: ' + evt.nodeId);
 	             * });
 	             */
 	            eventName = 'check';
@@ -4226,10 +4402,11 @@
 	            /**
 	             * @api
 	             * @event Tree#uncheck
-	             * @param {string} nodeId - Unchecked node id
+	             * @param {{nodeId: string}} evt - Event data
+	             *     @param {string} evt.nodeId - Unchecked node id
 	             * @example
-	             * tree.on('uncheck', function(nodeId) {
-	             *     console.log('unchecked: ' + nodeId);
+	             * tree.on('uncheck', function(evt) {
+	             *     console.log('unchecked: ' + evt.nodeId);
 	             * });
 	             */
 	            eventName = 'uncheck';
@@ -4240,9 +4417,35 @@
 	            isSilent: true
 	        });
 
+	        this._setClassName(nodeId, state);
+
 	        if (!stopPropagation) {
 	            this._propagateState(nodeId, state);
-	            tree.fire(eventName, nodeId);
+	            tree.fire(eventName, {nodeId: nodeId});
+	        }
+	    },
+
+	    /**
+	     * Set class name on label element
+	     * @param {string} nodeId - Node id for finding input element
+	     * @param {number} state - Checked state number
+	     */
+	    _setClassName: function(nodeId, state) {
+	        var parentElement = this._getCheckboxElement(nodeId).parentNode;
+	        var labelElement;
+
+	        if (parentElement && parentElement.parentNode) {
+	            labelElement = parentElement.parentNode;
+
+	            util.removeClass(labelElement, INDETERMINATE_CLASSNAME);
+	            util.removeClass(labelElement, CHECKED_CLASSNAME);
+
+	            if (state === 1) {
+	                util.addClass(labelElement, CHECKED_CLASSNAME);
+	            } else if (state === 3) {
+	                util.addClass(labelElement, INDETERMINATE_CLASSNAME);
+	                util.addClass(labelElement, CHECKED_CLASSNAME);
+	            }
 	        }
 	    },
 
@@ -4585,6 +4788,8 @@
 	        }
 	    },
 	    init: function(tree, options) { /*eslint-enable*/
+	        var containerId = tree.rootElement.parentNode.id;
+
 	        options = options || {};
 
 	        /**
@@ -4596,13 +4801,13 @@
 	        /**
 	         * Tree selector for context menu
 	         */
-	        this.treeSelector = '#' + this.tree.rootElement.id;
+	        this.treeSelector = '#' + containerId;
 
 	        /**
 	         * Id of floating layer in tree
 	         * @type {string}
 	         */
-	        this.flId = this.tree.rootElement.id + '-fl';
+	        this.flId = containerId + '-fl';
 
 	        /**
 	         * Info of context menu in tree
@@ -4737,13 +4942,16 @@
 	        /**
 	         * @api
 	         * @event Tree#beforeOpenContextMenu
-	         * @param {string} nodeId - Current selected node id
+	         * @param {{nodeId: string}} evt - Event data
+	         *     @param {string} evt.nodeId - Current selected node id
 	         * @example
-	         * tree.on('beforeOpenContextMenu', function(nodeId) {
-	         *     console.log('nodeId: ' + nodeId);
+	         * tree.on('beforeOpenContextMenu', function(evt) {
+	         *     console.log('nodeId: ' + evt.nodeId);
 	         * });
 	         */
-	        this.tree.fire('beforeOpenContextMenu', this.selectedNodeId);
+	        this.tree.fire('beforeOpenContextMenu', {
+	            nodeId: this.selectedNodeId
+	        });
 	    },
 
 	    /**
@@ -4756,13 +4964,15 @@
 	        /**
 	         * @api
 	         * @event Tree#selectContextMenu
-	         * @param {{cmd: string, nodeId: string}} treeEvent - Tree event
+	         * @param {{cmd: string, nodeId: string}} evt - Event data
+	         *     @param {string} evt.cmd - Command type
+	         *     @param {string} evt.nodeId - Node id
 	         * @example
-	         * tree.on('selectContextMenu', function(treeEvent) {
+	         * tree.on('selectContextMenu', function(evt) {
 	         *     var cmd = treeEvent.cmd; // key of context menu's data
 	         *     var nodeId = treeEvent.nodeId;
 	         *
-	         *     console.log(cmd, nodeId);
+	         *     console.log(evt.cmd, evt.nodeId);
 	         * });
 	         */
 	        this.tree.fire('selectContextMenu', {
@@ -4907,16 +5117,20 @@
 	        /**
 	         * @api
 	         * @event Tree#beforeAjaxRequest
-	         * @param {string} command - Command type
-	         * @param {string} [data] - Request data
+	         * @param {{command: string, data: object}} evt - Event data
+	         *     @param {string} evt.command - Command type
+	         *     @param {object} [evt.data] - Request data
 	         * @example
-	         * tree.on('beforeAjaxRequest', function(command, data) {
-	         *     console.log('before ' + command + ' request!');
+	         * tree.on('beforeAjaxRequest', function(evt) {
+	         *     console.log('before ' + evt.command + ' request!');
 	         *     return false; // It cancels request
 	         *     // return true; // It fires request
 	         * });
 	         */
-	        if (!this.tree.invoke('beforeAjaxRequest', type, params)) {
+	        if (!this.tree.invoke('beforeAjaxRequest', {
+	            type: type,
+	            params: params
+	        })) {
 	            return;
 	        }
 
@@ -4956,28 +5170,33 @@
 	            /**
 	             * @api
 	             * @event Tree#successAjaxResponse
-	             * @param {string} command - Command type
-	             * @param {string} [data] - Return value of executed command callback
+	             * @param {{command: string, data: object}} evt - Event data
+	             *     @param {string} evt.command - Command type
+	             *     @param {object} [evt.data] - Return value of executed command callback
 	             * @example
-	             * tree.on('successAjaxResponse', function(command, data) {
-	             *     console.log(command + ' response is success!');
+	             * tree.on('successAjaxResponse', function(evt) {
+	             *     console.log(evt.command + ' response is success!');
 	             *     if (data) {
-	             *           console.log('new add ids :' + data);
+	             *           console.log('data:' + evt.data);
 	             *     }
 	             * });
 	             */
-	            tree.fire('successAjaxResponse', type, data);
+	            tree.fire('successAjaxResponse', {
+	                type: type,
+	                data: data
+	            });
 	        } else {
 	            /**
 	             * @api
 	             * @event Tree#failAjaxResponse
-	             * @param {string} command - Command type
+	             * @param {{command: string}} evt - Event data
+	             *     @param {string} evt.command - Command type
 	             * @example
-	             * tree.on('failAjaxResponse', function(command) {
-	             *     console.log(command + ' response is fail!');
+	             * tree.on('failAjaxResponse', function(evt) {
+	             *     console.log(evt.command + ' response is fail!');
 	             * });
 	             */
-	            tree.fire('failAjaxResponse', type);
+	            tree.fire('failAjaxResponse', {type: type});
 	        }
 	    },
 
@@ -4992,13 +5211,14 @@
 	        /**
 	         * @api
 	         * @event Tree#errorAjaxResponse
-	         * @param {string} command - Command type
+	         * @param {{command: string}} evt - Event data
+	         *     @param {string} evt.command - Command type
 	         * @example
-	         * tree.on('errorAjaxResponse', function(command) {
-	         *     console.log(command + ' response is error!');
+	         * tree.on('errorAjaxResponse', function(evt) {
+	         *     console.log(evt.command + ' response is error!');
 	         * });
 	         */
-	        this.tree.fire('errorAjaxResponse', type);
+	        this.tree.fire('errorAjaxResponse', {type: type});
 	    },
 
 	    /**

@@ -18,7 +18,9 @@ var STATE_CHECKED = 1,
     STATE_UNCHECKED = 2,
     STATE_INDETERMINATE = 3,
     DATA_KEY_FOR_CHECKBOX_STATE = '__CheckBoxState__',
-    DATA = {};
+    DATA = {},
+    CHECKED_CLASSNAME = 'tui-is-checked',
+    INDETERMINATE_CLASSNAME = 'tui-checkbox-root';
 
 var filter = tui.util.filter,
     forEach = tui.util.forEach;
@@ -86,13 +88,10 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
     _attachEvents: function() {
         this.tree.on({
             singleClick: function(event) {
-                var target = util.getTarget(event),
-                    nodeId, state;
+                var target = util.getTarget(event);
 
-                if (util.hasClass(target, this.checkboxClassName)) {
-                    nodeId = this.tree.getNodeIdFromElement(target);
-                    state = this._getStateFromCheckbox(target);
-                    this._continuePostprocessing(nodeId, state);
+                if (util.getElementsByClassName(target, this.checkboxClassName)) {
+                    this._changeCustomCheckbox(target);
                 }
             },
             afterDraw: function(nodeId) {
@@ -107,6 +106,29 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
                 this._reflectChanges(data.newParentId);
             }
         }, this);
+    },
+
+    /**
+     * Change custom checkbox
+     * @param {HTMLElement} target - Label element
+     */
+    _changeCustomCheckbox: function(target) {
+        var self = this;
+        var nodeId = this.tree.getNodeIdFromElement(target);
+        var inputElement = target.getElementsByTagName('input')[0];
+        var eventType = util.getChangeEventName();
+        var state;
+
+        /**
+         * Change event handler
+         */
+        function onChange() {
+            state = self._getStateFromCheckbox(inputElement);
+            util.removeEventListener(inputElement, eventType, onChange);
+            self._continuePostprocessing(nodeId, state);
+        }
+
+        util.addEventListener(inputElement, eventType, onChange);
     },
 
     /**
@@ -228,10 +250,11 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
             /**
              * @api
              * @event Tree#check
-             * @param {string} nodeId - Checked node id
+             * @param {{nodeId: string}} evt - Event data
+             *     @param {string} evt.nodeId - Checked node id
              * @example
-             * tree.on('check', function(nodeId) {
-             *     console.log('checked: ' + nodeId);
+             * tree.on('check', function(evt) {
+             *     console.log('checked: ' + evt.nodeId);
              * });
              */
             eventName = 'check';
@@ -239,10 +262,11 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
             /**
              * @api
              * @event Tree#uncheck
-             * @param {string} nodeId - Unchecked node id
+             * @param {{nodeId: string}} evt - Event data
+             *     @param {string} evt.nodeId - Unchecked node id
              * @example
-             * tree.on('uncheck', function(nodeId) {
-             *     console.log('unchecked: ' + nodeId);
+             * tree.on('uncheck', function(evt) {
+             *     console.log('unchecked: ' + evt.nodeId);
              * });
              */
             eventName = 'uncheck';
@@ -253,9 +277,35 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
             isSilent: true
         });
 
+        this._setClassName(nodeId, state);
+
         if (!stopPropagation) {
             this._propagateState(nodeId, state);
-            tree.fire(eventName, nodeId);
+            tree.fire(eventName, {nodeId: nodeId});
+        }
+    },
+
+    /**
+     * Set class name on label element
+     * @param {string} nodeId - Node id for finding input element
+     * @param {number} state - Checked state number
+     */
+    _setClassName: function(nodeId, state) {
+        var parentElement = this._getCheckboxElement(nodeId).parentNode;
+        var labelElement;
+
+        if (parentElement && parentElement.parentNode) {
+            labelElement = parentElement.parentNode;
+
+            util.removeClass(labelElement, INDETERMINATE_CLASSNAME);
+            util.removeClass(labelElement, CHECKED_CLASSNAME);
+
+            if (state === 1) {
+                util.addClass(labelElement, CHECKED_CLASSNAME);
+            } else if (state === 3) {
+                util.addClass(labelElement, INDETERMINATE_CLASSNAME);
+                util.addClass(labelElement, CHECKED_CLASSNAME);
+            }
         }
     },
 

@@ -32,13 +32,14 @@ var nodeStates = states.node,
     extend = snippet.extend,
     TIMEOUT_TO_DIFFERENTIATE_CLICK_AND_DBLCLICK = 200,
     MOUSE_MOVING_THRESHOLD = 5;
+
 /**
  * Create tree model and inject data to model
  * @class Tree
  * @mixes tui.util.CustomEvents
- * @param {Object} data A data to be used on tree
+ * @param {string|HTMLElement|jQueryObject} conatiner - Tree container element or id string value
  * @param {Object} options The options
- *     @param {HTMLElement} [options.rootElement] Root element (It should be 'UL' element)
+ *     @param {Object} [options.data] A data to be used on tree
  *     @param {string} [options.nodeIdPrefix] A default prefix of a node
  *     @param {Object} [options.nodeDefaultState] A default state of a node
  *     @param {Object} [options.template] A markup set to make element
@@ -47,17 +48,9 @@ var nodeStates = states.node,
  *     @param {Object} [options.stateLabels] Toggle button state label
  *         @param {string} [options.stateLabels.opened] State-OPENED label (Text or HTML)
  *         @param {string} [options.stateLabels.closed] State-CLOSED label (Text or HTML)
- *     @param {Object} [options.classNames] Class names for tree
- *         @param {string} [options.classNames.nodeClass] A class name for node
- *         @param {string} [options.classNames.leafClass] A class name for leaf node
- *         @param {string} [options.classNames.openedClass] A class name for opened node
- *         @param {string} [options.classNames.closedClass] A class name for closed node
- *         @param {string} [options.classNames.textClass] A class name that for textElement in node
- *         @param {string} [options.classNames.subtreeClass] A class name for subtree in internal node
- *         @param {string} [options.classNames.toggleBtnClass] A class name for toggle button in internal node
  *     @param {Function} [options.renderTemplate] Function for rendering template
  * @example
- * //Default options:
+ * // Default options:
  * // {
  * //     nodeIdPrefix: 'tui-tree-node-'
  * //     nodeDefaultState: 'closed',
@@ -65,26 +58,31 @@ var nodeStates = states.node,
  * //         opened: '-',
  * //         closed: '+'
  * //     },
- * //     classNames: {
- * //         nodeClass: 'tui-tree-node',
- * //         leafClass: 'tui-tree-leaf',
- * //         openedClass: 'tui-tree-opened',
- * //         closedClass: 'tui-tree-closed',
- * //         subtreeClass: 'tui-tree-subtree',
- * //         toggleBtnClass: 'tui-tree-toggleBtn',
- * //         textClass: 'tui-tree-text',
- * //     },
  * //     template: {
  * //         internalNode:
- * //             '<button type="button" class="{{toggleBtnClass}}">{{stateLabel}}</button>' +
- * //             '<span class="{{textClass}}">{{text}}</span>' +
- * //             '<ul class="{{subtreeClass}}">{{children}}</ul>'
+ * //             '<div class="tui-tree-btn">' +
+ * //                 '<button type="button" class="tui-tree-toggle-btn tui-js-tree-toggle-btn">' +
+ * //                     '<span class="tui-ico-tree"></span>' +
+ * //                     '{{stateLabel}}' +
+ * //                 '</button>' +
+ * //                 '<span class="tui-tree-text tui-js-tree-text">' +
+ * //                     '<span class="tui-tree-ico tui-ico-folder"></span>' +
+ * //                     '{{text}}' +
+ * //                 '</span>' +
+ * //             '</div>' +
+ * //             '<ul class="tui-tree-subtree tui-js-tree-subtree">' +
+ * //                 '{{children}}' +
+ * //              '</ul>',
  * //         leafNode:
- * //             '<span class="{{textClass}}">{{text}}</span>' +
+ * //             '<div class="tui-tree-btn">' +
+ * //                 '<span class="tui-tree-text tui-js-tree-text">' +
+ * //                     '<span class="tui-tree-ico tui-ico-file"></span>' +
+ * //                     '{{text}}' +
+ * //                 '</span>' +
+ * //             '</div>'
  * //     }
  * // }
- * //
- *
+ * var container = document.getElementById('tree');
  * var data = [
  *     {text: 'rootA', children: [
  *         {text: 'root-1A'},
@@ -114,36 +112,43 @@ var nodeStates = states.node,
  *         {text:'b'}
  *     ]}
  * ];
- *
- * var tree1 = new tui.component.Tree(data, {
- *     rootElement: 'treeRoot', // or document.getElementById('treeRoot')
+ * var tree = new tui.component.Tree(container, {
+ *     data: data,
  *     nodeDefaultState: 'opened',
  *
  *     // ========= Option: Override template renderer ===========
  *
  *     template: { // template for Mustache engine
  *         internalNode:
- *             '<button type="button" class="{{toggleBtnClass}}">{{stateLabel}}</button>' +
- *             '<span class="{{textClass}}">{{text}}</span>' +
- *             '<ul class="{{subtreeClass}}">{{children}}</ul>',
+ *             '<div class="tui-tree-btn">' +
+ *                 '<button type="button" class="tui-tree-toggle-btn tui-js-tree-toggle-btn">' +
+ *                     '<span class="tui-ico-tree"></span>' +
+ *                     '{{stateLabel}}' +
+ *                 '</button>' +
+ *                 '<span class="tui-tree-text tui-js-tree-text">' +
+ *                     '<span class="tui-tree-ico tui-ico-folder"></span>' +
+ *                     '{{text}}' +
+ *                 '</span>' +
+ *             '</div>' +
+ *             '<ul class="tui-tree-subtree tui-js-tree-subtree">' +
+ *                  '{{{children}}}' +
+ *             '</ul>',
  *         leafNode:
- *             '<span class="{{textClass}}">{{text}}</span>'
+ *             '<div class="tui-tree-btn">' +
+ *                 '<span class="tui-tree-text tui-js-tree-text">' +
+ *                     '<span class="tui-tree-ico tui-ico-file"></span>' +
+ *                     '{{text}}' +
+ *                 '</span>' +
+ *             '</div>'
  *     },
  *     renderTemplate: function(tmpl, props) {
  *         // Mustache template engine
  *         return Mustache.render(tmpl, props);
  *     }
  * });
- *
- * @tutorial default
- * @tutorial depthLabel
- * @tutorial selectableNodes
- * @tutorial check
- * @tutorial ctxMenu
- * @tutorial ajaxFeature
- **/
-var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
-    init: function(data, options) { /*eslint-enable*/
+ */
+var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
+    init: function(container, options) {
         options = extend({}, defaultOption, options);
 
         /**
@@ -162,7 +167,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
          * Root element
          * @type {HTMLElement}
          */
-        this.rootElement = options.rootElement;
+        this.rootElement = null;
 
         /**
          * Toggle button state label
@@ -175,7 +180,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
          * @type {TreeModel}
          * @private
          */
-        this.model = new TreeModel(data, options);
+        this.model = new TreeModel(options);
 
         /**
          * Enabled features
@@ -223,25 +228,31 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
          */
         this.isMovingNode = false;
 
-        this._setRoot();
+        this._setRoot(container);
         this._draw(this.getRootNodeId());
         this._setEvents();
     },
 
     /**
      * Set root element of tree
+     * @param {string|HTMLElement|jQueryObject} container - Container element or id selector
      * @private
      */
-    _setRoot: function() {
-        var rootEl = this.rootElement;
+    _setRoot: function(container) {
+        var rootElement = outerTemplate.ROOT;
 
-        if (snippet.isString(rootEl)) {
-            rootEl = this.rootElement = document.getElementById(rootEl);
+        if (snippet.isString(container)) {
+            container = document.getElementById(container);
+        } else if (container.jquery) {
+            container = container[0];
         }
 
-        if (!snippet.isHTMLNode(rootEl)) {
-            throw new Error(messages.INVALID_ROOT_ELEMENT);
+        if (!snippet.isHTMLNode(container)) {
+            throw new Error(messages.INVALID_CONTAINER_ELEMENT);
         }
+
+        container.innerHTML = rootElement;
+        this.rootElement = container.firstChild;
     },
 
     /**
@@ -259,13 +270,17 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
         /**
          * @api
          * @event Tree#move
-         * @param {{nodeId: string, originalParentId: string, newParentId: string, index: number}} treeEvent - Event
+         * @param {{nodeId: string, originalParentId: string, newParentId: string, index: number}} evt - Event data
+         *     @param {string} evt.nodeId - Current node id to move
+         *     @param {string} evt.originalParentId - Original parent node id of moved node
+         *     @param {string} evt.newParentId - New parent node id of moved node
+         *     @param {number} evt.index - Moved index number
          * @example
-         * tree.on('move', function(treeEvent) {
-         *     var nodeId = treeEvent.nodeId;
-         *     var originalParentId = treeEvent.originalParentId;
-         *     var newParentId = treeEvent.newParentId;
-         *     var index = treeEvent.index;
+         * tree.on('move', function(evt) {
+         *     var nodeId = evt.nodeId;
+         *     var originalParentId = evt.originalParentId;
+         *     var newParentId = evt.newParentId;
+         *     var index = evt.index;
          *
          *     console.log(nodeId, originalParentId, newParentId, index);
          * });
@@ -323,12 +338,14 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
                 self._mouseMovingFlag = true;
             }
         }
+
         function onMouseUp(upEvent) {
             self.fire('mouseup', upEvent);
             util.removeEventListener(document, 'mousemove', onMouseMove);
             util.removeEventListener(document, 'mouseup', onMouseUp);
             util.removeEventListener(document, 'mouseout', onMouseOut);
         }
+
         function onMouseOut(event) {
             if (event.toElement === null) {
                 self.fire('mouseup', event);
@@ -349,8 +366,8 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * @private
      */
     _onClick: function(event) {
-        var target = util.getTarget(event),
-            self = this;
+        var target = util.getTarget(event);
+        var self = this;
 
         if (util.isRightButton(event)) {
             this.clickTimer = null;
@@ -358,7 +375,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
             return;
         }
 
-        if (util.hasClass(target, this.classNames.toggleBtnClass)) {
+        if (this._isClickedToggleButton(target)) {
             this.toggle(this.getNodeIdFromElement(target));
 
             return;
@@ -383,6 +400,28 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
     },
 
     /**
+     * Whether target element is toggle button or not
+     * @param {HTMLElement} target - Tree node element
+     * @returns {boolean} State
+     * @private
+     */
+    _isClickedToggleButton: function(target) {
+        var nodeId = this.getNodeIdFromElement(target);
+        var nodeElement;
+
+        if (!nodeId) {
+            return false;
+        }
+
+        nodeElement = util.getElementsByClassName(
+            document.getElementById(nodeId),
+            this.classNames.toggleBtnClass
+        )[0];
+
+        return (nodeElement && nodeElement.contains(target));
+    },
+
+    /**
      * Set node state - opened or closed
      * @param {string} nodeId - Node id
      * @param {string} state - Node state
@@ -390,7 +429,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      */
     _setDisplayFromNodeState: function(nodeId, state) {
         var subtreeElement = this._getSubtreeElement(nodeId),
-            label, btnElement, nodeElement;
+            label, btnElement, nodeElement, firstTextNode;
 
         if (!subtreeElement || subtreeElement === this.rootElement) {
             return;
@@ -411,7 +450,8 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
         this._setNodeClassNameFromState(nodeElement, state);
 
         if (btnElement) {
-            btnElement.innerHTML = label;
+            firstTextNode = util.getFirstTextNode(btnElement);
+            firstTextNode.nodeValue = label;
         }
     },
 
@@ -549,16 +589,17 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
         /**
          * @api
          * @event Tree#beforeDraw
-         * @param {string} nodeId - Node id
+         * @param {{nodeId: string}} evt - Event data
+         *     @param {string} evt.nodeId - Node id
          * @example
-         * tree.on('beforeDraw', function(nodeId) {
+         * tree.on('beforeDraw', function(evt) {
          *     if (tree.isMovingNode) {
          *         console.log('isMovingNode');
          *     }
-         *     console.log('beforeDraw: ' + nodeId);
+         *     console.log('beforeDraw: ' + evt.nodeId);
          * });
          */
-        this.fire('beforeDraw', nodeId);
+        this.fire('beforeDraw', {nodeId: nodeId});
 
         if (node.isRoot()) {
             html = this._makeHtml(node.getChildIds());
@@ -573,16 +614,17 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
         /**
          * @api
          * @event Tree#afterDraw
-         * @param {string} nodeId - Node id
+         * @param {{nodeId: string}} evt - Event data
+         *     @param {string} evt.nodeId - Node id
          * @example
-         * tree.on('afterDraw', function(nodeId) {
+         * tree.on('afterDraw', function(evt) {
          *     if (tree.isMovingNode) {
          *         console.log('isMovingNode');
          *     }
-         *     console.log('afterDraw: ' + nodeId);
+         *     console.log('afterDraw: ' + evt.nodeId);
          * });
          */
-        this.fire('afterDraw', nodeId);
+        this.fire('afterDraw', {nodeId: nodeId});
     },
 
     /**
@@ -896,10 +938,12 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
         var node = this.model.getNode(nodeId);
         var state = node.getState();
         var isReload = snippet.isUndefined(node.getData('reload')) ||
-                        node.getData('reload');
+            node.getData('reload');
 
         if (state === nodeStates.CLOSED) { // open -> close action
-            this._setNodeData(nodeId, {reload: false}, true);
+            this._setNodeData(nodeId, {
+                reload: false
+            }, true);
         }
 
         if (state === nodeStates.OPENED && isReload) { // close -> open action
@@ -1094,7 +1138,9 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
      * @private
      */
     _resetAllData: function(data, nodeId) {
-        this._removeAllChildren(nodeId, {isSilent: true});
+        this._removeAllChildren(nodeId, {
+            isSilent: true
+        });
 
         return this._add(data, nodeId);
     },
@@ -1208,7 +1254,9 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
         if (useAjax) {
             treeAjax.loadData(ajaxCommand.MOVE, function() {
                 if (self.getParentId(nodeId) !== newParentId) { // just move, not sort!
-                    self.setNodeData(newParentId, {reload: true}, true);
+                    self.setNodeData(newParentId, {
+                        reload: true
+                    }, true);
                 }
                 self._move(nodeId, newParentId, index);
             }, {
@@ -1234,18 +1282,22 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */{ /*eslint-disable*/
         /**
          * @api
          * @event Tree#beforeMove
-         * @param {string} nodeId - Current dragging node id
-         * @param {string} parentId - New parent id
+         * @param {{nodeId: string, parentId: string}} evt - Event data
+         *     @param {string} evt.nodeId - Current dragging node id
+         *     @param {string} evt.parentId - New parent id
          * @example
-         * tree.on('beforeMove', function(nodeId, parentId) {
-         *      console.log('dragging node: ' + nodeId);
-         *      console.log('parent node: ' + parentId);
+         * tree.on('beforeMove', function(evt) {
+         *      console.log('dragging node: ' + evt.nodeId);
+         *      console.log('parent node: ' + evt.parentId);
          *
          *      return false; // Cancel "move" event
          *      // return true; // Fire "move" event
          * });
          */
-        if (!this.invoke('beforeMove', nodeId, newParentId)) {
+        if (!this.invoke('beforeMove', {
+            nodeId: nodeId,
+            newParentId: newParentId
+        })) {
             return;
         }
 
@@ -1522,4 +1574,5 @@ snippet.forEach(features, function(Feature, name) {
     setAbstractAPIs(name, Feature);
 });
 snippet.CustomEvents.mixin(Tree);
+
 module.exports = Tree;

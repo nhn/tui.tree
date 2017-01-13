@@ -18,8 +18,9 @@ describe('Tree', function() {
     beforeEach(function() {
         loadFixtures('basicFixture.html');
 
-        tree = new Tree(data, {
+        tree = new Tree('tree', {
             rootElement: 'treeRoot',
+            data: data,
             template: {
                 internalNode:
                     '<button type="button" class="{{toggleBtnClass}}">{{stateLabel}}</button>' +
@@ -38,7 +39,6 @@ describe('Tree', function() {
         lastChildElement = document.getElementById(lastChildId);
 
         tree.enableFeature('Editable', {
-            editableClassName: tree.classNames.textClass,
             dataKey: 'text'
         });
 
@@ -92,21 +92,18 @@ describe('Tree', function() {
         });
     });
 
-    describe('editNode()', function() {
-        it('should create input element in selected node.', function() {
-            var inputElements = firstChildElement.getElementsByTagName('input');
+    it('"editNode()" should create input element in selected node.', function() {
+        var inputElements = firstChildElement.getElementsByTagName('input');
 
-            tree.editNode(firstChildId);
-            expect(inputElements.length).toBe(1);
-        });
+        tree.editNode(firstChildId);
+        expect(inputElements.length).toBe(1);
+    });
 
-        it('should hide text label of selected node.', function() {
-            var textClass = tree.classNames.textClass;
-            var textLabel = util.getElementsByClassName(firstChildElement, textClass)[0];
+    it('"_attachInputElement" should attach the input element to selected node.', function() {
+        var wrapperClassName = 'tui-input-wrap';
 
-            tree.editNode(firstChildId);
+        treeEditable._attachInputElement(firstChildId);
 
-            expect(textLabel.style.display).toBe('none');
-        });
+        expect(util.getElementsByClassName(firstChildElement, wrapperClassName).length).toBe(1);
     });
 });

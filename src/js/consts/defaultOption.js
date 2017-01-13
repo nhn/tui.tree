@@ -1,25 +1,10 @@
 'use strict';
 
 /**
- * Make class names
- * @param {string} prefix - Prefix of class name
- * @param {Array.<string>} keys - Keys of class names
- * @returns {object.<string, string>} Class names map
- * @ignore
- */
-function makeClassNames(prefix, keys) {
-    var obj = {};
-    tui.util.forEach(keys, function(key) {
-        obj[key + 'Class'] = prefix + key;
-    });
-
-    return obj;
-}
-
-/**
  * A default values for tree
  * @const
  * @type {Object}
+ * @property {array} data - A data to be used on tree
  * @property {string} nodeDefaultState - Node state
  * @property {string} nodeIdPrefix - Node id prefix
  * @property {object} stateLabel - State label in node
@@ -38,27 +23,41 @@ function makeClassNames(prefix, keys) {
  *  @property {string} textClass - Class name for text element in a node
  */
 module.exports = {
+    data: [],
     nodeDefaultState: 'closed',
     stateLabels: {
         opened: '-',
         closed: '+'
     },
     nodeIdPrefix: 'tui-tree-node-',
-    classNames: makeClassNames('tui-tree-', [
-        'node',
-        'leaf',
-        'opened',
-        'closed',
-        'subtree',
-        'toggleBtn',
-        'text'
-    ]),
+    classNames: {
+        nodeClass: 'tui-tree-node',
+        leafClass: 'tui-tree-leaf',
+        openedClass: 'tui-tree-opened',
+        closedClass: 'tui-tree-closed',
+        subtreeClass: 'tui-js-tree-subtree',
+        toggleBtnClass: 'tui-js-tree-toggle-btn',
+        textClass: 'tui-js-tree-text'
+    },
     template: {
         internalNode:
-            '<button type="button" class="{{toggleBtnClass}}">{{stateLabel}}</button>' +
-            '<span class="{{textClass}}">{{text}}</span>' +
-            '<ul class="{{subtreeClass}}">{{children}}</ul>',
+            '<div class="tui-tree-btn">' +
+                '<button type="button" class="tui-tree-toggle-btn {{toggleBtnClass}}">' +
+                    '<span class="tui-ico-tree"></span>' +
+                    '{{stateLabel}}' +
+                '</button>' +
+                '<span class="tui-tree-text {{textClass}}">' +
+                    '<span class="tui-tree-ico tui-ico-folder"></span>' +
+                    '{{text}}' +
+                '</span>' +
+            '</div>' +
+            '<ul class="tui-tree-subtree {{subtreeClass}}">{{children}}</ul>',
         leafNode:
-            '<span class="{{textClass}}">{{text}}</span>'
+            '<div class="tui-tree-btn">' +
+                '<span class="tui-tree-text {{textClass}}">' +
+                    '<span class="tui-tree-ico tui-ico-file"></span>' +
+                    '{{text}}' +
+                '</span>' +
+            '</div>'
     }
 };

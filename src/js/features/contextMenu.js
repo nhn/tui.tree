@@ -29,6 +29,8 @@ var ContextMenu = tui.util.defineClass(/** @lends ContextMenu.prototype */{/*esl
         }
     },
     init: function(tree, options) { /*eslint-enable*/
+        var containerId = tree.rootElement.parentNode.id;
+
         options = options || {};
 
         /**
@@ -40,13 +42,13 @@ var ContextMenu = tui.util.defineClass(/** @lends ContextMenu.prototype */{/*esl
         /**
          * Tree selector for context menu
          */
-        this.treeSelector = '#' + this.tree.rootElement.id;
+        this.treeSelector = '#' + containerId;
 
         /**
          * Id of floating layer in tree
          * @type {string}
          */
-        this.flId = this.tree.rootElement.id + '-fl';
+        this.flId = containerId + '-fl';
 
         /**
          * Info of context menu in tree
@@ -181,13 +183,16 @@ var ContextMenu = tui.util.defineClass(/** @lends ContextMenu.prototype */{/*esl
         /**
          * @api
          * @event Tree#beforeOpenContextMenu
-         * @param {string} nodeId - Current selected node id
+         * @param {{nodeId: string}} evt - Event data
+         *     @param {string} evt.nodeId - Current selected node id
          * @example
-         * tree.on('beforeOpenContextMenu', function(nodeId) {
-         *     console.log('nodeId: ' + nodeId);
+         * tree.on('beforeOpenContextMenu', function(evt) {
+         *     console.log('nodeId: ' + evt.nodeId);
          * });
          */
-        this.tree.fire('beforeOpenContextMenu', this.selectedNodeId);
+        this.tree.fire('beforeOpenContextMenu', {
+            nodeId: this.selectedNodeId
+        });
     },
 
     /**
@@ -200,13 +205,15 @@ var ContextMenu = tui.util.defineClass(/** @lends ContextMenu.prototype */{/*esl
         /**
          * @api
          * @event Tree#selectContextMenu
-         * @param {{cmd: string, nodeId: string}} treeEvent - Tree event
+         * @param {{cmd: string, nodeId: string}} evt - Event data
+         *     @param {string} evt.cmd - Command type
+         *     @param {string} evt.nodeId - Node id
          * @example
-         * tree.on('selectContextMenu', function(treeEvent) {
+         * tree.on('selectContextMenu', function(evt) {
          *     var cmd = treeEvent.cmd; // key of context menu's data
          *     var nodeId = treeEvent.nodeId;
          *
-         *     console.log(cmd, nodeId);
+         *     console.log(evt.cmd, evt.nodeId);
          * });
          */
         this.tree.fire('selectContextMenu', {

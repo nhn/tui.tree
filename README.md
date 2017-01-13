@@ -1,51 +1,43 @@
 Tree
 ===============
 Tree component<br>
-Display the hierarchical data by tree.<br>
-Each node can be moved by drag and drop.
+Display the hierarchical data by tree<br>
+Can use more features
 
 ## Feature
-* Display hierarchical data by tree UI
-* Fold sub tree
-* Create & Edit node
-* Drag and drop (extend)
-* Tri-state checkbox
-* Custom events
-* Context menu
-* Ajax
+* Default
+    * Display hierarchical data by tree UI
+    * Fold sub tree
+    * Custom events
+* Optional feature
+    * Ajax: server communication
+    * Checkbox: tri-state checkbox
+    * ContextMenu: create context menu on node
+    * Draggable: drag and drop using 2 ways
+    * Editable: create and edit node
+    * Selectable: select and deselect node
 
 ## Documentation
 * API: [https://nhnent.github.io/tui.component.tree/latest](https://nhnent.github.io/tui.component.tree/latest)
 * Tutorial: [https://github.com/nhnent/tui.component.tree/wiki/Tree-Tutorial](https://github.com/nhnent/tui.component.tree/wiki/Tree-Tutorial)
-* Examples: [http://nhnent.github.io/tui.component.tree/latest/tutorial-default.html](http://nhnent.github.io/tui.component.tree/latest/tutorial-default.html)
-
-## Sample Image
-* Default<br>
-![alt tag](https://nhnent.github.io/tui.component.tree/tree.png)<br>
-* Label Apply<br>
-![alt tag](https://nhnent.github.io/tui.component.tree/tree_edit.png)<br>
-* Daraggable<br>
-![alt tag](https://cloud.githubusercontent.com/assets/18183560/15561914/85815950-2335-11e6-908e-ee6035b17f73.png)<br>
-* Context Menu<br>
-![alt tag](https://cloud.githubusercontent.com/assets/18183560/15561915/8582a616-2335-11e6-9e25-8b521e11292b.png)<br>
+* Examples: [http://nhnent.github.io/tui.component.tree/latest/tutorial-basic.html](http://nhnent.github.io/tui.component.tree/latest/tutorial-basic.html)
 
 ## Dependency
 * tui-code-snippet: ~1.2.0
-* tui-contextmenu: ~1.1.2 (optional, for using ContextMenu feature)
-* jQuery: ~1.8.3 (optional, for using Ajax feature)
+* tui-contextmenu: ~1.2.0 (optional, for using 'ContextMenu' feature)
+* jQuery: ~1.8.3 (optional, for using 'Ajax' feature)
 
 ## Test Environment
 * PC
-    * IE7~11
+    * IE8~11
     * Edge
     * Chrome
     * Firefox
-    * PhantomJS
 
 ## Download/Install
 * Bower:
    * Latest: `bower install tui-component-tree`
-   * Each version: `bower install tui-component-tree[#tag]`
+   * Each Version: `bower install tui-component-tree[#tag]`
 * Download: https://github.com/nhnent/tui.component.tree
 
 ## LICENSE

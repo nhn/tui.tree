@@ -146,7 +146,6 @@ function setConfig(defaultConfig, server) {
         defaultConfig.browserNoActivityTimeout = 30000;
     } else {
         defaultConfig.browsers = [
-            'PhantomJS',
             'Chrome'
         ];
     }

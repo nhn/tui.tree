@@ -47,4 +47,26 @@ describe('Util', function() {
 
         expect(util.getClass(element)).toEqual(className);
     });
+
+    it('"getFirstText" should return first text of element.', function() {
+        var element = document.createElement('div');
+        var firstTextNode;
+
+        element.innerHTML = '<span></span>firstText';
+
+        firstTextNode = util.getFirstTextNode(element);
+
+        expect(firstTextNode.nodeValue).toBe('firstText');
+    });
+
+    it('"removeElement" should remove target element.', function() {
+        var element = document.createElement('div');
+
+        element.id = 'test';
+        document.body.appendChild(element);
+
+        util.removeElement(element);
+
+        expect(document.getElementById('test')).toBe(null);
+    });
 });

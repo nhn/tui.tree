@@ -38,7 +38,8 @@ describe('TreeModel', function() {
         ];
 
     beforeEach(function() {
-        treeModel = new TreeModel(data, {
+        treeModel = new TreeModel({
+            data: data,
             defaultState: 'closed',
             nodeIdPrefix: 'tree-node-'
         });

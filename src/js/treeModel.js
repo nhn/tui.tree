@@ -19,7 +19,7 @@ var extend = tui.util.extend,
  * @ignore
  **/
 var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslint-disable */
-    init: function(data, options) {/*eslint-enable*/
+    init: function(options) {/*eslint-enable*/
         TreeNode.setIdPrefix(options.nodeIdPrefix);
 
         /**
@@ -42,7 +42,7 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
          */
         this.treeHash = {};
 
-        this._setData(data);
+        this._setData(options.data);
     },
 
     /**

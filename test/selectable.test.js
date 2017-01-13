@@ -32,15 +32,17 @@ describe('Tree', function() {
                 {title: '3'}
             ]}
         ],
-        rootElement, tree, treeSelection;
+        $rootElement, tree, treeSelection;
 
     beforeEach(function() {
         loadFixtures('basicFixture.html');
-        tree = new Tree(data, {
-            rootElement: 'treeRoot'
+
+        tree = new Tree('tree', {
+            rootElement: 'treeRoot',
+            data: data
         });
 
-        rootElement = document.getElementById('treeRoot');
+        $rootElement = $(tree.rootElement);
         tree.enableFeature('Selectable');
 
         // "tree.enabledFeatures.Selectable" is not constructor but instance.
@@ -52,7 +54,7 @@ describe('Tree', function() {
             target;
 
         beforeEach(function() {
-            target = $(rootElement).find('.tui-tree-node')[2];
+            target = $rootElement.find('.tui-tree-node')[2];
             eventMock = {
                 target: target
             };
@@ -107,15 +109,22 @@ describe('Tree', function() {
             var beforeSelectListenerSpy = jasmine.createSpy(),
                 selectListenerSpy = jasmine.createSpy(),
                 curNodeId = target.id,
-                prevNodeId = 'previousNodeId';
+                prevNodeId = 'previousNodeId',
+                expected;
 
             treeSelection.selectedNodeId = prevNodeId;
             tree.on('beforeSelect', beforeSelectListenerSpy);
             tree.on('select', selectListenerSpy);
             treeSelection.onSingleClick(eventMock);
 
-            expect(beforeSelectListenerSpy).toHaveBeenCalledWith(curNodeId, prevNodeId, target);
-            expect(selectListenerSpy).toHaveBeenCalledWith(curNodeId, prevNodeId, target);
+            expected = {
+                nodeId: curNodeId,
+                prevNodeId: prevNodeId,
+                target: target
+            };
+
+            expect(beforeSelectListenerSpy).toHaveBeenCalledWith(expected);
+            expect(selectListenerSpy).toHaveBeenCalledWith(expected);
         });
     });
 
@@ -129,7 +138,7 @@ describe('Tree', function() {
         it('should invoke "beforeSelect" and fire "select"', function() {
             var beforeSelectListenerSpy = jasmine.createSpy(),
                 selectListenerSpy = jasmine.createSpy(),
-                targetId = $(rootElement).find('.tui-tree-node')[2].id;
+                targetId = $rootElement.find('.tui-tree-node')[2].id;
 
             tree.on({
                 beforeSelect: beforeSelectListenerSpy,
@@ -142,27 +151,27 @@ describe('Tree', function() {
         });
 
         it('should have "getSelectedNodeId" api', function() {
-            var targetId = $(rootElement).find('.tui-tree-node')[2].id;
+            var targetId = $rootElement.find('.tui-tree-node')[2].id;
 
             tree.select(targetId);
             expect(tree.getSelectedNodeId()).toEqual(targetId);
         });
 
         it('deselect() should reset node state after selecting.', function() {
-            var nodeId = $(rootElement).find('.tui-tree-node')[0].id;
+            var nodeId = $rootElement.find('.tui-tree-node')[0].id;
             var className = treeSelection.selectedClassName;
             var selectedNode;
 
             tree.select(nodeId);
             tree.deselect();
 
-            selectedNode = $(rootElement).find('#' + nodeId);
+            selectedNode = $rootElement.find('#' + nodeId);
 
             expect(selectedNode.hasClass(className)).toBe(false);
         });
 
         it('deselect() should invoke "deselect" event.', function() {
-            var nodeId = $(rootElement).find('.tui-tree-node')[0].id;
+            var nodeId = $rootElement.find('.tui-tree-node')[0].id;
             var handler = jasmine.createSpy();
 
             tree.select(nodeId);
@@ -173,7 +182,7 @@ describe('Tree', function() {
         });
 
         it('deselect() should not invoke "deselect" event when node is removed.', function() {
-            var nodeId = $(rootElement).find('.tui-tree-node')[0].id;
+            var nodeId = $rootElement.find('.tui-tree-node')[0].id;
             var handler = jasmine.createSpy();
 
             tree.select(nodeId);

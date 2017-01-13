@@ -11,8 +11,11 @@ var isUndefined = tui.util.isUndefined,
         return isValidDotNotationRe.test(str);
     },
     isArray = tui.util.isArraySafe,
+    forEach = tui.util.forEach,
+    browser = tui.util.browser,
     isSupportPageOffset = typeof window.pageXOffset !== 'undefined',
-    isCSS1Compat = document.compatMode === 'CSS1Compat';
+    isCSS1Compat = document.compatMode === 'CSS1Compat',
+    isOlderIE = (browser.msie && browser.version < 9);
 
 /**
  * @ignore
@@ -112,6 +115,17 @@ var util = {
         target = e.target || e.srcElement;
 
         return target;
+    },
+
+    /**
+     * Get key code from event object
+     * @param {Event} e Event object
+     * @returns {Number} KeyCode
+     */
+    getKeyCode: function(e) {
+        e = e || window.event;
+
+        return e.which || e.keyCode;
     },
 
     /**
@@ -295,6 +309,54 @@ var util = {
         }
 
         return scrollTop;
+    },
+
+    /**
+     * Get first text node in target element
+     * @param {HTMLElement} element - Target element to find
+     * @returns {HTMLElement} Text node
+     */
+    getFirstTextNode: function(element) {
+        var childElements = tui.util.toArray(element.childNodes);
+        var firstTextNode = '';
+
+        forEach(childElements, function(childElement) {
+            if (childElement.nodeName === '#text') {
+                firstTextNode = childElement;
+
+                return false;
+            }
+
+            return true;
+        });
+
+        return firstTextNode;
+    },
+
+    /**
+     * Remove element from parent element
+     * @param {HTMLElement} element - Target element to remove
+     */
+    removeElement: function(element) {
+        if (element && element.parentNode) {
+            element.parentNode.removeChild(element);
+        }
+    },
+
+    /**
+     * Get change event name as browser
+     * @returns {string} Event name
+     */
+    getChangeEventName: function() {
+        var changeEventName;
+
+        if (isOlderIE) {
+            changeEventName = 'propertychange';
+        } else {
+            changeEventName = 'change';
+        }
+
+        return changeEventName;
     }
 };
 

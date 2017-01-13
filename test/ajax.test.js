@@ -10,7 +10,7 @@ describe('Tree', function() {
 
         jasmine.Ajax.install();
 
-        tree = new Tree(nodeData, {
+        tree = new Tree('tree', {
             rootElement: 'treeRoot'
         });
     });
@@ -256,8 +256,8 @@ describe('Tree', function() {
                 }
             });
 
-            tree.on('successAjaxResponse', function(type, data) {
-                newChildIds = data;
+            tree.on('successAjaxResponse', function(evt) {
+                newChildIds = evt.data;
             });
         });
 
@@ -295,8 +295,8 @@ describe('Tree', function() {
                 e.success(true);
             });
 
-            tree.on('successAjaxResponse', function(type, data) {
-                newChildIds = data;
+            tree.on('successAjaxResponse', function(evt) {
+                newChildIds = evt.data;
             });
 
             tree.add({text: 'C'}, parentId);

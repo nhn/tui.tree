@@ -1,20 +1,29 @@
 {
-  "default": {
-    "title": "Default, Draggable, Selectable"
+  "basic": {
+    "title": "Default"
   },
-  "depthLabel": {
-    "title": "Custom_DepthLabel"
+  "template": {
+    "title": "Using Template"
   },
-  "selectableNodes": {
-    "title": "Selectable, Editable"
+  "selectable": {
+    "title": "Selectable Feature"
   },
-  "check": {
-    "title": "Checkbox"
+  "draggable": {
+    "title": "Draggable Feature"
   },
-  "ctxMenu": {
-    "title": "ContextMenu"
+  "editable": {
+    "title": "Editable Feature"
   },
-  "ajaxFeature": {
-    "title": "Ajax"
+  "contextmenu": {
+    "title": "ContextMenu Feature"
+  },
+  "checkbox": {
+    "title": "Checkbox Feature"
+  },
+  "ajax": {
+    "title": "Ajax Feature"
+  },
+  "customizing": {
+    "title": "Make Depth Label"
   }
 }

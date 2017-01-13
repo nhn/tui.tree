@@ -1,34 +1,34 @@
 {
-  "name": "tui-component-tree",
-  "authors": [
-    "NHN ent. FE dev team.<dl_javascript@nhnent.com>"
-  ],
-  "license": "MIT",
-  "ignore": [
-    "**/.*",
-    ".gitignore",
-    "node_modules",
-    "bower_components",
-    "test",
-    "tests",
-    "samples",
-    "src",
-    "server",
-    "data.js",
-    "index.js",
-    "gulpfile.js",
-    "conf.json",
-    "karma.conf.js",
-    "karma.conf.*.js",
-    "package.json",
-    "bower.json",
-    "jsdoc-conf.json"
-  ],
-  "dependencies": {
-    "tui-code-snippet": "^1.2.0",
-    "tui-component-contextmenu": "^1.1.2"
-  },
-  "devDependencies": {
-    "jquery": "1.8.3"
-  }
+    "name": "tui-component-tree",
+    "authors": [
+        "NHN ent. FE dev team.<dl_javascript@nhnent.com>"
+    ],
+    "license": "MIT",
+    "ignore": [
+        "**/.*",
+        "node_modules",
+        "bower_components",
+        "test",
+        "tests",
+        "src",
+        "server",
+        "data.js",
+        "Gruntfile.js",
+        "gulpfile.js",
+        "karma.*.js",
+        "conf.json",
+        "package.json",
+        ".gitignore",
+        "examples",
+        "index.js",
+        "jsdoc-conf.json",
+        "webpack.config.js"
+    ],
+    "dependencies": {
+        "tui-code-snippet": "^1.2.0",
+        "tui-component-contextmenu": "^1.2.0"
+    },
+    "devDependencies": {
+        "jquery": "1.8.3"
+    }
 }

@@ -4,7 +4,7 @@ var Tree = require('../src/js/tree'),
     messages = require('../src/js/consts/messages');
 
 describe('Tree', function() {
-    var nodeData = [
+    var data = [
             {text: 'A', children: [
                 {text: '1'},
                 {text: '2'},
@@ -38,19 +38,24 @@ describe('Tree', function() {
         $rootElement,
         tree,
         firstChildId, lastChildId, grandChildId,
-        firstChild;
+        firstChild,
+        container;
 
     beforeEach(function() {
         loadFixtures('basicFixture.html');
-        $rootElement = $('#treeRoot');
-        tree = new Tree(nodeData, {
+
+        container = 'tree';
+
+        tree = new Tree(container, {
             rootElement: 'treeRoot',
+            data: data,
             template: {
                 leafNode:
                 '<span class="tui-tree-leaf-label"></span>' +
                 '<span class="{{textClass}}">{{text}}</span>'
             }
         });
+        $rootElement = $(tree.rootElement);
         firstChildId = tree.model.rootNode.getChildIds()[0];
         firstChild = tree.model.getNode(firstChildId);
         lastChildId = tree.model.rootNode.getChildIds().slice(-1)[0]; // slice(-1) returns a value of last index
@@ -59,8 +64,8 @@ describe('Tree', function() {
 
     it('should throw an error if has invalid root element', function() {
         expect(function() {
-            return new Tree(nodeData);
-        }).toThrowError(messages.INVALID_ROOT_ELEMENT);
+            return new Tree('tree2');
+        }).toThrowError(messages.INVALID_CONTAINER_ELEMENT);
     });
 
     it('should have a root element', function() {
@@ -73,8 +78,9 @@ describe('Tree', function() {
 
     it('should make correct DOM', function() {
         var textElement = $rootElement.find('.tui-tree-node .tui-tree-text')[0];
+        var textNode = util.getFirstTextNode(textElement);
 
-        expect(textElement.innerHTML).toEqual('A');
+        expect(textNode.nodeValue).toEqual('A');
     });
 
     it('should make DOM from optional-template', function() {
@@ -124,13 +130,14 @@ describe('Tree', function() {
 
     it('"open(), close()" should change button label', function() {
         var firstChildElement = document.getElementById(firstChildId),
-            btnElement = $(firstChildElement).find('.tui-tree-toggleBtn')[0];
+            btnElement = $(firstChildElement).find('.' + tree.classNames.toggleBtnClass)[0],
+            textNode = util.getFirstTextNode(btnElement);
 
         tree.close(firstChildId);
-        expect(btnElement.innerHTML).toEqual(tree.stateLabels.closed);
+        expect(textNode.nodeValue).toEqual(tree.stateLabels.closed);
 
         tree.open(firstChildId);
-        expect(btnElement.innerHTML).toEqual(tree.stateLabels.opened);
+        expect(textNode.nodeValue).toEqual(tree.stateLabels.opened);
     });
 
     it('should fire doubleClick event', function() {
@@ -235,8 +242,9 @@ describe('Tree', function() {
             return util.renderTemplate(source, props);
         });
 
-        tree = new Tree(nodeData, {
+        tree = new Tree(container, {
             rootElement: 'treeRoot',
+            data: data,
             template: {
                 leafNode:
                 '<span class="tui-tree-leaf-label"></span>' +

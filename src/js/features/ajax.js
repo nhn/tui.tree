@@ -114,16 +114,20 @@ var Ajax = tui.util.defineClass(/** @lends Ajax.prototype */{/*eslint-disable*/
         /**
          * @api
          * @event Tree#beforeAjaxRequest
-         * @param {string} command - Command type
-         * @param {string} [data] - Request data
+         * @param {{command: string, data: object}} evt - Event data
+         *     @param {string} evt.command - Command type
+         *     @param {object} [evt.data] - Request data
          * @example
-         * tree.on('beforeAjaxRequest', function(command, data) {
-         *     console.log('before ' + command + ' request!');
+         * tree.on('beforeAjaxRequest', function(evt) {
+         *     console.log('before ' + evt.command + ' request!');
          *     return false; // It cancels request
          *     // return true; // It fires request
          * });
          */
-        if (!this.tree.invoke('beforeAjaxRequest', type, params)) {
+        if (!this.tree.invoke('beforeAjaxRequest', {
+            type: type,
+            params: params
+        })) {
             return;
         }
 
@@ -163,28 +167,33 @@ var Ajax = tui.util.defineClass(/** @lends Ajax.prototype */{/*eslint-disable*/
             /**
              * @api
              * @event Tree#successAjaxResponse
-             * @param {string} command - Command type
-             * @param {string} [data] - Return value of executed command callback
+             * @param {{command: string, data: object}} evt - Event data
+             *     @param {string} evt.command - Command type
+             *     @param {object} [evt.data] - Return value of executed command callback
              * @example
-             * tree.on('successAjaxResponse', function(command, data) {
-             *     console.log(command + ' response is success!');
+             * tree.on('successAjaxResponse', function(evt) {
+             *     console.log(evt.command + ' response is success!');
              *     if (data) {
-             *           console.log('new add ids :' + data);
+             *           console.log('data:' + evt.data);
              *     }
              * });
              */
-            tree.fire('successAjaxResponse', type, data);
+            tree.fire('successAjaxResponse', {
+                type: type,
+                data: data
+            });
         } else {
             /**
              * @api
              * @event Tree#failAjaxResponse
-             * @param {string} command - Command type
+             * @param {{command: string}} evt - Event data
+             *     @param {string} evt.command - Command type
              * @example
-             * tree.on('failAjaxResponse', function(command) {
-             *     console.log(command + ' response is fail!');
+             * tree.on('failAjaxResponse', function(evt) {
+             *     console.log(evt.command + ' response is fail!');
              * });
              */
-            tree.fire('failAjaxResponse', type);
+            tree.fire('failAjaxResponse', {type: type});
         }
     },
 
@@ -199,13 +208,14 @@ var Ajax = tui.util.defineClass(/** @lends Ajax.prototype */{/*eslint-disable*/
         /**
          * @api
          * @event Tree#errorAjaxResponse
-         * @param {string} command - Command type
+         * @param {{command: string}} evt - Event data
+         *     @param {string} evt.command - Command type
          * @example
-         * tree.on('errorAjaxResponse', function(command) {
-         *     console.log(command + ' response is error!');
+         * tree.on('errorAjaxResponse', function(evt) {
+         *     console.log(evt.command + ' response is error!');
          * });
          */
-        this.tree.fire('errorAjaxResponse', type);
+        this.tree.fire('errorAjaxResponse', {type: type});
     },
 
     /**

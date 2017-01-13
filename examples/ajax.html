@@ -1,59 +1,43 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
-<head lang="en">
-    <meta charset="UTF-8">
+    <head lang="en">
+        <meta charset="UTF-8">
+        <title>Tree with "Ajax" feature</title>
+        <link rel="stylesheet" href="css/docs.css" />
+        <link rel="stylesheet" href="../dist/tui-component-tree.css" />
+        <link rel="stylesheet" href="//rawgit.com/nhnent/tui.component.contextmenu/1.2.0/dist/tui-component-contextmenu.css" />
+    </head>
 
-    <title>Tree Component</title>
-    <link rel="stylesheet" href="css/samplepage.css" />
-    <link rel="stylesheet" href="css/tree.css" />
-    <link rel="stylesheet" href="//cdn.rawgit.com/nhnent/tui.component.contextmenu/1.1.2/dist/contextmenu.css" />
-</head>
-<body>
-    <div class="code-html">
-        <!-- Tree area -->
-        <div class="treeWrap">
-            <ul id="treeRoot" class="tree"></ul>
+    <body>
+        <div class="code-html">
+            <div id="tree" class="tui-tree-wrap"></div>
         </div>
-        <!-- Ajax request info area -->
-        <textarea id="infoArea"></textarea>
-    </div>
+        <div class="explain">
+            <textarea id="infoArea"></textarea>
+        </div>
 
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/6.16.0/polyfill.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-    <script src="//cdn.rawgit.com/nhnent/tui.code-snippet/1.2.1/code-snippet.js"></script>
-    <script src="//cdn.rawgit.com/nhnent/tui.dom/2.1.0/dist/domutil.js"></script>
-    <script src="//cdn.rawgit.com/nhnent/tui.component.floatinglayer/1.0.1/dist/floatingLayer.js"></script>
-    <script src="//cdn.rawgit.com/nhnent/tui.component.contextmenu/1.1.2/dist/tui-component-contextmenu.js"></script>
-    <script src="../dist/tui-component-tree.js"></script>
-    <script class="code-js">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/6.16.0/polyfill.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+        <script src="https://rawgit.com/nhnent/tui.code-snippet/1.2.1/code-snippet.js"></script>
+        <script src="https://rawgit.com/nhnent/tui.dom/2.1.0/dist/domutil.js"></script>
+        <script src="https://rawgit.com/nhnent/tui.component.floatinglayer/1.0.1/dist/floatingLayer.js"></script>
+        <script src="https://rawgit.com/nhnent/tui.component.contextmenu/1.2.0/dist/tui-component-contextmenu.js"></script>
+        <script src="../dist/tui-component-tree.js"></script>
+        <script class="code-js">
+
         var infoArea = document.getElementById('infoArea');
 
         // Create Tree component
-        var tree = new tui.component.Tree([], {
-            nodeDefaultState: 'opened',
-            rootElement: document.getElementById('treeRoot'),
-            template: { // User custom template
-                internalNode:
-                    '<button type="button" class="{{toggleBtnClass}}">{{stateLabel}}</button>' +
-                    '<span class="{{textClass}}">{{text}}</span>' +
-                    '<ul class="{{subtreeClass}}">{{children}}</ul>',
-                leafNode:
-                    '<span class="{{textClass}}">{{text}}</span>'
-            }
+        var tree = new tui.component.Tree('tree', {
+            nodeDefaultState: 'opened'
         });
 
         // Add features
         tree.enableFeature('Selectable')
             .enableFeature('Editable', {
-            editableClassName: tree.classNames.textClass,
             dataKey: 'text'
         }).enableFeature('Draggable', {
-            isSortable: true,
-            lineClassName: 'tui-tree-marker',
-            lineBoundary: {
-                top: 10,
-                bottom: 10
-            }
+            isSortable: true
         }).enableFeature('ContextMenu', {
             menuData: [
                 {title: 'create', command: 'create'},
@@ -152,23 +136,16 @@
             return confirm('edit?');
         });
 
-        tree.on('select', function(nodeId) {
-            console.log(nodeId);
-        });
-
         tree.on('successAjaxResponse', function(command, data) {
             var message;
 
-            if (command === 'create') {
-                console.log('created node id : ' + data);
-            }
-
-            message = 'command command : ' + command  + '\n';
+            message = 'Command : ' + command  + '\n';
             message += 'jQuery request options : \n';
             message += JSON.stringify(tree.enabledFeatures.Ajax.command[command], null, 8);
 
             infoArea.value = message;
         });
-    </script>
+
+        </script>
     </body>
 </html>

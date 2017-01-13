@@ -12,6 +12,8 @@ var EDIT_TYPE = {
     CREATE: 'create',
     UPDATE: 'update'
 };
+var WRAPPER_CLASSNAME = 'tui-input-wrap';
+var INPUT_CLASSNAME = 'tui-tree-input';
 
 /**
  * Set the tree selectable
@@ -48,13 +50,7 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
          * Classname of editable element
          * @type {string}
          */
-        this.editableClassName = options.editableClassName;
-
-        /**
-         * Classname of input element
-         * @type {string}
-         */
-        this.inputClassName = options.inputClassName;
+        this.editableClassName = options.editableClassName || tree.classNames.textClass;
 
         /**
          * Key of node data to set value
@@ -81,16 +77,16 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
         this.mode = null;
 
         /**
-         * Keyup event handler
-         * @type {Function}
-         */
-        this.boundOnKeyup = tui.util.bind(this._onKeyup, this);
-
-        /**
          * Whether custom event is ignored or not
          * @type {Boolean}
          */
         this.isCustomEventIgnored = false;
+
+        /**
+         * Keyup event handler
+         * @type {Function}
+         */
+        this.boundOnKeyup = tui.util.bind(this._onKeyup, this);
 
         /**
          * Blur event handler
@@ -197,7 +193,7 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
      * @private
      */
     _onKeyup: function(event) {
-        if (event.keyCode === 13) { // keyup "enter"
+        if (util.getKeyCode(event) === 13) {
             this.inputElement.blur();
         }
     },
@@ -222,18 +218,15 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
 
     /**
      * Create input element
-     * @param {string} inputClassName - Classname of input element
      * @returns {HTMLElement} Input element
      * @private
      */
-    _createInputElement: function(inputClassName) {
-        var el = document.createElement('INPUT');
-        if (inputClassName) {
-            el.className = inputClassName;
-        }
-        el.setAttribute('type', 'text');
+    _createInputElement: function() {
+        var element = document.createElement('INPUT');
+        element.setAttribute('type', 'text');
+        util.addClass(element, INPUT_CLASSNAME);
 
-        return el;
+        return element;
     },
 
     /**
@@ -244,21 +237,21 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
     _attachInputElement: function(nodeId) {
         var tree = this.tree;
         var target = document.getElementById(nodeId);
-        var textElement = util.getElementsByClassName(target, tree.classNames.textClass)[0];
-        var inputElement;
+        var wrapperElement = document.createElement('DIV');
+        var inputElement = this._createInputElement();
 
-        inputElement = this._createInputElement(this.inputClassName);
+        util.addClass(wrapperElement, WRAPPER_CLASSNAME);
         inputElement.value = tree.getNodeData(nodeId)[this.dataKey] || '';
 
-        textElement.parentNode.insertBefore(inputElement, textElement);
-        textElement.style.display = 'none';
+        wrapperElement.appendChild(inputElement);
+        target.appendChild(wrapperElement);
+
+        util.addEventListener(inputElement, 'keyup', this.boundOnKeyup);
+        util.addEventListener(inputElement, 'blur', this.boundOnBlur);
 
         this.inputElement = inputElement;
 
-        util.addEventListener(this.inputElement, 'keyup', this.boundOnKeyup);
-        util.addEventListener(this.inputElement, 'blur', this.boundOnBlur);
-
-        this.inputElement.focus();
+        inputElement.focus();
     },
 
     /**
@@ -267,15 +260,12 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
      */
     _detachInputElement: function() {
         var tree = this.tree;
-        var inputEl = this.inputElement;
-        var parentNode = inputEl.parentNode;
+        var inputElement = this.inputElement;
 
-        util.removeEventListener(this.inputElement, 'keyup', this.boundOnKeyup);
-        util.removeEventListener(this.inputElement, 'blur', this.boundOnBlur);
+        util.removeEventListener(inputElement, 'keyup', this.boundOnKeyup);
+        util.removeEventListener(inputElement, 'blur', this.boundOnBlur);
 
-        if (parentNode) {
-            parentNode.removeChild(inputEl);
-        }
+        util.removeElement(inputElement);
 
         if (tree.enabledFeatures.Ajax) {
             tree.off(this, 'successAjaxResponse');
@@ -299,17 +289,18 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
         /**
          * @api
          * @event Tree#beforeCreateChildNode
-         * @param {string} value - Return value of creating input element
+         * @param {{value: string}} evt - Event data
+         *     @param {string} evt.value - Return value of creating input element
          * @example
          * tree
          *  .enableFeature('Editable')
-         *  .on('beforeCreateChildNode', function(value) {
-         *      console.log(value);
+         *  .on('beforeCreateChildNode', function(evt) {
+         *      console.log(evt.value);
          *      return false; // It cancels
          *      // return true; // It execute next
          *  });
          */
-        if (!this.tree.invoke('beforeCreateChildNode', value)) {
+        if (!this.tree.invoke('beforeCreateChildNode', {value: value})) {
             this.isCustomEventIgnored = true;
             this.inputElement.focus();
 
@@ -337,17 +328,18 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
         /**
          * @api
          * @event Tree#beforeEditNode
-         * @param {string} value - Return value of editing input element
+         * @param {{value: string}} evt - Event data
+         *     @param {string} evt.value - Return value of editing input element
          * @example
          * tree
          *  .enableFeature('Editable')
-         *  .on('beforeEditNode', function(value) {
-         *      console.log(value);
+         *  .on('beforeEditNode', function(evt) {
+         *      console.log(evt.value);
          *      return false; // It cancels
          *      // return true; // It execute next
          *  });
          */
-        if (!this.tree.invoke('beforeEditNode', value)) {
+        if (!this.tree.invoke('beforeEditNode', {value: value})) {
             this.isCustomEventIgnored = true;
             this.inputElement.focus();
 

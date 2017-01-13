@@ -113,40 +113,50 @@ var Selectable = tui.util.defineClass(/** @lends Selectable.prototype */{/*eslin
         /**
          * @api
          * @event Tree#beforeSelect
-         * @param {string} nodeId - Selected node id
-         * @param {string} prevNodeId - Previous selected node id
-         * @param {Element|undefined} target - Target element
+         * @param {{nodeId: string, prevNodeId: string, target: HTMLElement|undefined}} evt - Event data
+         *     @param {string} evt.nodeId - Selected node id
+         *     @param {string} evt.prevNodeId - Previous selected node id
+         *     @param {HTMLElement|undefined} evt.target - Target element
          * @example
          * tree
          *  .enableFeature('Selectable')
-         *  .on('beforeSelect', function(nodeId, prevNodeId, target) {
-         *      console.log('selected node: ' + nodeId);
-         *      console.log('previous selected node: ' + prevNodeId);
-         *      console.log('target element: ' + target);
+         *  .on('beforeSelect', function(evt) {
+         *      console.log('selected node: ' + evt.nodeId);
+         *      console.log('previous selected node: ' + evt.prevNodeId);
+         *      console.log('target element: ' + evt.target);
          *      return false; // It cancels "select"
          *      // return true; // It fires "select"
          *  });
          */
-        if (tree.invoke('beforeSelect', nodeId, prevNodeId, target)) {
+        if (tree.invoke('beforeSelect', {
+            nodeId: nodeId,
+            prevNodeId: prevNodeId,
+            target: target
+        })) {
             util.removeClass(prevElement, selectedClassName);
             util.addClass(nodeElement, selectedClassName);
 
             /**
              * @api
              * @event Tree#select
-             * @param {string} nodeId - Selected node id
-             * @param {string} prevNodeId - Previous selected node id
-             * @param {Element|undefined} target - Target element
+             * @param {{nodeId: string, prevNodeId: string, target: HTMLElement|undefined}} evt - Event data
+             *     @param {string} evt.nodeId - Selected node id
+             *     @param {string} evt.prevNodeId - Previous selected node id
+             *     @param {HTMLElement|undefined} evt.target - Target element
              * @example
              * tree
              *  .enableFeature('Selectable')
-             *  .on('select', function(nodeId, prevNodeId, target) {
-             *      console.log('selected node: ' + nodeId);
-             *      console.log('previous selected node: ' + prevNodeId);
-             *      console.log('target element: ' + target);
+             *  .on('select', function(evt) {
+             *      console.log('selected node: ' + evt.nodeId);
+             *      console.log('previous selected node: ' + evt.prevNodeId);
+             *      console.log('target element: ' + evt.target);
              *  });
              */
-            tree.fire('select', nodeId, prevNodeId, target);
+            tree.fire('select', {
+                nodeId: nodeId,
+                prevNodeId: prevNodeId,
+                target: target
+            });
             this.selectedNodeId = nodeId;
         }
     },
@@ -191,15 +201,16 @@ var Selectable = tui.util.defineClass(/** @lends Selectable.prototype */{/*eslin
 
         /**
          * @event Tree#deselect
-         * @param {string} nodeId - Deselected node id
+         * @param {{nodeId: string}} evt - Event data
+         *     @param {string} evt.nodeId - Deselected node id
          * @example
          * tree
          *  .enableFeature('Selectable')
-         *  .on('deselect', function(nodeId) {
-         *      console.log('deselected node: ' + nodeId);
+         *  .on('deselect', function(evt) {
+         *      console.log('deselected node: ' + evt.nodeId);
          *  });
          */
-        tree.fire('deselect', nodeId);
+        tree.fire('deselect', {nodeId: nodeId});
     },
 
     /**
