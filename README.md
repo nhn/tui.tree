@@ -19,8 +19,8 @@ Can use more features
 
 ## Documentation
 * API: [https://nhnent.github.io/tui.component.tree/latest](https://nhnent.github.io/tui.component.tree/latest)
-* Tutorial: [https://github.com/nhnent/tui.component.tree/wiki/Tree-Tutorial](https://github.com/nhnent/tui.component.tree/wiki/Tree-Tutorial)
-* Examples: [http://nhnent.github.io/tui.component.tree/latest/tutorial-basic.html](http://nhnent.github.io/tui.component.tree/latest/tutorial-basic.html)
+* Tutorial: [https://github.com/nhnent/tui.component.tree/wiki/Tutorial](https://github.com/nhnent/tui.component.tree/wiki/Tutorial)
+* Examples: [http://nhnent.github.io/tui.component.tree/latest/tutorial-example1.html](http://nhnent.github.io/tui.component.tree/latest/tutorial-example1.html)
 
 ## Dependency
 * tui-code-snippet: ~1.2.0
