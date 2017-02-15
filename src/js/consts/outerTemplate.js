@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Set outer template
+ * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
+ */
 'use strict';
 
 /**

@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Set default value of options
+ * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
+ */
 'use strict';
 
 /**

@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Feature that each tree node is possible to select as click
+ * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
+ */
 'use strict';
 
 var util = require('./../util');

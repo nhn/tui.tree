@@ -1,4 +1,9 @@
+/**
+ * @fileoverview Feature that each tree node is possible to drag and drop
+ * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
+ */
 'use strict';
+
 var util = require('./../util');
 
 var defaultOptions = {

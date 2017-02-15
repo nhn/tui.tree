@@ -1,4 +1,9 @@
+/**
+ * @fileoverview Feature that each tree node is possible to have context-menu
+ * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
+ */
 'use strict';
+
 var util = require('./../util');
 
 var API_LIST = [

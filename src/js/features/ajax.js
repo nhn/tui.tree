@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Feature that tree action is enable to communicate server
+ * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
+ */
 'use strict';
 
 var snippet = tui.util;

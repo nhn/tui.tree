@@ -40,7 +40,7 @@
 /******/ 	__webpack_require__.c = installedModules;
 
 /******/ 	// __webpack_public_path__
-/******/ 	__webpack_require__.p = "";
+/******/ 	__webpack_require__.p = "dist";
 
 /******/ 	// Load entry module and return exports
 /******/ 	return __webpack_require__(0);
@@ -62,10 +62,9 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
-	 * @fileoverview Render tree and update tree.
+	 * @fileoverview Render tree and update tree
 	 * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
 	 */
-
 	'use strict';
 
 	var util = __webpack_require__(2),
@@ -105,17 +104,18 @@
 	 *     @param {Object} [options.data] A data to be used on tree
 	 *     @param {string} [options.nodeIdPrefix] A default prefix of a node
 	 *     @param {Object} [options.nodeDefaultState] A default state of a node
+	 *     @param {Object} [options.stateLabels] Toggle button state label
+	 *         @param {string} [options.stateLabels.opened] State-OPENED label
+	 *         @param {string} [options.stateLabels.closed] State-CLOSED label
 	 *     @param {Object} [options.template] A markup set to make element
 	 *         @param {string} [options.template.internalNode] HTML template
 	 *         @param {string} [options.template.leafNode] HTML template
-	 *     @param {Object} [options.stateLabels] Toggle button state label
-	 *         @param {string} [options.stateLabels.opened] State-OPENED label (Text or HTML)
-	 *         @param {string} [options.stateLabels.closed] State-CLOSED label (Text or HTML)
 	 *     @param {Function} [options.renderTemplate] Function for rendering template
 	 * @example
 	 * // Default options:
 	 * // {
-	 * //     nodeIdPrefix: 'tui-tree-node-'
+	 * //     data: [],
+	 * //     nodeIdPrefix: 'tui-tree-node-',
 	 * //     nodeDefaultState: 'closed',
 	 * //     stateLabels: {
 	 * //         opened: '-',
@@ -135,7 +135,7 @@
 	 * //             '</div>' +
 	 * //             '<ul class="tui-tree-subtree tui-js-tree-subtree">' +
 	 * //                 '{{children}}' +
-	 * //              '</ul>',
+	 * //             '</ul>',
 	 * //         leafNode:
 	 * //             '<div class="tui-tree-btn">' +
 	 * //                 '<span class="tui-tree-text tui-js-tree-text">' +
@@ -153,26 +153,26 @@
 	 *         {text: 'root-1C'},
 	 *         {text: 'root-1D'},
 	 *         {text: 'root-2A', children: [
-	 *             {text:'sub_1A', children:[
-	 *                 {text:'sub_sub_1A'}
+	 *             {text: 'sub_1A', children:[
+	 *                 {text: 'sub_sub_1A'}
 	 *             ]},
-	 *             {text:'sub_2A'}
+	 *             {text: 'sub_2A'}
 	 *         ]},
 	 *         {text: 'root-2B'},
 	 *         {text: 'root-2C'},
 	 *         {text: 'root-2D'},
 	 *         {text: 'root-3A', children: [
-	 *             {text:'sub3_a'},
-	 *             {text:'sub3_b'}
+	 *             {text: 'sub3_a'},
+	 *             {text: 'sub3_b'}
 	 *         ]},
 	 *         {text: 'root-3B'},
 	 *         {text: 'root-3C'},
 	 *         {text: 'root-3D'}
 	 *     ]},
 	 *     {text: 'rootB', children: [
-	 *         {text:'B_sub1'},
-	 *         {text:'B_sub2'},
-	 *         {text:'b'}
+	 *         {text: 'B_sub1'},
+	 *         {text: 'B_sub2'},
+	 *         {text: 'b'}
 	 *     ]}
 	 * ];
 	 * var tree = new tui.component.Tree(container, {
@@ -2014,6 +2014,10 @@
 /* 3 */
 /***/ function(module, exports) {
 
+	/**
+	 * @fileoverview Set default value of options
+	 * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
+	 */
 	'use strict';
 
 	/**
@@ -2083,6 +2087,10 @@
 /* 4 */
 /***/ function(module, exports) {
 
+	/**
+	 * @fileoverview Set default value of toggle button
+	 * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
+	 */
 	'use strict';
 
 	/**
@@ -2105,6 +2113,10 @@
 /* 5 */
 /***/ function(module, exports) {
 
+	/**
+	 * @fileoverview Set error messages
+	 * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
+	 */
 	'use strict';
 
 	/**
@@ -2125,6 +2137,10 @@
 /* 6 */
 /***/ function(module, exports) {
 
+	/**
+	 * @fileoverview Set outer template
+	 * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
+	 */
 	'use strict';
 
 	/**
@@ -2148,6 +2164,10 @@
 /* 7 */
 /***/ function(module, exports) {
 
+	/**
+	 * @fileoverview Set each command name using in Ajax feature
+	 * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
+	 */
 	'use strict';
 
 	/**
@@ -2629,6 +2649,10 @@
 /* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
+	/**
+	 * @fileoverview Control each tree node's data
+	 * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
+	 */
 	'use strict';
 
 	var states = __webpack_require__(4).node,
@@ -2939,6 +2963,10 @@
 /* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
+	/**
+	 * @fileoverview Feature that each tree node is possible to select as click
+	 * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
+	 */
 	'use strict';
 
 	var util = __webpack_require__(2);
@@ -3173,7 +3201,12 @@
 /* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
+	/**
+	 * @fileoverview Feature that each tree node is possible to drag and drop
+	 * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
+	 */
 	'use strict';
+
 	var util = __webpack_require__(2);
 
 	var defaultOptions = {
@@ -3762,6 +3795,10 @@
 /* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
+	/**
+	 * @fileoverview Feature that each tree node is possible to edit as double click
+	 * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
+	 */
 	'use strict';
 
 	var util = __webpack_require__(2);
@@ -4138,9 +4175,14 @@
 /* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
+	/**
+	 * @fileoverview Feature that each tree node is possible to check and uncheck
+	 * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
+	 */
 	'use strict';
 
 	var util = __webpack_require__(2);
+
 	var API_LIST = [
 	    'check',
 	    'uncheck',
@@ -4757,7 +4799,12 @@
 /* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
+	/**
+	 * @fileoverview Feature that each tree node is possible to have context-menu
+	 * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
+	 */
 	'use strict';
+
 	var util = __webpack_require__(2);
 
 	var API_LIST = [
@@ -5001,6 +5048,10 @@
 /* 15 */
 /***/ function(module, exports) {
 
+	/**
+	 * @fileoverview Feature that tree action is enable to communicate server
+	 * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
+	 */
 	'use strict';
 
 	var snippet = tui.util;

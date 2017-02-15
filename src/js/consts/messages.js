@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Set error messages
+ * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
+ */
 'use strict';
 
 /**

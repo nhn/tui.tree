@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Control each tree node's data
+ * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
+ */
 'use strict';
 
 var states = require('./consts/states').node,
