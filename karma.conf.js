@@ -178,20 +178,7 @@ module.exports = function(config) {
         },
         reporters: ['dots'],
         webpack: {
-            devtool: 'inline-source-map',
-            module: {
-                preLoaders: [
-                    {
-                        test: /\.js$/,
-                        include: /src/,
-                        exclude: /(bower_components|node_modules)/,
-                        loader: 'eslint-loader'
-                    }
-                ]
-            },
-            plugins: [
-                new webpack.HotModuleReplacementPlugin()
-            ]
+            devtool: 'inline-source-map'
         },
         port: 9876,
         colors: true,

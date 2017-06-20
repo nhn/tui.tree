@@ -1,5 +1,5 @@
 /**
- * webpack.config.js.js created on 2016. 12. 01.
+ * webpack.config.js updated on 2017. 02. 27
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
 'use strict';
@@ -7,6 +7,7 @@
 /* eslint-disable vars-on-top, no-process-env, require-jsdoc */
 var pkg = require('./package.json');
 var webpack = require('webpack');
+var ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 var isProduction = process.argv.indexOf('-p') > -1;
 
@@ -20,7 +21,7 @@ var BANNER = [
 
 module.exports = {
     eslint: {
-        failOnError: true
+        failOnError: isProduction
     },
     entry: './src/index.js',
     output: {
@@ -32,18 +33,26 @@ module.exports = {
         preLoaders: [
             {
                 test: /\.js$/,
-                exclude: /(node_modules|bower_components)/,
+                exclude: /(test|node_modules|bower_components)/,
                 loader: 'eslint-loader'
+            },
+            {
+                test: /\.css$/,
+                loader: ExtractTextPlugin.extract('style-loader', 'css-loader')
+            },
+            {
+                test: /[\.png|\.gif]$/,
+                loader: 'url-loader'
             }
         ]
     },
     plugins: [
-        new webpack.BannerPlugin(BANNER)
+        new webpack.BannerPlugin(BANNER),
+        new ExtractTextPlugin(pkg.name + '.css')
     ],
     devServer: {
         historyApiFallback: false,
         progress: true,
-        inline: true,
         host: '0.0.0.0'
     }
 };

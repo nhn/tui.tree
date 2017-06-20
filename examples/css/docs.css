@@ -10,6 +10,7 @@ body {
     top: 0;
     left: 305px;
     font-size: 12px;
+    z-index: -1;
 }
 
 .explain textarea {
