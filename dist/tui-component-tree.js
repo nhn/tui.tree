@@ -1,6 +1,6 @@
 /*!
  * tui-component-tree.js
- * @version 2.0.0
+ * @version 2.0.1
  * @author NHNEnt FE Development Lab <dl_javascript@nhnent.com>
  * @license MIT
  */
@@ -48,18 +48,19 @@
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	var Tree = __webpack_require__(1);
+	__webpack_require__(16);
 	tui.util.defineNamespace('tui.component', {
 	    Tree: Tree
 	});
 
 
-/***/ },
+/***/ }),
 /* 1 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Render tree and update tree
@@ -1345,13 +1346,14 @@
 	        /**
 	         * @api
 	         * @event Tree#beforeMove
-	         * @param {{nodeId: string, parentId: string}} evt - Event data
+	         * @param {{nodeId: string, newParentId: string}} evt - Event data
 	         *     @param {string} evt.nodeId - Current dragging node id
-	         *     @param {string} evt.parentId - New parent id
+	         *     @param {string} evt.newParentId - New parent id
 	         * @example
 	         * tree.on('beforeMove', function(evt) {
 	         *      console.log('dragging node: ' + evt.nodeId);
-	         *      console.log('parent node: ' + evt.parentId);
+	         *      console.log('new parent node: ' + evt.newParentId);
+	         *      console.log('original parent node: ' + tree.getParentId(evt.nodeId));
 	         *
 	         *      return false; // Cancel "move" event
 	         *      // return true; // Fire "move" event
@@ -1641,9 +1643,9 @@
 	module.exports = Tree;
 
 
-/***/ },
+/***/ }),
 /* 2 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	/**
 	 * @fileoverview Helper object to make easy tree elements
@@ -1959,6 +1961,29 @@
 	    },
 
 	    /**
+	     * Get top position value of element
+	     * @param {HTMLElement} element - Target element
+	     * @returns {number} Top position value
+	     */
+	    getElementTop: function(element) {
+	        var actualTop = 0;
+	        var scrollTop;
+
+	        while (element) {
+	            if (element.tagName.toLowerCase === 'body') {
+	                scrollTop = util.getWindowScrollTop();
+	            } else {
+	                scrollTop = element.scrollTop;
+	            }
+
+	            actualTop += element.offsetTop - scrollTop + element.clientTop;
+	            element = element.offsetParent;
+	        }
+
+	        return actualTop;
+	    },
+
+	    /**
 	     * Get first text node in target element
 	     * @param {HTMLElement} element - Target element to find
 	     * @returns {HTMLElement} Text node
@@ -2010,9 +2035,9 @@
 	module.exports = util;
 
 
-/***/ },
+/***/ }),
 /* 3 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	/**
 	 * @fileoverview Set default value of options
@@ -2083,9 +2108,9 @@
 	};
 
 
-/***/ },
+/***/ }),
 /* 4 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	/**
 	 * @fileoverview Set default value of toggle button
@@ -2109,9 +2134,9 @@
 	};
 
 
-/***/ },
+/***/ }),
 /* 5 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	/**
 	 * @fileoverview Set error messages
@@ -2133,9 +2158,9 @@
 	};
 
 
-/***/ },
+/***/ }),
 /* 6 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	/**
 	 * @fileoverview Set outer template
@@ -2160,9 +2185,9 @@
 	};
 
 
-/***/ },
+/***/ }),
 /* 7 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	/**
 	 * @fileoverview Set each command name using in Ajax feature
@@ -2184,9 +2209,9 @@
 	};
 
 
-/***/ },
+/***/ }),
 /* 8 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Update view and control tree data
@@ -2498,7 +2523,7 @@
 	    /*eslint-disable complexity*/
 	    move: function(nodeId, newParentId, index, isSilent) {
 	        var node = this.getNode(nodeId);
-	        var originalParentId, newParent;
+	        var originalParentId, newParent, sameParent;
 
 	        if (!node) {
 	            return;
@@ -2507,9 +2532,10 @@
 	        newParent = this.getNode(newParentId) || this.rootNode;
 	        newParentId = newParent.getId();
 	        originalParentId = node.getParentId();
-	        index = tui.util.isUndefined(index) ? -1 : index;
+	        sameParent = (index === -1) && (originalParentId === newParentId);
 
-	        if (nodeId === newParentId || this.contains(nodeId, newParentId)) {
+	        if (nodeId === newParentId || sameParent ||
+	            this.contains(nodeId, newParentId)) {
 	            return;
 	        }
 
@@ -2645,9 +2671,9 @@
 	module.exports = TreeModel;
 
 
-/***/ },
+/***/ }),
 /* 9 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Control each tree node's data
@@ -2959,9 +2985,9 @@
 	module.exports = TreeNode;
 
 
-/***/ },
+/***/ }),
 /* 10 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Feature that each tree node is possible to select as click
@@ -3197,9 +3223,9 @@
 	module.exports = Selectable;
 
 
-/***/ },
+/***/ }),
 /* 11 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Feature that each tree node is possible to drag and drop
@@ -3440,7 +3466,7 @@
 	        var lineStyle = lineElement.style;
 
 	        lineStyle.position = 'absolute';
-	        lineStyle.visibility = 'hidden';
+	        lineStyle.display = 'none';
 
 	        util.addClass(lineElement, this.lineClassName);
 
@@ -3591,20 +3617,70 @@
 	     */
 	    _onMouseup: function(event) {
 	        var tree = this.tree;
+	        var nodeId = this.currentNodeId;
 	        var target = util.getTarget(event);
-	        var nodeId = tree.getNodeIdFromElement(target);
-	        var index = -1;
+	        var targetId = this._getTargetNodeId(target);
+	        var index = this._getIndexToInsert(targetId);
+	        var newParentId;
 
-	        if (nodeId && this.isSortable && this.movingLineType) {
-	            index = this._getIndexForInserting(nodeId);
-	            nodeId = tree.getParentId(nodeId);
+	        if (index === -1) { // When the node is created as a child after moving
+	            newParentId = targetId;
+	        } else {
+	            newParentId = tree.getParentId(targetId);
 	        }
 
-	        if (this.currentNodeId !== nodeId) {
-	            tree.move(this.currentNodeId, nodeId, index);
-	        }
-
+	        tree.move(nodeId, newParentId, index);
 	        this._reset();
+	    },
+
+	    /**
+	     * Get id of the target element on which the moved item is placed
+	     * @param {HTMLElement} target - Target element
+	     * @returns {string} Id of target element
+	     * @private
+	     */
+	    _getTargetNodeId: function(target) {
+	        var tree = this.tree;
+	        var movingType = this.movingLineType;
+	        var nodeId = tree.getNodeIdFromElement(target);
+	        var childIds;
+
+	        if (nodeId) {
+	            return nodeId;
+	        }
+
+	        childIds = tree.getChildIds(tree.getRootNodeId());
+
+	        if (movingType === 'top') {
+	            nodeId = childIds[0];
+	        } else {
+	            nodeId = childIds[childIds.length - 1];
+	        }
+
+	        return nodeId;
+	    },
+
+	    /**
+	     * Get a index number to insert the moved item
+	     * @param {number} nodeId - Id of moved item
+	     * @returns {number} Index number
+	     * @private
+	     */
+	    _getIndexToInsert: function(nodeId) {
+	        var movingType = this.movingLineType;
+	        var index;
+
+	        if (!movingType) {
+	            return -1;
+	        }
+
+	        index = this.tree.getNodeIndex(nodeId);
+
+	        if (movingType === 'bottom') {
+	            index += 1;
+	        }
+
+	        return index;
 	    },
 
 	    /**
@@ -3720,31 +3796,14 @@
 	        var scrollTop;
 
 	        if (boundaryType) {
-	            scrollTop = util.getWindowScrollTop();
-
-	            style.top = targetPos[boundaryType] + scrollTop + 'px';
-	            style.visibility = 'visible';
+	            scrollTop = util.getElementTop(this.tree.rootElement.parentNode);
+	            style.top = targetPos[boundaryType] - scrollTop + 'px';
+	            style.display = 'block';
 	            this.movingLineType = boundaryType;
 	        } else {
-	            style.visibility = 'hidden';
+	            style.display = 'none';
 	            this.movingLineType = null;
 	        }
-	    },
-
-	    /**
-	     * Get index for inserting
-	     * @param {string} nodeId - Current selected helper node id
-	     * @returns {number} Index number
-	     * @private
-	     */
-	    _getIndexForInserting: function(nodeId) {
-	        var index = this.tree.getNodeIndex(nodeId);
-
-	        if (this.movingLineType === 'bottom') {
-	            index += 1;
-	        }
-
-	        return index;
 	    },
 
 	    /**
@@ -3753,7 +3812,7 @@
 	     */
 	    _reset: function() {
 	        if (this.isSortable) {
-	            this.lineElement.style.visibility = 'hidden';
+	            this.lineElement.style.display = 'none';
 	        }
 
 	        if (this.hoveredElement) {
@@ -3791,9 +3850,9 @@
 	module.exports = Draggable;
 
 
-/***/ },
+/***/ }),
 /* 12 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Feature that each tree node is possible to edit as double click
@@ -4171,9 +4230,9 @@
 	module.exports = Editable;
 
 
-/***/ },
+/***/ }),
 /* 13 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Feature that each tree node is possible to check and uncheck
@@ -4795,9 +4854,9 @@
 	module.exports = Checkbox;
 
 
-/***/ },
+/***/ }),
 /* 14 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Feature that each tree node is possible to have context-menu
@@ -5044,9 +5103,9 @@
 	module.exports = ContextMenu;
 
 
-/***/ },
+/***/ }),
 /* 15 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	/**
 	 * @fileoverview Feature that tree action is enable to communicate server
@@ -5345,5 +5404,11 @@
 	module.exports = Ajax;
 
 
-/***/ }
+/***/ }),
+/* 16 */
+/***/ (function(module, exports) {
+
+	// removed by extract-text-webpack-plugin
+
+/***/ })
 /******/ ]);

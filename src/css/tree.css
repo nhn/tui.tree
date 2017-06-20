@@ -164,6 +164,7 @@
     height: 1px;
     background-color: #4b96e6;
     font-size: 0;
+    z-index: 1;
 }
 
 .tui-tree-drop {
@@ -173,6 +174,7 @@
     background-color: #fff;
     border: 1px solid #4b96e6;
     color: #4b96e6;
+    z-index: 2;
 }
 
 .tui-tree-drop .tui-ico-folder, .tui-tree-drop .tui-ico-file {
