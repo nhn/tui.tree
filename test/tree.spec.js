@@ -209,15 +209,17 @@ describe('Tree', function() {
     });
 
     it('"move()" should fire "move" event with some related ids', function() {
-        spyOn(tree, 'fire');
+        var mock = jasmine.createSpy('move event handler');
+        var index = -1;
 
-        tree.move(grandChildId, lastChildId);
+        tree.on('move', mock);
+        tree.move(grandChildId, lastChildId, index);
 
-        expect(tree.fire).toHaveBeenCalledWith('move', {
+        expect(mock).toHaveBeenCalledWith({
             nodeId: grandChildId,
             originalParentId: firstChildId,
             newParentId: lastChildId,
-            index: -1
+            index: index
         });
     });
 

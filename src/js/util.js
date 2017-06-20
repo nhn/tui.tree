@@ -312,6 +312,29 @@ var util = {
     },
 
     /**
+     * Get top position value of element
+     * @param {HTMLElement} element - Target element
+     * @returns {number} Top position value
+     */
+    getElementTop: function(element) {
+        var actualTop = 0;
+        var scrollTop;
+
+        while (element) {
+            if (element.tagName.toLowerCase === 'body') {
+                scrollTop = util.getWindowScrollTop();
+            } else {
+                scrollTop = element.scrollTop;
+            }
+
+            actualTop += element.offsetTop - scrollTop + element.clientTop;
+            element = element.offsetParent;
+        }
+
+        return actualTop;
+    },
+
+    /**
      * Get first text node in target element
      * @param {HTMLElement} element - Target element to find
      * @returns {HTMLElement} Text node

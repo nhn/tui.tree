@@ -209,7 +209,7 @@ describe('Tree', function() {
 
         treeDraggable._drawBoundaryLine(targetPos, boundaryType);
 
-        expect(treeDraggable.lineElement.style.visibility).toEqual('visible');
+        expect(treeDraggable.lineElement.style.display).toEqual('block');
     });
 
     describe('_getIndexForInserting() is called,', function() {
@@ -226,7 +226,7 @@ describe('Tree', function() {
             treeDraggable.currentNodeId = helperId;
             treeDraggable.movingLineType = 'top';
 
-            index = treeDraggable._getIndexForInserting(nodeId);
+            index = treeDraggable._getIndexToInsert(nodeId);
 
             expect(index).toEqual(2);
         });
@@ -238,7 +238,7 @@ describe('Tree', function() {
             treeDraggable.currentNodeId = helperId;
             treeDraggable.movingLineType = 'bottom';
 
-            index = treeDraggable._getIndexForInserting(nodeId);
+            index = treeDraggable._getIndexToInsert(nodeId);
 
             expect(index).toEqual(1);
         });

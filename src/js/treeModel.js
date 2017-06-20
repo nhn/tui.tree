@@ -308,7 +308,7 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
     /*eslint-disable complexity*/
     move: function(nodeId, newParentId, index, isSilent) {
         var node = this.getNode(nodeId);
-        var originalParentId, newParent;
+        var originalParentId, newParent, sameParent;
 
         if (!node) {
             return;
@@ -317,9 +317,10 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
         newParent = this.getNode(newParentId) || this.rootNode;
         newParentId = newParent.getId();
         originalParentId = node.getParentId();
-        index = tui.util.isUndefined(index) ? -1 : index;
+        sameParent = (index === -1) && (originalParentId === newParentId);
 
-        if (nodeId === newParentId || this.contains(nodeId, newParentId)) {
+        if (nodeId === newParentId || sameParent ||
+            this.contains(nodeId, newParentId)) {
             return;
         }
 

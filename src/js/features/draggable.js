@@ -237,7 +237,7 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{/*eslint-
         var lineStyle = lineElement.style;
 
         lineStyle.position = 'absolute';
-        lineStyle.visibility = 'hidden';
+        lineStyle.display = 'none';
 
         util.addClass(lineElement, this.lineClassName);
 
@@ -388,20 +388,70 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{/*eslint-
      */
     _onMouseup: function(event) {
         var tree = this.tree;
+        var nodeId = this.currentNodeId;
         var target = util.getTarget(event);
-        var nodeId = tree.getNodeIdFromElement(target);
-        var index = -1;
+        var targetId = this._getTargetNodeId(target);
+        var index = this._getIndexToInsert(targetId);
+        var newParentId;
 
-        if (nodeId && this.isSortable && this.movingLineType) {
-            index = this._getIndexForInserting(nodeId);
-            nodeId = tree.getParentId(nodeId);
+        if (index === -1) { // When the node is created as a child after moving
+            newParentId = targetId;
+        } else {
+            newParentId = tree.getParentId(targetId);
         }
 
-        if (this.currentNodeId !== nodeId) {
-            tree.move(this.currentNodeId, nodeId, index);
-        }
-
+        tree.move(nodeId, newParentId, index);
         this._reset();
+    },
+
+    /**
+     * Get id of the target element on which the moved item is placed
+     * @param {HTMLElement} target - Target element
+     * @returns {string} Id of target element
+     * @private
+     */
+    _getTargetNodeId: function(target) {
+        var tree = this.tree;
+        var movingType = this.movingLineType;
+        var nodeId = tree.getNodeIdFromElement(target);
+        var childIds;
+
+        if (nodeId) {
+            return nodeId;
+        }
+
+        childIds = tree.getChildIds(tree.getRootNodeId());
+
+        if (movingType === 'top') {
+            nodeId = childIds[0];
+        } else {
+            nodeId = childIds[childIds.length - 1];
+        }
+
+        return nodeId;
+    },
+
+    /**
+     * Get a index number to insert the moved item
+     * @param {number} nodeId - Id of moved item
+     * @returns {number} Index number
+     * @private
+     */
+    _getIndexToInsert: function(nodeId) {
+        var movingType = this.movingLineType;
+        var index;
+
+        if (!movingType) {
+            return -1;
+        }
+
+        index = this.tree.getNodeIndex(nodeId);
+
+        if (movingType === 'bottom') {
+            index += 1;
+        }
+
+        return index;
     },
 
     /**
@@ -517,31 +567,14 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{/*eslint-
         var scrollTop;
 
         if (boundaryType) {
-            scrollTop = util.getWindowScrollTop();
-
-            style.top = targetPos[boundaryType] + scrollTop + 'px';
-            style.visibility = 'visible';
+            scrollTop = util.getElementTop(this.tree.rootElement.parentNode);
+            style.top = targetPos[boundaryType] - scrollTop + 'px';
+            style.display = 'block';
             this.movingLineType = boundaryType;
         } else {
-            style.visibility = 'hidden';
+            style.display = 'none';
             this.movingLineType = null;
         }
-    },
-
-    /**
-     * Get index for inserting
-     * @param {string} nodeId - Current selected helper node id
-     * @returns {number} Index number
-     * @private
-     */
-    _getIndexForInserting: function(nodeId) {
-        var index = this.tree.getNodeIndex(nodeId);
-
-        if (this.movingLineType === 'bottom') {
-            index += 1;
-        }
-
-        return index;
     },
 
     /**
@@ -550,7 +583,7 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{/*eslint-
      */
     _reset: function() {
         if (this.isSortable) {
-            this.lineElement.style.visibility = 'hidden';
+            this.lineElement.style.display = 'none';
         }
 
         if (this.hoveredElement) {

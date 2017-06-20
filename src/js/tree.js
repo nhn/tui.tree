@@ -1282,13 +1282,14 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
         /**
          * @api
          * @event Tree#beforeMove
-         * @param {{nodeId: string, parentId: string}} evt - Event data
+         * @param {{nodeId: string, newParentId: string}} evt - Event data
          *     @param {string} evt.nodeId - Current dragging node id
-         *     @param {string} evt.parentId - New parent id
+         *     @param {string} evt.newParentId - New parent id
          * @example
          * tree.on('beforeMove', function(evt) {
          *      console.log('dragging node: ' + evt.nodeId);
-         *      console.log('parent node: ' + evt.parentId);
+         *      console.log('new parent node: ' + evt.newParentId);
+         *      console.log('original parent node: ' + tree.getParentId(evt.nodeId));
          *
          *      return false; // Cancel "move" event
          *      // return true; // Fire "move" event
