@@ -3629,7 +3629,10 @@
 	            newParentId = tree.getParentId(targetId);
 	        }
 
-	        tree.move(nodeId, newParentId, index);
+	        if (nodeId !== newParentId) { // Don't fire beforeMove event
+	            tree.move(nodeId, newParentId, index);
+	        }
+
 	        this._reset();
 	    },
 

@@ -146,6 +146,10 @@
             infoArea.value = message;
         });
 
+        tree.on('beforeMove', function() {
+            console.log('before move');
+        });
+
         </script>
     </body>
 </html>
