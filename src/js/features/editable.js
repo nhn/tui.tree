@@ -245,6 +245,8 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
         var inputElement = this._createInputElement();
 
         util.addClass(wrapperElement, WRAPPER_CLASSNAME);
+        wrapperElement.style.paddingLeft = (this.tree.indent * this.tree.getDepth(nodeId) + 37) + 'px';
+
         inputElement.value = tree.getNodeData(nodeId)[this.dataKey] || '';
 
         wrapperElement.appendChild(inputElement);

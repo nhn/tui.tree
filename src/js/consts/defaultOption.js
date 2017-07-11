@@ -63,5 +63,6 @@ module.exports = {
                     '{{text}}' +
                 '</span>' +
             '</div>'
-    }
+    },
+    indent: 23
 };

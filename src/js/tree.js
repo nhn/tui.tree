@@ -228,9 +228,21 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
          */
         this.isMovingNode = false;
 
+        this.indent = options.indent;
+
         this._setRoot(container);
         this._draw(this.getRootNodeId());
         this._setEvents();
+    },
+
+    /*
+     * Calculate list item's indentation width by it's depth
+     * @param {string} nodeId - list item's id
+     * @returns {number} - indentation width
+     * @private
+     */
+    _calculateIndentationWidth: function(nodeId) {
+        return this.indent * this.getDepth(nodeId);
     },
 
     /**
@@ -648,6 +660,10 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
             this.each(function(child) {
                 this._setClassWithDisplay(child);
             }, nodeId, this);
+        }
+
+        if (element && element.childNodes) {
+            element.childNodes[0].style.paddingLeft = this._calculateIndentationWidth(nodeId) + 'px';
         }
     },
 

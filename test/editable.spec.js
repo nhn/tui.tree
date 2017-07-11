@@ -14,6 +14,7 @@ describe('Tree', function() {
         ]},
         {title: 'B'}
     ];
+    var WRAPPER_CLASSNAME = 'tui-input-wrap';
 
     beforeEach(function() {
         loadFixtures('basicFixture.html');
@@ -100,10 +101,27 @@ describe('Tree', function() {
     });
 
     it('"_attachInputElement" should attach the input element to selected node.', function() {
-        var wrapperClassName = 'tui-input-wrap';
-
         treeEditable._attachInputElement(firstChildId);
 
-        expect(util.getElementsByClassName(firstChildElement, wrapperClassName).length).toBe(1);
+        expect(util.getElementsByClassName(firstChildElement, WRAPPER_CLASSNAME).length).toBe(1);
+    });
+
+    it('should calculate input element\'s paddingLeft by it\'s depth when editable feature is enabled.', function() {
+        /* expect all node is closed */
+        var nodeElements = util.getElementsByClassName(tree.rootElement, 'tui-tree-closed');
+        var i = 0;
+        var length = nodeElements.length;
+        var nodeElement, id, inputWrapper, expectedPaddingLeft;
+
+        for (; i < length; i += 1) {
+            nodeElement = nodeElements[i];
+            id = nodeElement.id;
+            expectedPaddingLeft = (23 * tree.getDepth(id) + 37) + 'px';
+
+            tree.editNode(id);
+            inputWrapper = util.getElementsByClassName(nodeElement, WRAPPER_CLASSNAME)[0];
+
+            expect(inputWrapper.style.paddingLeft).toBe(expectedPaddingLeft);
+        }
     });
 });
