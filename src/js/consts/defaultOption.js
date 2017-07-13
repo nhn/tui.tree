@@ -41,11 +41,12 @@ module.exports = {
         closedClass: 'tui-tree-closed',
         subtreeClass: 'tui-js-tree-subtree',
         toggleBtnClass: 'tui-js-tree-toggle-btn',
-        textClass: 'tui-js-tree-text'
+        textClass: 'tui-js-tree-text',
+        btnClass: 'tui-tree-btn'
     },
     template: {
         internalNode:
-            '<div class="tui-tree-btn">' +
+            '<div class="{{btnClass}}">' +
                 '<button type="button" class="tui-tree-toggle-btn {{toggleBtnClass}}">' +
                     '<span class="tui-ico-tree"></span>' +
                     '{{stateLabel}}' +
@@ -57,11 +58,12 @@ module.exports = {
             '</div>' +
             '<ul class="tui-tree-subtree {{subtreeClass}}">{{children}}</ul>',
         leafNode:
-            '<div class="tui-tree-btn">' +
+            '<div class="{{btnClass}}">' +
                 '<span class="tui-tree-text {{textClass}}">' +
                     '<span class="tui-tree-ico tui-ico-file"></span>' +
                     '{{text}}' +
                 '</span>' +
             '</div>'
-    }
+    },
+    indent: 23
 };

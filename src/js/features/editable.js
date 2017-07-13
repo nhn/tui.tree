@@ -18,6 +18,7 @@ var EDIT_TYPE = {
 };
 var WRAPPER_CLASSNAME = 'tui-input-wrap';
 var INPUT_CLASSNAME = 'tui-tree-input';
+var ITEM_ICON_WIDTH = 37;
 
 /**
  * Set the tree selectable
@@ -241,21 +242,35 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
     _attachInputElement: function(nodeId) {
         var tree = this.tree;
         var target = document.getElementById(nodeId);
-        var wrapperElement = document.createElement('DIV');
-        var inputElement = this._createInputElement();
+        var wrapperElement, inputElement;
 
-        util.addClass(wrapperElement, WRAPPER_CLASSNAME);
-        inputElement.value = tree.getNodeData(nodeId)[this.dataKey] || '';
+        if (!target) {
+            return;
+        }
 
-        wrapperElement.appendChild(inputElement);
-        target.appendChild(wrapperElement);
+        wrapperElement = util.getChildElementByClassName(target, WRAPPER_CLASSNAME);
+        if (!wrapperElement) {
+            wrapperElement = document.createElement('DIV');
+            inputElement = this._createInputElement();
 
-        util.addEventListener(inputElement, 'keyup', this.boundOnKeyup);
-        util.addEventListener(inputElement, 'blur', this.boundOnBlur);
+            util.addClass(wrapperElement, WRAPPER_CLASSNAME);
+            wrapperElement.style.paddingLeft = (tree.indent * tree.getDepth(nodeId) + ITEM_ICON_WIDTH) + 'px';
 
-        this.inputElement = inputElement;
+            inputElement.value = tree.getNodeData(nodeId)[this.dataKey] || '';
 
-        inputElement.focus();
+            wrapperElement.appendChild(inputElement);
+            target.appendChild(wrapperElement);
+
+            util.addEventListener(inputElement, 'keyup', this.boundOnKeyup);
+            util.addEventListener(inputElement, 'blur', this.boundOnBlur);
+
+            if (this.inputElement) {
+                $(this.inputElement).blur();
+            }
+            this.inputElement = inputElement;
+        }
+
+        this.inputElement.focus();
     },
 
     /**

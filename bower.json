@@ -21,7 +21,7 @@
         ".gitignore",
         "examples",
         "index.js",
-        "jsdoc-conf.json",
+        "jsdoc.conf.json",
         "webpack.config.js"
     ],
     "dependencies": {

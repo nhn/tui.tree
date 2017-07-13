@@ -1,6 +1,6 @@
 'use strict';
-var Tree = require('../src/js/tree');
-var util = require('../src/js/util');
+var Tree = require('../../src/js/tree');
+var util = require('../../src/js/util');
 
 describe('Tree', function() {
     var tree, treeEditable, rootNodeId;
@@ -14,6 +14,7 @@ describe('Tree', function() {
         ]},
         {title: 'B'}
     ];
+    var WRAPPER_CLASSNAME = 'tui-input-wrap';
 
     beforeEach(function() {
         loadFixtures('basicFixture.html');
@@ -100,10 +101,23 @@ describe('Tree', function() {
     });
 
     it('"_attachInputElement" should attach the input element to selected node.', function() {
-        var wrapperClassName = 'tui-input-wrap';
-
         treeEditable._attachInputElement(firstChildId);
 
-        expect(util.getElementsByClassName(firstChildElement, wrapperClassName).length).toBe(1);
+        expect(util.getElementsByClassName(firstChildElement, WRAPPER_CLASSNAME).length).toBe(1);
+    });
+
+    it('should calculate input element\'s paddingLeft by it\'s depth when editable feature is enabled.', function() {
+        /* expected padding-left: 23 * depth + 37 */
+
+        var nodeElements = util.getElementsByClassName(tree.rootElement, 'tui-tree-node');
+        var inputWrapper;
+
+        tree.editNode(nodeElements[0].id); // depth 1
+        inputWrapper = util.getChildElementByClassName(nodeElements[0], WRAPPER_CLASSNAME);
+        expect(inputWrapper.style.paddingLeft).toBe((23 * 1 + 37) + 'px');
+
+        tree.editNode(nodeElements[1].id); // depth 2
+        inputWrapper = util.getChildElementByClassName(nodeElements[1], WRAPPER_CLASSNAME);
+        expect(inputWrapper.style.paddingLeft).toBe((23 * 2 + 37) + 'px');
     });
 });

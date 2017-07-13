@@ -157,7 +157,7 @@ module.exports = function(config) {
         frameworks: ['jasmine'],
         files: [
             'node_modules/babel-polyfill/dist/polyfill.js',
-            'bower_components/tui-code-snippet/code-snippet.js',
+            'bower_components/tui-code-snippet/dist/code-snippet.js',
             'bower_components/tui-dom/dist/tui-dom.js',
             'bower_components/tui-component-floatinglayer/dist/floatingLayer.js',
             'bower_components/tui-component-contextmenu/dist/tui-component-contextmenu.js',

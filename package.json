@@ -1,7 +1,7 @@
 {
     "name": "tui-component-tree",
     "author": "NHNEnt FE Development Lab <dl_javascript@nhnent.com>",
-    "version": "2.0.1",
+    "version": "2.1.1",
     "license": "MIT",
     "repository": "https://github.com/nhnent/tui.component.tree.git",
     "description": "Tree component",
@@ -33,16 +33,17 @@
         "tui-jsdoc-template": "^1.0.4",
         "url-loader": "^0.5.7",
         "webpack": "^1.13.2",
-        "webpack-dev-server": "^1.16.1"
+        "webpack-dev-server": "^1.16.5"
     },
     "scripts": {
         "test": "karma start --no-single-run",
         "test:bs": "KARMA_SERVER=bs karma start",
         "test:ne": "KARMA_SERVER=ne karma start",
         "bundle": "webpack && webpack -p",
+        "dev": "webpack --watch",
         "serve": "webpack-dev-server --inline --hot -d",
         "serve:ie8": "webpack-dev-server -d",
         "cpy-dist2doc": "mkdir -p doc/dist && cp -f -r dist doc",
-        "doc": "jsdoc -c jsdoc-conf.json && npm run cpy-dist2doc"
+        "doc": "jsdoc -c jsdoc.conf.json && npm run cpy-dist2doc"
     }
 }

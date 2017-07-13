@@ -228,9 +228,42 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
          */
         this.isMovingNode = false;
 
+        /**
+         * nested item's indent width
+         * @type {number}
+         * @private
+         */
+        this.indent = options.indent;
+
         this._setRoot(container);
         this._draw(this.getRootNodeId());
         this._setEvents();
+    },
+
+    /**
+     * Calculate list item's indentation width by it's depth
+     * @param {string} nodeId - list item's id
+     * @returns {number} - indentation width
+     * @private
+     */
+    _calculateIndentationWidth: function(nodeId) {
+        return this.indent * this.getDepth(nodeId);
+    },
+
+    /**
+     * Nested list items are indented from parent list item<br>
+     * by adding padding left on nested element.
+     * @param {HTMLElement} element - list item element having LI tag
+     * @param {string} nodeId - tree node id
+     */
+    _setIndentOnListItem: function(element, nodeId) {
+        var childElement;
+        if (element) {
+            childElement = util.getChildElementByClassName(element, this.classNames.btnClass);
+            if (childElement) {
+                childElement.style.paddingLeft = this._calculateIndentationWidth(nodeId) + 'px';
+            }
+        }
     },
 
     /**
@@ -609,7 +642,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
             element = document.getElementById(nodeId);
         }
         element.innerHTML = html;
-        this._setClassWithDisplay(node);
+        this._setClassNameAndVisibilityByFeature(node);
 
         /**
          * @api
@@ -628,27 +661,31 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
     },
 
     /**
-     * Set class and display of node element
-     * @param {TreeNode} node - Node
+     * Update class name by features on below<br>
+     * - leaf node: has classNames.leafClass<br>
+     * - internal node + opened: has classNames.openedClass, child is visible<br>
+     * - internal node + closed: has classNames.closedClass, child is not visible<br>
+     * @param {TreeNode} node - (re)drawing starts from this node
      * @private
      */
-    _setClassWithDisplay: function(node) {
+    _setClassNameAndVisibilityByFeature: function(node) {
         var nodeId = node.getId(),
             element = document.getElementById(nodeId),
             classNames = this.classNames;
-
-        util.removeClass(element, classNames.leafClass);
 
         if (node.isLeaf()) {
             util.removeClass(element, classNames.openedClass);
             util.removeClass(element, classNames.closedClass);
             util.addClass(element, classNames.leafClass);
         } else {
+            util.removeClass(element, classNames.leafClass);
             this._setDisplayFromNodeState(nodeId, node.getState());
             this.each(function(child) {
-                this._setClassWithDisplay(child);
+                this._setClassNameAndVisibilityByFeature(child);
             }, nodeId, this);
         }
+
+        this._setIndentOnListItem(element, nodeId);
     },
 
     /**

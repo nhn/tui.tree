@@ -1,6 +1,6 @@
 /*!
  * tui-component-tree.js
- * @version 2.0.1
+ * @version 2.1.1
  * @author NHNEnt FE Development Lab <dl_javascript@nhnent.com>
  * @license MIT
  */
@@ -292,9 +292,42 @@
 	         */
 	        this.isMovingNode = false;
 
+	        /**
+	         * nested item's indent width
+	         * @type {number}
+	         * @private
+	         */
+	        this.indent = options.indent;
+
 	        this._setRoot(container);
 	        this._draw(this.getRootNodeId());
 	        this._setEvents();
+	    },
+
+	    /**
+	     * Calculate list item's indentation width by it's depth
+	     * @param {string} nodeId - list item's id
+	     * @returns {number} - indentation width
+	     * @private
+	     */
+	    _calculateIndentationWidth: function(nodeId) {
+	        return this.indent * this.getDepth(nodeId);
+	    },
+
+	    /**
+	     * Nested list items are indented from parent list item<br>
+	     * by adding padding left on nested element.
+	     * @param {HTMLElement} element - list item element having LI tag
+	     * @param {string} nodeId - tree node id
+	     */
+	    _setIndentOnListItem: function(element, nodeId) {
+	        var childElement;
+	        if (element) {
+	            childElement = util.getChildElementByClassName(element, this.classNames.btnClass);
+	            if (childElement) {
+	                childElement.style.paddingLeft = this._calculateIndentationWidth(nodeId) + 'px';
+	            }
+	        }
 	    },
 
 	    /**
@@ -673,7 +706,7 @@
 	            element = document.getElementById(nodeId);
 	        }
 	        element.innerHTML = html;
-	        this._setClassWithDisplay(node);
+	        this._setClassNameAndVisibilityByFeature(node);
 
 	        /**
 	         * @api
@@ -692,27 +725,31 @@
 	    },
 
 	    /**
-	     * Set class and display of node element
-	     * @param {TreeNode} node - Node
+	     * Update class name by features on below<br>
+	     * - leaf node: has classNames.leafClass<br>
+	     * - internal node + opened: has classNames.openedClass, child is visible<br>
+	     * - internal node + closed: has classNames.closedClass, child is not visible<br>
+	     * @param {TreeNode} node - (re)drawing starts from this node
 	     * @private
 	     */
-	    _setClassWithDisplay: function(node) {
+	    _setClassNameAndVisibilityByFeature: function(node) {
 	        var nodeId = node.getId(),
 	            element = document.getElementById(nodeId),
 	            classNames = this.classNames;
-
-	        util.removeClass(element, classNames.leafClass);
 
 	        if (node.isLeaf()) {
 	            util.removeClass(element, classNames.openedClass);
 	            util.removeClass(element, classNames.closedClass);
 	            util.addClass(element, classNames.leafClass);
 	        } else {
+	            util.removeClass(element, classNames.leafClass);
 	            this._setDisplayFromNodeState(nodeId, node.getState());
 	            this.each(function(child) {
-	                this._setClassWithDisplay(child);
+	                this._setClassNameAndVisibilityByFeature(child);
 	            }, nodeId, this);
 	        }
+
+	        this._setIndentOnListItem(element, nodeId);
 	    },
 
 	    /**
@@ -1819,7 +1856,33 @@
 	            });
 	        }
 
+	        if (!filtered) {
+	            filtered = [];
+	        }
+
 	        return filtered;
+	    },
+
+	    /**
+	     * Find element by class name among child nodes
+	     * @param {HTMLElement} target A target element
+	     * @param {string} className A name of class
+	     * @returns {Array.<HTMLElement>} Elements
+	     */
+	    getChildElementByClassName: function(target, className) {
+	        var children = target.childNodes;
+	        var i = 0;
+	        var length = children.length;
+	        var child;
+
+	        for (; i < length; i += 1) {
+	            child = children[i];
+	            if (util.hasClass(child, className)) {
+	                return child;
+	            }
+	        }
+
+	        return null;
 	    },
 
 	    /**
@@ -2082,11 +2145,12 @@
 	        closedClass: 'tui-tree-closed',
 	        subtreeClass: 'tui-js-tree-subtree',
 	        toggleBtnClass: 'tui-js-tree-toggle-btn',
-	        textClass: 'tui-js-tree-text'
+	        textClass: 'tui-js-tree-text',
+	        btnClass: 'tui-tree-btn'
 	    },
 	    template: {
 	        internalNode:
-	            '<div class="tui-tree-btn">' +
+	            '<div class="{{btnClass}}">' +
 	                '<button type="button" class="tui-tree-toggle-btn {{toggleBtnClass}}">' +
 	                    '<span class="tui-ico-tree"></span>' +
 	                    '{{stateLabel}}' +
@@ -2098,13 +2162,14 @@
 	            '</div>' +
 	            '<ul class="tui-tree-subtree {{subtreeClass}}">{{children}}</ul>',
 	        leafNode:
-	            '<div class="tui-tree-btn">' +
+	            '<div class="{{btnClass}}">' +
 	                '<span class="tui-tree-text {{textClass}}">' +
 	                    '<span class="tui-tree-ico tui-ico-file"></span>' +
 	                    '{{text}}' +
 	                '</span>' +
 	            '</div>'
-	    }
+	    },
+	    indent: 23
 	};
 
 
@@ -3877,6 +3942,7 @@
 	};
 	var WRAPPER_CLASSNAME = 'tui-input-wrap';
 	var INPUT_CLASSNAME = 'tui-tree-input';
+	var ITEM_ICON_WIDTH = 37;
 
 	/**
 	 * Set the tree selectable
@@ -4100,21 +4166,35 @@
 	    _attachInputElement: function(nodeId) {
 	        var tree = this.tree;
 	        var target = document.getElementById(nodeId);
-	        var wrapperElement = document.createElement('DIV');
-	        var inputElement = this._createInputElement();
+	        var wrapperElement, inputElement;
 
-	        util.addClass(wrapperElement, WRAPPER_CLASSNAME);
-	        inputElement.value = tree.getNodeData(nodeId)[this.dataKey] || '';
+	        if (!target) {
+	            return;
+	        }
 
-	        wrapperElement.appendChild(inputElement);
-	        target.appendChild(wrapperElement);
+	        wrapperElement = util.getChildElementByClassName(target, WRAPPER_CLASSNAME);
+	        if (!wrapperElement) {
+	            wrapperElement = document.createElement('DIV');
+	            inputElement = this._createInputElement();
 
-	        util.addEventListener(inputElement, 'keyup', this.boundOnKeyup);
-	        util.addEventListener(inputElement, 'blur', this.boundOnBlur);
+	            util.addClass(wrapperElement, WRAPPER_CLASSNAME);
+	            wrapperElement.style.paddingLeft = (tree.indent * tree.getDepth(nodeId) + ITEM_ICON_WIDTH) + 'px';
 
-	        this.inputElement = inputElement;
+	            inputElement.value = tree.getNodeData(nodeId)[this.dataKey] || '';
 
-	        inputElement.focus();
+	            wrapperElement.appendChild(inputElement);
+	            target.appendChild(wrapperElement);
+
+	            util.addEventListener(inputElement, 'keyup', this.boundOnKeyup);
+	            util.addEventListener(inputElement, 'blur', this.boundOnBlur);
+
+	            if (this.inputElement) {
+	                $(this.inputElement).blur();
+	            }
+	            this.inputElement = inputElement;
+	        }
+
+	        this.inputElement.focus();
 	    },
 
 	    /**
