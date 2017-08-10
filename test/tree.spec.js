@@ -5,37 +5,37 @@ var Tree = require('../src/js/tree'),
 
 describe('Tree', function() {
     var data = [
-            {text: 'A', children: [
-                {text: '1'},
-                {text: '2'},
-                {text: '3'},
-                {text: '4'},
-                {text: '5', children: [
-                    {text: '가', children: [
-                        {text: '*'}
-                    ]},
-                    {text: '나'}
+        {text: 'A', children: [
+            {text: '1'},
+            {text: '2'},
+            {text: '3'},
+            {text: '4'},
+            {text: '5', children: [
+                {text: '가', children: [
+                    {text: '*'}
                 ]},
-                {text: '6'},
-                {text: '7'},
-                {text: '8'},
-                {text: '9', children: [
-                    {text: '가'},
-                    {text: '나'}
-                ]},
-                {text: '10'},
-                {text: '11'},
-                {text: '12'}
+                {text: '나'}
             ]},
-            {text: 'B', children: [
-                {text: '1'},
-                {text: '2'},
-                {text: '3'},
-                {text: '4'},
-                {text: '5'}
-            ]}
-        ],
-        $rootElement,
+            {text: '6'},
+            {text: '7'},
+            {text: '8'},
+            {text: '9', children: [
+                {text: '가'},
+                {text: '나'}
+            ]},
+            {text: '10'},
+            {text: '11'},
+            {text: '12'}
+        ]},
+        {text: 'B', children: [
+            {text: '1'},
+            {text: '2'},
+            {text: '3'},
+            {text: '4'},
+            {text: '5'}
+        ]}
+    ];
+    var $rootElement,
         tree,
         firstChildId, lastChildId, grandChildId,
         firstChild,
@@ -153,16 +153,16 @@ describe('Tree', function() {
     });
 
     it('"add() with no "isSilent" flag" should redraw nodes', function() {
-        var childCount = firstChild.getChildIds().length,
-            data = [
-                {text: 'hello world'},
-                {text: 'new world'}
-            ],
-            subtreeElement;
+        var childCount = firstChild.getChildIds().length;
+        var subtreeElement;
+        var testData = [
+            {text: 'hello world'},
+            {text: 'new world'}
+        ];
 
         spyOn(tree, '_draw').and.callThrough();
 
-        tree.add(data, firstChildId);
+        tree.add(testData, firstChildId);
         subtreeElement = document.getElementById(firstChildId).lastChild;
 
         expect(firstChild.getChildIds().length).toEqual(childCount + 2);
@@ -170,14 +170,14 @@ describe('Tree', function() {
     });
 
     it('"add()" should return node ids of new added nodes', function() {
-        var data = [
-                {text: 'hello world', children: [
-                    {text: 'foo'},
-                    {text: 'bar'}
-                ]},
-                {text: 'new world'}
-            ],
-            ids = tree.add(data, firstChildId, false, false);
+        var testData = [
+            {text: 'hello world', children: [
+                {text: 'foo'},
+                {text: 'bar'}
+            ]},
+            {text: 'new world'}
+        ];
+        var ids = tree.add(testData, firstChildId, false, false);
 
         expect(ids).toEqual(jasmine.any(Array));
         expect(ids.length).toEqual(2);
@@ -269,12 +269,12 @@ describe('Tree', function() {
     });
 
     it('"resetAllData()" should reset all nodes from new data', function() {
-        var data = [
-                {text: 'hello'},
-                {text: 'wolrd'}
-            ],
-            newChildIds = tree.resetAllData(data),
-            rootNodeId = tree.getRootNodeId();
+        var testData = [
+            {text: 'hello'},
+            {text: 'wolrd'}
+        ];
+        var newChildIds = tree.resetAllData(testData);
+        var rootNodeId = tree.getRootNodeId();
 
         expect(newChildIds.length).toBe(2);
         expect(tree.getChildIds(rootNodeId)).toEqual(newChildIds);
@@ -282,25 +282,55 @@ describe('Tree', function() {
     });
 
     it('"getNodeIndex()" should return index number of selected node in children list', function() {
-        var data = [
+        var testData = [
             {text: 'child1'},
             {text: 'child2'}
         ];
-        var newChildIds = tree.resetAllData(data);
+        var newChildIds = tree.resetAllData(testData);
         var prevNodeIdx = tree.getNodeIndex(newChildIds[1]);
 
         expect(prevNodeIdx).toEqual(1);
     });
 
     it('When "resetAllData()" have nodeId parameter, it should reset children data of nodeId', function() {
-        var data = [
+        var testData = [
             {text: 'A'},
             {text: 'B'}
         ];
         var nodeId = tree.getChildIds(tree.getRootNodeId())[0];
-        var newChildIds = tree.resetAllData(data, nodeId);
+        var newChildIds = tree.resetAllData(testData, nodeId);
 
         expect(tree.getNodeData(newChildIds[0])).toEqual({text: 'A'});
         expect(tree.getNodeData(newChildIds[1])).toEqual({text: 'B'});
+    });
+
+    it('"getIndentWidth()" should return padding left by element\'s depth', function() {
+        var data = [
+            {text: 'A', children: [
+                {text: '1', children: [
+                    {text: '가', children: [
+                        {text: '*'},
+                        {text: '#', children: [
+                            {text: 'a'}
+                        ]},
+                        {text: '@'}
+                    ]}
+                ]}
+            ]}
+        ];
+        var treeNodes;
+        tree.resetAllData([]);
+        tree = new Tree(container, {
+            rootElement: 'treeRoot',
+            data: data
+        });
+
+        treeNodes = $(tree.rootElement).find('.tui-tree-node');
+
+        tui.util.forEach(function(treeNode) {
+            var id = treeNode.id;
+            expect(treeNode.childNodes[0].style.paddingLeft).toBe(tree.getIndentWidth(id) + 'px');
+        }, treeNodes);
+
     });
 });

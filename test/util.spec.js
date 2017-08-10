@@ -69,4 +69,35 @@ describe('Util', function() {
 
         expect(document.getElementById('test')).toBe(null);
     });
+
+    describe('.prototype.getChildElementByClassName()', function() {
+        var element;
+        beforeEach(function() {
+            element = document.createElement('div');
+            document.body.appendChild(element);
+        });
+
+        afterEach(function() {
+            util.removeElement(element);
+        });
+
+        it('should find first element by classname', function() {
+            var child;
+            element.innerHTML = '<div id="1" class="a b c"></div>' +
+                                '<div id="2" class="a b c"></div>';
+            child = util.getChildElementByClassName(element, 'b');
+
+            expect(child.id).toBe('1');
+        });
+
+        it('should return null when child elements don\'t contain same class', function() {
+            var child;
+            element.innerHTML = '<div id="1" class="a c">' +
+                                    '<div id="2" class="ac"></div>' +
+                                '</div>';
+            child = util.getChildElementByClassName(element, 'b');
+
+            expect(child).toBeNull();
+        });
+    });
 });

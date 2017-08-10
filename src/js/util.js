@@ -170,7 +170,33 @@ var util = {
             });
         }
 
+        if (!filtered) {
+            filtered = [];
+        }
+
         return filtered;
+    },
+
+    /**
+     * Find element by class name among child nodes
+     * @param {HTMLElement} target A target element
+     * @param {string} className A name of class
+     * @returns {Array.<HTMLElement>} Elements
+     */
+    getChildElementByClassName: function(target, className) {
+        var children = target.childNodes;
+        var i = 0;
+        var length = children.length;
+        var child;
+
+        for (; i < length; i += 1) {
+            child = children[i];
+            if (util.hasClass(child, className)) {
+                return child;
+            }
+        }
+
+        return null;
     },
 
     /**

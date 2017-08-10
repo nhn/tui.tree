@@ -23,9 +23,9 @@ Can use more features
 * Examples: [http://nhnent.github.io/tui.component.tree/latest/tutorial-example1.html](http://nhnent.github.io/tui.component.tree/latest/tutorial-example1.html)
 
 ## Dependency
-* tui-code-snippet: ~1.2.0
+* tui-code-snippet: ~1.2.5
 * tui-contextmenu: ~1.2.0 (optional, for using 'ContextMenu' feature)
-* jQuery: ~1.8.3 (optional, for using 'Ajax' feature)
+* jQuery: 1.8.3 (optional, for using 'Ajax' feature)
 
 ## Test Environment
 * PC

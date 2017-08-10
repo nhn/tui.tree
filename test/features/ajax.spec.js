@@ -1,8 +1,7 @@
 'use strict';
-var Tree = require('../src/js/tree');
+var Tree = require('../../src/js/tree');
 
 describe('Tree', function() {
-    var nodeData = [];
     var tree;
 
     beforeEach(function() {
@@ -74,12 +73,14 @@ describe('Tree', function() {
             expect(treeAjax.command.read.dataType).toBe('json');
         });
 
-        it('When default command option have "url" property and it is function, "url" value set to return value.', function() {
+        it('When default command option have "url" property and it is function, ' +
+            '"url" value set to return value.', function() {
             treeAjax._getDefaultRequestOptions('read');
             expect(treeAjax.command.read.url).toBe('api/id');
         });
 
-        it('When default command option have "data" property and it is function, "data" value set to return value.', function() {
+        it('When default command option have "data" property and it is function, ' +
+            '"data" value set to return value.', function() {
             treeAjax._getDefaultRequestOptions('read');
             expect(treeAjax.command.read.data).toEqual({
                 param1: 'a',

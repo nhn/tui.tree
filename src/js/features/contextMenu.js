@@ -26,7 +26,7 @@ var ContextMenu = tui.util.defineClass(/** @lends ContextMenu.prototype */{/*esl
     static: {
         /**
          * @static
-         * @memberOf ContextMenu
+         * @memberof ContextMenu
          * @returns {Array.<string>} API list of ContextMenu
          */
         getAPIList: function() {
@@ -85,8 +85,7 @@ var ContextMenu = tui.util.defineClass(/** @lends ContextMenu.prototype */{/*esl
 
     /**
      * Change current context-menu view
-     * @api
-     * @memberOf Tree.prototype
+     * @memberof Tree.prototype
      * @requires ContextMenu
      * @param {Array.<Object>} newMenuData - New context menu data
      * @example
@@ -186,7 +185,6 @@ var ContextMenu = tui.util.defineClass(/** @lends ContextMenu.prototype */{/*esl
         this.selectedNodeId = this.tree.getNodeIdFromElement(target);
 
         /**
-         * @api
          * @event Tree#beforeOpenContextMenu
          * @param {{nodeId: string}} evt - Event data
          *     @param {string} evt.nodeId - Current selected node id
@@ -208,7 +206,6 @@ var ContextMenu = tui.util.defineClass(/** @lends ContextMenu.prototype */{/*esl
      */
     _onSelect: function(e, cmd) {
         /**
-         * @api
          * @event Tree#selectContextMenu
          * @param {{cmd: string, nodeId: string}} evt - Event data
          *     @param {string} evt.cmd - Command type

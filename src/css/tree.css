@@ -246,38 +246,6 @@
     background-color: rgba(75, 150, 230, .1);
 }
 
-.tui-tree-subtree .tui-tree-btn {
-    padding-left: 46px;
-}
-
-.tui-tree-subtree .tui-tree-subtree .tui-tree-btn {
-    padding-left: 69px;
-}
-
-.tui-tree-subtree .tui-tree-subtree .tui-tree-subtree .tui-tree-btn {
-    padding-left: 93px;
-}
-
-.tui-tree-root>.tui-tree-node>.tui-input-wrap {
-    padding-left: 63px;
-}
-
-.tui-tree-subtree .tui-input-wrap {
-    padding-left: 83px;
-}
-
-.tui-tree-subtree .tui-tree-subtree .tui-input-wrap {
-    padding-left: 110px;
-}
-
-.tui-tree-subtree .tui-tree-subtree .tui-tree-subtree .tui-input-wrap {
-    padding-left: 134px;
-}
-
-.tui-tree-subtree .tui-tree-subtree .tui-tree-input {
-    margin-left: -4px;
-}
-
 .tui-tree-wrap-checkbox .tui-tree-toggle-btn {
     margin-right: 4px;
 }

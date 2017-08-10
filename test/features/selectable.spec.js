@@ -1,38 +1,38 @@
 'use strict';
-var Tree = require('../src/js/tree'),
-    messages = require('../src/js/consts/messages');
+var Tree = require('../../src/js/tree'),
+    messages = require('../../src/js/consts/messages');
 
 describe('Tree', function() {
     var data = [
-            {title: 'A', children: [
-                {title: '1'},
-                {title: '2'},
-                {title: '3'},
-                {title: '4'},
-                {title: '5', children: [
-                    {title: '가', children: [
-                        {title: '*'}
-                    ]},
-                    {title: '나'}
+        {title: 'A', children: [
+            {title: '1'},
+            {title: '2'},
+            {title: '3'},
+            {title: '4'},
+            {title: '5', children: [
+                {title: '가', children: [
+                    {title: '*'}
                 ]},
-                {title: '6'},
-                {title: '7'},
-                {title: '8'},
-                {title: '9', children: [
-                    {title: '가'},
-                    {title: '나'}
-                ]},
-                {title: '10'},
-                {title: '11'},
-                {title: '12'}
+                {title: '나'}
             ]},
-            {title: 'B', children: [
-                {title: '1'},
-                {title: '2'},
-                {title: '3'}
-            ]}
-        ],
-        $rootElement, tree, treeSelection;
+            {title: '6'},
+            {title: '7'},
+            {title: '8'},
+            {title: '9', children: [
+                {title: '가'},
+                {title: '나'}
+            ]},
+            {title: '10'},
+            {title: '11'},
+            {title: '12'}
+        ]},
+        {title: 'B', children: [
+            {title: '1'},
+            {title: '2'},
+            {title: '3'}
+        ]}
+    ];
+    var $rootElement, tree, treeSelection;
 
     beforeEach(function() {
         loadFixtures('basicFixture.html');
