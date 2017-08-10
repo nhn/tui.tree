@@ -95,8 +95,8 @@
 	    extend = snippet.extend,
 	    TIMEOUT_TO_DIFFERENTIATE_CLICK_AND_DBLCLICK = 200,
 	    MOUSE_MOVING_THRESHOLD = 5,
-	    INDENTATION_PIXELS = 23,
-	    ICON_REGION_WIDTH = 37;
+	    INDENT_WIDTH_PIXEL = 23,
+	    ICON_WIDTH_PIXEL = 37;
 
 	/**
 	 * Create tree model and inject data to model
@@ -214,7 +214,7 @@
 	 * });
 	 */
 	var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
-	    ICON_REGION_WIDTH: ICON_REGION_WIDTH,
+	    ICON_WIDTH_PIXEL: ICON_WIDTH_PIXEL,
 	    init: function(container, options) {
 	        options = extend({}, defaultOption, options);
 
@@ -647,7 +647,7 @@
 	     * @returns {number} - padding left of tree node division
 	     */
 	    getIndentWidth: function(nodeId) {
-	        return this.getDepth(nodeId) * INDENTATION_PIXELS;
+	        return this.getDepth(nodeId) * INDENT_WIDTH_PIXEL;
 	    },
 
 	    /**
@@ -685,7 +685,7 @@
 	            element = document.getElementById(nodeId);
 	        }
 	        element.innerHTML = html;
-	        this._setClassWithDisplay(node);
+	        this._setClassNameAndVisibilityByFeature(node);
 
 	        /**
 	         * @event Tree#afterDraw
@@ -703,25 +703,27 @@
 	    },
 
 	    /**
-	     * Set class and display of node element
-	     * @param {TreeNode} node - Node
+	     * Update class name by features on below<br>
+	     * - leaf node: has classNames.leafClass<br>
+	     * - internal node + opened: has classNames.openedClass, child is visible<br>
+	     * - internal node + closed: has classNames.closedClass, child is not visible<br>
+	     * @param {TreeNode} node - (re)drawing starts from this node
 	     * @private
 	     */
-	    _setClassWithDisplay: function(node) {
+	    _setClassNameAndVisibilityByFeature: function(node) {
 	        var nodeId = node.getId(),
 	            element = document.getElementById(nodeId),
 	            classNames = this.classNames;
-
-	        util.removeClass(element, classNames.leafClass);
 
 	        if (node.isLeaf()) {
 	            util.removeClass(element, classNames.openedClass);
 	            util.removeClass(element, classNames.closedClass);
 	            util.addClass(element, classNames.leafClass);
 	        } else {
+	            util.removeClass(element, classNames.leafClass);
 	            this._setDisplayFromNodeState(nodeId, node.getState());
 	            this.each(function(child) {
-	                this._setClassWithDisplay(child);
+	                this._setClassNameAndVisibilityByFeature(child);
 	            }, nodeId, this);
 	        }
 	    },
@@ -1800,7 +1802,33 @@
 	            });
 	        }
 
+	        if (!filtered) {
+	            filtered = [];
+	        }
+
 	        return filtered;
+	    },
+
+	    /**
+	     * Find element by class name among child nodes
+	     * @param {HTMLElement} target A target element
+	     * @param {string} className A name of class
+	     * @returns {Array.<HTMLElement>} Elements
+	     */
+	    getChildElementByClassName: function(target, className) {
+	        var children = target.childNodes;
+	        var i = 0;
+	        var length = children.length;
+	        var child;
+
+	        for (; i < length; i += 1) {
+	            child = children[i];
+	            if (util.hasClass(child, className)) {
+	                return child;
+	            }
+	        }
+
+	        return null;
 	    },
 
 	    /**
@@ -2063,7 +2091,8 @@
 	        closedClass: 'tui-tree-closed',
 	        subtreeClass: 'tui-js-tree-subtree',
 	        toggleBtnClass: 'tui-js-tree-toggle-btn',
-	        textClass: 'tui-js-tree-text'
+	        textClass: 'tui-js-tree-text',
+	        btnClass: 'tui-tree-btn'
 	    },
 	    template: {
 	        internalNode:
@@ -2085,7 +2114,8 @@
 	                    '{{text}}' +
 	                '</span>' +
 	            '</div>'
-	    }
+	    },
+	    indent: 23
 	};
 
 
@@ -4063,20 +4093,34 @@
 	        var target = document.getElementById(nodeId);
 	        var wrapperElement = document.createElement('DIV');
 	        var inputElement = this._createInputElement();
-	        wrapperElement.style.paddingLeft = (tree.getIndentWidth(nodeId) + tree.ICON_REGION_WIDTH) + 'px';
 
-	        util.addClass(wrapperElement, WRAPPER_CLASSNAME);
-	        inputElement.value = tree.getNodeData(nodeId)[this.dataKey] || '';
+	        if (!target) {
+	            return;
+	        }
 
-	        wrapperElement.appendChild(inputElement);
-	        target.appendChild(wrapperElement);
+	        wrapperElement = util.getChildElementByClassName(target, WRAPPER_CLASSNAME);
+	        if (!wrapperElement) {
+	            wrapperElement = document.createElement('DIV');
+	            inputElement = this._createInputElement();
 
-	        util.addEventListener(inputElement, 'keyup', this.boundOnKeyup);
-	        util.addEventListener(inputElement, 'blur', this.boundOnBlur);
+	            util.addClass(wrapperElement, WRAPPER_CLASSNAME);
+	            wrapperElement.style.paddingLeft = (tree.getIndentWidth(nodeId) + tree.ICON_WIDTH_PIXEL) + 'px';
 
-	        this.inputElement = inputElement;
+	            inputElement.value = tree.getNodeData(nodeId)[this.dataKey] || '';
 
-	        inputElement.focus();
+	            wrapperElement.appendChild(inputElement);
+	            target.appendChild(wrapperElement);
+
+	            util.addEventListener(inputElement, 'keyup', this.boundOnKeyup);
+	            util.addEventListener(inputElement, 'blur', this.boundOnBlur);
+
+	            if (this.inputElement) {
+	                $(this.inputElement).blur();
+	            }
+	            this.inputElement = inputElement;
+	        }
+
+	        this.inputElement.focus();
 	    },
 
 	    /**
