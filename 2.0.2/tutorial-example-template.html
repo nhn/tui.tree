@@ -116,7 +116,7 @@
 
         // Custom template string
         var customInternalNode =
-            '&lt;div class="tui-tree-btn tui-tree-root-btn">' +
+            '&lt;div class="tui-tree-btn tui-tree-root-btn" style="padding-left: {{indent}}px">' +
                 '&lt;button type="button" class="tui-tree-toggle-btn tui-js-tree-toggle-btn">' +
                     '&lt;span class="tui-ico-tree">&lt;/span>' +
                     '{{stateLabel}}' +
@@ -130,7 +130,7 @@
             '&lt;/ul>';
 
         var customLeafNode =
-            '&lt;div class="tui-tree-btn tui-tree-root-btn">' +
+            '&lt;div class="tui-tree-btn tui-tree-root-btn" style="padding-left: {{indent}}px">' +
                 '&lt;span class="tui-tree-text tui-js-tree-text">' +
                     '{{text}}' +
                 '&lt;/span>' +
@@ -141,7 +141,7 @@
             nodeDefaultState: 'opened',
             template: {
                 internalNode: // Change to Mustache's format
-                    '&lt;div class="tui-tree-btn">' +
+                    '&lt;div class="tui-tree-btn" style="padding-left: {{indent}}px">' +
                         '&lt;button type="button" class="tui-tree-toggle-btn tui-js-tree-toggle-btn">' +
                             '&lt;span class="tui-ico-tree">&lt;/span>' +
                             '{{stateLabel}}' +
