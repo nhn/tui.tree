@@ -107,24 +107,6 @@ describe('Tree', function() {
     });
 
     it('should calculate input element\'s paddingLeft by it\'s depth when editable feature is enabled.', function() {
-<<<<<<< HEAD:test/editable.spec.js
-        /* expect all node is closed */
-        var nodeElements = util.getElementsByClassName(tree.rootElement, 'tui-tree-closed');
-        var i = 0;
-        var length = nodeElements.length;
-        var nodeElement, id, inputWrapper, expectedPaddingLeft;
-
-        for (; i < length; i += 1) {
-            nodeElement = nodeElements[i];
-            id = nodeElement.id;
-            expectedPaddingLeft = (23 * tree.getDepth(id) + 37) + 'px';
-
-            tree.editNode(id);
-            inputWrapper = util.getElementsByClassName(nodeElement, WRAPPER_CLASSNAME)[0];
-
-            expect(inputWrapper.style.paddingLeft).toBe(expectedPaddingLeft);
-        }
-=======
         /* expected padding-left: 23 * depth + 37 */
 
         var nodeElements = util.getElementsByClassName(tree.rootElement, 'tui-tree-node');
@@ -137,6 +119,5 @@ describe('Tree', function() {
         tree.editNode(nodeElements[1].id); // depth 2
         inputWrapper = util.getChildElementByClassName(nodeElements[1], WRAPPER_CLASSNAME);
         expect(inputWrapper.style.paddingLeft).toBe((23 * 2 + 37) + 'px');
->>>>>>> ff61cb0c1d622e2c6417103c41a7b00fad6970a3:test/features/editable.spec.js
     });
 });

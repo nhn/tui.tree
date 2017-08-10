@@ -242,12 +242,6 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
         var wrapperElement = document.createElement('DIV');
         var inputElement = this._createInputElement();
 
-<<<<<<< HEAD
-        util.addClass(wrapperElement, WRAPPER_CLASSNAME);
-        wrapperElement.style.paddingLeft = (this.tree.indent * this.tree.getDepth(nodeId) + 37) + 'px';
-
-        inputElement.value = tree.getNodeData(nodeId)[this.dataKey] || '';
-=======
         if (!target) {
             return;
         }
@@ -256,7 +250,6 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
         if (!wrapperElement) {
             wrapperElement = document.createElement('DIV');
             inputElement = this._createInputElement();
->>>>>>> ff61cb0c1d622e2c6417103c41a7b00fad6970a3
 
             util.addClass(wrapperElement, WRAPPER_CLASSNAME);
             wrapperElement.style.paddingLeft = (tree.getIndentWidth(nodeId) + tree.ICON_WIDTH_PIXEL) + 'px';

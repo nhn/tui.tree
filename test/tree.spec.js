@@ -304,32 +304,6 @@ describe('Tree', function() {
         expect(tree.getNodeData(newChildIds[1])).toEqual({text: 'B'});
     });
 
-<<<<<<< HEAD
-    it('should calculate node\'s paddingLeft by it\'s depth.', function() {
-        var nodeElements = util.getElementsByClassName(tree.rootElement, 'tui-tree-closed');
-        var i = 0;
-        var length = nodeElements.length;
-        var nodeElement, depth;
-
-        for (; i < length; i += 1) {
-            nodeElement = nodeElements[i];
-            depth = tree.getDepth(nodeElement.id);
-            expect(nodeElement.childNodes[0].style.paddingLeft).toBe(23 * depth + 'px');
-        }
-    });
-
-    it('should set paddingLeft by  option', function() {
-        var element;
-        tree = new Tree(container, {
-            rootElement: 'treeRoot',
-            data: data,
-            indent: 10
-        });
-        firstChildId = tree.model.rootNode.getChildIds()[0];
-        element = document.getElementById(firstChildId);
-
-        expect(element.childNodes[0].style.paddingLeft).toBe('10px');
-=======
     it('"getIndentWidth()" should return padding left by element\'s depth', function() {
         var data = [
             {text: 'A', children: [
@@ -358,6 +332,5 @@ describe('Tree', function() {
             expect(treeNode.childNodes[0].style.paddingLeft).toBe(tree.getIndentWidth(id) + 'px');
         }, treeNodes);
 
->>>>>>> ff61cb0c1d622e2c6417103c41a7b00fad6970a3
     });
 });
