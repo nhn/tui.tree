@@ -31,8 +31,8 @@ var nodeStates = states.node,
     extend = snippet.extend,
     TIMEOUT_TO_DIFFERENTIATE_CLICK_AND_DBLCLICK = 200,
     MOUSE_MOVING_THRESHOLD = 5,
-    INDENTATION_PIXELS = 23,
-    ICON_REGION_WIDTH = 37;
+    INDENT_WIDTH_PIXEL = 23,
+    ICON_WIDTH_PIXEL = 37;
 
 /**
  * Create tree model and inject data to model
@@ -150,7 +150,7 @@ var nodeStates = states.node,
  * });
  */
 var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
-    ICON_REGION_WIDTH: ICON_REGION_WIDTH,
+    ICON_WIDTH_PIXEL: ICON_WIDTH_PIXEL,
     init: function(container, options) {
         options = extend({}, defaultOption, options);
 
@@ -231,42 +231,9 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
          */
         this.isMovingNode = false;
 
-        /**
-         * nested item's indent width
-         * @type {number}
-         * @private
-         */
-        this.indent = options.indent;
-
         this._setRoot(container);
         this._draw(this.getRootNodeId());
         this._setEvents();
-    },
-
-    /**
-     * Calculate list item's indentation width by it's depth
-     * @param {string} nodeId - list item's id
-     * @returns {number} - indentation width
-     * @private
-     */
-    _calculateIndentationWidth: function(nodeId) {
-        return this.indent * this.getDepth(nodeId);
-    },
-
-    /**
-     * Nested list items are indented from parent list item<br>
-     * by adding padding left on nested element.
-     * @param {HTMLElement} element - list item element having LI tag
-     * @param {string} nodeId - tree node id
-     */
-    _setIndentOnListItem: function(element, nodeId) {
-        var childElement;
-        if (element) {
-            childElement = util.getChildElementByClassName(element, this.classNames.btnClass);
-            if (childElement) {
-                childElement.style.paddingLeft = this._calculateIndentationWidth(nodeId) + 'px';
-            }
-        }
     },
 
     /**
@@ -616,7 +583,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * @returns {number} - padding left of tree node division
      */
     getIndentWidth: function(nodeId) {
-        return this.getDepth(nodeId) * INDENTATION_PIXELS;
+        return this.getDepth(nodeId) * INDENT_WIDTH_PIXEL;
     },
 
     /**
@@ -695,8 +662,6 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
                 this._setClassNameAndVisibilityByFeature(child);
             }, nodeId, this);
         }
-
-        this._setIndentOnListItem(element, nodeId);
     },
 
     /**

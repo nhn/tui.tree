@@ -18,7 +18,6 @@ var EDIT_TYPE = {
 };
 var WRAPPER_CLASSNAME = 'tui-input-wrap';
 var INPUT_CLASSNAME = 'tui-tree-input';
-var ITEM_ICON_WIDTH = 37;
 
 /**
  * Set the tree selectable
@@ -242,7 +241,6 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
         var target = document.getElementById(nodeId);
         var wrapperElement = document.createElement('DIV');
         var inputElement = this._createInputElement();
-        wrapperElement.style.paddingLeft = (tree.getIndentWidth(nodeId) + tree.ICON_REGION_WIDTH) + 'px';
 
         if (!target) {
             return;
@@ -254,7 +252,7 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
             inputElement = this._createInputElement();
 
             util.addClass(wrapperElement, WRAPPER_CLASSNAME);
-            wrapperElement.style.paddingLeft = (tree.indent * tree.getDepth(nodeId) + ITEM_ICON_WIDTH) + 'px';
+            wrapperElement.style.paddingLeft = (tree.getIndentWidth(nodeId) + tree.ICON_WIDTH_PIXEL) + 'px';
 
             inputElement.value = tree.getNodeData(nodeId)[this.dataKey] || '';
 
