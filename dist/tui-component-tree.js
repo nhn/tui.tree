@@ -1,6 +1,6 @@
 /*!
  * tui-component-tree.js
- * @version 2.1.1
+ * @version 2.0.2
  * @author NHNEnt FE Development Lab <dl_javascript@nhnent.com>
  * @license MIT
  */
@@ -94,13 +94,15 @@
 	    snippet = tui.util,
 	    extend = snippet.extend,
 	    TIMEOUT_TO_DIFFERENTIATE_CLICK_AND_DBLCLICK = 200,
-	    MOUSE_MOVING_THRESHOLD = 5;
+	    MOUSE_MOVING_THRESHOLD = 5,
+	    INDENTATION_PIXELS = 23,
+	    ICON_REGION_WIDTH = 37;
 
 	/**
 	 * Create tree model and inject data to model
 	 * @class Tree
 	 * @mixes tui.util.CustomEvents
-	 * @param {string|HTMLElement|jQueryObject} conatiner - Tree container element or id string value
+	 * @param {string|HTMLElement|jQueryObject} container - Tree container element or id string value
 	 * @param {Object} options The options
 	 *     @param {Object} [options.data] A data to be used on tree
 	 *     @param {string} [options.nodeIdPrefix] A default prefix of a node
@@ -212,6 +214,7 @@
 	 * });
 	 */
 	var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
+	    ICON_REGION_WIDTH: ICON_REGION_WIDTH,
 	    init: function(container, options) {
 	        options = extend({}, defaultOption, options);
 
@@ -365,7 +368,6 @@
 	        this._draw(newParentId);
 
 	        /**
-	         * @api
 	         * @event Tree#move
 	         * @param {{nodeId: string, originalParentId: string, newParentId: string, index: number}} evt - Event data
 	         *     @param {string} evt.nodeId - Current node id to move
@@ -650,24 +652,37 @@
 	     */
 	    _makeTemplateProps: function(node) {
 	        var classNames = this.classNames,
+	            id = node.getId(),
+	            indent = this.getIndentWidth(id),
 	            props, state;
 
 	        if (node.isLeaf()) {
 	            props = {
-	                id: node.getId(),
+	                id: id,
+	                indent: indent,
 	                isLeaf: true // for custom template method
 	            };
 	        } else {
 	            state = node.getState();
 	            props = {
-	                id: node.getId(),
+	                id: id,
 	                stateClass: classNames[state + 'Class'],
 	                stateLabel: this.stateLabels[state],
-	                children: this._makeHtml(node.getChildIds())
+	                children: this._makeHtml(node.getChildIds()),
+	                indent: indent
 	            };
 	        }
 
 	        return extend(props, classNames, node.getAllData());
+	    },
+
+	    /**
+	     * calculate tree node's padding left
+	     * @param {string} nodeId - Node id
+	     * @returns {number} - padding left of tree node division
+	     */
+	    getIndentWidth: function(nodeId) {
+	        return this.getDepth(nodeId) * INDENTATION_PIXELS;
 	    },
 
 	    /**
@@ -684,7 +699,6 @@
 	        }
 
 	        /**
-	         * @api
 	         * @event Tree#beforeDraw
 	         * @param {{nodeId: string}} evt - Event data
 	         *     @param {string} evt.nodeId - Node id
@@ -709,7 +723,6 @@
 	        this._setClassNameAndVisibilityByFeature(node);
 
 	        /**
-	         * @api
 	         * @event Tree#afterDraw
 	         * @param {{nodeId: string}} evt - Event data
 	         *     @param {string} evt.nodeId - Node id
@@ -778,7 +791,6 @@
 
 	    /**
 	     * Return the depth of node
-	     * @api
 	     * @param {string} nodeId - Node id
 	     * @returns {number|undefined} Depth
 	     */
@@ -788,7 +800,6 @@
 
 	    /**
 	     * Return the last depth of tree
-	     * @api
 	     * @returns {number} Last depth
 	     */
 	    getLastDepth: function() {
@@ -797,7 +808,6 @@
 
 	    /**
 	     * Return root node id
-	     * @api
 	     * @returns {string} Root node id
 	     */
 	    getRootNodeId: function() {
@@ -806,7 +816,6 @@
 
 	    /**
 	     * Return child ids
-	     * @api
 	     * @param {string} nodeId - Node id
 	     * @returns {Array.<string>|undefined} Child ids
 	     */
@@ -816,7 +825,6 @@
 
 	    /**
 	     * Return parent id of node
-	     * @api
 	     * @param {string} nodeId - Node id
 	     * @returns {string|undefined} Parent id
 	     */
@@ -834,7 +842,6 @@
 
 	    /**
 	     * Get node id from element
-	     * @api
 	     * @param {HTMLElement} element - Element
 	     * @returns {string} Node id
 	     * @example
@@ -852,7 +859,6 @@
 
 	    /**
 	     * Get prefix of node id
-	     * @api
 	     * @returns {string} Prefix of node id
 	     * @example
 	     * tree.getNodeIdPrefix(); // 'tui-tree-node-'
@@ -863,7 +869,6 @@
 
 	    /**
 	     * Get node data
-	     * @api
 	     * @param {string} nodeId - Node id
 	     * @returns {object|undefined} Node data
 	     */
@@ -873,7 +878,6 @@
 
 	    /**
 	     * Set data properties of a node
-	     * @api
 	     * @param {string} nodeId - Node id
 	     * @param {object} data - Properties
 	     * @param {object} [options] - Options
@@ -915,7 +919,6 @@
 
 	    /**
 	     * Remove node data
-	     * @api
 	     * @param {string} nodeId - Node id
 	     * @param {string|Array} names - Names of properties
 	     * @param {object} [options] - Options
@@ -957,7 +960,6 @@
 
 	    /**
 	     * Get node state.
-	     * @api
 	     * @param {string} nodeId - Node id
 	     * @returns {string|null} Node state(('opened', 'closed', null)
 	     * @example
@@ -976,7 +978,6 @@
 
 	    /**
 	     * Open node
-	     * @api
 	     * @param {string} nodeId - Node id
 	     */
 	    open: function(nodeId) {
@@ -995,7 +996,6 @@
 
 	    /**
 	     * Close node
-	     * @api
 	     * @param {string} nodeId - Node id
 	     */
 	    close: function(nodeId) {
@@ -1010,7 +1010,6 @@
 
 	    /**
 	     * Toggle node
-	     * @api
 	     * @param {string} nodeId - Node id
 	     */
 	    toggle: function(nodeId) {
@@ -1057,7 +1056,6 @@
 
 	    /**
 	     * Sort all nodes
-	     * @api
 	     * @param {Function} comparator - Comparator for sorting
 	     * @param {boolean} [isSilent] - If true, it doesn't redraw tree
 	     * @example
@@ -1092,7 +1090,6 @@
 
 	    /**
 	     * Refresh tree or node's children
-	     * @api
 	     * @param {string} [nodeId] - TreeNode id to refresh
 	     */
 	    refresh: function(nodeId) {
@@ -1102,7 +1099,6 @@
 
 	    /**
 	     * Traverse this tree iterating over all nodes.
-	     * @api
 	     * @param {Function} iteratee - Iteratee function
 	     * @param {object} [context] - Context of iteratee
 	     * @example
@@ -1116,7 +1112,6 @@
 
 	    /**
 	     * Traverse this tree iterating over all descendants of a node.
-	     * @api
 	     * @param {Function} iteratee - Iteratee function
 	     * @param {string} parentId - Parent node id
 	     * @param {object} [context] - Context of iteratee
@@ -1134,7 +1129,6 @@
 	     * Add node(s).
 	     * - If the parentId is falsy, the node will be appended to rootNode.
 	     * - If 'isSilent' is not true, it redraws the tree
-	     * @api
 	     * @param {Array|object} data - Raw-data
 	     * @param {*} [parentId] - Parent id
 	     * @param {object} [options] - Options
@@ -1190,7 +1184,6 @@
 
 	    /**
 	     * Reset all data
-	     * @api
 	     * @param {Array|object} data - Raw data for all nodes
 	     * @param {object} [options] - Options
 	     *     @param {string} [options.nodeId] - Parent node id to reset all child data
@@ -1248,7 +1241,6 @@
 
 	    /**
 	     * Remove all children
-	     * @api
 	     * @param {string} nodeId - Parent node id
 	     * @param {object} [options] - Options
 	     *     @param {boolean} [options.isSilent] - If true, it doesn't redraw the node
@@ -1295,7 +1287,6 @@
 	    /**
 	     * Remove a node with children.
 	     * - If 'isSilent' is not true, it redraws the tree
-	     * @api
 	     * @param {string} nodeId - Node id to remove
 	     * @param {object} [options] - Options
 	     *     @param {boolean} [options.isSilent] - If true, it doesn't redraw children
@@ -1335,7 +1326,6 @@
 	    /**
 	     * Move a node to new parent
 	     * - If 'isSilent' is not true, it redraws the tree
-	     * @api
 	     * @param {string} nodeId - Node id
 	     * @param {string} newParentId - New parent id
 	     * @param {number} index - Index number of selected node
@@ -1381,7 +1371,6 @@
 	     */
 	    _move: function(nodeId, newParentId, index, isSilent) {
 	        /**
-	         * @api
 	         * @event Tree#beforeMove
 	         * @param {{nodeId: string, newParentId: string}} evt - Event data
 	         *     @param {string} evt.nodeId - Current dragging node id
@@ -1410,7 +1399,6 @@
 
 	    /**
 	     * Search node ids by passing the predicate check or matching data
-	     * @api
 	     * @param {Function|Object} predicate - Predicate or data
 	     * @param {Object} [context] - Context of predicate
 	     * @returns {Array.<string>} Node ids
@@ -1484,7 +1472,6 @@
 
 	    /**
 	     * Whether the node is leaf
-	     * @api
 	     * @param {string} nodeId - Node id
 	     * @returns {boolean} True if the node is leaf.
 	     */
@@ -1496,7 +1483,6 @@
 
 	    /**
 	     * Whether a node is a ancestor of another node.
-	     * @api
 	     * @param {string} containerNodeId - Id of a node that may contain the other node
 	     * @param {string} containedNodeId - Id of a node that may be contained by the other node
 	     * @returns {boolean} Whether a node contains another node
@@ -1507,7 +1493,6 @@
 
 	    /**
 	     * Enable facility of tree
-	     * @api
 	     * @param {string} featureName - 'Selectable', 'Draggable', 'Editable', 'ContextMenu'
 	     * @param {object} [options] - Feature options
 	     * @returns {Tree} this
@@ -1620,7 +1605,6 @@
 
 	    /**
 	     * Disable facility of tree
-	     * @api
 	     * @param {string} featureName - 'Selectable', 'Draggable', 'Editable'
 	     * @returns {Tree} this
 	     * @example
@@ -1645,7 +1629,6 @@
 
 	    /**
 	     * Get index number of selected node
-	     * @api
 	     * @param {string} nodeId - Id of selected node
 	     * @returns {number} Index number of attached node
 	     */
@@ -2150,7 +2133,7 @@
 	    },
 	    template: {
 	        internalNode:
-	            '<div class="{{btnClass}}">' +
+	            '<div class="tui-tree-btn" style="padding-left: {{indent}}px">' +
 	                '<button type="button" class="tui-tree-toggle-btn {{toggleBtnClass}}">' +
 	                    '<span class="tui-ico-tree"></span>' +
 	                    '{{stateLabel}}' +
@@ -2162,7 +2145,7 @@
 	            '</div>' +
 	            '<ul class="tui-tree-subtree {{subtreeClass}}">{{children}}</ul>',
 	        leafNode:
-	            '<div class="{{btnClass}}">' +
+	            '<div class="tui-tree-btn" style="padding-left: {{indent}}px">' +
 	                '<span class="tui-tree-text {{textClass}}">' +
 	                    '<span class="tui-tree-ico tui-ico-file"></span>' +
 	                    '{{text}}' +
@@ -2846,7 +2829,6 @@
 
 	    /**
 	     * Toggle state
-	     * @api
 	     */
 	    toggleState: function() {
 	        if (this._state === states.CLOSED) {
@@ -2858,7 +2840,6 @@
 
 	    /**
 	     * Set state
-	     * @api
 	     * @param {string} state - State of node ('closed', 'opened')
 	     */
 	    setState: function(state) {
@@ -2868,7 +2849,6 @@
 
 	    /**
 	     * Get state
-	     * @api
 	     * @returns {string} state ('opened' or 'closed')
 	     */
 	    getState: function() {
@@ -2877,7 +2857,6 @@
 
 	    /**
 	     * Get id
-	     * @api
 	     * @returns {string} Node id
 	     */
 	    getId: function() {
@@ -2886,7 +2865,6 @@
 
 	    /**
 	     * Get parent id
-	     * @api
 	     * @returns {string} Parent node id
 	     */
 	    getParentId: function() {
@@ -2911,7 +2889,6 @@
 
 	    /**
 	     * Get id list of children
-	     * @api
 	     * @returns {Array.<number>} Id list of children
 	     */
 	    getChildIds: function() {
@@ -2940,7 +2917,6 @@
 
 	    /**
 	     * Get data
-	     * @api
 	     * @param {string} name - Property name of data
 	     * @returns {*} Data
 	     */
@@ -2950,7 +2926,6 @@
 
 	    /**
 	     * Get all data
-	     * @api
 	     * @returns {Object} Data
 	     */
 	    getAllData: function() {
@@ -2959,7 +2934,6 @@
 
 	    /**
 	     * Set data
-	     * @api
 	     * @param {Object} data - Data for adding
 	     */
 	    setData: function(data) {
@@ -2969,7 +2943,6 @@
 
 	    /**
 	     * Remove data
-	     * @api
 	     * @param {...string} names - Names of data
 	     */
 	    removeData: function() {
@@ -2980,7 +2953,6 @@
 
 	    /**
 	     * Return true if this node has a provided child id.
-	     * @api
 	     * @param {string} id - Node id
 	     * @returns {boolean} - Whether this node has a provided child id.
 	     */
@@ -2990,7 +2962,6 @@
 
 	    /**
 	     * Return whether this node is leaf.
-	     * @api
 	     * @returns {boolean} Node is leaf or not.
 	     */
 	    isLeaf: function() {
@@ -2999,7 +2970,6 @@
 
 	    /**
 	     * Return whether this node is root.
-	     * @api
 	     * @returns {boolean} Node is root or not.
 	     */
 	    isRoot: function() {
@@ -3008,7 +2978,6 @@
 
 	    /**
 	     * Get index of child
-	     * @api
 	     * @param {string} id - Node id
 	     * @returns {number} Index of child in children list
 	     */
@@ -3083,7 +3052,7 @@
 	    static: {
 	        /**
 	         * @static
-	         * @memberOf Selectable
+	         * @memberof Selectable
 	         * @returns {Array.<string>} API list of Selectable
 	         */
 	        getAPIList: function() {
@@ -3142,21 +3111,20 @@
 	        this.select(nodeId, target);
 	    },
 
-	    /* eslint-disable valid-jsdoc
-	        Ignore "target" parameter annotation for API page
-	        "tree.select(nodeId)"
+	    /* eslint-disable valid-jsdoc */
+	    /* Ignore "target" parameter annotation for API page
+	       "tree.select(nodeId)"
 	     */
+
 	    /**
 	     * Select node if the feature-"Selectable" is enabled.
-	     * @api
-	     * @memberOf Tree.prototype
+	     * @memberof Tree.prototype
 	     * @requires Selectable
 	     * @param {string} nodeId - Node id
 	     * @example
 	     * tree.select('tui-tree-node-3');
 	     */
-	    /* eslint-enable valid-jsdoc */
-	    select: function(nodeId, target) {
+	    select: function(nodeId, target) {/* eslint-enable valid-jsdoc */
 	        var tree, prevElement, nodeElement,
 	            selectedClassName, prevNodeId;
 
@@ -3171,7 +3139,6 @@
 	        prevNodeId = this.selectedNodeId;
 
 	        /**
-	         * @api
 	         * @event Tree#beforeSelect
 	         * @param {{nodeId: string, prevNodeId: string, target: HTMLElement|undefined}} evt - Event data
 	         *     @param {string} evt.nodeId - Selected node id
@@ -3197,7 +3164,6 @@
 	            util.addClass(nodeElement, selectedClassName);
 
 	            /**
-	             * @api
 	             * @event Tree#select
 	             * @param {{nodeId: string, prevNodeId: string, target: HTMLElement|undefined}} evt - Event data
 	             *     @param {string} evt.nodeId - Selected node id
@@ -3231,8 +3197,7 @@
 
 	    /**
 	     * Get selected node id
-	     * @api
-	     * @memberOf Tree.prototype
+	     * @memberof Tree.prototype
 	     * @returns {string} selected node id
 	     */
 	    getSelectedNodeId: function() {
@@ -3241,7 +3206,7 @@
 
 	    /**
 	     * Deselect node by id
-	     * @memberOf Tree.prototype
+	     * @memberof Tree.prototype
 	     * @requires Selectable
 	     * @param {string} nodeId - Node id
 	     * @example
@@ -3351,7 +3316,7 @@
 	    static: {
 	        /**
 	         * @static
-	         * @memberOf Draggable
+	         * @memberof Draggable
 	         * @returns {Array.<string>} API list of Draggable
 	         */
 	        getAPIList: function() {
@@ -3959,7 +3924,7 @@
 	    static: {
 	        /**
 	         * @static
-	         * @memberOf Selectable
+	         * @memberof Selectable
 	         * @returns {Array.<string>} API list of Editable
 	         */
 	        getAPIList: function() {
@@ -4043,8 +4008,7 @@
 
 	    /**
 	     * Create child node
-	     * @api
-	     * @memberOf Tree.prototype
+	     * @memberof Tree.prototype
 	     * @requires Editable
 	     * @param {string} parentId - Parent node id to create new node
 	     * @example
@@ -4072,8 +4036,7 @@
 
 	    /**
 	     * Edit node
-	     * @api
-	     * @memberOf Tree.prototype
+	     * @memberof Tree.prototype
 	     * @requires Editable
 	     * @param {string} nodeId - Node id
 	     * @example
@@ -4166,19 +4129,9 @@
 	    _attachInputElement: function(nodeId) {
 	        var tree = this.tree;
 	        var target = document.getElementById(nodeId);
-	        var wrapperElement, inputElement;
-
-	        if (!target) {
-	            return;
-	        }
-
-	        wrapperElement = util.getChildElementByClassName(target, WRAPPER_CLASSNAME);
-	        if (!wrapperElement) {
-	            wrapperElement = document.createElement('DIV');
-	            inputElement = this._createInputElement();
-
-	            util.addClass(wrapperElement, WRAPPER_CLASSNAME);
-	            wrapperElement.style.paddingLeft = (tree.indent * tree.getDepth(nodeId) + ITEM_ICON_WIDTH) + 'px';
+	        var wrapperElement = document.createElement('DIV');
+	        var inputElement = this._createInputElement();
+	        wrapperElement.style.paddingLeft = (tree.getIndentWidth(nodeId) + tree.ICON_REGION_WIDTH) + 'px';
 
 	            inputElement.value = tree.getNodeData(nodeId)[this.dataKey] || '';
 
@@ -4230,7 +4183,6 @@
 	        var data = {};
 
 	        /**
-	         * @api
 	         * @event Tree#beforeCreateChildNode
 	         * @param {{value: string}} evt - Event data
 	         *     @param {string} evt.value - Return value of creating input element
@@ -4269,7 +4221,6 @@
 	        var data = {};
 
 	        /**
-	         * @api
 	         * @event Tree#beforeEditNode
 	         * @param {{value: string}} evt - Event data
 	         *     @param {string} evt.value - Return value of editing input element
@@ -4360,7 +4311,7 @@
 	    static: {
 	        /**
 	         * @static
-	         * @memberOf Checkbox
+	         * @memberof Checkbox
 	         * @returns {Array.<string>} API list of checkbox
 	         */
 	        getAPIList: function() {
@@ -4572,7 +4523,6 @@
 	        if (state === STATE_CHECKED) {
 	            checkedList.push(nodeId);
 	            /**
-	             * @api
 	             * @event Tree#check
 	             * @param {{nodeId: string}} evt - Event data
 	             *     @param {string} evt.nodeId - Checked node id
@@ -4584,7 +4534,6 @@
 	            eventName = 'check';
 	        } else if (state === STATE_UNCHECKED) {
 	            /**
-	             * @api
 	             * @event Tree#uncheck
 	             * @param {{nodeId: string}} evt - Event data
 	             *     @param {string} evt.nodeId - Unchecked node id
@@ -4735,8 +4684,7 @@
 
 	    /**
 	     * Check node
-	     * @api
-	     * @memberOf Tree.prototype
+	     * @memberof Tree.prototype
 	     * @param {string} nodeId - Node id
 	     * @example
 	     * var nodeId = 'tui-tree-node-3';
@@ -4750,8 +4698,7 @@
 
 	    /**
 	     * Uncheck node
-	     * @api
-	     * @memberOf Tree.prototype
+	     * @memberof Tree.prototype
 	     * @param {string} nodeId - Node id
 	     * @example
 	     * var nodeId = 'tui-tree-node-3';
@@ -4765,8 +4712,7 @@
 
 	    /**
 	     * Toggle node checking
-	     * @api
-	     * @memberOf Tree.prototype
+	     * @memberof Tree.prototype
 	     * @param {string} nodeId - Node id
 	     * @example
 	     * var nodeId = 'tui-tree-node-3';
@@ -4782,8 +4728,7 @@
 
 	    /**
 	     * Whether the node is checked
-	     * @api
-	     * @memberOf Tree.prototype
+	     * @memberof Tree.prototype
 	     * @param {string} nodeId - Node id
 	     * @returns {boolean} True if node is indeterminate
 	     * @example
@@ -4797,8 +4742,7 @@
 
 	    /**
 	     * Whether the node is indeterminate
-	     * @api
-	     * @memberOf Tree.prototype
+	     * @memberof Tree.prototype
 	     * @param {string} nodeId - Node id
 	     * @returns {boolean} True if node is indeterminate
 	     * @example
@@ -4812,8 +4756,7 @@
 
 	    /**
 	     * Whether the node is unchecked or not
-	     * @api
-	     * @memberOf Tree.prototype
+	     * @memberof Tree.prototype
 	     * @param {string} nodeId - Node id
 	     * @returns {boolean} True if node is unchecked.
 	     * @example
@@ -4827,8 +4770,7 @@
 
 	    /**
 	     * Get checked list
-	     * @api
-	     * @memberOf Tree.prototype
+	     * @memberof Tree.prototype
 	     * @param {string} [parentId] - Node id (default: rootNode id)
 	     * @returns {Array.<string>} Checked node ids
 	     * @example
@@ -4861,8 +4803,7 @@
 
 	    /**
 	     * Get top checked list
-	     * @api
-	     * @memberOf Tree.prototype
+	     * @memberof Tree.prototype
 	     * @param {string} [parentId] - Node id (default: rootNode id)
 	     * @returns {Array.<string>} Checked node ids
 	     * @example
@@ -4901,8 +4842,7 @@
 
 	    /**
 	     * Get bottom checked list
-	     * @api
-	     * @memberOf Tree.prototype
+	     * @memberof Tree.prototype
 	     * @param {string} [parentId] - Node id (default: rootNode id)
 	     * @returns {Array.<string>} Checked node ids
 	     * @example
@@ -4969,7 +4909,7 @@
 	    static: {
 	        /**
 	         * @static
-	         * @memberOf ContextMenu
+	         * @memberof ContextMenu
 	         * @returns {Array.<string>} API list of ContextMenu
 	         */
 	        getAPIList: function() {
@@ -5028,8 +4968,7 @@
 
 	    /**
 	     * Change current context-menu view
-	     * @api
-	     * @memberOf Tree.prototype
+	     * @memberof Tree.prototype
 	     * @requires ContextMenu
 	     * @param {Array.<Object>} newMenuData - New context menu data
 	     * @example
@@ -5129,7 +5068,6 @@
 	        this.selectedNodeId = this.tree.getNodeIdFromElement(target);
 
 	        /**
-	         * @api
 	         * @event Tree#beforeOpenContextMenu
 	         * @param {{nodeId: string}} evt - Event data
 	         *     @param {string} evt.nodeId - Current selected node id
@@ -5151,7 +5089,6 @@
 	     */
 	    _onSelect: function(e, cmd) {
 	        /**
-	         * @api
 	         * @event Tree#selectContextMenu
 	         * @param {{cmd: string, nodeId: string}} evt - Event data
 	         *     @param {string} evt.cmd - Command type
@@ -5215,7 +5152,7 @@
 	    static: {
 	        /**
 	         * @static
-	         * @memberOf Ajax
+	         * @memberof Ajax
 	         * @returns {Array.<string>} API list of Ajax
 	         */
 	        getAPIList: function() {
@@ -5308,7 +5245,6 @@
 	        options = this._getDefaultRequestOptions(type, params);
 
 	        /**
-	         * @api
 	         * @event Tree#beforeAjaxRequest
 	         * @param {{command: string, data: object}} evt - Event data
 	         *     @param {string} evt.command - Command type
@@ -5361,7 +5297,6 @@
 	            data = callback(response);
 
 	            /**
-	             * @api
 	             * @event Tree#successAjaxResponse
 	             * @param {{command: string, data: object}} evt - Event data
 	             *     @param {string} evt.command - Command type
@@ -5380,7 +5315,6 @@
 	            });
 	        } else {
 	            /**
-	             * @api
 	             * @event Tree#failAjaxResponse
 	             * @param {{command: string}} evt - Event data
 	             *     @param {string} evt.command - Command type
@@ -5402,7 +5336,6 @@
 	        this._hideLoader();
 
 	        /**
-	         * @api
 	         * @event Tree#errorAjaxResponse
 	         * @param {{command: string}} evt - Event data
 	         *     @param {string} evt.command - Command type

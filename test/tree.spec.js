@@ -304,57 +304,33 @@ describe('Tree', function() {
         expect(tree.getNodeData(newChildIds[1])).toEqual({text: 'B'});
     });
 
-    it('should calculate node\'s paddingLeft by it\'s depth.', function() {
-        var testData = [
+    it('"getIndentWidth()" should return padding left by element\'s depth', function() {
+        var data = [
             {text: 'A', children: [
                 {text: '1', children: [
                     {text: '가', children: [
-                        {text: '*'}
-                    ]},
-                    {text: '나'}
+                        {text: '*'},
+                        {text: '#', children: [
+                            {text: 'a'}
+                        ]},
+                        {text: '@'}
+                    ]}
                 ]}
             ]}
         ];
-        var nodeElements;
-        
+        var treeNodes;
+        tree.resetAllData([]);
         tree = new Tree(container, {
             rootElement: 'treeRoot',
-            data: testData
+            data: data
         });
 
-        nodeElements = util.getElementsByClassName(tree.rootElement, 'tui-tree-btn');
-        expect(nodeElements[0].style.paddingLeft).toBe('23px');
-        expect(nodeElements[1].style.paddingLeft).toBe('46px');
-        expect(nodeElements[2].style.paddingLeft).toBe('69px');
-        expect(nodeElements[3].style.paddingLeft).toBe('92px');
-        expect(nodeElements[4].style.paddingLeft).toBe('69px');
-    });
+        treeNodes = $(tree.rootElement).find('.tui-tree-node');
 
-    it('could set paddingLeft by  option', function() {
-        var element;
-        tree = new Tree(container, {
-            rootElement: 'treeRoot',
-            data: data,
-            indent: 10
-        });
-        firstChildId = tree.model.rootNode.getChildIds()[0];
-        element = document.getElementById(firstChildId);
+        tui.util.forEach(function(treeNode) {
+            var id = treeNode.id;
+            expect(treeNode.childNodes[0].style.paddingLeft).toBe(tree.getIndentWidth(id) + 'px');
+        }, treeNodes);
 
-        expect(element.childNodes[0].style.paddingLeft).toBe('10px');
-    });
-
-    it('should set class name of inner template top element', function() {
-        var customizedClassName = 'inner-template-top-element';
-        var element;
-        tree = new Tree(container, {
-            rootElement: 'treeRoot',
-            data: data,
-            classNames: {
-                btnClass: customizedClassName
-            }
-        });
-
-        element = util.getChildElementByClassName(tree.rootElement, 'tui-tree-node');
-        expect(util.getChildElementByClassName(element, customizedClassName)).not.toBeNull();
     });
 });

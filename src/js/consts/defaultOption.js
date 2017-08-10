@@ -46,7 +46,7 @@ module.exports = {
     },
     template: {
         internalNode:
-            '<div class="{{btnClass}}">' +
+            '<div class="tui-tree-btn" style="padding-left: {{indent}}px">' +
                 '<button type="button" class="tui-tree-toggle-btn {{toggleBtnClass}}">' +
                     '<span class="tui-ico-tree"></span>' +
                     '{{stateLabel}}' +
@@ -58,7 +58,7 @@ module.exports = {
             '</div>' +
             '<ul class="tui-tree-subtree {{subtreeClass}}">{{children}}</ul>',
         leafNode:
-            '<div class="{{btnClass}}">' +
+            '<div class="tui-tree-btn" style="padding-left: {{indent}}px">' +
                 '<span class="tui-tree-text {{textClass}}">' +
                     '<span class="tui-tree-ico tui-ico-file"></span>' +
                     '{{text}}' +

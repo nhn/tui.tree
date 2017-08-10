@@ -41,7 +41,7 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
     static: {
         /**
          * @static
-         * @memberOf Checkbox
+         * @memberof Checkbox
          * @returns {Array.<string>} API list of checkbox
          */
         getAPIList: function() {
@@ -253,7 +253,6 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
         if (state === STATE_CHECKED) {
             checkedList.push(nodeId);
             /**
-             * @api
              * @event Tree#check
              * @param {{nodeId: string}} evt - Event data
              *     @param {string} evt.nodeId - Checked node id
@@ -265,7 +264,6 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
             eventName = 'check';
         } else if (state === STATE_UNCHECKED) {
             /**
-             * @api
              * @event Tree#uncheck
              * @param {{nodeId: string}} evt - Event data
              *     @param {string} evt.nodeId - Unchecked node id
@@ -416,8 +414,7 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
 
     /**
      * Check node
-     * @api
-     * @memberOf Tree.prototype
+     * @memberof Tree.prototype
      * @param {string} nodeId - Node id
      * @example
      * var nodeId = 'tui-tree-node-3';
@@ -431,8 +428,7 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
 
     /**
      * Uncheck node
-     * @api
-     * @memberOf Tree.prototype
+     * @memberof Tree.prototype
      * @param {string} nodeId - Node id
      * @example
      * var nodeId = 'tui-tree-node-3';
@@ -446,8 +442,7 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
 
     /**
      * Toggle node checking
-     * @api
-     * @memberOf Tree.prototype
+     * @memberof Tree.prototype
      * @param {string} nodeId - Node id
      * @example
      * var nodeId = 'tui-tree-node-3';
@@ -463,8 +458,7 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
 
     /**
      * Whether the node is checked
-     * @api
-     * @memberOf Tree.prototype
+     * @memberof Tree.prototype
      * @param {string} nodeId - Node id
      * @returns {boolean} True if node is indeterminate
      * @example
@@ -478,8 +472,7 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
 
     /**
      * Whether the node is indeterminate
-     * @api
-     * @memberOf Tree.prototype
+     * @memberof Tree.prototype
      * @param {string} nodeId - Node id
      * @returns {boolean} True if node is indeterminate
      * @example
@@ -493,8 +486,7 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
 
     /**
      * Whether the node is unchecked or not
-     * @api
-     * @memberOf Tree.prototype
+     * @memberof Tree.prototype
      * @param {string} nodeId - Node id
      * @returns {boolean} True if node is unchecked.
      * @example
@@ -508,8 +500,7 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
 
     /**
      * Get checked list
-     * @api
-     * @memberOf Tree.prototype
+     * @memberof Tree.prototype
      * @param {string} [parentId] - Node id (default: rootNode id)
      * @returns {Array.<string>} Checked node ids
      * @example
@@ -542,8 +533,7 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
 
     /**
      * Get top checked list
-     * @api
-     * @memberOf Tree.prototype
+     * @memberof Tree.prototype
      * @param {string} [parentId] - Node id (default: rootNode id)
      * @returns {Array.<string>} Checked node ids
      * @example
@@ -582,8 +572,7 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
 
     /**
      * Get bottom checked list
-     * @api
-     * @memberOf Tree.prototype
+     * @memberof Tree.prototype
      * @param {string} [parentId] - Node id (default: rootNode id)
      * @returns {Array.<string>} Checked node ids
      * @example

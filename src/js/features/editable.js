@@ -35,7 +35,7 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
     static: {
         /**
          * @static
-         * @memberOf Selectable
+         * @memberof Selectable
          * @returns {Array.<string>} API list of Editable
          */
         getAPIList: function() {
@@ -119,8 +119,7 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
 
     /**
      * Create child node
-     * @api
-     * @memberOf Tree.prototype
+     * @memberof Tree.prototype
      * @requires Editable
      * @param {string} parentId - Parent node id to create new node
      * @example
@@ -148,8 +147,7 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
 
     /**
      * Edit node
-     * @api
-     * @memberOf Tree.prototype
+     * @memberof Tree.prototype
      * @requires Editable
      * @param {string} nodeId - Node id
      * @example
@@ -242,7 +240,9 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
     _attachInputElement: function(nodeId) {
         var tree = this.tree;
         var target = document.getElementById(nodeId);
-        var wrapperElement, inputElement;
+        var wrapperElement = document.createElement('DIV');
+        var inputElement = this._createInputElement();
+        wrapperElement.style.paddingLeft = (tree.getIndentWidth(nodeId) + tree.ICON_REGION_WIDTH) + 'px';
 
         if (!target) {
             return;
@@ -306,7 +306,6 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
         var data = {};
 
         /**
-         * @api
          * @event Tree#beforeCreateChildNode
          * @param {{value: string}} evt - Event data
          *     @param {string} evt.value - Return value of creating input element
@@ -345,7 +344,6 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
         var data = {};
 
         /**
-         * @api
          * @event Tree#beforeEditNode
          * @param {{value: string}} evt - Event data
          *     @param {string} evt.value - Return value of editing input element

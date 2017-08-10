@@ -25,7 +25,7 @@
         "webpack.config.js"
     ],
     "dependencies": {
-        "tui-code-snippet": "^1.2.0",
+        "tui-code-snippet": "~1.2.5",
         "tui-component-contextmenu": "^1.2.0"
     },
     "devDependencies": {
