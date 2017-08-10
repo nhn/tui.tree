@@ -30,13 +30,15 @@ var nodeStates = states.node,
     snippet = tui.util,
     extend = snippet.extend,
     TIMEOUT_TO_DIFFERENTIATE_CLICK_AND_DBLCLICK = 200,
-    MOUSE_MOVING_THRESHOLD = 5;
+    MOUSE_MOVING_THRESHOLD = 5,
+    INDENT_WIDTH_PIXEL = 23,
+    ICON_WIDTH_PIXEL = 37;
 
 /**
  * Create tree model and inject data to model
  * @class Tree
  * @mixes tui.util.CustomEvents
- * @param {string|HTMLElement|jQueryObject} conatiner - Tree container element or id string value
+ * @param {string|HTMLElement|jQueryObject} container - Tree container element or id string value
  * @param {Object} options The options
  *     @param {Object} [options.data] A data to be used on tree
  *     @param {string} [options.nodeIdPrefix] A default prefix of a node
@@ -148,6 +150,7 @@ var nodeStates = states.node,
  * });
  */
 var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
+    ICON_WIDTH_PIXEL: ICON_WIDTH_PIXEL,
     init: function(container, options) {
         options = extend({}, defaultOption, options);
 
@@ -280,7 +283,6 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
         this._draw(newParentId);
 
         /**
-         * @api
          * @event Tree#move
          * @param {{nodeId: string, originalParentId: string, newParentId: string, index: number}} evt - Event data
          *     @param {string} evt.nodeId - Current node id to move
@@ -565,24 +567,35 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      */
     _makeTemplateProps: function(node) {
         var classNames = this.classNames,
-            props, state;
+            id = node.getId(),
+            props = {
+                id: id,
+                indent: this.getIndentWidth(id)
+            }, state;
 
         if (node.isLeaf()) {
-            props = {
-                id: node.getId(),
+            extend(props, {
                 isLeaf: true // for custom template method
-            };
+            });
         } else {
             state = node.getState();
-            props = {
-                id: node.getId(),
+            extend(props, {
                 stateClass: classNames[state + 'Class'],
                 stateLabel: this.stateLabels[state],
                 children: this._makeHtml(node.getChildIds())
-            };
+            });
         }
 
         return extend(props, classNames, node.getAllData());
+    },
+
+    /**
+     * calculate tree node's padding left
+     * @param {string} nodeId - Node id
+     * @returns {number} - padding left of tree node division
+     */
+    getIndentWidth: function(nodeId) {
+        return this.getDepth(nodeId) * INDENT_WIDTH_PIXEL;
     },
 
     /**
@@ -599,7 +612,6 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
         }
 
         /**
-         * @api
          * @event Tree#beforeDraw
          * @param {{nodeId: string}} evt - Event data
          *     @param {string} evt.nodeId - Node id
@@ -621,10 +633,9 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
             element = document.getElementById(nodeId);
         }
         element.innerHTML = html;
-        this._setClassWithDisplay(node);
+        this._setClassNameAndVisibilityByFeature(node);
 
         /**
-         * @api
          * @event Tree#afterDraw
          * @param {{nodeId: string}} evt - Event data
          *     @param {string} evt.nodeId - Node id
@@ -640,25 +651,27 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
     },
 
     /**
-     * Set class and display of node element
-     * @param {TreeNode} node - Node
+     * Update class name by features on below<br>
+     * - leaf node: has classNames.leafClass<br>
+     * - internal node + opened: has classNames.openedClass, child is visible<br>
+     * - internal node + closed: has classNames.closedClass, child is not visible<br>
+     * @param {TreeNode} node - (re)drawing starts from this node
      * @private
      */
-    _setClassWithDisplay: function(node) {
+    _setClassNameAndVisibilityByFeature: function(node) {
         var nodeId = node.getId(),
             element = document.getElementById(nodeId),
             classNames = this.classNames;
-
-        util.removeClass(element, classNames.leafClass);
 
         if (node.isLeaf()) {
             util.removeClass(element, classNames.openedClass);
             util.removeClass(element, classNames.closedClass);
             util.addClass(element, classNames.leafClass);
         } else {
+            util.removeClass(element, classNames.leafClass);
             this._setDisplayFromNodeState(nodeId, node.getState());
             this.each(function(child) {
-                this._setClassWithDisplay(child);
+                this._setClassNameAndVisibilityByFeature(child);
             }, nodeId, this);
         }
 
@@ -693,7 +706,6 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
 
     /**
      * Return the depth of node
-     * @api
      * @param {string} nodeId - Node id
      * @returns {number|undefined} Depth
      */
@@ -703,7 +715,6 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
 
     /**
      * Return the last depth of tree
-     * @api
      * @returns {number} Last depth
      */
     getLastDepth: function() {
@@ -712,7 +723,6 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
 
     /**
      * Return root node id
-     * @api
      * @returns {string} Root node id
      */
     getRootNodeId: function() {
@@ -721,7 +731,6 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
 
     /**
      * Return child ids
-     * @api
      * @param {string} nodeId - Node id
      * @returns {Array.<string>|undefined} Child ids
      */
@@ -731,7 +740,6 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
 
     /**
      * Return parent id of node
-     * @api
      * @param {string} nodeId - Node id
      * @returns {string|undefined} Parent id
      */
@@ -749,7 +757,6 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
 
     /**
      * Get node id from element
-     * @api
      * @param {HTMLElement} element - Element
      * @returns {string} Node id
      * @example
@@ -767,7 +774,6 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
 
     /**
      * Get prefix of node id
-     * @api
      * @returns {string} Prefix of node id
      * @example
      * tree.getNodeIdPrefix(); // 'tui-tree-node-'
@@ -778,7 +784,6 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
 
     /**
      * Get node data
-     * @api
      * @param {string} nodeId - Node id
      * @returns {object|undefined} Node data
      */
@@ -788,7 +793,6 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
 
     /**
      * Set data properties of a node
-     * @api
      * @param {string} nodeId - Node id
      * @param {object} data - Properties
      * @param {object} [options] - Options
@@ -830,7 +834,6 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
 
     /**
      * Remove node data
-     * @api
      * @param {string} nodeId - Node id
      * @param {string|Array} names - Names of properties
      * @param {object} [options] - Options
@@ -872,7 +875,6 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
 
     /**
      * Get node state.
-     * @api
      * @param {string} nodeId - Node id
      * @returns {string|null} Node state(('opened', 'closed', null)
      * @example
@@ -891,7 +893,6 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
 
     /**
      * Open node
-     * @api
      * @param {string} nodeId - Node id
      */
     open: function(nodeId) {
@@ -910,7 +911,6 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
 
     /**
      * Close node
-     * @api
      * @param {string} nodeId - Node id
      */
     close: function(nodeId) {
@@ -925,7 +925,6 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
 
     /**
      * Toggle node
-     * @api
      * @param {string} nodeId - Node id
      */
     toggle: function(nodeId) {
@@ -972,7 +971,6 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
 
     /**
      * Sort all nodes
-     * @api
      * @param {Function} comparator - Comparator for sorting
      * @param {boolean} [isSilent] - If true, it doesn't redraw tree
      * @example
@@ -1007,7 +1005,6 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
 
     /**
      * Refresh tree or node's children
-     * @api
      * @param {string} [nodeId] - TreeNode id to refresh
      */
     refresh: function(nodeId) {
@@ -1017,7 +1014,6 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
 
     /**
      * Traverse this tree iterating over all nodes.
-     * @api
      * @param {Function} iteratee - Iteratee function
      * @param {object} [context] - Context of iteratee
      * @example
@@ -1031,7 +1027,6 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
 
     /**
      * Traverse this tree iterating over all descendants of a node.
-     * @api
      * @param {Function} iteratee - Iteratee function
      * @param {string} parentId - Parent node id
      * @param {object} [context] - Context of iteratee
@@ -1049,7 +1044,6 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * Add node(s).
      * - If the parentId is falsy, the node will be appended to rootNode.
      * - If 'isSilent' is not true, it redraws the tree
-     * @api
      * @param {Array|object} data - Raw-data
      * @param {*} [parentId] - Parent id
      * @param {object} [options] - Options
@@ -1105,7 +1099,6 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
 
     /**
      * Reset all data
-     * @api
      * @param {Array|object} data - Raw data for all nodes
      * @param {object} [options] - Options
      *     @param {string} [options.nodeId] - Parent node id to reset all child data
@@ -1163,7 +1156,6 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
 
     /**
      * Remove all children
-     * @api
      * @param {string} nodeId - Parent node id
      * @param {object} [options] - Options
      *     @param {boolean} [options.isSilent] - If true, it doesn't redraw the node
@@ -1210,7 +1202,6 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
     /**
      * Remove a node with children.
      * - If 'isSilent' is not true, it redraws the tree
-     * @api
      * @param {string} nodeId - Node id to remove
      * @param {object} [options] - Options
      *     @param {boolean} [options.isSilent] - If true, it doesn't redraw children
@@ -1250,7 +1241,6 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
     /**
      * Move a node to new parent
      * - If 'isSilent' is not true, it redraws the tree
-     * @api
      * @param {string} nodeId - Node id
      * @param {string} newParentId - New parent id
      * @param {number} index - Index number of selected node
@@ -1296,7 +1286,6 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      */
     _move: function(nodeId, newParentId, index, isSilent) {
         /**
-         * @api
          * @event Tree#beforeMove
          * @param {{nodeId: string, newParentId: string}} evt - Event data
          *     @param {string} evt.nodeId - Current dragging node id
@@ -1325,7 +1314,6 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
 
     /**
      * Search node ids by passing the predicate check or matching data
-     * @api
      * @param {Function|Object} predicate - Predicate or data
      * @param {Object} [context] - Context of predicate
      * @returns {Array.<string>} Node ids
@@ -1399,7 +1387,6 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
 
     /**
      * Whether the node is leaf
-     * @api
      * @param {string} nodeId - Node id
      * @returns {boolean} True if the node is leaf.
      */
@@ -1411,7 +1398,6 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
 
     /**
      * Whether a node is a ancestor of another node.
-     * @api
      * @param {string} containerNodeId - Id of a node that may contain the other node
      * @param {string} containedNodeId - Id of a node that may be contained by the other node
      * @returns {boolean} Whether a node contains another node
@@ -1422,7 +1408,6 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
 
     /**
      * Enable facility of tree
-     * @api
      * @param {string} featureName - 'Selectable', 'Draggable', 'Editable', 'ContextMenu'
      * @param {object} [options] - Feature options
      * @returns {Tree} this
@@ -1535,7 +1520,6 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
 
     /**
      * Disable facility of tree
-     * @api
      * @param {string} featureName - 'Selectable', 'Draggable', 'Editable'
      * @returns {Tree} this
      * @example
@@ -1560,7 +1544,6 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
 
     /**
      * Get index number of selected node
-     * @api
      * @param {string} nodeId - Id of selected node
      * @returns {number} Index number of attached node
      */

@@ -11,26 +11,26 @@ describe('TreeModel', function() {
                 {text: '3'},
                 {text: '4'},
                 {text: '5', children: [
-                    {text:'가', children:[
-                        {text:'*'}
+                    {text: '가', children: [
+                        {text: '*'}
                     ]},
-                    {text:'나'}
+                    {text: '나'}
                 ]},
                 {text: '6'},
                 {text: '7'},
                 {text: '8'},
                 {text: '9', children: [
-                    {text:'가'},
-                    {text:'나'}
+                    {text: '가'},
+                    {text: '나'}
                 ]},
                 {text: '10'},
                 {text: '11'},
                 {text: '12'}
             ]},
             {text: 'B', state: 'opened', children: [
-                {text:'1'},
-                {text:'2'},
-                {text:'3'}
+                {text: '1'},
+                {text: '2'},
+                {text: '3'}
             ]},
             {text: 'C', children: [
                 {text: '1'}
@@ -66,14 +66,14 @@ describe('TreeModel', function() {
     });
 
     it('- Add method should append a node to a specific parent node', function() {
-        var data = {
-                text: 'This node will be added to the first node'
-            },
-            parentId = treeModel.rootNode.getChildIds()[0],
-            parentNode = treeModel.getNode(parentId),
-            id, node;
+        var parentId = treeModel.rootNode.getChildIds()[0];
+        var parentNode = treeModel.getNode(parentId);
+        var testData = {
+            text: 'This node will be added to the first node'
+        };
+        var id, node;
 
-        treeModel.add(data, parentId);
+        treeModel.add(testData, parentId);
         id = parentNode.getChildIds()[12];
         node = treeModel.getNode(id);
 
@@ -118,6 +118,7 @@ describe('TreeModel', function() {
                 if (!bValue.localeCompare) {
                     return 0;
                 }
+
                 return bValue.localeCompare(aValue);
             };
 

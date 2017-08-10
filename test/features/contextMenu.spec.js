@@ -1,7 +1,7 @@
 'use strict';
 
-var Tree = require('../src/js/tree');
-var util = require('../src/js//util');
+var Tree = require('../../src/js/tree');
+var util = require('../../src/js//util');
 var TuiContextMenu = tui && tui.component && tui.component.ContextMenu;
 var styleKeys = ['userSelect', 'WebkitUserSelect', 'OUserSelect', 'MozUserSelect', 'msUserSelect'];
 var enableProp = util.testProp(styleKeys);

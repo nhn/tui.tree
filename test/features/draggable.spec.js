@@ -1,6 +1,6 @@
 'use strict';
-var Tree = require('../src/js/tree');
-var util = require('../src/js/util');
+var Tree = require('../../src/js/tree');
+var util = require('../../src/js/util');
 
 jasmine.getFixtures().fixturesPath = 'base/test/fixtures';
 

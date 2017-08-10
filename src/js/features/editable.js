@@ -34,7 +34,7 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
     static: {
         /**
          * @static
-         * @memberOf Selectable
+         * @memberof Selectable
          * @returns {Array.<string>} API list of Editable
          */
         getAPIList: function() {
@@ -118,8 +118,7 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
 
     /**
      * Create child node
-     * @api
-     * @memberOf Tree.prototype
+     * @memberof Tree.prototype
      * @requires Editable
      * @param {string} parentId - Parent node id to create new node
      * @example
@@ -147,8 +146,7 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
 
     /**
      * Edit node
-     * @api
-     * @memberOf Tree.prototype
+     * @memberof Tree.prototype
      * @requires Editable
      * @param {string} nodeId - Node id
      * @example
@@ -244,20 +242,40 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
         var wrapperElement = document.createElement('DIV');
         var inputElement = this._createInputElement();
 
+<<<<<<< HEAD
         util.addClass(wrapperElement, WRAPPER_CLASSNAME);
         wrapperElement.style.paddingLeft = (this.tree.indent * this.tree.getDepth(nodeId) + 37) + 'px';
 
         inputElement.value = tree.getNodeData(nodeId)[this.dataKey] || '';
+=======
+        if (!target) {
+            return;
+        }
 
-        wrapperElement.appendChild(inputElement);
-        target.appendChild(wrapperElement);
+        wrapperElement = util.getChildElementByClassName(target, WRAPPER_CLASSNAME);
+        if (!wrapperElement) {
+            wrapperElement = document.createElement('DIV');
+            inputElement = this._createInputElement();
+>>>>>>> ff61cb0c1d622e2c6417103c41a7b00fad6970a3
 
-        util.addEventListener(inputElement, 'keyup', this.boundOnKeyup);
-        util.addEventListener(inputElement, 'blur', this.boundOnBlur);
+            util.addClass(wrapperElement, WRAPPER_CLASSNAME);
+            wrapperElement.style.paddingLeft = (tree.getIndentWidth(nodeId) + tree.ICON_WIDTH_PIXEL) + 'px';
 
-        this.inputElement = inputElement;
+            inputElement.value = tree.getNodeData(nodeId)[this.dataKey] || '';
 
-        inputElement.focus();
+            wrapperElement.appendChild(inputElement);
+            target.appendChild(wrapperElement);
+
+            util.addEventListener(inputElement, 'keyup', this.boundOnKeyup);
+            util.addEventListener(inputElement, 'blur', this.boundOnBlur);
+
+            if (this.inputElement) {
+                $(this.inputElement).blur();
+            }
+            this.inputElement = inputElement;
+        }
+
+        this.inputElement.focus();
     },
 
     /**
@@ -293,7 +311,6 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
         var data = {};
 
         /**
-         * @api
          * @event Tree#beforeCreateChildNode
          * @param {{value: string}} evt - Event data
          *     @param {string} evt.value - Return value of creating input element
@@ -332,7 +349,6 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
         var data = {};
 
         /**
-         * @api
          * @event Tree#beforeEditNode
          * @param {{value: string}} evt - Event data
          *     @param {string} evt.value - Return value of editing input element

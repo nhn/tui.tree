@@ -23,7 +23,7 @@ var Ajax = tui.util.defineClass(/** @lends Ajax.prototype */{/*eslint-disable*/
     static: {
         /**
          * @static
-         * @memberOf Ajax
+         * @memberof Ajax
          * @returns {Array.<string>} API list of Ajax
          */
         getAPIList: function() {
@@ -116,7 +116,6 @@ var Ajax = tui.util.defineClass(/** @lends Ajax.prototype */{/*eslint-disable*/
         options = this._getDefaultRequestOptions(type, params);
 
         /**
-         * @api
          * @event Tree#beforeAjaxRequest
          * @param {{command: string, data: object}} evt - Event data
          *     @param {string} evt.command - Command type
@@ -169,7 +168,6 @@ var Ajax = tui.util.defineClass(/** @lends Ajax.prototype */{/*eslint-disable*/
             data = callback(response);
 
             /**
-             * @api
              * @event Tree#successAjaxResponse
              * @param {{command: string, data: object}} evt - Event data
              *     @param {string} evt.command - Command type
@@ -188,7 +186,6 @@ var Ajax = tui.util.defineClass(/** @lends Ajax.prototype */{/*eslint-disable*/
             });
         } else {
             /**
-             * @api
              * @event Tree#failAjaxResponse
              * @param {{command: string}} evt - Event data
              *     @param {string} evt.command - Command type
@@ -210,7 +207,6 @@ var Ajax = tui.util.defineClass(/** @lends Ajax.prototype */{/*eslint-disable*/
         this._hideLoader();
 
         /**
-         * @api
          * @event Tree#errorAjaxResponse
          * @param {{command: string}} evt - Event data
          *     @param {string} evt.command - Command type
