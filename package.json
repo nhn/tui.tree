@@ -57,6 +57,6 @@
     "dependencies": {
         "tui-code-snippet": "^1.2.5",
         "tui-context-menu": "file:../../contextmenu/component-contextmenu",
-        "tui-dom": "file:../../dom/tui.dom"
+        "tui-dom": "^3.0.0"
     }
 }
