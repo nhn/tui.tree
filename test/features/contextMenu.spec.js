@@ -1,43 +1,38 @@
-'use strict';
-
 var Tree = require('../../src/js/tree');
 var util = require('../../src/js//util');
-var TuiContextMenu = tui && tui.component && tui.component.ContextMenu;
+var TuiContextMenu = require('tui-context-menu');
 var styleKeys = ['userSelect', 'WebkitUserSelect', 'OUserSelect', 'MozUserSelect', 'msUserSelect'];
 var enableProp = util.testProp(styleKeys);
 
 describe('contextMenu.js', function() {
     var $rootElement, tree, contextMenu, menuData;
     var data = [
-        {text: 'A', children: [
-            {text: '1'},
-            {text: '2'},
-            {text: '3'},
-            {text: '4'},
-            {text: '5', children: [
-                {text: '가', children: [
-                    {text: '*'}
-                ]},
-                {text: '나'}
-            ]},
-            {text: '6'},
-            {text: '7'},
-            {text: '8'},
-            {text: '9', children: [
-                {text: '가'},
-                {text: '나'}
-            ]},
-            {text: '10'},
-            {text: '11'},
-            {text: '12'}
-        ]},
-        {text: 'B', children: [
-            {text: '1'},
-            {text: '2'},
-            {text: '3'},
-            {text: '4'},
-            {text: '5'}
-        ]}
+        {
+            text: 'A',
+            children: [
+                {text: '1'},
+                {text: '2'},
+                {text: '3'},
+                {text: '4'},
+                {
+                    text: '5',
+                    children: [
+                        {text: '가', children: [{text: '*'}]},
+                        {text: '나'}
+                    ]
+                },
+                {text: '6'},
+                {text: '7'},
+                {text: '8'},
+                {text: '9', children: [{text: '가'}, {text: '나'}]},
+                {text: '10'},
+                {text: '11'},
+                {text: '12'}
+            ]
+        },
+        {
+            text: 'B', children: [{text: '1'}, {text: '2'}, {text: '3'}, {text: '4'}, {text: '5'}]
+        }
     ];
 
     beforeEach(function() {

@@ -1,8 +1,6 @@
-Tree
-===============
-Tree component<br>
-Display the hierarchical data by tree<br>
-Can use more features
+# Tree
+
+TOAST UI Component: Tree
 
 ## Feature
 * Default
@@ -18,31 +16,68 @@ Can use more features
     * Selectable: select and deselect node
 
 ## Documentation
-* API: [https://nhnent.github.io/tui.component.tree/latest](https://nhnent.github.io/tui.component.tree/latest)
-* Tutorial: [https://github.com/nhnent/tui.component.tree/wiki/Tutorial](https://github.com/nhnent/tui.component.tree/wiki/Tutorial)
-* Examples: [http://nhnent.github.io/tui.component.tree/latest/tutorial-example1.html](http://nhnent.github.io/tui.component.tree/latest/tutorial-example1.html)
+* API: [https://nhnent.github.io/tui.tree/latest](https://nhnent.github.io/tui.tree/latest)
+* Tutorial: [https://github.com/nhnent/tui.tree/wiki](https://github.com/nhnent/tui.tree/wiki)
+* Examples: [http://nhnent.github.io/tui.tree/latest/tutorial-example01-basic.html](http://nhnent.github.io/tui.tree/latest/tutorial-example01-basic.html)
 
 ## Dependency
-* tui-code-snippet: ~1.2.5
-* tui-contextmenu: ~1.2.0 (optional, for using 'ContextMenu' feature)
-* jQuery: 1.8.3 (optional, for using 'Ajax' feature)
+* tui-code-snippet: ^1.2.5
+* tui-context-menu: ^2.0.0 (Optional, needed for using `ContextMenu` feature)
+* tui-dom: ^3.0.0 (Optional, needed for using `ContextMenu` feature)
+* jQuery: ^1.11.0 (Optional, needed for using `Ajax` feature)
 
 ## Test Environment
-* PC
-    * IE8~11
-    * Edge
-    * Chrome
-    * Firefox
+### PC
+* IE8~11
+* Edge
+* Chrome
+* Firefox
+* Safari
 
-## Download/Install
-* Bower:
-   * Latest: `bower install tui-component-tree`
-   * Each Version: `bower install tui-component-tree[#tag]`
-* Download: https://github.com/nhnent/tui.component.tree
+## Usage
+### Use `npm`
 
-## LICENSE
-[MIT LICENSE](LICENSE)
+Install the latest version using `npm` command:
 
-## Sponsor
-* <img src="https://cloud.githubusercontent.com/assets/12269563/12287774/8cf4d2c0-ba12-11e5-9fa8-0a9c452cca05.png" height="30"><br>
- [BrowserStack](https://www.browserstack.com/) is a cloud based cross browser testing tool
+```
+$ npm install tui-tree --save
+```
+
+or want to install the each version:
+
+```
+$ npm install tui-tree@<version> --save
+```
+
+To access as module format in your code:
+
+```javascript
+var Tree = require('tui-tree');
+var instance = new Tree(...);
+```
+
+### Use `bower`
+Install the latest version using `bower` command:
+
+```
+$ bower install tui-tree
+```
+
+or want to install the each version:
+
+```
+$ bower install tui-tree#<tag>
+```
+
+To access as namespace format in your code:
+
+```javascript
+var instance = new tui.Tree(...);
+```
+
+### Download
+* [Download bundle files from `dist` folder](https://github.com/nhnent/tui.tree/tree/production/dist)
+* [Download all sources for each version](https://github.com/nhnent/tui.tree/releases)
+
+## License
+[MIT LICENSE](https://github.com/nhnent/tui.tree/blob/master/LICENSE)

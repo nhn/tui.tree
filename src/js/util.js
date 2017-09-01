@@ -2,17 +2,17 @@
  * @fileoverview Helper object to make easy tree elements
  * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
  */
-'use strict';
-var isUndefined = tui.util.isUndefined,
-    pick = tui.util.pick,
+var snippet = require('tui-code-snippet');
+var isUndefined = snippet.isUndefined,
+    pick = snippet.pick,
     templateMaskRe = /\{\{(.+?)}}/gi,
     isValidDotNotationRe = /^\w+(?:\.\w+)*$/,
     isValidDotNotation = function(str) {
         return isValidDotNotationRe.test(str);
     },
-    isArray = tui.util.isArraySafe,
-    forEach = tui.util.forEach,
-    browser = tui.util.browser,
+    isArray = snippet.isArraySafe,
+    forEach = snippet.forEach,
+    browser = snippet.browser,
     isSupportPageOffset = typeof window.pageXOffset !== 'undefined',
     isCSS1Compat = document.compatMode === 'CSS1Compat',
     isOlderIE = (browser.msie && browser.version < 9);
@@ -68,13 +68,12 @@ var util = {
         }
 
         arr = originalClassName.split(' ');
-        index = tui.util.inArray(className, arr);
+        index = snippet.inArray(className, arr);
         if (index !== -1) {
             arr.splice(index, 1);
             element.className = arr.join(' ');
         }
     },
-
 
     /**
      * Add event to element
@@ -162,8 +161,8 @@ var util = {
         if (target.querySelectorAll) {
             filtered = target.querySelectorAll('.' + className);
         } else {
-            all = tui.util.toArray(target.getElementsByTagName('*'));
-            filtered = tui.util.filter(all, function(el) {
+            all = snippet.toArray(target.getElementsByTagName('*'));
+            filtered = snippet.filter(all, function(el) {
                 var classNames = el.className || '';
 
                 return (classNames.indexOf(className) !== -1);
@@ -226,7 +225,7 @@ var util = {
             propertyName = false;
 
         /* eslint-disable consistent-return */
-        tui.util.forEach(props, function(prop) {
+        snippet.forEach(props, function(prop) {
             if (prop in style) {
                 propertyName = prop;
 
@@ -366,7 +365,7 @@ var util = {
      * @returns {HTMLElement} Text node
      */
     getFirstTextNode: function(element) {
-        var childElements = tui.util.toArray(element.childNodes);
+        var childElements = snippet.toArray(element.childNodes);
         var firstTextNode = '';
 
         forEach(childElements, function(childElement) {

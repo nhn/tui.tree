@@ -2,9 +2,8 @@
  * @fileoverview Feature that each tree node is possible to drag and drop
  * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
  */
-'use strict';
-
 var util = require('./../util');
+var snippet = require('tui-code-snippet');
 
 var defaultOptions = {
     useHelper: true,
@@ -31,8 +30,8 @@ var rejectedTagNames = [
 var selectKey = util.testProp(
     ['userSelect', 'WebkitUserSelect', 'OUserSelect', 'MozUserSelect', 'msUserSelect']
 );
-var inArray = tui.util.inArray;
-var forEach = tui.util.forEach;
+var inArray = snippet.inArray;
+var forEach = snippet.forEach;
 var API_LIST = [];
 
 /**
@@ -53,7 +52,7 @@ var API_LIST = [];
  *     @param {{top: number, bottom: number}} options.lineBoundary - Boundary value for visible moving line
  * @ignore
  */
-var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{/*eslint-disable*/
+var Draggable = snippet.defineClass(/** @lends Draggable.prototype */{/*eslint-disable*/
     static: {
         /**
          * @static
@@ -66,7 +65,7 @@ var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{/*eslint-
     },
 
     init: function(tree, options) { /*eslint-enable*/
-        options = tui.util.extend({}, defaultOptions, options);
+        options = snippet.extend({}, defaultOptions, options);
 
         /**
          * Tree data

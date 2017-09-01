@@ -1,37 +1,37 @@
-'use strict';
+var snippet = require('tui-code-snippet');
+
 var Tree = require('../../src/js/tree'),
     messages = require('../../src/js/consts/messages'),
     Checkbox = require('../../src/js/features/checkbox');
 
 describe('Tree', function() {
     var data = [
-        {title: 'A', children: [
-            {title: '1'},
-            {title: '2'},
-            {title: '3'},
-            {title: '4'},
-            {title: '5', children: [
-                {title: '가', children: [
-                    {title: '*'}
-                ]},
-                {title: '나'}
-            ]},
-            {title: '6'},
-            {title: '7'},
-            {title: '8'},
-            {title: '9', children: [
-                {title: '가'},
-                {title: '나'}
-            ]},
-            {title: '10'},
-            {title: '11'},
-            {title: '12'}
-        ]},
-        {title: 'B', children: [
-            {title: '1'},
-            {title: '2'},
-            {title: '3'}
-        ]}
+        {
+            title: 'A',
+            children: [
+                {title: '1'},
+                {title: '2'},
+                {title: '3'},
+                {title: '4'},
+                {
+                    title: '5',
+                    children: [
+                        {title: '가', children: [{title: '*'}]},
+                        {title: '나'}
+                    ]
+                },
+                {title: '6'},
+                {title: '7'},
+                {title: '8'},
+                {title: '9', children: [{title: '가'}, {title: '나'}]},
+                {title: '10'},
+                {title: '11'},
+                {title: '12'}
+            ]
+        },
+        {
+            title: 'B', children: [{title: '1'}, {title: '2'}, {title: '3'}]
+        }
     ];
     var tree;
 
@@ -60,12 +60,12 @@ describe('Tree', function() {
     it('should have implemented apis about checkbox if enabled', function() {
         var apiList = Checkbox.getAPIList();
 
-        tui.util.forEach(apiList, function(name) {
+        snippet.forEach(apiList, function(name) {
             expect(tree[name]).not.toThrowError(messages.INVALID_API_CHECKBOX);
         });
 
         tree.disableFeature('Checkbox');
-        tui.util.forEach(apiList, function(name) {
+        snippet.forEach(apiList, function(name) {
             expect(tree[name]).toThrowError(messages.INVALID_API_CHECKBOX);
         });
     });

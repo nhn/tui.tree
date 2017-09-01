@@ -1,4 +1,3 @@
-'use strict';
 var Tree = require('../../src/js/tree');
 
 describe('Tree', function() {
@@ -469,10 +468,7 @@ describe('Tree', function() {
 
         beforeEach(function() {
             children = [
-                {text: 'A', children: [
-                    {text: 'aa'},
-                    {text: 'bb'}
-                ]},
+                {text: 'A', children: [{text: 'aa'}, {text: 'bb'}]},
                 {text: 'B'},
                 {text: 'C'}
             ];

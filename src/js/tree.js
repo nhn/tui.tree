@@ -2,37 +2,37 @@
  * @fileoverview Render tree and update tree
  * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
  */
-'use strict';
 
-var util = require('./util'),
-    defaultOption = require('./consts/defaultOption'),
-    states = require('./consts/states'),
-    messages = require('./consts/messages'),
-    outerTemplate = require('./consts/outerTemplate'),
-    ajaxCommand = require('./consts/ajaxCommand'),
-    TreeModel = require('./treeModel'),
-    Selectable = require('./features/selectable'),
-    Draggable = require('./features/draggable'),
-    Editable = require('./features/editable'),
-    Checkbox = require('./features/checkbox'),
-    ContextMenu = require('./features/contextMenu'),
-    Ajax = require('./features/ajax');
+var util = require('./util');
+var defaultOption = require('./consts/defaultOption');
+var states = require('./consts/states');
+var messages = require('./consts/messages');
+var outerTemplate = require('./consts/outerTemplate');
+var ajaxCommand = require('./consts/ajaxCommand');
+var TreeModel = require('./treeModel');
+var Selectable = require('./features/selectable');
+var Draggable = require('./features/draggable');
+var Editable = require('./features/editable');
+var Checkbox = require('./features/checkbox');
+var ContextMenu = require('./features/contextMenu');
+var Ajax = require('./features/ajax');
 
-var nodeStates = states.node,
-    features = {
-        Selectable: Selectable,
-        Draggable: Draggable,
-        Editable: Editable,
-        Checkbox: Checkbox,
-        ContextMenu: ContextMenu,
-        Ajax: Ajax
-    },
-    snippet = tui.util,
-    extend = snippet.extend,
-    TIMEOUT_TO_DIFFERENTIATE_CLICK_AND_DBLCLICK = 200,
-    MOUSE_MOVING_THRESHOLD = 5,
-    INDENT_WIDTH_PIXEL = 23,
-    ICON_WIDTH_PIXEL = 37;
+var nodeStates = states.node;
+var features = {
+    Selectable: Selectable,
+    Draggable: Draggable,
+    Editable: Editable,
+    Checkbox: Checkbox,
+    ContextMenu: ContextMenu,
+    Ajax: Ajax
+};
+var snippet = require('tui-code-snippet');
+var extend = snippet.extend;
+
+var TIMEOUT_TO_DIFFERENTIATE_CLICK_AND_DBLCLICK = 200;
+var MOUSE_MOVING_THRESHOLD = 5;
+var INDENT_WIDTH_PIXEL = 23;
+var ICON_WIDTH_PIXEL = 37;
 
 /**
  * Create tree model and inject data to model
@@ -50,7 +50,16 @@ var nodeStates = states.node,
  *         @param {string} [options.template.internalNode] HTML template
  *         @param {string} [options.template.leafNode] HTML template
  *     @param {Function} [options.renderTemplate] Function for rendering template
- * @example
+ * @example <caption>Get `Tree` module</caption>
+ * // * node, commonjs
+ * // * Get Tree module from `node_modules/tui-tree`
+ * var Tree = require('tui-tree');
+ * var instance = new Tree(...);
+ * // * distribution file, script
+ * // * there is `tui.Tree` as a global variable
+ * var Tree = tui.Tree;
+ * var instance = new Tree(...);
+ * @example <caption>Initialize Tree</caption>
  * // Default options:
  * // {
  * //     data: [],
@@ -114,7 +123,7 @@ var nodeStates = states.node,
  *         {text: 'b'}
  *     ]}
  * ];
- * var tree = new tui.component.Tree(container, {
+ * var tree = new Tree(container, {
  *     data: data,
  *     nodeDefaultState: 'opened',
  *
@@ -484,7 +493,6 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
         util.removeClass(nodeElement, closedClassName);
         util.addClass(nodeElement, classNames[state + 'Class']);
     },
-
 
     /**
      * Make html
@@ -1432,23 +1440,23 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      *      hoverClassName: 'tui-tree-hover'
      *      lineClassName: 'tui-tree-line',
      *      lineBoundary: {
-     *      	top: 10,
-     *       	bottom: 10
+     *          top: 10,
+     *          bottom: 10
      *      }
      *  })
      *  .enableFeature('Checkbox', {
      *      checkboxClassName: 'tui-tree-checkbox'
      *  })
      *  .enableFeature('ContextMenu', {
-     *  	menuData: [
-     *   		{title: 'menu1', command: 'copy'},
-     *     		{title: 'menu2', command: 'paste'},
-     *       	{separator: true},
-     *        	{
-     *         		title: 'menu3',
-     *           	menu: [
-     *            		{title: 'submenu1'},
-     *              	{title: 'submenu2'}
+     *      menuData: [
+     *          {title: 'menu1', command: 'copy'},
+     *          {title: 'menu2', command: 'paste'},
+     *          {separator: true},
+     *          {
+     *              title: 'menu3',
+     *              menu: [
+     *                  {title: 'submenu1'},
+     *                  {title: 'submenu2'}
      *              ]
      *          }
      *      }

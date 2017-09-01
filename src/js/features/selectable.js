@@ -2,9 +2,8 @@
  * @fileoverview Feature that each tree node is possible to select as click
  * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
  */
-'use strict';
-
 var util = require('./../util');
+var snippet = require('tui-code-snippet');
 
 var API_LIST = [
         'select',
@@ -23,7 +22,7 @@ var API_LIST = [
  *  @param {string} options.selectedClassName - Classname for selected node.
  * @ignore
  */
-var Selectable = tui.util.defineClass(/** @lends Selectable.prototype */{/*eslint-disable*/
+var Selectable = snippet.defineClass(/** @lends Selectable.prototype */{/*eslint-disable*/
     static: {
         /**
          * @static
@@ -35,7 +34,7 @@ var Selectable = tui.util.defineClass(/** @lends Selectable.prototype */{/*eslin
         }
     },
     init: function(tree, options) { /*eslint-enable*/
-        options = tui.util.extend({}, defaults, options);
+        options = snippet.extend({}, defaults, options);
 
         this.tree = tree;
         this.selectedClassName = options.selectedClassName;
@@ -54,9 +53,9 @@ var Selectable = tui.util.defineClass(/** @lends Selectable.prototype */{/*eslin
      */
     _setAPIs: function() {
         var tree = this.tree,
-            bind = tui.util.bind;
+            bind = snippet.bind;
 
-        tui.util.forEach(API_LIST, function(apiName) {
+        snippet.forEach(API_LIST, function(apiName) {
             tree[apiName] = bind(this[apiName], this);
         }, this);
     },
@@ -70,7 +69,7 @@ var Selectable = tui.util.defineClass(/** @lends Selectable.prototype */{/*eslin
 
         util.removeClass(nodeElement, this.selectedClassName);
         tree.off(this);
-        tui.util.forEach(API_LIST, function(apiName) {
+        snippet.forEach(API_LIST, function(apiName) {
             delete tree[apiName];
         });
     },

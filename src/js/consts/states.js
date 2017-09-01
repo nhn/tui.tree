@@ -2,7 +2,6 @@
  * @fileoverview Set default value of toggle button
  * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
  */
-'use strict';
 
 /**
  * States in tree

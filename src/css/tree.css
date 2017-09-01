@@ -1,4 +1,4 @@
-@charset 'utf-8';
+@charset "utf-8";
 .tui-ico-check, .tui-ico-checked, .tui-ico-file, .tui-ico-folder, .tui-ico-root, .tui-ico-tree {
     overflow: hidden;
     display: inline-block;

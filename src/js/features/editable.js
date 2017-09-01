@@ -2,11 +2,10 @@
  * @fileoverview Feature that each tree node is possible to edit as double click
  * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
  */
-'use strict';
-
 var util = require('./../util');
 var ajaxCommand = require('./../consts/ajaxCommand');
 var states = require('./../consts/states');
+var snippet = require('tui-code-snippet');
 
 var API_LIST = [
     'createChildNode',
@@ -30,7 +29,7 @@ var INPUT_CLASSNAME = 'tui-tree-input';
  *  @param {string} [options.inputClassName] - Classname of input element
  * @ignore
  */
-var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-disable*/
+var Editable = snippet.defineClass(/** @lends Editable.prototype */{/*eslint-disable*/
     static: {
         /**
          * @static
@@ -42,7 +41,7 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
         }
     },
     init: function(tree, options) { /*eslint-enable*/
-        options = tui.util.extend({}, options);
+        options = snippet.extend({}, options);
 
         /**
          * Tree
@@ -90,13 +89,13 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
          * Keyup event handler
          * @type {Function}
          */
-        this.boundOnKeyup = tui.util.bind(this._onKeyup, this);
+        this.boundOnKeyup = snippet.bind(this._onKeyup, this);
 
         /**
          * Blur event handler
          * @type {Function}
          */
-        this.boundOnBlur = tui.util.bind(this._onBlur, this);
+        this.boundOnBlur = snippet.bind(this._onBlur, this);
 
         tree.on('doubleClick', this._onDoubleClick, this);
 
@@ -111,7 +110,7 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
 
         this._detachInputElement();
         tree.off(this);
-        tui.util.forEach(API_LIST, function(apiName) {
+        snippet.forEach(API_LIST, function(apiName) {
             delete tree[apiName];
         });
     },
@@ -374,9 +373,9 @@ var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-di
      */
     _setAPIs: function() {
         var tree = this.tree;
-        var bind = tui.util.bind;
+        var bind = snippet.bind;
 
-        tui.util.forEach(API_LIST, function(apiName) {
+        snippet.forEach(API_LIST, function(apiName) {
             tree[apiName] = bind(this[apiName], this);
         }, this);
     }

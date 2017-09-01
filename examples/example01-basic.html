@@ -2,9 +2,9 @@
 <html>
     <head lang="en">
         <meta charset="UTF-8">
-        <title>Tree with "Selectable" feature</title>
+        <title>Tree</title>
         <link rel="stylesheet" href="css/docs.css" />
-        <link rel="stylesheet" href="../dist/tui-component-tree.css" />
+        <link rel="stylesheet" href="../dist/tui-tree.css" />
     </head>
 
     <body>
@@ -12,14 +12,13 @@
             <div id="tree" class="tui-tree-wrap"></div>
         </div>
         <div class="explain">
-            <button id="selectedBtn">select</button>
-            <button id="deselectedBtn">deselect</button>
-            <br>
-            <textarea id="selectedValue"></textarea>
+            <button id="addChildBtn">add child</button>
+            <button id="removeChildBtn">remove child</button>
+            <button id="sortBtn">sort</button>
         </div>
 
-        <script src="https://rawgit.com/nhnent/tui.code-snippet/1.2.1/code-snippet.js"></script>
-        <script src="../dist/tui-component-tree.js"></script>
+        <script src="https://cdn.rawgit.com/nhnent/tui.code-snippet/v1.2.5/dist/tui-code-snippet.js"></script>
+        <script src="../dist/tui-tree.js"></script>
         <script class="code-js">
 
         var util = {
@@ -62,35 +61,36 @@
             ]}
         ];
 
-        var tree = new tui.component.Tree('tree', {
+        var tree = new tui.Tree('tree', {
             data: data,
             nodeDefaultState: 'opened'
-        }).enableFeature('Selectable', {
-            selectedClassName: 'tui-tree-selected',
         });
 
-        var selectedBtn = document.getElementById('selectedBtn');
-        var deselectedBtn = document.getElementById('deselectedBtn');
+        var addChildBtn = document.getElementById('addChildBtn');
+        var removeChildBtn = document.getElementById('removeChildBtn');
+        var sortBtn = document.getElementById('sortBtn');
         var rootNodeId = tree.getRootNodeId();
         var firstChildId = tree.getChildIds(rootNodeId)[0];
-        var selectedValue = document.getElementById('selectedValue');
 
-        tree.on('select', function(eventData) {
-            var nodeData = tree.getNodeData(eventData.nodeId);
-            selectedValue.value = 'selected : ' + nodeData.text;
+        util.addEventListener(addChildBtn, 'click', function() {
+            tree.add({text:'hello world'}, firstChildId);
         });
 
-        tree.on('deselect', function(eventData) {
-            var nodeData = tree.getNodeData(eventData.nodeId);
-            selectedValue.value = 'deselected : ' + nodeData.text;
+        util.addEventListener(removeChildBtn, 'click', function() {
+            var lastGrandChildId = tree.getChildIds(firstChildId).slice(-1)[0];
+            tree.remove(lastGrandChildId);
         });
 
-        util.addEventListener(selectedBtn, 'click', function() {
-            tree.select(firstChildId);
-        });
+        util.addEventListener(sortBtn, 'click', function() {
+            tree.sort(function(nodeA, nodeB) {
+                var aValue = nodeA.getData('text'),
+                    bValue = nodeB.getData('text');
 
-        util.addEventListener(deselectedBtn, 'click', function() {
-            tree.deselect();
+                if (!aValue.localeCompare) {
+                    return 0;
+                }
+                return aValue.localeCompare(bValue);
+            });
         });
 
         </script>

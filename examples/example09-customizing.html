@@ -4,7 +4,7 @@
         <meta charset="UTF-8">
         <title>Tree with depth label using template option</title>
         <link rel="stylesheet" href="css/docs.css" />
-        <link rel="stylesheet" href="../dist/tui-component-tree.css" />
+        <link rel="stylesheet" href="../dist/tui-tree.css" />
     </head>
 
     <body>
@@ -31,8 +31,8 @@
             </div>
         </div>
 
-        <script src="https://rawgit.com/nhnent/tui.code-snippet/1.2.1/code-snippet.js"></script>
-        <script src="../dist/tui-component-tree.js"></script>
+        <script src="https://cdn.rawgit.com/nhnent/tui.code-snippet/v1.2.5/dist/tui-code-snippet.js"></script>
+        <script src="../dist/tui-tree.js"></script>
         <script class="code-js">
 
         var data = [
@@ -66,7 +66,7 @@
 
         var depthLabels = ['층', '열', '구역', '블록'];
 
-        var tree = new tui.component.Tree('tree', {
+        var tree = new tui.Tree('tree', {
             data: data,
             nodeDefaultState: 'opened',
             template: {
