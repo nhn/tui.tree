@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+    <head lang="en">
+        <meta charset="UTF-8">
+        <title>Tree with "Ajax" feature</title>
+        <link rel="stylesheet" href="css/docs.css" />
+        <link rel="stylesheet" href="../dist/tui-tree.css" /> 
+        <link rel="stylesheet" href="//rawgit.com/nhnent/tui.context-menu/v2.0.0/dist/tui-context-menu.css" /> 
+    </head>
+
+    <body>
+        <div class="code-html">
+            <div id="tree" class="tui-tree-wrap"></div>
+        </div>
+        <div class="explain">
+            <textarea id="infoArea"></textarea>
+        </div>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+        <script src="https://cdn.rawgit.com/nhnent/tui.code-snippet/v1.2.5/dist/tui-code-snippet.min.js"></script>
+        <script src="https://cdn.rawgit.com/nhnent/tui.dom/v3.0.0/dist/tui-dom.min.js"></script>
+        <script src="https://rawgit.com/nhnent/tui.context-menu/v2.0.0/dist/tui-context-menu.min.js"></script> 
+        <script src="../dist/tui-tree.js"></script>
+        <script class="code-js">
+
+        var infoArea = document.getElementById('infoArea');
+
+        // Create Tree component
+        var tree = new tui.Tree('tree', {
+            nodeDefaultState: 'opened'
+        });
+
+        // Add features
+        tree.enableFeature('Selectable')
+            .enableFeature('Editable', {
+            dataKey: 'text'
+        }).enableFeature('Draggable', {
+            isSortable: true
+        }).enableFeature('ContextMenu', {
+            menuData: [
+                {title: 'create', command: 'create'},
+                {title: 'update', command: 'update'},
+                {title: 'remove', command: 'remove'}
+            ]
+        }).enableFeature('Ajax', {
+            command: {
+                read: {
+                    url: 'data/tree.js',
+                    dataType: 'jsonp',
+                    jsonpCallback: 'dataCallback',
+                    data: function(params) {
+                        return {
+                            productId: tree.getNodeData(params.nodeId).pid
+                        };
+                    }
+                },
+                create: {
+                    url: 'data/response.js',
+                    dataType: 'jsonp',
+                    jsonpCallback: 'dataCallback',
+                    data: function(params) {
+                        return {
+                            targetId: tree.getNodeData(params.parentId).pid,
+                            productName: params.data.text
+                        };
+                    }
+                },
+                update: {
+                    url: 'data/response.js',
+                    dataType: 'jsonp',
+                    jsonpCallback: 'dataCallback',
+                    data: function(params) {
+                        return {
+                            productId: tree.getNodeData(params.nodeId).pid,
+                            productName: params.data.text
+                        };
+                    }
+                },
+                remove: {
+                    url: 'data/response.js',
+                    dataType: 'jsonp',
+                    jsonpCallback: 'dataCallback',
+                    data: function(params) {
+                        return {
+                            productId: tree.getNodeData(params.nodeId).pid
+                        };
+                    }
+                },
+                move: {
+                    url: 'data/response.js',
+                    dataType: 'jsonp',
+                    jsonpCallback: 'dataCallback',
+                    data: function(params) {
+                        return {
+                            productId: tree.getNodeData(params.nodeId).pid,
+                            targetId: tree.getNodeData(params.newParentId).pid,
+                            moveIdx: params.index
+                        };
+                    }
+                }
+            },
+            parseData: function(command, response) {
+                if (command === 'read') {
+                    return response.code === '200' ? response.tree : false;
+                } else {
+                    return response.code === '200';
+                }
+            }
+        });
+
+        // Bind custom event
+        tree.on('selectContextMenu', function(e) {
+            var cmd = e.cmd;
+            var nodeId = e.nodeId;
+
+            switch (cmd) {
+                case 'create':
+                    tree.createChildNode(nodeId);
+                    break;
+                case 'update':
+                    tree.editNode(nodeId);
+                    break;
+                case 'remove':
+                    tree.remove(nodeId);
+                    break;
+            }
+        });
+
+        tree.on('beforeCreateChildNode', function() {
+            return confirm('create?');
+        });
+
+        tree.on('beforeEditNode', function() {
+            return confirm('edit?');
+        });
+
+        tree.on('successAjaxResponse', function(command, data) {
+            var message;
+
+            message = 'Command : ' + command  + '\n';
+            message += 'jQuery request options : \n';
+            message += JSON.stringify(tree.enabledFeatures.Ajax.command[command], null, 8);
+
+            infoArea.value = message;
+        });
+
+        tree.on('beforeMove', function() {
+            console.log('before move');
+        });
+
+        </script>
+    </body>
+</html>

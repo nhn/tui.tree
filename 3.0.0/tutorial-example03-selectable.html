@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Tutorial: 3. Selectable feature | Tree</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-jsdoc.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/tui-doc.css">
+
+    
+</head>
+<body>
+<nav class="lnb" id="lnb">
+    <div class="logo" style="width: 150px; height: 13px">
+        
+            <a href="https://github.com/nhnent/tui.jsdoc-template" rel="noopener noreferrer" target="_blank">
+                <img src="https://cloud.githubusercontent.com/assets/12269563/20029815/01133928-a39a-11e6-80f3-12500a91c755.png" width="100%" height="100%">
+            </a>
+        
+    </div>
+    <div class="title">
+        <h1><a href="index.html" class="link">Tree</a></h1>
+        
+            <span class="version">v3.0.0</span>
+        
+    </div>
+    <div class="search-container" id="search-container">
+        <input type="text" placeholder="Search">
+        <ul></ul>
+    </div>
+    
+        <ol class="lnb-tab">
+            <li id="api-tab">
+                <a href="#"><h4>API</h4></a>
+            </li>
+            <li id="examples-tab">
+                <a href="#"><h4>Examples</h4></a>
+            </li>
+        </ol>
+    
+    <div class="lnb-examples hidden"><h3>Examples</h3><ul><li><a href="tutorial-example01-basic.html">1. Basic</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example01-basic_sub"></div></li><li><a href="tutorial-example02-template.html">2. Using template</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example02-template_sub"></div></li><li><a href="tutorial-example03-selectable.html">3. Selectable feature</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example03-selectable_sub"></div></li><li><a href="tutorial-example04-draggable.html">4. Draggable feature</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example04-draggable_sub"></div></li><li><a href="tutorial-example05-editable.html">5. Editable feature</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example05-editable_sub"></div></li><li><a href="tutorial-example06-contextmenu.html">6. ContextMenu feature</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example06-contextmenu_sub"></div></li><li><a href="tutorial-example07-checkbox.html">7. Checkbox feature</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example07-checkbox_sub"></div></li><li><a href="tutorial-example08-ajax.html">8. Ajax feature</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example08-ajax_sub"></div></li><li><a href="tutorial-example09-customizing.html">9. Customizing - Make depth label</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example09-customizing_sub"></div></li></ul></div><div class="lnb-api hidden"><h3>Classes</h3><ul><li><a href="Tree.html">Tree</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Tree_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="Tree.html#add">add</a></li><li><a href="Tree.html#changeContextMenu">changeContextMenu</a></li><li><a href="Tree.html#check">check</a></li><li><a href="Tree.html#close">close</a></li><li><a href="Tree.html#contains">contains</a></li><li><a href="Tree.html#createChildNode">createChildNode</a></li><li><a href="Tree.html#deselect">deselect</a></li><li><a href="Tree.html#disableFeature">disableFeature</a></li><li><a href="Tree.html#each">each</a></li><li><a href="Tree.html#eachAll">eachAll</a></li><li><a href="Tree.html#editNode">editNode</a></li><li><a href="Tree.html#enableFeature">enableFeature</a></li><li><a href="Tree.html#getBottomCheckedList">getBottomCheckedList</a></li><li><a href="Tree.html#getCheckedList">getCheckedList</a></li><li><a href="Tree.html#getChildIds">getChildIds</a></li><li><a href="Tree.html#getDepth">getDepth</a></li><li><a href="Tree.html#getIndentWidth">getIndentWidth</a></li><li><a href="Tree.html#getLastDepth">getLastDepth</a></li><li><a href="Tree.html#getNodeData">getNodeData</a></li><li><a href="Tree.html#getNodeIdFromElement">getNodeIdFromElement</a></li><li><a href="Tree.html#getNodeIdPrefix">getNodeIdPrefix</a></li><li><a href="Tree.html#getNodeIndex">getNodeIndex</a></li><li><a href="Tree.html#getParentId">getParentId</a></li><li><a href="Tree.html#getRootNodeId">getRootNodeId</a></li><li><a href="Tree.html#getSelectedNodeId">getSelectedNodeId</a></li><li><a href="Tree.html#getState">getState</a></li><li><a href="Tree.html#getTopCheckedList">getTopCheckedList</a></li><li><a href="Tree.html#isChecked">isChecked</a></li><li><a href="Tree.html#isIndeterminate">isIndeterminate</a></li><li><a href="Tree.html#isLeaf">isLeaf</a></li><li><a href="Tree.html#isUnchecked">isUnchecked</a></li><li><a href="Tree.html#move">move</a></li><li><a href="Tree.html#open">open</a></li><li><a href="Tree.html#refresh">refresh</a></li><li><a href="Tree.html#remove">remove</a></li><li><a href="Tree.html#removeAllChildren">removeAllChildren</a></li><li><a href="Tree.html#removeNodeData">removeNodeData</a></li><li><a href="Tree.html#resetAllData">resetAllData</a></li><li><a href="Tree.html#resetClickTimer">resetClickTimer</a></li><li><a href="Tree.html#search">search</a></li><li><a href="Tree.html#select">select</a></li><li><a href="Tree.html#setNodeData">setNodeData</a></li><li><a href="Tree.html#sort">sort</a></li><li><a href="Tree.html#toggle">toggle</a></li><li><a href="Tree.html#toggleCheck">toggleCheck</a></li><li><a href="Tree.html#uncheck">uncheck</a></li></ul><div class="member-type">Events</div><ul class="inner"><li><a href="Tree.html#event:afterDraw">afterDraw</a></li><li><a href="Tree.html#event:beforeAjaxRequest">beforeAjaxRequest</a></li><li><a href="Tree.html#event:beforeCreateChildNode">beforeCreateChildNode</a></li><li><a href="Tree.html#event:beforeDraw">beforeDraw</a></li><li><a href="Tree.html#event:beforeEditNode">beforeEditNode</a></li><li><a href="Tree.html#event:beforeMove">beforeMove</a></li><li><a href="Tree.html#event:beforeOpenContextMenu">beforeOpenContextMenu</a></li><li><a href="Tree.html#event:beforeSelect">beforeSelect</a></li><li><a href="Tree.html#event:check">check</a></li><li><a href="Tree.html#event:deselect">deselect</a></li><li><a href="Tree.html#event:errorAjaxResponse">errorAjaxResponse</a></li><li><a href="Tree.html#event:failAjaxResponse">failAjaxResponse</a></li><li><a href="Tree.html#event:move">move</a></li><li><a href="Tree.html#event:select">select</a></li><li><a href="Tree.html#event:selectContextMenu">selectContextMenu</a></li><li><a href="Tree.html#event:successAjaxResponse">successAjaxResponse</a></li><li><a href="Tree.html#event:uncheck">uncheck</a></li></ul></div></li></ul></div>
+</nav>
+<div id="resizer"></div>
+
+<div class="main" id="main">
+    
+
+<section>
+    <header>
+        
+
+        <h2>3. Selectable feature</h2>
+    </header>
+
+    
+        
+
+        <ul id="example-nav" class="nav nav-tabs">
+            <li role="presentation" id="example-result-btn" class="active" onclick="showResult()">
+                <a href="#">Result</a>
+            </li>
+            <li role="presentation" id="example-js-btn" class="" onclick="showJs()">
+                <a href="#">JS</a>
+            </li>
+            <li role="presentation" id="example-html-btn" class="" onclick="showHtml()">
+                <a href="#">HTML</a>
+            </li>
+        </ul>
+        <article>
+            
+            <iframe id="example-result" width="100%" height="800" frameborder="0" src=tutorials/example03-selectable.html></iframe>
+            <div id="example-js" class="hidden"><pre class="prettyprint source">
+
+        var util = {
+            addEventListener: function(element, eventName, handler) {
+                if (element.addEventListener) {
+                    element.addEventListener(eventName, handler, false);
+                } else {
+                    element.attachEvent('on' + eventName, handler);
+                }
+            }
+        };
+
+        var data = [
+            {text: 'rootA', children: [
+                {text: 'sub-A1'},
+                {text: 'sub-A2'},
+                {text: 'sub-A3'},
+                {text: 'sub-A4'},
+                {text: 'sub-A5', state: 'closed', children: [
+                    {text:'sub-A5A', children:[
+                        {text:'sub-A5A1'}
+                    ]},
+                    {text:'sub_A5B'}
+                ]},
+                {text: 'sub-A6'},
+                {text: 'sub-A7'},
+                {text: 'sub-A8'},
+                {text: 'sub-A9', state: 'closed', children: [
+                    {text:'sub-A9A'},
+                    {text:'sub-A9B'}
+                ]},
+                {text: 'sub-A10'},
+                {text: 'sub-A11'},
+                {text: 'sub-A12'}
+            ]},
+            {text: 'rootB', state:'closed', children: [
+                {text:'sub-B1'},
+                {text:'sub-B2'},
+                {text:'sub-B3'}
+            ]}
+        ];
+
+        var tree = new tui.Tree('tree', {
+            data: data,
+            nodeDefaultState: 'opened'
+        }).enableFeature('Selectable', {
+            selectedClassName: 'tui-tree-selected',
+        });
+
+        var selectedBtn = document.getElementById('selectedBtn');
+        var deselectedBtn = document.getElementById('deselectedBtn');
+        var rootNodeId = tree.getRootNodeId();
+        var firstChildId = tree.getChildIds(rootNodeId)[0];
+        var selectedValue = document.getElementById('selectedValue');
+
+        tree.on('select', function(eventData) {
+            var nodeData = tree.getNodeData(eventData.nodeId);
+            selectedValue.value = 'selected : ' + nodeData.text;
+        });
+
+        tree.on('deselect', function(eventData) {
+            var nodeData = tree.getNodeData(eventData.nodeId);
+            selectedValue.value = 'deselected : ' + nodeData.text;
+        });
+
+        util.addEventListener(selectedBtn, 'click', function() {
+            tree.select(firstChildId);
+        });
+
+        util.addEventListener(deselectedBtn, 'click', function() {
+            tree.deselect();
+        });
+
+        </pre></div>
+            <div id="example-html" class="hidden"><pre class="prettyprint source">
+            &lt;div id="tree" class="tui-tree-wrap">&lt;/div>
+        </pre></div>
+        </article>
+    
+</section>
+
+
+    <script>
+        var exampleResult = document.getElementById('example-result');
+        var exampleJs = document.getElementById('example-js');
+        var exampleHtml = document.getElementById('example-html');
+        var exampleResultBtn = document.getElementById('example-result-btn');
+        var exampleJsBtn = document.getElementById('example-js-btn');
+        var exampleHtmlBtn = document.getElementById('example-html-btn');
+
+        function setActive(el) {
+            el.className += ' active';
+        }
+
+        function setInactive(el) {
+            el.className = el.className.replace(/\s*active\s*/g, '');
+        }
+
+        function show(el) {
+            el.className = el.className.replace(/\s*hidden\s*/g, '');
+        }
+
+        function hide(el) {
+            el.className += ' hidden';
+        }
+
+        function showJs() {
+            hide(exampleHtml);
+            hide(exampleResult);
+            setInactive(exampleHtmlBtn);
+            setInactive(exampleResultBtn);
+
+            show(exampleJs);
+            setActive(exampleJsBtn);
+        }
+
+        function showHtml() {
+            hide(exampleJs);
+            hide(exampleResult);
+            setInactive(exampleJsBtn);
+            setInactive(exampleResultBtn);
+
+            show(exampleHtml);
+            setActive(exampleHtmlBtn);
+        }
+
+        function showResult() {
+            hide(exampleJs);
+            hide(exampleHtml);
+            setInactive(exampleJsBtn);
+            setInactive(exampleHtmlBtn);
+
+            show(exampleResult);
+            setActive(exampleResultBtn);
+        }
+    </script>
+
+
+</div>
+
+<footer>
+    <img class="logo" src="https://cloud.githubusercontent.com/assets/12269563/20029815/01133928-a39a-11e6-80f3-12500a91c755.png" style="width: 150px; height: 13px">
+    <div class="footer-text">NHN Entertainment. Frontend Development Lab</div>
+</footer>
+<script>prettyPrint();</script>
+<script src="scripts/jquery.min.js"></script>
+<script src="scripts/tui-doc.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+    <script>
+        showLnbExamples();
+    </script>
+
+</body>
+</html>
