@@ -18,7 +18,7 @@ TOAST UI Component: Tree
 ## Documentation
 * API: [https://nhnent.github.io/tui.tree/latest](https://nhnent.github.io/tui.tree/latest)
 * Tutorial: [https://github.com/nhnent/tui.tree/wiki](https://github.com/nhnent/tui.tree/wiki)
-* Examples: [http://nhnent.github.io/tui.tree/latest/tutorial-example01-basic.html](http://nhnent.github.io/tui.tree/latest/tutorial-example01-basic.html)
+* Examples: [https://nhnent.github.io/tui.tree/latest/tutorial-example01-basic.html](https://nhnent.github.io/tui.tree/latest/tutorial-example01-basic.html)
 
 ## Dependency
 * [tui-code-snippet](https://github.com/nhnent/tui.code-snippet): ^1.2.5
