@@ -1,5 +1,3 @@
-'use strict';
-
 var webdriverConfig = {
     hostname: 'fe.nhnent.com',
     port: 4444,
@@ -109,18 +107,6 @@ module.exports = function(config) {
             'es5-shim'
         ],
         files: [
-            {
-                pattern: 'node_modules/tui-code-snippet/dist/tui-code-snippet.js',
-                watched: false
-            },
-            {
-                pattern: 'node_modules/tui-dom/dist/tui-dom.js',
-                watched: false
-            },
-            {
-                pattern: 'node_modules/tui-context-menu/dist/tui-context-menu.js',
-                watched: false
-            },
             {
                 pattern: 'node_modules/jasmine-jquery/lib/jasmine-jquery.js',
                 watched: false

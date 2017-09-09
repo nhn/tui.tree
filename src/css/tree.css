@@ -1,317 +1,329 @@
-@charset "utf-8";
-.tui-ico-check, .tui-ico-checked, .tui-ico-file, .tui-ico-folder, .tui-ico-root, .tui-ico-tree {
-    overflow: hidden;
-    display: inline-block;
-    width: 1px;
-    height: 1px;
-    line-height: 300px;
-    vertical-align: top;
-    background: url(../img/sp_tui_tree.png) no-repeat;
-}
+@charset 'utf-8';
 
-.tui-ico-check {
-    width: 14px;
-    height: 14px;
-    background-position: 0px 0px
-}
-
-.tui-ico-checked {
-    width: 14px;
-    height: 14px;
-    background-position: -16px 0px
-}
-
-.tui-ico-file {
-    width: 9px;
-    height: 12px;
-    background-position: 0px -32px
-}
-
-.tui-ico-folder {
-    width: 12px;
-    height: 10px;
-    background-position: -16px -16px
-}
-
-.tui-ico-root {
-    width: 14px;
-    height: 14px;
-    background-position: 0px -16px
-}
-
-.tui-ico-tree {
-    width: 5px;
-    height: 8px;
-    background-position: -32px -31px
-}
+.tui-ico-check,
+.tui-ico-checked,
+.tui-ico-file,
+.tui-ico-folder,
+.tui-ico-root,
+.tui-ico-tree {overflow:hidden;display:inline-block;width:1px;height:1px;line-height:300px;vertical-align:top;background:url(../img/sp_tui_tree.png) no-repeat;}
+.tui-ico-check {width:14px;height:14px;background-position:0px 0px}
+.tui-ico-checked {width:14px;height:14px;background-position:-16px 0px}
+.tui-ico-file {width:9px;height:12px;background-position:0px -32px}
+.tui-ico-folder {width:12px;height:10px;background-position:-16px -16px}
+.tui-ico-root {width:14px;height:14px;background-position:0px -16px}
+.tui-ico-tree {width:5px;height:8px;background-position:-32px -31px}
 
 .tui-tree-wrap {
-    overflow-y: auto;
-    width: 300px;
-    height: auto;
-    padding: 30px 0;
-    margin: 0;
-    font-size: 11px;
-    background-color: #f9f9f9;
+        overflow-y: auto;
+        width: 300px;
+        height: auto;
+        padding: 30px 0;
+        margin: 0;
+        font-size: 11px;
+        background-color: #f9f9f9;
 }
 
 .tui-tree-wrap .tui-tree, .tui-tree-wrap .tui-tree-subtree {
-    margin: 0;
-    padding-left: 0;
+        margin: 0;
+        padding-left: 0;
 }
 
 .tui-tree-wrap .tui-tree-node {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    min-height: 24px;
-    cursor: pointer;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        min-height: 24px;
+        cursor: pointer;
 }
 
 .tui-tree-wrap .tui-tree-node {
-    position: relative;
+        position: relative;
 }
 
 .tui-tree-wrap .tui-tree-toggle-btn {
-    float: left;
-    margin: 6px 4px 0 0;
-    width: 13px;
-    height: 12px;
-    font-size: 0;
-    padding: 0;
-    color: #000000;
-    vertical-align: top;
-    border: 0;
-    border-radius: 0;
-    background-color: transparent;
-    outline: none;
-    cursor: pointer;
+        float:left;
+        margin:6px 4px 0 0;
+        width: 13px;
+        height: 12px;
+        font-size: 0;
+        padding: 0;
+        color: #000000;
+        vertical-align: top;
+        border: 0;
+        border-radius: 0;
+        background-color: transparent;
+        outline: none;
+        cursor: pointer;
 }
 
-.tui-tree-root>.tui-tree-node>.tui-tree-toggle-btn {
-    margin: 11px 1px 0 0;
+.tui-tree-root > .tui-tree-node > .tui-tree-toggle-btn {
+        margin: 11px 1px 0 0;
 }
 
-.tui-tree-btn .tui-tree-ico {
-    margin: 0 8px 0 0;
+.tui-tree-content-wrapper .tui-tree-ico{
+        margin:0 8px 0 0;
 }
 
-.tui-tree-btn .tui-ico-folder {
-    margin: 2px 8px 0 0;
+.tui-tree-content-wrapper .tui-ico-folder{
+        margin:2px 8px 0 0;
 }
 
-.tui-tree-btn .tui-ico-file {
-    margin: 0 9px 0 2px;
+.tui-tree-content-wrapper .tui-ico-file{
+        margin:0 9px 0 2px;
 }
 
 .tui-tree-text {
-    overflow: hidden;
-    position: relative;
-    display: block;
-    padding: 5px 0;
-    font-size: 12px;
-    font-weight: normal;
-    text-overflow: ellipsis;
-    color: #777;
-    *display: inline;
-    zoom: 1;
+        overflow: hidden;
+        position: relative;
+        display: block;
+        padding: 5px 0;
+        font-size:12px;
+        font-weight:400;
+        text-overflow:ellipsis;
+        color:#777;
+        *display:inline;
+        zoom: 1;
 }
 
-.tui-tree-opened>.tui-tree-btn .tui-tree-text {
-    font-weight: bold;
-    color: #333;
+.tui-tree-root .tui-tree-rootBtn .tui-tree-text {
+        font-size:14px;
 }
+
+.tui-tree-root .tui-tree-rootBtn .tui-tree-toggle-btn {
+        margin-top: 7px;
+}
+
+.tui-tree-opened > .tui-tree-content-wrapper .tui-tree-text {
+        font-weight:700;
+        color:#333;
+} 
 
 .tui-tree-opened .tui-ico-folder {
-    background-position: -32px 0px;
+        background-position:-32px 0px;
 }
 
 .tui-tree-opened .tui-ico-tree {
-    width: 8px;
-    height: 5px;
-    background-position: -22px -28px;
+        width:8px;
+        height:5px;
+        background-position:-22px -28px;
 }
 
 .tui-tree-closed .tui-ico-tree {
-    width: 5px;
-    height: 8px;
-    background-position: -22px -35px;
+        width:5px;
+        height:8px;
+        background-position:-22px -35px;
 }
 
 .tui-tree-closed .tui-ico-folder {
-    background-position: -16px -16px;
+        background-position:-16px -16px;
 }
 
-.tui-tree-leaf>.tui-tree-btn .tui-tree-text {
-    padding-left: 17px;
+.tui-tree-leaf > .tui-tree-content-wrapper .tui-tree-text {
+        padding-left: 17px;
 }
 
 .tui-tree-input {
-    position: absolute;
-    top: -2px;
-    width: 128px;
-    margin: 0;
-    padding: 7px 9px;
-    height: 12px;
-    border: 1px solid #aaa;
-    outline: none;
+        position: absolute;
+        top: -2px;
+        width: 128px;
+        margin: 0;
+        padding: 7px 9px;
+        height: 12px;
+        border: 1px solid #aaa;
+        outline: none;
 }
 
 .tui-tree-line {
-    margin: 0;
-    padding: 0;
-    width: 300px;
-    height: 1px;
-    background-color: #4b96e6;
-    font-size: 0;
-    z-index: 1;
+        margin: 0;
+        padding: 0;
+        width: 300px;
+        height: 1px;
+        background-color: #4b96e6;
+        font-size: 0;
 }
 
 .tui-tree-drop {
-    padding: 5px 22px 5px 10px;
-    height: 12px;
-    font-weight: normal;
-    background-color: #fff;
-    border: 1px solid #4b96e6;
-    color: #4b96e6;
-    z-index: 2;
+        padding:5px 22px 5px 10px;
+        height:12px;
+        font-weight: normal;
+        background-color: #fff;
+        border:1px solid #4b96e6;
+        color:#4b96e6;
 }
 
 .tui-tree-drop .tui-ico-folder, .tui-tree-drop .tui-ico-file {
-    margin-right: 6px;
+        margin-right: 6px;
 }
 
 .tui-tree-selector {
-    position: absolute;
-    width: 100%;
-    height: 24px;
-    top: 0;
-    left: 0;
-    right: 0;
-    background-color: #fff;
+        position: absolute;
+        width: 100%;
+        height: 24px;
+        top:0;
+        left:0;
+        right:0;
+        background-color: #fff;
 }
 
 .tui-tree-loader {
-    position: absolute;
-    margin-left: -16px;
-    margin-top: -16px;
-    left: 50%;
-    top: 50%;
-    padding: 0;
-    width: 32px;
-    height: 32px;
-    background: url(../img/ajax_loader.gif) no-repeat;
-    background-position: 0 0;
-    font-size: 0;
+        position: absolute;
+        margin-left: -16px;
+        margin-top: -16px;
+        left: 50%;
+        top: 50%;
+        padding: 0;
+        width: 32px;
+        height: 32px;
+        background: url('../img/ajax-loader.gif') no-repeat left;
+        background-position: 0 0;
+        font-size: 0;
 }
 
-.tui-tree-selected>.tui-tree-btn {
-    background: #e7eff7;
-    background-color: rgba(75, 150, 230, .1);
+.tui-tree-selected > .tui-tree-content-wrapper {
+        background: #e7eff7;
+        background-color:rgba(75, 150, 230, .1);
 }
 
-.tui-tree-selected>.tui-tree-btn .tui-tree-text {
-    font-weight: bold;
-    color: #4b96e6;
+.tui-tree-selected > .tui-tree-content-wrapper .tui-tree-text {
+        font-weight: bold;
+        color:#4b96e6;
 }
 
-.tui-tree-selected>.tui-tree-btn .tui-ico-folder, .tui-tree-drop .tui-ico-folder {
-    background-position: -32px -12px;
+.tui-tree-selected > .tui-tree-content-wrapper .tui-ico-folder,
+.tui-tree-drop .tui-ico-folder {
+        background-position: -32px -12px;
 }
 
-.tui-tree-selected.tui-tree-opened>.tui-tree-btn .tui-ico-folder {
-    background-position: -32px -24px;
+.tui-tree-selected.tui-tree-opened > .tui-tree-content-wrapper .tui-ico-folder {
+        background-position: -32px -24px;
 }
 
-.tui-tree-selected>.tui-tree-btn .tui-ico-file, .tui-tree-drop .tui-ico-file {
-    background-position: -11px -32px;
+.tui-tree-selected > .tui-tree-content-wrapper .tui-ico-file ,
+.tui-tree-drop .tui-ico-file {
+        background-position: -11px -32px;
 }
 
-.tui-tree-btn {
-    overflow: hidden;
-    padding-left: 26px;
-    padding-right: 25px;
-    white-space: nowrap;
-    text-overflow: ellipsis;
+.tui-tree-content-wrapper {
+        overflow: hidden;
+        padding-left: 26px;
+        padding-right: 25px;
+        white-space:nowrap;
+        text-overflow:ellipsis;
 }
 
-.tui-tree-btn:after {
-    display: block;
-    clear: both;
-    content: '';
+.tui-tree-content-wrapper:after{
+        display:block;
+        clear:both;
+        content:'';
 }
 
-.tui-tree-btn:hover, .tui-tree-hover>.tui-tree-btn {
-    background: #e7eff7;
-    background-color: rgba(75, 150, 230, .1);
+.tui-tree-content-wrapper:hover,.tui-tree-hover > .tui-tree-content-wrapper {
+        background: #e7eff7;
+        background-color:rgba(75, 150, 230, .1);
 }
 
-.tui-tree-wrap-checkbox .tui-tree-toggle-btn {
-    margin-right: 4px;
+.tui-tree-subtree .tui-tree-content-wrapper {
+        padding-left: 46px;
 }
+
+.tui-tree-subtree .tui-tree-subtree .tui-tree-content-wrapper {
+        padding-left: 69px;
+}
+
+.tui-tree-subtree .tui-tree-subtree .tui-tree-subtree .tui-tree-content-wrapper {
+        padding-left: 93px;
+}
+
+.tui-tree-root > .tui-tree-node > .tui-input-wrap {
+        padding-left: 63px;
+}
+.tui-tree-subtree .tui-input-wrap {
+        padding-left: 83px;
+}
+
+.tui-tree-subtree .tui-tree-subtree .tui-input-wrap {
+        padding-left: 110px;
+}
+
+.tui-tree-subtree .tui-tree-subtree .tui-tree-subtree .tui-input-wrap {
+        padding-left: 134px;
+}
+
+.tui-tree-subtree .tui-tree-subtree .tui-tree-input {
+        margin-left: -4px;
+}
+
+.tui-tree-wrap-checkbox .tui-tree-toggle-btn  {
+        margin-right: 4px;
+}
+
 
 .tui-ico-check {
-    width: 14px;
-    height: 14px;
-    background-position: 0px 0px;
+        width:14px;
+        height:14px;
+        background-position:0px 0px;
 }
 
 .tui-ico-check input {
-    position: absolute;
-    left: -9999px;
+        position: absolute;
+        left:-9999px;
 }
 
 .tui-checkbox {
-    position: relative;
-    overflow: hidden;
-    display: inline-block;
-    margin-right: 8px;
-    height: 14px;
-    font-size: 0;
-    cursor: pointer;
-    vertical-align: top;
+        position: relative;
+        overflow: hidden;
+        display: inline-block;
+        margin-right: 8px;
+        height: 14px;
+        font-size: 0;
+        cursor: pointer;
+        vertical-align: top;
 }
 
 .tui-checkbox.tui-is-checked .tui-ico-check {
-    background-position: -16px 0;
+        background-position:-16px 0;
+}
+
+.tui-tree-rootBtn .tui-checkbox-root {
+        margin:1px 10px 0 0;
 }
 
 .tui-checkbox-root.tui-is-checked .tui-ico-check {
-    background-position: 0 -16px;
+        background-position:0 -16px;
 }
 
-.tui-tree-node.tui-tree-drag>.tui-tree-btn .tui-tree-text {
-    color: #ddd;
+.tui-tree-node.tui-tree-drag > .tui-tree-content-wrapper .tui-tree-text {
+        color:#ddd;
 }
 
-.tui-tree-node.tui-tree-drag>.tui-tree-btn .tui-ico-file {
-    background-position: -46px -24px;
+.tui-tree-node.tui-tree-drag > .tui-tree-content-wrapper .tui-ico-file {
+        background-position: -46px -24px;
 }
 
-.tui-tree-closed.tui-tree-drag>.tui-tree-btn .tui-ico-folder {
-    background-position: -46px -12px;
+.tui-tree-closed.tui-tree-drag > .tui-tree-content-wrapper .tui-ico-folder {
+        background-position: -46px 0;
 }
 
-.tui-tree-opened.tui-tree-drag>.tui-tree-btn .tui-ico-folder {
-    background-position: -46px 0;
+.tui-tree-opened.tui-tree-drag > .tui-tree-content-wrapper .tui-ico-folder {
+        background-position: -46px -12px;
 }
 
-.tui-tree-closed.tui-tree-drag>.tui-tree-btn .tui-ico-tree {
-    background-position: -29px -35px;
+.tui-tree-closed.tui-tree-drag > .tui-tree-content-wrapper .tui-ico-tree {
+        background-position: -29px -35px;
 }
 
-.tui-tree-opened.tui-tree-drag>.tui-tree-btn .tui-ico-tree {
-    background-position: -36px -35px;
+.tui-tree-opened.tui-tree-drag > .tui-tree-content-wrapper .tui-ico-tree {
+        background-position: -36px -35px;
 }
 
-.tui-tree-node.tui-tree-drag>.tui-tree-btn .tui-checkbox .tui-ico-check {
-    background-position: 0 -46px;
+.tui-tree-node.tui-tree-drag > .tui-tree-content-wrapper .tui-checkbox .tui-ico-check {
+        background-position: 0 -46px;
 }
 
-.tui-tree-node.tui-tree-drag>.tui-tree-btn .tui-checkbox.tui-is-checked .tui-ico-check {
-    background-position: -16px -46px;
+.tui-tree-node.tui-tree-drag > .tui-tree-content-wrapper .tui-checkbox.tui-is-checked .tui-ico-check {
+        background-position: -16px -46px ;
 }
 
-.tui-tree-node.tui-tree-drag>.tui-tree-btn .tui-checkbox-root.tui-is-checked .tui-ico-check {
-    background-position: -32px -46px;
+.tui-tree-node.tui-tree-drag > .tui-tree-content-wrapper .tui-checkbox-root.tui-is-checked .tui-ico-check {
+        background-position: -32px -46px ;
 }

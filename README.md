@@ -21,10 +21,9 @@ TOAST UI Component: Tree
 * Examples: [http://nhnent.github.io/tui.tree/latest/tutorial-example01-basic.html](http://nhnent.github.io/tui.tree/latest/tutorial-example01-basic.html)
 
 ## Dependency
-* tui-code-snippet: ^1.2.5
-* tui-context-menu: ^2.0.0 (Optional, needed for using `ContextMenu` feature)
-* tui-dom: ^3.0.0 (Optional, needed for using `ContextMenu` feature)
-* jQuery: ^1.11.0 (Optional, needed for using `Ajax` feature)
+* [tui-code-snippet](https://github.com/nhnent/tui.code-snippet): ^1.2.5
+* [tui-context-menu](https://github.com/nhnent/tui.context-menu): ^2.0.0 (Optional, needed for using `ContextMenu` feature)
+* [jQuery](https://github.com/jquery/jquery/tree/1.12-stable): ^1.11.0 (Optional, needed for using `Ajax` feature)
 
 ## Test Environment
 ### PC

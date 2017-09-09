@@ -48,7 +48,7 @@ module.exports = {
         preLoaders: [
             {
                 test: /\.js$/,
-                exclude: /(test|node_modules|bower_components)/,
+                exclude: /(dist|node_modules|bower_components)/,
                 loader: 'eslint-loader'
             },
             {

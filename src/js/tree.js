@@ -71,7 +71,7 @@ var ICON_WIDTH_PIXEL = 37;
  * //     },
  * //     template: {
  * //         internalNode:
- * //             '<div class="tui-tree-btn">' +
+ * //             '<div class="tui-tree-content-wrapper">' +
  * //                 '<button type="button" class="tui-tree-toggle-btn tui-js-tree-toggle-btn">' +
  * //                     '<span class="tui-ico-tree"></span>' +
  * //                     '{{stateLabel}}' +
@@ -85,7 +85,7 @@ var ICON_WIDTH_PIXEL = 37;
  * //                 '{{children}}' +
  * //             '</ul>',
  * //         leafNode:
- * //             '<div class="tui-tree-btn">' +
+ * //             '<div class="tui-tree-content-wrapper">' +
  * //                 '<span class="tui-tree-text tui-js-tree-text">' +
  * //                     '<span class="tui-tree-ico tui-ico-file"></span>' +
  * //                     '{{text}}' +
@@ -131,7 +131,7 @@ var ICON_WIDTH_PIXEL = 37;
  *
  *     template: { // template for Mustache engine
  *         internalNode:
- *             '<div class="tui-tree-btn">' +
+ *             '<div class="tui-tree-content-wrapper">' +
  *                 '<button type="button" class="tui-tree-toggle-btn tui-js-tree-toggle-btn">' +
  *                     '<span class="tui-ico-tree"></span>' +
  *                     '{{stateLabel}}' +
@@ -145,7 +145,7 @@ var ICON_WIDTH_PIXEL = 37;
  *                  '{{{children}}}' +
  *             '</ul>',
  *         leafNode:
- *             '<div class="tui-tree-btn">' +
+ *             '<div class="tui-tree-content-wrapper">' +
  *                 '<span class="tui-tree-text tui-js-tree-text">' +
  *                     '<span class="tui-tree-ico tui-ico-file"></span>' +
  *                     '{{text}}' +

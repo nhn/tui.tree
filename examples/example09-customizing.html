@@ -4,7 +4,7 @@
         <meta charset="UTF-8">
         <title>Tree with depth label using template option</title>
         <link rel="stylesheet" href="css/docs.css" />
-        <link rel="stylesheet" href="../dist/tui-tree.css" />
+        <link rel="stylesheet" href="../dist/tui-tree.css" /> 
     </head>
 
     <body>
@@ -71,7 +71,7 @@
             nodeDefaultState: 'opened',
             template: {
                 internalNode:
-                    '<div class="tui-tree-btn" style="padding-left: {{indent}}px">' +
+                    '<div class="tui-tree-content-wrapper" style="padding-left: {{indent}}px">' +
                         '<button type="button" class="tui-tree-toggle-btn tui-js-tree-toggle-btn">' +
                             '<span class="tui-ico-tree"></span>' +
                             '{{stateLabel}}' +
@@ -84,7 +84,7 @@
                     '</div>' +
                     '<ul class="tui-tree-subtree tui-js-tree-subtree">{{children}}</ul>',
                 leafNode:
-                    '<div class="tui-tree-btn" style="padding-left: {{indent}}px">' +
+                    '<div class="tui-tree-content-wrapper" style="padding-left: {{indent}}px">' +
                         '<span class="tui-tree-text tui-js-tree-text">' +
                             '<span class="tui-tree-ico tui-ico-file"></span>' +
                             '{{text}}<b>{{depthLabel}}</b>' +
