@@ -1,4 +1,3 @@
-'use strict';
 var Tree = require('../../src/js/tree');
 var util = require('../../src/js/util');
 
@@ -7,11 +6,7 @@ describe('Tree', function() {
     var firstChildId, lastChildId;
     var firstChildElement, lastChildElement;
     var data = [
-        {title: 'A', state: 'closed', children: [
-            {title: '1'},
-            {title: '2'},
-            {title: '3'}
-        ]},
+        {title: 'A', state: 'closed', children: [{title: '1'}, {title: '2'}, {title: '3'}]},
         {title: 'B'}
     ];
     var WRAPPER_CLASSNAME = 'tui-input-wrap';
@@ -114,10 +109,10 @@ describe('Tree', function() {
 
         tree.editNode(nodeElements[0].id); // depth 1
         inputWrapper = util.getChildElementByClassName(nodeElements[0], WRAPPER_CLASSNAME);
-        expect(inputWrapper.style.paddingLeft).toBe((23 * 1 + 37) + 'px');
+        expect(inputWrapper.style.paddingLeft).toBe(((23 * 1) + 37) + 'px');
 
         tree.editNode(nodeElements[1].id); // depth 2
         inputWrapper = util.getChildElementByClassName(nodeElements[1], WRAPPER_CLASSNAME);
-        expect(inputWrapper.style.paddingLeft).toBe((23 * 2 + 37) + 'px');
+        expect(inputWrapper.style.paddingLeft).toBe(((23 * 2) + 37) + 'px');
     });
 });

@@ -1,39 +1,31 @@
-'use strict';
+var snippet = require('tui-code-snippet');
 var Tree = require('../src/js/tree'),
     util = require('../src/js/util'),
     messages = require('../src/js/consts/messages');
 
 describe('Tree', function() {
     var data = [
-        {text: 'A', children: [
-            {text: '1'},
-            {text: '2'},
-            {text: '3'},
-            {text: '4'},
-            {text: '5', children: [
-                {text: '가', children: [
-                    {text: '*'}
-                ]},
-                {text: '나'}
-            ]},
-            {text: '6'},
-            {text: '7'},
-            {text: '8'},
-            {text: '9', children: [
-                {text: '가'},
-                {text: '나'}
-            ]},
-            {text: '10'},
-            {text: '11'},
-            {text: '12'}
-        ]},
-        {text: 'B', children: [
-            {text: '1'},
-            {text: '2'},
-            {text: '3'},
-            {text: '4'},
-            {text: '5'}
-        ]}
+        {
+            text: 'A',
+            children: [
+                {text: '1'},
+                {text: '2'},
+                {text: '3'},
+                {text: '4'},
+                {text: '5', children: [{text: '가', children: [{text: '*'}]}, {text: '나'}]},
+                {text: '6'},
+                {text: '7'},
+                {text: '8'},
+                {text: '9', children: [{text: '가'}, {text: '나'}]},
+                {text: '10'},
+                {text: '11'},
+                {text: '12'}
+            ]
+        },
+        {
+            text: 'B',
+            children: [{text: '1'}, {text: '2'}, {text: '3'}, {text: '4'}, {text: '5'}]
+        }
     ];
     var $rootElement,
         tree,
@@ -171,10 +163,7 @@ describe('Tree', function() {
 
     it('"add()" should return node ids of new added nodes', function() {
         var testData = [
-            {text: 'hello world', children: [
-                {text: 'foo'},
-                {text: 'bar'}
-            ]},
+            {text: 'hello world', children: [{text: 'foo'}, {text: 'bar'}]},
             {text: 'new world'}
         ];
         var ids = tree.add(testData, firstChildId, false, false);
@@ -305,32 +294,32 @@ describe('Tree', function() {
     });
 
     it('"getIndentWidth()" should return padding left by element\'s depth', function() {
-        var data = [
-            {text: 'A', children: [
-                {text: '1', children: [
-                    {text: '가', children: [
+        var treeData = [{
+            text: 'A',
+            children: [{
+                text: '1',
+                children: [{
+                    text: '가',
+                    children: [
                         {text: '*'},
-                        {text: '#', children: [
-                            {text: 'a'}
-                        ]},
+                        {text: '#', children: [{text: 'a'}]},
                         {text: '@'}
-                    ]}
-                ]}
-            ]}
-        ];
+                    ]
+                }]
+            }]
+        }];
         var treeNodes;
         tree.resetAllData([]);
         tree = new Tree(container, {
             rootElement: 'treeRoot',
-            data: data
+            data: treeData
         });
 
         treeNodes = $(tree.rootElement).find('.tui-tree-node');
 
-        tui.util.forEach(function(treeNode) {
+        snippet.forEach(function(treeNode) {
             var id = treeNode.id;
             expect(treeNode.childNodes[0].style.paddingLeft).toBe(tree.getIndentWidth(id) + 'px');
         }, treeNodes);
-
     });
 });

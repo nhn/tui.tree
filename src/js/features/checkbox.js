@@ -2,9 +2,8 @@
  * @fileoverview Feature that each tree node is possible to check and uncheck
  * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
  */
-'use strict';
-
 var util = require('../util.js');
+var snippet = require('tui-code-snippet');
 
 var API_LIST = [
     'check',
@@ -27,8 +26,8 @@ var STATE_CHECKED = 1,
     CHECKED_CLASSNAME = 'tui-is-checked',
     INDETERMINATE_CLASSNAME = 'tui-checkbox-root';
 
-var filter = tui.util.filter,
-    forEach = tui.util.forEach;
+var filter = snippet.filter,
+    forEach = snippet.forEach;
 /**
  * Set the checkbox-api
  * @class Checkbox
@@ -37,7 +36,7 @@ var filter = tui.util.filter,
  *  @param {string} option.checkboxClassName - Classname of checkbox element
  * @ignore
  */
-var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-disable*/
+var Checkbox = snippet.defineClass(/** @lends Checkbox.prototype */{ /*eslint-disable*/
     static: {
         /**
          * @static
@@ -49,7 +48,7 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
         }
     },
     init: function(tree, option) {/*eslint-enable*/
-        option = tui.util.extend({}, option);
+        option = snippet.extend({}, option);
 
         this.tree = tree;
         this.checkboxClassName = option.checkboxClassName;
@@ -79,7 +78,7 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
      */
     _setAPIs: function() {
         var tree = this.tree,
-            bind = tui.util.bind;
+            bind = snippet.bind;
 
         forEach(API_LIST, function(apiName) {
             tree[apiName] = bind(this[apiName], this);
@@ -106,7 +105,7 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
                 this._reflectChanges(nodeId);
             },
             move: function(data) {
-                //@todo - Optimization
+                // @TODO - Optimization
                 this._reflectChanges(data.originalParentId);
                 this._reflectChanges(data.newParentId);
             }
@@ -603,5 +602,5 @@ var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-d
     }
 });
 
-tui.util.CustomEvents.mixin(Checkbox);
+snippet.CustomEvents.mixin(Checkbox);
 module.exports = Checkbox;

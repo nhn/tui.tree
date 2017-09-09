@@ -4,7 +4,7 @@
         <meta charset="UTF-8">
         <title>Tree with "Checkbox" feature</title>
         <link rel="stylesheet" href="css/docs.css" />
-        <link rel="stylesheet" href="../dist/tui-component-tree.css" />
+        <link rel="stylesheet" href="../dist/tui-tree.css" /> 
     </head>
 
     <body>
@@ -18,8 +18,8 @@
             <textarea id="checkedValue"></textarea>
         </div>
 
-        <script src="https://rawgit.com/nhnent/tui.code-snippet/1.2.1/code-snippet.js"></script>
-        <script src="../dist/tui-component-tree.js"></script>
+        <script src="https://cdn.rawgit.com/nhnent/tui.code-snippet/v1.2.5/dist/tui-code-snippet.min.js"></script>
+        <script src="../dist/tui-tree.js"></script>
         <script class="code-js">
 
         var util = {
@@ -62,12 +62,12 @@
             ]}
         ];
 
-        var tree = new tui.component.Tree('tree', {
+        var tree = new tui.Tree('tree', {
             data: data,
             nodeDefaultState: 'opened',
             template: {
                 internalNode:
-                    '<div class="tui-tree-btn" style="padding-left: {{indent}}px">' +
+                    '<div class="tui-tree-content-wrapper" style="padding-left: {{indent}}px">' +
                         '<button type="button" class="tui-tree-toggle-btn tui-js-tree-toggle-btn">' +
                             '<span class="tui-ico-tree"></span>' +
                             '{{stateLabel}}' +
@@ -82,7 +82,7 @@
                     '</div>' +
                     '<ul class="tui-tree-subtree tui-js-tree-subtree">{{children}}</ul>',
                 leafNode:
-                    '<div class="tui-tree-btn" style="padding-left: {{indent}}px">' +
+                    '<div class="tui-tree-content-wrapper" style="padding-left: {{indent}}px">' +
                         '<span class="tui-tree-text tui-js-tree-text">' +
                             '<label class="tui-checkbox">' +
                                '<span class="tui-ico-check"><input type="checkbox" class="tui-tree-checkbox"></span>' +

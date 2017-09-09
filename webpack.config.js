@@ -1,13 +1,12 @@
 /**
- * webpack.config.js updated on 2017. 02. 27
+ * Configs file for bundling
  * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
-'use strict';
-
-/* eslint-disable vars-on-top, no-process-env, require-jsdoc */
 var pkg = require('./package.json');
 var webpack = require('webpack');
+
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
+var SafeUmdPlugin = require('safe-umd-webpack-plugin');
 
 var isProduction = process.argv.indexOf('-p') > -1;
 
@@ -23,17 +22,33 @@ module.exports = {
     eslint: {
         failOnError: isProduction
     },
-    entry: './src/index.js',
+    entry: './src/js/index.js',
     output: {
+        library: ['tui', 'Tree'],
+        libraryTarget: 'umd',
         path: 'dist',
-        publicPath: 'dist',
+        publicPath: 'dist/',
         filename: FILENAME
+    },
+    externals: {
+        'tui-code-snippet': {
+            'commonjs': 'tui-code-snippet',
+            'commonjs2': 'tui-code-snippet',
+            'amd': 'tui-code-snippet',
+            'root': ['tui', 'util']
+        },
+        'tui-context-menu': {
+            'commonjs': 'tui-context-menu',
+            'commonjs2': 'tui-context-menu',
+            'amd': 'tui-context-menu',
+            'root': ['tui', 'ContextMenu']
+        }
     },
     module: {
         preLoaders: [
             {
                 test: /\.js$/,
-                exclude: /(test|node_modules|bower_components)/,
+                exclude: /(dist|node_modules|bower_components)/,
                 loader: 'eslint-loader'
             },
             {
@@ -41,18 +56,20 @@ module.exports = {
                 loader: ExtractTextPlugin.extract('style-loader', 'css-loader')
             },
             {
-                test: /[\.png|\.gif]$/,
+                test: /[.png|.gif]$/,
                 loader: 'url-loader'
             }
         ]
     },
     plugins: [
-        new webpack.BannerPlugin(BANNER),
-        new ExtractTextPlugin(pkg.name + '.css')
+        new SafeUmdPlugin(),
+        new ExtractTextPlugin(pkg.name + '.css'),
+        new webpack.BannerPlugin(BANNER)
     ],
     devServer: {
         historyApiFallback: false,
         progress: true,
-        host: '0.0.0.0'
+        host: '0.0.0.0',
+        disableHostCheck: true
     }
 };

@@ -2,9 +2,7 @@
  * @fileoverview Feature that tree action is enable to communicate server
  * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
  */
-'use strict';
-
-var snippet = tui.util;
+var snippet = require('tui-code-snippet');
 var API_LIST = [];
 var LOADER_CLASSNAME = 'tui-tree-loader';
 
@@ -19,7 +17,7 @@ var LOADER_CLASSNAME = 'tui-tree-loader';
  *  @param {boolean} [options.isLoadRoot] - Whether load data from root node or not
  * @ignore
  */
-var Ajax = tui.util.defineClass(/** @lends Ajax.prototype */{/*eslint-disable*/
+var Ajax = snippet.defineClass(/** @lends Ajax.prototype */{/*eslint-disable*/
     static: {
         /**
          * @static
@@ -31,7 +29,7 @@ var Ajax = tui.util.defineClass(/** @lends Ajax.prototype */{/*eslint-disable*/
         }
     },
     init: function(tree, options) { /*eslint-enable*/
-        options = tui.util.extend({}, options);
+        options = snippet.extend({}, options);
 
         /**
          * Tree
@@ -61,8 +59,7 @@ var Ajax = tui.util.defineClass(/** @lends Ajax.prototype */{/*eslint-disable*/
          * State of loading root data or not
          * @type {boolean}
          */
-        this.isLoadRoot = !snippet.isUndefined(options.isLoadRoot) ?
-                            options.isLoadRoot : true;
+        this.isLoadRoot = !snippet.isUndefined(options.isLoadRoot) ? options.isLoadRoot : true;
 
         /**
          * Loader element

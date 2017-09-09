@@ -1,34 +1,30 @@
 {
-    "name": "tui-component-tree",
+    "name": "tui-tree",
     "authors": [
         "NHN ent. FE dev team.<dl_javascript@nhnent.com>"
+    ],
+    "main": [
+        "dist/tui-tree.js",
+        "dist/tui-tree.css"
     ],
     "license": "MIT",
     "ignore": [
         "**/.*",
         "node_modules",
         "bower_components",
-        "test",
-        "tests",
-        "src",
-        "server",
-        "data.js",
-        "Gruntfile.js",
-        "gulpfile.js",
-        "karma.*.js",
-        "conf.json",
-        "package.json",
-        ".gitignore",
         "examples",
-        "index.js",
+        "src",
+        "test",
         "jsdoc.conf.json",
-        "webpack.config.js"
+        "karma.conf.js",
+        "webpack.config.js",
+        "package.json"
     ],
     "dependencies": {
-        "tui-code-snippet": "~1.2.5",
-        "tui-component-contextmenu": "^1.2.0"
+        "tui-code-snippet": "^1.2.5",
+        "tui-context-menu": "^2.0.0"
     },
     "devDependencies": {
-        "jquery": "1.8.3"
+        "jquery": "^1.11.0"
     }
 }

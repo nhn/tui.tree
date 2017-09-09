@@ -4,7 +4,7 @@
         <meta charset="UTF-8">
         <title>Tree with "Editable" feature</title>
         <link rel="stylesheet" href="css/docs.css" />
-        <link rel="stylesheet" href="../dist/tui-component-tree.css" />
+        <link rel="stylesheet" href="../dist/tui-tree.css" /> 
     </head>
 
     <body>
@@ -15,8 +15,8 @@
             <p>Double-click on each node</p>
         </div>
 
-        <script src="https://rawgit.com/nhnent/tui.code-snippet/1.2.1/code-snippet.js"></script>
-        <script src="../dist/tui-component-tree.js"></script>
+        <script src="https://cdn.rawgit.com/nhnent/tui.code-snippet/v1.2.5/dist/tui-code-snippet.min.js"></script>
+        <script src="../dist/tui-tree.js"></script>
         <script class="code-js">
 
         var data = [
@@ -49,7 +49,7 @@
             ]}
         ];
 
-        var tree = new tui.component.Tree('tree', {
+        var tree = new tui.Tree('tree', {
             data: data,
             nodeDefaultState: 'opened'
         }).enableFeature('Editable', {

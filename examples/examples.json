@@ -1,29 +1,29 @@
 {
-    "example1": {
+    "example01-basic": {
         "title": "1. Basic"
     },
-    "example2": {
+    "example02-template": {
         "title": "2. Using template"
     },
-    "example3": {
+    "example03-selectable": {
         "title": "3. Selectable feature"
     },
-    "example4": {
+    "example04-draggable": {
         "title": "4. Draggable feature"
     },
-    "example5": {
+    "example05-editable": {
         "title": "5. Editable feature"
     },
-    "example6": {
+    "example06-contextmenu": {
         "title": "6. ContextMenu feature"
     },
-    "example7": {
+    "example07-checkbox": {
         "title": "7. Checkbox feature"
     },
-    "example8": {
+    "example08-ajax": {
         "title": "8. Ajax feature"
     },
-    "example9": {
+    "example09-customizing": {
         "title": "9. Customizing - Make depth label"
     }
 }

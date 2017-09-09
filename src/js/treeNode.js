@@ -2,8 +2,7 @@
  * @fileoverview Control each tree node's data
  * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
  */
-'use strict';
-
+var snippet = require('tui-code-snippet');
 var states = require('./consts/states').node,
     util = require('./util');
 
@@ -19,7 +18,7 @@ var lastIndex = 0,
         state: 'setState',
         children: ''
     },
-    inArray = tui.util.inArray;
+    inArray = snippet.inArray;
 
 /**
  * TreeNode
@@ -28,7 +27,7 @@ var lastIndex = 0,
  * @param {string} [parentId] - Parent node id
  * @ignore
  */
-var TreeNode = tui.util.defineClass(/** @lends TreeNode.prototype */{ /*eslint-disable*/
+var TreeNode = snippet.defineClass(/** @lends TreeNode.prototype */{ /*eslint-disable*/
     static: {
         /**
          * Set prefix of id
@@ -90,7 +89,7 @@ var TreeNode = tui.util.defineClass(/** @lends TreeNode.prototype */{ /*eslint-d
      * @private
      */
     _setReservedProperties: function(data) {
-        tui.util.forEachOwnProperties(RESERVED_PROPERTIES, function(setter, name) {
+        snippet.forEachOwnProperties(RESERVED_PROPERTIES, function(setter, name) {
             var value = data[name];
 
             if (value && setter) {
@@ -177,7 +176,7 @@ var TreeNode = tui.util.defineClass(/** @lends TreeNode.prototype */{ /*eslint-d
     addChildId: function(id) {
         var childIds = this._childIds;
 
-        if (tui.util.inArray(childIds, id) === -1) {
+        if (snippet.inArray(childIds, id) === -1) {
             childIds.push(id);
         }
     },
@@ -204,7 +203,7 @@ var TreeNode = tui.util.defineClass(/** @lends TreeNode.prototype */{ /*eslint-d
      * @returns {Object} Data
      */
     getAllData: function() {
-        return tui.util.extend({}, this._data);
+        return snippet.extend({}, this._data);
     },
 
     /**
@@ -213,7 +212,7 @@ var TreeNode = tui.util.defineClass(/** @lends TreeNode.prototype */{ /*eslint-d
      */
     setData: function(data) {
         data = this._setReservedProperties(data);
-        tui.util.extend(this._data, data);
+        snippet.extend(this._data, data);
     },
 
     /**
@@ -221,7 +220,7 @@ var TreeNode = tui.util.defineClass(/** @lends TreeNode.prototype */{ /*eslint-d
      * @param {...string} names - Names of data
      */
     removeData: function() {
-        tui.util.forEachArray(arguments, function(name) {
+        snippet.forEachArray(arguments, function(name) {
             delete this._data[name];
         }, this);
     },
@@ -248,7 +247,7 @@ var TreeNode = tui.util.defineClass(/** @lends TreeNode.prototype */{ /*eslint-d
      * @returns {boolean} Node is root or not.
      */
     isRoot: function() {
-        return tui.util.isFalsy(this._parentId);
+        return snippet.isFalsy(this._parentId);
     },
 
     /**

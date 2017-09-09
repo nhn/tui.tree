@@ -1,40 +1,38 @@
-'use strict';
-
 var TreeModel = require('../src/js/treeModel');
 
 describe('TreeModel', function() {
     var treeModel,
         data = [
-            {text: 'A', hiddenValue: 'Child of root', children: [
-                {text: '1'},
-                {text: '2'},
-                {text: '3'},
-                {text: '4'},
-                {text: '5', children: [
-                    {text: '가', children: [
-                        {text: '*'}
-                    ]},
-                    {text: '나'}
-                ]},
-                {text: '6'},
-                {text: '7'},
-                {text: '8'},
-                {text: '9', children: [
-                    {text: '가'},
-                    {text: '나'}
-                ]},
-                {text: '10'},
-                {text: '11'},
-                {text: '12'}
-            ]},
-            {text: 'B', state: 'opened', children: [
-                {text: '1'},
-                {text: '2'},
-                {text: '3'}
-            ]},
-            {text: 'C', children: [
-                {text: '1'}
-            ]}
+            {
+                text: 'A',
+                hiddenValue: 'Child of root',
+                children: [
+                    {text: '1'},
+                    {text: '2'},
+                    {text: '3'},
+                    {text: '4'},
+                    {
+                        text: '5',
+                        children: [
+                            {text: '가', children: [{text: '*'}]},
+                            {text: '나'}
+                        ]
+                    },
+                    {text: '6'},
+                    {text: '7'},
+                    {text: '8'},
+                    {text: '9', children: [{text: '가'}, {text: '나'}]},
+                    {text: '10'},
+                    {text: '11'},
+                    {text: '12'}
+                ]
+            },
+            {
+                text: 'B',
+                state: 'opened',
+                children: [{text: '1'}, {text: '2'}, {text: '3'}]
+            },
+            {text: 'C', children: [{text: '1'}]}
         ];
 
     beforeEach(function() {

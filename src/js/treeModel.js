@@ -2,14 +2,13 @@
  * @fileoverview Update view and control tree data
  * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
  */
-'use strict';
-
 var TreeNode = require('./treeNode');
+var snippet = require('tui-code-snippet');
 
-var extend = tui.util.extend,
-    keys = tui.util.keys,
-    forEach = tui.util.forEach,
-    map = tui.util.map;
+var extend = snippet.extend,
+    keys = snippet.keys,
+    forEach = snippet.forEach,
+    map = snippet.map;
 
 /**
  * Tree model
@@ -18,7 +17,7 @@ var extend = tui.util.extend,
  * @param {Object} options - Options for defaultState and nodeIdPrefix
  * @ignore
  **/
-var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslint-disable */
+var TreeModel = snippet.defineClass(/** @lends TreeModel.prototype */{ /* eslint-disable */
     init: function(options) {/*eslint-enable*/
         TreeNode.setIdPrefix(options.nodeIdPrefix);
 
@@ -287,7 +286,7 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
             return;
         }
 
-        if (tui.util.isArray(names)) {
+        if (snippet.isArray(names)) {
             node.removeData.apply(node, names);
         } else {
             node.removeData(names);
@@ -305,7 +304,7 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
      * @param {number} [index] - Start index number for inserting
      * @param {boolean} [isSilent] - If true, it doesn't trigger the 'update' event
      */
-    /*eslint-disable complexity*/
+    /* eslint-disable complexity*/
     move: function(nodeId, newParentId, index, isSilent) {
         var node = this.getNode(nodeId);
         var originalParentId, newParent, sameParent;
@@ -329,7 +328,7 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
         if (!isSilent) {
             this.fire('move', nodeId, originalParentId, newParentId, index);
         }
-    }, /*eslint-enable complexity*/
+    }, /* eslint-enable complexity*/
 
     /**
      * Change order of ids
@@ -432,7 +431,7 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
      * @param {string} parentId - Parent node id
      * @param {object} [context] - Context of iteratee
      */
-    each: function(iteratee, parentId, context) { //depth-first
+    each: function(iteratee, parentId, context) { // depth-first
         var stack, nodeId, node;
 
         node = this.getNode(parentId);
@@ -452,5 +451,5 @@ var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslin
     }
 });
 
-tui.util.CustomEvents.mixin(TreeModel);
+snippet.CustomEvents.mixin(TreeModel);
 module.exports = TreeModel;

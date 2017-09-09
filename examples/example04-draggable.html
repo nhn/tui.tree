@@ -2,9 +2,9 @@
 <html>
     <head lang="en">
         <meta charset="UTF-8">
-        <title>Tree with "Selectable" feature</title>
+        <title>Tree with "Draggable" feature</title>
         <link rel="stylesheet" href="css/docs.css" />
-        <link rel="stylesheet" href="../dist/tui-component-tree.css" />
+        <link rel="stylesheet" href="../dist/tui-tree.css" /> 
     </head>
 
     <body>
@@ -12,14 +12,11 @@
             <div id="tree" class="tui-tree-wrap"></div>
         </div>
         <div class="explain">
-            <button id="selectedBtn">select</button>
-            <button id="deselectedBtn">deselect</button>
-            <br>
-            <textarea id="selectedValue"></textarea>
+            <textarea id="movedValue"></textarea>
         </div>
 
-        <script src="https://rawgit.com/nhnent/tui.code-snippet/1.2.1/code-snippet.js"></script>
-        <script src="../dist/tui-component-tree.js"></script>
+        <script src="https://cdn.rawgit.com/nhnent/tui.code-snippet/v1.2.5/dist/tui-code-snippet.min.js"></script>
+        <script src="../dist/tui-tree.js"></script>
         <script class="code-js">
 
         var util = {
@@ -62,35 +59,26 @@
             ]}
         ];
 
-        var tree = new tui.component.Tree('tree', {
+        var movedValue = document.getElementById('movedValue');
+
+        var tree = new tui.Tree('tree', {
             data: data,
             nodeDefaultState: 'opened'
-        }).enableFeature('Selectable', {
-            selectedClassName: 'tui-tree-selected',
+        }).enableFeature('Draggable', {
+            helperClassName: 'tui-tree-drop',
+            lineClassName: 'tui-tree-line',
+            isSortable: true
         });
 
-        var selectedBtn = document.getElementById('selectedBtn');
-        var deselectedBtn = document.getElementById('deselectedBtn');
-        var rootNodeId = tree.getRootNodeId();
-        var firstChildId = tree.getChildIds(rootNodeId)[0];
-        var selectedValue = document.getElementById('selectedValue');
+        tree.on('move', function(eventData) {
+            var msg;
 
-        tree.on('select', function(eventData) {
-            var nodeData = tree.getNodeData(eventData.nodeId);
-            selectedValue.value = 'selected : ' + nodeData.text;
-        });
+            msg = 'nodeId: ' + eventData.nodeId + '\n';
+            msg += 'originalParentId: ' + eventData.originalParentId + '\n';
+            msg += 'newParentId: ' + eventData.newParentId + '\n';
+            msg += 'index: ' + eventData.index + '\n';
 
-        tree.on('deselect', function(eventData) {
-            var nodeData = tree.getNodeData(eventData.nodeId);
-            selectedValue.value = 'deselected : ' + nodeData.text;
-        });
-
-        util.addEventListener(selectedBtn, 'click', function() {
-            tree.select(firstChildId);
-        });
-
-        util.addEventListener(deselectedBtn, 'click', function() {
-            tree.deselect();
+            movedValue.value = msg;
         });
 
         </script>

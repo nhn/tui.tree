@@ -2,17 +2,15 @@
  * @fileoverview Feature that each tree node is possible to have context-menu
  * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
  */
-'use strict';
-
 var util = require('./../util');
-
+var snippet = require('tui-code-snippet');
+var TuiContextMenu = require('tui-context-menu');
 var API_LIST = [
     'changeContextMenu'
 ];
-var TuiContextMenu = tui && tui.component && tui.component.ContextMenu;
 var styleKeys = ['userSelect', 'WebkitUserSelect', 'OUserSelect', 'MozUserSelect', 'msUserSelect'];
 var enableProp = util.testProp(styleKeys);
-var bind = tui.util.bind;
+var bind = snippet.bind;
 
 /**
  * Set ContextMenu feature on tree
@@ -22,7 +20,7 @@ var bind = tui.util.bind;
  *     @param {Array.<Object>} options.menuData - Context menu data
  * @ignore
  */
-var ContextMenu = tui.util.defineClass(/** @lends ContextMenu.prototype */{/*eslint-disable*/
+var ContextMenu = snippet.defineClass(/** @lends ContextMenu.prototype */{/*eslint-disable*/
     static: {
         /**
          * @static
@@ -73,8 +71,7 @@ var ContextMenu = tui.util.defineClass(/** @lends ContextMenu.prototype */{/*esl
          */
         this.selectedNodeId = null;
 
-        this.menu.register(this.treeSelector, bind(this._onSelect, this),
-                            options.menuData || {});
+        this.menu.register(this.treeSelector, bind(this._onSelect, this), options.menuData || {});
 
         this.tree.on('contextmenu', this._onContextMenu, this);
 
@@ -93,8 +90,8 @@ var ContextMenu = tui.util.defineClass(/** @lends ContextMenu.prototype */{/*esl
      *      {title: 'menu1'},
      *      {title: 'menu2', disable: true},
      *      {title: 'menu3', menu: [
-     *      	{title: 'submenu1', disable: true},
-     *      	{title: 'submenu2'}
+     *          {title: 'submenu1', disable: true},
+     *          {title: 'submenu2'}
      *      ]}
      * ]);
      */
@@ -116,7 +113,7 @@ var ContextMenu = tui.util.defineClass(/** @lends ContextMenu.prototype */{/*esl
 
         tree.off(this);
 
-        tui.util.forEach(API_LIST, function(apiName) {
+        snippet.forEach(API_LIST, function(apiName) {
             delete tree[apiName];
         });
     },
@@ -231,7 +228,7 @@ var ContextMenu = tui.util.defineClass(/** @lends ContextMenu.prototype */{/*esl
     _setAPIs: function() {
         var tree = this.tree;
 
-        tui.util.forEach(API_LIST, function(apiName) {
+        snippet.forEach(API_LIST, function(apiName) {
             tree[apiName] = bind(this[apiName], this);
         }, this);
     }

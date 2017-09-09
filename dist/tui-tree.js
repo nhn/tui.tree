@@ -1,10 +1,20 @@
 /*!
- * tui-component-tree.js
- * @version 2.0.2
+ * tui-tree.js
+ * @version 3.0.0
  * @author NHNEnt FE Development Lab <dl_javascript@nhnent.com>
  * @license MIT
  */
-/******/ (function(modules) { // webpackBootstrap
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(typeof exports === 'object' && typeof module === 'object')
+		module.exports = factory(require("tui-code-snippet"), require("tui-context-menu"));
+	else if(typeof define === 'function' && define.amd)
+		define(["tui-code-snippet", "tui-context-menu"], factory);
+	else if(typeof exports === 'object')
+		exports["Tree"] = factory(require("tui-code-snippet"), require("tui-context-menu"));
+	else
+		root["tui"] = root["tui"] || {}, root["tui"]["Tree"] = factory((root["tui"] && root["tui"]["util"]), (root["tui"] && root["tui"]["ContextMenu"]));
+})(this, function(__WEBPACK_EXTERNAL_MODULE_9__, __WEBPACK_EXTERNAL_MODULE_22__) {
+return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
 
@@ -40,7 +50,7 @@
 /******/ 	__webpack_require__.c = installedModules;
 
 /******/ 	// __webpack_public_path__
-/******/ 	__webpack_require__.p = "dist";
+/******/ 	__webpack_require__.p = "dist/";
 
 /******/ 	// Load entry module and return exports
 /******/ 	return __webpack_require__(0);
@@ -50,53 +60,61 @@
 /* 0 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	'use strict';
-	var Tree = __webpack_require__(1);
-	__webpack_require__(16);
-	tui.util.defineNamespace('tui.component', {
-	    Tree: Tree
-	});
+	__webpack_require__(1);
+
+	module.exports = __webpack_require__(7);
 
 
 /***/ }),
 /* 1 */
+/***/ (function(module, exports) {
+
+	// removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 2 */,
+/* 3 */,
+/* 4 */,
+/* 5 */,
+/* 6 */,
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Render tree and update tree
 	 * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
 	 */
-	'use strict';
 
-	var util = __webpack_require__(2),
-	    defaultOption = __webpack_require__(3),
-	    states = __webpack_require__(4),
-	    messages = __webpack_require__(5),
-	    outerTemplate = __webpack_require__(6),
-	    ajaxCommand = __webpack_require__(7),
-	    TreeModel = __webpack_require__(8),
-	    Selectable = __webpack_require__(10),
-	    Draggable = __webpack_require__(11),
-	    Editable = __webpack_require__(12),
-	    Checkbox = __webpack_require__(13),
-	    ContextMenu = __webpack_require__(14),
-	    Ajax = __webpack_require__(15);
+	var util = __webpack_require__(8);
+	var defaultOption = __webpack_require__(10);
+	var states = __webpack_require__(11);
+	var messages = __webpack_require__(12);
+	var outerTemplate = __webpack_require__(13);
+	var ajaxCommand = __webpack_require__(14);
+	var TreeModel = __webpack_require__(15);
+	var Selectable = __webpack_require__(17);
+	var Draggable = __webpack_require__(18);
+	var Editable = __webpack_require__(19);
+	var Checkbox = __webpack_require__(20);
+	var ContextMenu = __webpack_require__(21);
+	var Ajax = __webpack_require__(23);
 
-	var nodeStates = states.node,
-	    features = {
-	        Selectable: Selectable,
-	        Draggable: Draggable,
-	        Editable: Editable,
-	        Checkbox: Checkbox,
-	        ContextMenu: ContextMenu,
-	        Ajax: Ajax
-	    },
-	    snippet = tui.util,
-	    extend = snippet.extend,
-	    TIMEOUT_TO_DIFFERENTIATE_CLICK_AND_DBLCLICK = 200,
-	    MOUSE_MOVING_THRESHOLD = 5,
-	    INDENT_WIDTH_PIXEL = 23,
-	    ICON_WIDTH_PIXEL = 37;
+	var nodeStates = states.node;
+	var features = {
+	    Selectable: Selectable,
+	    Draggable: Draggable,
+	    Editable: Editable,
+	    Checkbox: Checkbox,
+	    ContextMenu: ContextMenu,
+	    Ajax: Ajax
+	};
+	var snippet = __webpack_require__(9);
+	var extend = snippet.extend;
+
+	var TIMEOUT_TO_DIFFERENTIATE_CLICK_AND_DBLCLICK = 200;
+	var MOUSE_MOVING_THRESHOLD = 5;
+	var INDENT_WIDTH_PIXEL = 23;
+	var ICON_WIDTH_PIXEL = 37;
 
 	/**
 	 * Create tree model and inject data to model
@@ -114,7 +132,16 @@
 	 *         @param {string} [options.template.internalNode] HTML template
 	 *         @param {string} [options.template.leafNode] HTML template
 	 *     @param {Function} [options.renderTemplate] Function for rendering template
-	 * @example
+	 * @example <caption>Get `Tree` module</caption>
+	 * // * node, commonjs
+	 * // * Get Tree module from `node_modules/tui-tree`
+	 * var Tree = require('tui-tree');
+	 * var instance = new Tree(...);
+	 * // * distribution file, script
+	 * // * there is `tui.Tree` as a global variable
+	 * var Tree = tui.Tree;
+	 * var instance = new Tree(...);
+	 * @example <caption>Initialize Tree</caption>
 	 * // Default options:
 	 * // {
 	 * //     data: [],
@@ -126,7 +153,7 @@
 	 * //     },
 	 * //     template: {
 	 * //         internalNode:
-	 * //             '<div class="tui-tree-btn">' +
+	 * //             '<div class="tui-tree-content-wrapper">' +
 	 * //                 '<button type="button" class="tui-tree-toggle-btn tui-js-tree-toggle-btn">' +
 	 * //                     '<span class="tui-ico-tree"></span>' +
 	 * //                     '{{stateLabel}}' +
@@ -140,7 +167,7 @@
 	 * //                 '{{children}}' +
 	 * //             '</ul>',
 	 * //         leafNode:
-	 * //             '<div class="tui-tree-btn">' +
+	 * //             '<div class="tui-tree-content-wrapper">' +
 	 * //                 '<span class="tui-tree-text tui-js-tree-text">' +
 	 * //                     '<span class="tui-tree-ico tui-ico-file"></span>' +
 	 * //                     '{{text}}' +
@@ -178,7 +205,7 @@
 	 *         {text: 'b'}
 	 *     ]}
 	 * ];
-	 * var tree = new tui.component.Tree(container, {
+	 * var tree = new Tree(container, {
 	 *     data: data,
 	 *     nodeDefaultState: 'opened',
 	 *
@@ -186,7 +213,7 @@
 	 *
 	 *     template: { // template for Mustache engine
 	 *         internalNode:
-	 *             '<div class="tui-tree-btn">' +
+	 *             '<div class="tui-tree-content-wrapper">' +
 	 *                 '<button type="button" class="tui-tree-toggle-btn tui-js-tree-toggle-btn">' +
 	 *                     '<span class="tui-ico-tree"></span>' +
 	 *                     '{{stateLabel}}' +
@@ -200,7 +227,7 @@
 	 *                  '{{{children}}}' +
 	 *             '</ul>',
 	 *         leafNode:
-	 *             '<div class="tui-tree-btn">' +
+	 *             '<div class="tui-tree-content-wrapper">' +
 	 *                 '<span class="tui-tree-text tui-js-tree-text">' +
 	 *                     '<span class="tui-tree-ico tui-ico-file"></span>' +
 	 *                     '{{text}}' +
@@ -295,9 +322,21 @@
 	         */
 	        this.isMovingNode = false;
 
+	        this.indent = options.indent;
+
 	        this._setRoot(container);
 	        this._draw(this.getRootNodeId());
 	        this._setEvents();
+	    },
+
+	    /*
+	     * Calculate list item's indentation width by it's depth
+	     * @param {string} nodeId - list item's id
+	     * @returns {number} - indentation width
+	     * @private
+	     */
+	    _calculateIndentationWidth: function(nodeId) {
+	        return this.indent * this.getDepth(nodeId);
 	    },
 
 	    /**
@@ -537,7 +576,6 @@
 	        util.addClass(nodeElement, classNames[state + 'Class']);
 	    },
 
-
 	    /**
 	     * Make html
 	     * @param {Array.<string>} nodeIds - Node id list
@@ -725,6 +763,10 @@
 	            this.each(function(child) {
 	                this._setClassNameAndVisibilityByFeature(child);
 	            }, nodeId, this);
+	        }
+
+	        if (element && element.childNodes) {
+	            element.childNodes[0].style.paddingLeft = this._calculateIndentationWidth(nodeId) + 'px';
 	        }
 	    },
 
@@ -1480,23 +1522,23 @@
 	     *      hoverClassName: 'tui-tree-hover'
 	     *      lineClassName: 'tui-tree-line',
 	     *      lineBoundary: {
-	     *      	top: 10,
-	     *       	bottom: 10
+	     *          top: 10,
+	     *          bottom: 10
 	     *      }
 	     *  })
 	     *  .enableFeature('Checkbox', {
 	     *      checkboxClassName: 'tui-tree-checkbox'
 	     *  })
 	     *  .enableFeature('ContextMenu', {
-	     *  	menuData: [
-	     *   		{title: 'menu1', command: 'copy'},
-	     *     		{title: 'menu2', command: 'paste'},
-	     *       	{separator: true},
-	     *        	{
-	     *         		title: 'menu3',
-	     *           	menu: [
-	     *            		{title: 'submenu1'},
-	     *              	{title: 'submenu2'}
+	     *      menuData: [
+	     *          {title: 'menu1', command: 'copy'},
+	     *          {title: 'menu2', command: 'paste'},
+	     *          {separator: true},
+	     *          {
+	     *              title: 'menu3',
+	     *              menu: [
+	     *                  {title: 'submenu1'},
+	     *                  {title: 'submenu2'}
 	     *              ]
 	     *          }
 	     *      }
@@ -1627,24 +1669,24 @@
 
 
 /***/ }),
-/* 2 */
-/***/ (function(module, exports) {
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Helper object to make easy tree elements
 	 * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
 	 */
-	'use strict';
-	var isUndefined = tui.util.isUndefined,
-	    pick = tui.util.pick,
+	var snippet = __webpack_require__(9);
+	var isUndefined = snippet.isUndefined,
+	    pick = snippet.pick,
 	    templateMaskRe = /\{\{(.+?)}}/gi,
 	    isValidDotNotationRe = /^\w+(?:\.\w+)*$/,
 	    isValidDotNotation = function(str) {
 	        return isValidDotNotationRe.test(str);
 	    },
-	    isArray = tui.util.isArraySafe,
-	    forEach = tui.util.forEach,
-	    browser = tui.util.browser,
+	    isArray = snippet.isArraySafe,
+	    forEach = snippet.forEach,
+	    browser = snippet.browser,
 	    isSupportPageOffset = typeof window.pageXOffset !== 'undefined',
 	    isCSS1Compat = document.compatMode === 'CSS1Compat',
 	    isOlderIE = (browser.msie && browser.version < 9);
@@ -1700,13 +1742,12 @@
 	        }
 
 	        arr = originalClassName.split(' ');
-	        index = tui.util.inArray(className, arr);
+	        index = snippet.inArray(className, arr);
 	        if (index !== -1) {
 	            arr.splice(index, 1);
 	            element.className = arr.join(' ');
 	        }
 	    },
-
 
 	    /**
 	     * Add event to element
@@ -1794,8 +1835,8 @@
 	        if (target.querySelectorAll) {
 	            filtered = target.querySelectorAll('.' + className);
 	        } else {
-	            all = tui.util.toArray(target.getElementsByTagName('*'));
-	            filtered = tui.util.filter(all, function(el) {
+	            all = snippet.toArray(target.getElementsByTagName('*'));
+	            filtered = snippet.filter(all, function(el) {
 	                var classNames = el.className || '';
 
 	                return (classNames.indexOf(className) !== -1);
@@ -1858,7 +1899,7 @@
 	            propertyName = false;
 
 	        /* eslint-disable consistent-return */
-	        tui.util.forEach(props, function(prop) {
+	        snippet.forEach(props, function(prop) {
 	            if (prop in style) {
 	                propertyName = prop;
 
@@ -1998,7 +2039,7 @@
 	     * @returns {HTMLElement} Text node
 	     */
 	    getFirstTextNode: function(element) {
-	        var childElements = tui.util.toArray(element.childNodes);
+	        var childElements = snippet.toArray(element.childNodes);
 	        var firstTextNode = '';
 
 	        forEach(childElements, function(childElement) {
@@ -2045,14 +2086,19 @@
 
 
 /***/ }),
-/* 3 */
+/* 9 */
+/***/ (function(module, exports) {
+
+	module.exports = __WEBPACK_EXTERNAL_MODULE_9__;
+
+/***/ }),
+/* 10 */
 /***/ (function(module, exports) {
 
 	/**
 	 * @fileoverview Set default value of options
 	 * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
 	 */
-	'use strict';
 
 	/**
 	 * A default values for tree
@@ -2092,11 +2138,11 @@
 	        subtreeClass: 'tui-js-tree-subtree',
 	        toggleBtnClass: 'tui-js-tree-toggle-btn',
 	        textClass: 'tui-js-tree-text',
-	        btnClass: 'tui-tree-btn'
+	        btnClass: 'tui-tree-content-wrapper'
 	    },
 	    template: {
 	        internalNode:
-	            '<div class="tui-tree-btn" style="padding-left: {{indent}}px">' +
+	            '<div class="tui-tree-content-wrapper" style="padding-left: {{indent}}px">' +
 	                '<button type="button" class="tui-tree-toggle-btn {{toggleBtnClass}}">' +
 	                    '<span class="tui-ico-tree"></span>' +
 	                    '{{stateLabel}}' +
@@ -2108,7 +2154,7 @@
 	            '</div>' +
 	            '<ul class="tui-tree-subtree {{subtreeClass}}">{{children}}</ul>',
 	        leafNode:
-	            '<div class="tui-tree-btn" style="padding-left: {{indent}}px">' +
+	            '<div class="tui-tree-content-wrapper" style="padding-left: {{indent}}px">' +
 	                '<span class="tui-tree-text {{textClass}}">' +
 	                    '<span class="tui-tree-ico tui-ico-file"></span>' +
 	                    '{{text}}' +
@@ -2120,14 +2166,13 @@
 
 
 /***/ }),
-/* 4 */
+/* 11 */
 /***/ (function(module, exports) {
 
 	/**
 	 * @fileoverview Set default value of toggle button
 	 * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
 	 */
-	'use strict';
 
 	/**
 	 * States in tree
@@ -2146,38 +2191,36 @@
 
 
 /***/ }),
-/* 5 */
+/* 12 */
 /***/ (function(module, exports) {
 
 	/**
 	 * @fileoverview Set error messages
 	 * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
 	 */
-	'use strict';
 
 	/**
 	 * Messages for tree
 	 * @type {Object.<string, string>}
 	 */
 	module.exports = {
-	    INVALID_CONTAINER_ELEMENT: '"tui-component-tree": The container element is invalid.',
-	    INVALID_API: '"tui-component-tree": INVALID_API',
-	    INVALID_API_SELECTABLE: '"tui-component-tree": The feature-"Selectable" is not enabled.',
-	    INVALID_API_EDITABLE: '"tui-component-tree": The feature-"Editable" is not enabled.',
-	    INVALID_API_DRAGGABLE: '"tui-component-tree": The feature-"Draggable" is not enabled.',
-	    INVALID_API_CHECKBOX: '"tui-component-tree": The feature-"Checkbox" is not enabled.'
+	    INVALID_CONTAINER_ELEMENT: '"tui-tree": The container element is invalid.',
+	    INVALID_API: '"tui-tree": INVALID_API',
+	    INVALID_API_SELECTABLE: '"tui-tree": The feature-"Selectable" is not enabled.',
+	    INVALID_API_EDITABLE: '"tui-tree": The feature-"Editable" is not enabled.',
+	    INVALID_API_DRAGGABLE: '"tui-tree": The feature-"Draggable" is not enabled.',
+	    INVALID_API_CHECKBOX: '"tui-tree": The feature-"Checkbox" is not enabled.'
 	};
 
 
 /***/ }),
-/* 6 */
+/* 13 */
 /***/ (function(module, exports) {
 
 	/**
 	 * @fileoverview Set outer template
 	 * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
 	 */
-	'use strict';
 
 	/**
 	 * Outer template
@@ -2197,14 +2240,13 @@
 
 
 /***/ }),
-/* 7 */
+/* 14 */
 /***/ (function(module, exports) {
 
 	/**
 	 * @fileoverview Set each command name using in Ajax feature
 	 * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
 	 */
-	'use strict';
 
 	/**
 	 * Ajax comman in tree
@@ -2221,21 +2263,20 @@
 
 
 /***/ }),
-/* 8 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Update view and control tree data
 	 * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
 	 */
-	'use strict';
+	var TreeNode = __webpack_require__(16);
+	var snippet = __webpack_require__(9);
 
-	var TreeNode = __webpack_require__(9);
-
-	var extend = tui.util.extend,
-	    keys = tui.util.keys,
-	    forEach = tui.util.forEach,
-	    map = tui.util.map;
+	var extend = snippet.extend,
+	    keys = snippet.keys,
+	    forEach = snippet.forEach,
+	    map = snippet.map;
 
 	/**
 	 * Tree model
@@ -2244,7 +2285,7 @@
 	 * @param {Object} options - Options for defaultState and nodeIdPrefix
 	 * @ignore
 	 **/
-	var TreeModel = tui.util.defineClass(/** @lends TreeModel.prototype */{ /* eslint-disable */
+	var TreeModel = snippet.defineClass(/** @lends TreeModel.prototype */{ /* eslint-disable */
 	    init: function(options) {/*eslint-enable*/
 	        TreeNode.setIdPrefix(options.nodeIdPrefix);
 
@@ -2513,7 +2554,7 @@
 	            return;
 	        }
 
-	        if (tui.util.isArray(names)) {
+	        if (snippet.isArray(names)) {
 	            node.removeData.apply(node, names);
 	        } else {
 	            node.removeData(names);
@@ -2531,7 +2572,7 @@
 	     * @param {number} [index] - Start index number for inserting
 	     * @param {boolean} [isSilent] - If true, it doesn't trigger the 'update' event
 	     */
-	    /*eslint-disable complexity*/
+	    /* eslint-disable complexity*/
 	    move: function(nodeId, newParentId, index, isSilent) {
 	        var node = this.getNode(nodeId);
 	        var originalParentId, newParent, sameParent;
@@ -2555,7 +2596,7 @@
 	        if (!isSilent) {
 	            this.fire('move', nodeId, originalParentId, newParentId, index);
 	        }
-	    }, /*eslint-enable complexity*/
+	    }, /* eslint-enable complexity*/
 
 	    /**
 	     * Change order of ids
@@ -2658,7 +2699,7 @@
 	     * @param {string} parentId - Parent node id
 	     * @param {object} [context] - Context of iteratee
 	     */
-	    each: function(iteratee, parentId, context) { //depth-first
+	    each: function(iteratee, parentId, context) { // depth-first
 	        var stack, nodeId, node;
 
 	        node = this.getNode(parentId);
@@ -2678,22 +2719,21 @@
 	    }
 	});
 
-	tui.util.CustomEvents.mixin(TreeModel);
+	snippet.CustomEvents.mixin(TreeModel);
 	module.exports = TreeModel;
 
 
 /***/ }),
-/* 9 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Control each tree node's data
 	 * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
 	 */
-	'use strict';
-
-	var states = __webpack_require__(4).node,
-	    util = __webpack_require__(2);
+	var snippet = __webpack_require__(9);
+	var states = __webpack_require__(11).node,
+	    util = __webpack_require__(8);
 
 	var lastIndex = 0,
 	    getNextIndex = function() {
@@ -2707,7 +2747,7 @@
 	        state: 'setState',
 	        children: ''
 	    },
-	    inArray = tui.util.inArray;
+	    inArray = snippet.inArray;
 
 	/**
 	 * TreeNode
@@ -2716,7 +2756,7 @@
 	 * @param {string} [parentId] - Parent node id
 	 * @ignore
 	 */
-	var TreeNode = tui.util.defineClass(/** @lends TreeNode.prototype */{ /*eslint-disable*/
+	var TreeNode = snippet.defineClass(/** @lends TreeNode.prototype */{ /*eslint-disable*/
 	    static: {
 	        /**
 	         * Set prefix of id
@@ -2778,7 +2818,7 @@
 	     * @private
 	     */
 	    _setReservedProperties: function(data) {
-	        tui.util.forEachOwnProperties(RESERVED_PROPERTIES, function(setter, name) {
+	        snippet.forEachOwnProperties(RESERVED_PROPERTIES, function(setter, name) {
 	            var value = data[name];
 
 	            if (value && setter) {
@@ -2865,7 +2905,7 @@
 	    addChildId: function(id) {
 	        var childIds = this._childIds;
 
-	        if (tui.util.inArray(childIds, id) === -1) {
+	        if (snippet.inArray(childIds, id) === -1) {
 	            childIds.push(id);
 	        }
 	    },
@@ -2892,7 +2932,7 @@
 	     * @returns {Object} Data
 	     */
 	    getAllData: function() {
-	        return tui.util.extend({}, this._data);
+	        return snippet.extend({}, this._data);
 	    },
 
 	    /**
@@ -2901,7 +2941,7 @@
 	     */
 	    setData: function(data) {
 	        data = this._setReservedProperties(data);
-	        tui.util.extend(this._data, data);
+	        snippet.extend(this._data, data);
 	    },
 
 	    /**
@@ -2909,7 +2949,7 @@
 	     * @param {...string} names - Names of data
 	     */
 	    removeData: function() {
-	        tui.util.forEachArray(arguments, function(name) {
+	        snippet.forEachArray(arguments, function(name) {
 	            delete this._data[name];
 	        }, this);
 	    },
@@ -2936,7 +2976,7 @@
 	     * @returns {boolean} Node is root or not.
 	     */
 	    isRoot: function() {
-	        return tui.util.isFalsy(this._parentId);
+	        return snippet.isFalsy(this._parentId);
 	    },
 
 	    /**
@@ -2983,16 +3023,15 @@
 
 
 /***/ }),
-/* 10 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Feature that each tree node is possible to select as click
 	 * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
 	 */
-	'use strict';
-
-	var util = __webpack_require__(2);
+	var util = __webpack_require__(8);
+	var snippet = __webpack_require__(9);
 
 	var API_LIST = [
 	        'select',
@@ -3011,7 +3050,7 @@
 	 *  @param {string} options.selectedClassName - Classname for selected node.
 	 * @ignore
 	 */
-	var Selectable = tui.util.defineClass(/** @lends Selectable.prototype */{/*eslint-disable*/
+	var Selectable = snippet.defineClass(/** @lends Selectable.prototype */{/*eslint-disable*/
 	    static: {
 	        /**
 	         * @static
@@ -3023,7 +3062,7 @@
 	        }
 	    },
 	    init: function(tree, options) { /*eslint-enable*/
-	        options = tui.util.extend({}, defaults, options);
+	        options = snippet.extend({}, defaults, options);
 
 	        this.tree = tree;
 	        this.selectedClassName = options.selectedClassName;
@@ -3042,9 +3081,9 @@
 	     */
 	    _setAPIs: function() {
 	        var tree = this.tree,
-	            bind = tui.util.bind;
+	            bind = snippet.bind;
 
-	        tui.util.forEach(API_LIST, function(apiName) {
+	        snippet.forEach(API_LIST, function(apiName) {
 	            tree[apiName] = bind(this[apiName], this);
 	        }, this);
 	    },
@@ -3058,7 +3097,7 @@
 
 	        util.removeClass(nodeElement, this.selectedClassName);
 	        tree.off(this);
-	        tui.util.forEach(API_LIST, function(apiName) {
+	        snippet.forEach(API_LIST, function(apiName) {
 	            delete tree[apiName];
 	        });
 	    },
@@ -3217,16 +3256,15 @@
 
 
 /***/ }),
-/* 11 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Feature that each tree node is possible to drag and drop
 	 * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
 	 */
-	'use strict';
-
-	var util = __webpack_require__(2);
+	var util = __webpack_require__(8);
+	var snippet = __webpack_require__(9);
 
 	var defaultOptions = {
 	    useHelper: true,
@@ -3253,8 +3291,8 @@
 	var selectKey = util.testProp(
 	    ['userSelect', 'WebkitUserSelect', 'OUserSelect', 'MozUserSelect', 'msUserSelect']
 	);
-	var inArray = tui.util.inArray;
-	var forEach = tui.util.forEach;
+	var inArray = snippet.inArray;
+	var forEach = snippet.forEach;
 	var API_LIST = [];
 
 	/**
@@ -3275,7 +3313,7 @@
 	 *     @param {{top: number, bottom: number}} options.lineBoundary - Boundary value for visible moving line
 	 * @ignore
 	 */
-	var Draggable = tui.util.defineClass(/** @lends Draggable.prototype */{/*eslint-disable*/
+	var Draggable = snippet.defineClass(/** @lends Draggable.prototype */{/*eslint-disable*/
 	    static: {
 	        /**
 	         * @static
@@ -3288,7 +3326,7 @@
 	    },
 
 	    init: function(tree, options) { /*eslint-enable*/
-	        options = tui.util.extend({}, defaultOptions, options);
+	        options = snippet.extend({}, defaultOptions, options);
 
 	        /**
 	         * Tree data
@@ -3847,18 +3885,17 @@
 
 
 /***/ }),
-/* 12 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Feature that each tree node is possible to edit as double click
 	 * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
 	 */
-	'use strict';
-
-	var util = __webpack_require__(2);
-	var ajaxCommand = __webpack_require__(7);
-	var states = __webpack_require__(4);
+	var util = __webpack_require__(8);
+	var ajaxCommand = __webpack_require__(14);
+	var states = __webpack_require__(11);
+	var snippet = __webpack_require__(9);
 
 	var API_LIST = [
 	    'createChildNode',
@@ -3882,7 +3919,7 @@
 	 *  @param {string} [options.inputClassName] - Classname of input element
 	 * @ignore
 	 */
-	var Editable = tui.util.defineClass(/** @lends Editable.prototype */{/*eslint-disable*/
+	var Editable = snippet.defineClass(/** @lends Editable.prototype */{/*eslint-disable*/
 	    static: {
 	        /**
 	         * @static
@@ -3894,7 +3931,7 @@
 	        }
 	    },
 	    init: function(tree, options) { /*eslint-enable*/
-	        options = tui.util.extend({}, options);
+	        options = snippet.extend({}, options);
 
 	        /**
 	         * Tree
@@ -3942,13 +3979,13 @@
 	         * Keyup event handler
 	         * @type {Function}
 	         */
-	        this.boundOnKeyup = tui.util.bind(this._onKeyup, this);
+	        this.boundOnKeyup = snippet.bind(this._onKeyup, this);
 
 	        /**
 	         * Blur event handler
 	         * @type {Function}
 	         */
-	        this.boundOnBlur = tui.util.bind(this._onBlur, this);
+	        this.boundOnBlur = snippet.bind(this._onBlur, this);
 
 	        tree.on('doubleClick', this._onDoubleClick, this);
 
@@ -3963,7 +4000,7 @@
 
 	        this._detachInputElement();
 	        tree.off(this);
-	        tui.util.forEach(API_LIST, function(apiName) {
+	        snippet.forEach(API_LIST, function(apiName) {
 	            delete tree[apiName];
 	        });
 	    },
@@ -4226,9 +4263,9 @@
 	     */
 	    _setAPIs: function() {
 	        var tree = this.tree;
-	        var bind = tui.util.bind;
+	        var bind = snippet.bind;
 
-	        tui.util.forEach(API_LIST, function(apiName) {
+	        snippet.forEach(API_LIST, function(apiName) {
 	            tree[apiName] = bind(this[apiName], this);
 	        }, this);
 	    }
@@ -4238,16 +4275,15 @@
 
 
 /***/ }),
-/* 13 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Feature that each tree node is possible to check and uncheck
 	 * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
 	 */
-	'use strict';
-
-	var util = __webpack_require__(2);
+	var util = __webpack_require__(8);
+	var snippet = __webpack_require__(9);
 
 	var API_LIST = [
 	    'check',
@@ -4270,8 +4306,8 @@
 	    CHECKED_CLASSNAME = 'tui-is-checked',
 	    INDETERMINATE_CLASSNAME = 'tui-checkbox-root';
 
-	var filter = tui.util.filter,
-	    forEach = tui.util.forEach;
+	var filter = snippet.filter,
+	    forEach = snippet.forEach;
 	/**
 	 * Set the checkbox-api
 	 * @class Checkbox
@@ -4280,7 +4316,7 @@
 	 *  @param {string} option.checkboxClassName - Classname of checkbox element
 	 * @ignore
 	 */
-	var Checkbox = tui.util.defineClass(/** @lends Checkbox.prototype */{ /*eslint-disable*/
+	var Checkbox = snippet.defineClass(/** @lends Checkbox.prototype */{ /*eslint-disable*/
 	    static: {
 	        /**
 	         * @static
@@ -4292,7 +4328,7 @@
 	        }
 	    },
 	    init: function(tree, option) {/*eslint-enable*/
-	        option = tui.util.extend({}, option);
+	        option = snippet.extend({}, option);
 
 	        this.tree = tree;
 	        this.checkboxClassName = option.checkboxClassName;
@@ -4322,7 +4358,7 @@
 	     */
 	    _setAPIs: function() {
 	        var tree = this.tree,
-	            bind = tui.util.bind;
+	            bind = snippet.bind;
 
 	        forEach(API_LIST, function(apiName) {
 	            tree[apiName] = bind(this[apiName], this);
@@ -4349,7 +4385,7 @@
 	                this._reflectChanges(nodeId);
 	            },
 	            move: function(data) {
-	                //@todo - Optimization
+	                // @TODO - Optimization
 	                this._reflectChanges(data.originalParentId);
 	                this._reflectChanges(data.newParentId);
 	            }
@@ -4846,29 +4882,27 @@
 	    }
 	});
 
-	tui.util.CustomEvents.mixin(Checkbox);
+	snippet.CustomEvents.mixin(Checkbox);
 	module.exports = Checkbox;
 
 
 /***/ }),
-/* 14 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Feature that each tree node is possible to have context-menu
 	 * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
 	 */
-	'use strict';
-
-	var util = __webpack_require__(2);
-
+	var util = __webpack_require__(8);
+	var snippet = __webpack_require__(9);
+	var TuiContextMenu = __webpack_require__(22);
 	var API_LIST = [
 	    'changeContextMenu'
 	];
-	var TuiContextMenu = tui && tui.component && tui.component.ContextMenu;
 	var styleKeys = ['userSelect', 'WebkitUserSelect', 'OUserSelect', 'MozUserSelect', 'msUserSelect'];
 	var enableProp = util.testProp(styleKeys);
-	var bind = tui.util.bind;
+	var bind = snippet.bind;
 
 	/**
 	 * Set ContextMenu feature on tree
@@ -4878,7 +4912,7 @@
 	 *     @param {Array.<Object>} options.menuData - Context menu data
 	 * @ignore
 	 */
-	var ContextMenu = tui.util.defineClass(/** @lends ContextMenu.prototype */{/*eslint-disable*/
+	var ContextMenu = snippet.defineClass(/** @lends ContextMenu.prototype */{/*eslint-disable*/
 	    static: {
 	        /**
 	         * @static
@@ -4929,8 +4963,7 @@
 	         */
 	        this.selectedNodeId = null;
 
-	        this.menu.register(this.treeSelector, bind(this._onSelect, this),
-	                            options.menuData || {});
+	        this.menu.register(this.treeSelector, bind(this._onSelect, this), options.menuData || {});
 
 	        this.tree.on('contextmenu', this._onContextMenu, this);
 
@@ -4949,8 +4982,8 @@
 	     *      {title: 'menu1'},
 	     *      {title: 'menu2', disable: true},
 	     *      {title: 'menu3', menu: [
-	     *      	{title: 'submenu1', disable: true},
-	     *      	{title: 'submenu2'}
+	     *          {title: 'submenu1', disable: true},
+	     *          {title: 'submenu2'}
 	     *      ]}
 	     * ]);
 	     */
@@ -4972,7 +5005,7 @@
 
 	        tree.off(this);
 
-	        tui.util.forEach(API_LIST, function(apiName) {
+	        snippet.forEach(API_LIST, function(apiName) {
 	            delete tree[apiName];
 	        });
 	    },
@@ -5087,7 +5120,7 @@
 	    _setAPIs: function() {
 	        var tree = this.tree;
 
-	        tui.util.forEach(API_LIST, function(apiName) {
+	        snippet.forEach(API_LIST, function(apiName) {
 	            tree[apiName] = bind(this[apiName], this);
 	        }, this);
 	    }
@@ -5097,16 +5130,20 @@
 
 
 /***/ }),
-/* 15 */
+/* 22 */
 /***/ (function(module, exports) {
+
+	module.exports = __WEBPACK_EXTERNAL_MODULE_22__;
+
+/***/ }),
+/* 23 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Feature that tree action is enable to communicate server
 	 * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
 	 */
-	'use strict';
-
-	var snippet = tui.util;
+	var snippet = __webpack_require__(9);
 	var API_LIST = [];
 	var LOADER_CLASSNAME = 'tui-tree-loader';
 
@@ -5121,7 +5158,7 @@
 	 *  @param {boolean} [options.isLoadRoot] - Whether load data from root node or not
 	 * @ignore
 	 */
-	var Ajax = tui.util.defineClass(/** @lends Ajax.prototype */{/*eslint-disable*/
+	var Ajax = snippet.defineClass(/** @lends Ajax.prototype */{/*eslint-disable*/
 	    static: {
 	        /**
 	         * @static
@@ -5133,7 +5170,7 @@
 	        }
 	    },
 	    init: function(tree, options) { /*eslint-enable*/
-	        options = tui.util.extend({}, options);
+	        options = snippet.extend({}, options);
 
 	        /**
 	         * Tree
@@ -5163,8 +5200,7 @@
 	         * State of loading root data or not
 	         * @type {boolean}
 	         */
-	        this.isLoadRoot = !snippet.isUndefined(options.isLoadRoot) ?
-	                            options.isLoadRoot : true;
+	        this.isLoadRoot = !snippet.isUndefined(options.isLoadRoot) ? options.isLoadRoot : true;
 
 	        /**
 	         * Loader element
@@ -5393,11 +5429,7 @@
 	module.exports = Ajax;
 
 
-/***/ }),
-/* 16 */
-/***/ (function(module, exports) {
-
-	// removed by extract-text-webpack-plugin
-
 /***/ })
-/******/ ]);
+/******/ ])
+});
+;
