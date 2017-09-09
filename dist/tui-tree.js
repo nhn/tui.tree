@@ -50,7 +50,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.c = installedModules;
 
 /******/ 	// __webpack_public_path__
-/******/ 	__webpack_require__.p = "dist";
+/******/ 	__webpack_require__.p = "dist/";
 
 /******/ 	// Load entry module and return exports
 /******/ 	return __webpack_require__(0);

@@ -27,7 +27,7 @@ module.exports = {
         library: ['tui', 'Tree'],
         libraryTarget: 'umd',
         path: 'dist',
-        publicPath: 'dist',
+        publicPath: 'dist/',
         filename: FILENAME
     },
     externals: {
