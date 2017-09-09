@@ -22,7 +22,7 @@
     ],
     "dependencies": {
         "tui-code-snippet": "^1.2.5",
-        "tui-component-contextmenu": "^1.2.0"
+        "tui-context-menu": "^2.0.0"
     },
     "devDependencies": {
         "jquery": "^1.11.0"
