@@ -31,8 +31,6 @@ var extend = snippet.extend;
 
 var TIMEOUT_TO_DIFFERENTIATE_CLICK_AND_DBLCLICK = 200;
 var MOUSE_MOVING_THRESHOLD = 5;
-var INDENT_WIDTH_PIXEL = 23;
-var ICON_WIDTH_PIXEL = 37;
 
 /**
  * Create tree model and inject data to model
@@ -159,7 +157,6 @@ var ICON_WIDTH_PIXEL = 37;
  * });
  */
 var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
-    ICON_WIDTH_PIXEL: ICON_WIDTH_PIXEL,
     init: function(container, options) {
         options = extend({}, defaultOption, options);
 
@@ -240,21 +237,16 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
          */
         this.isMovingNode = false;
 
-        this.indent = options.indent;
+        /**
+         * Indentation value
+         * @type {number}
+         * @private
+         */
+        this._indent = options.indent;
 
         this._setRoot(container);
         this._draw(this.getRootNodeId());
         this._setEvents();
-    },
-
-    /*
-     * Calculate list item's indentation width by it's depth
-     * @param {string} nodeId - list item's id
-     * @returns {number} - indentation width
-     * @private
-     */
-    _calculateIndentationWidth: function(nodeId) {
-        return this.indent * this.getDepth(nodeId);
     },
 
     /**
@@ -391,6 +383,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
     _onClick: function(event) {
         var target = util.getTarget(event);
         var self = this;
+        var nodeId;
 
         if (util.isRightButton(event)) {
             this.clickTimer = null;
@@ -399,7 +392,24 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
         }
 
         if (this._isClickedToggleButton(target)) {
-            this.toggle(this.getNodeIdFromElement(target));
+            nodeId = this.getNodeIdFromElement(target);
+
+            this.toggle(nodeId);
+
+            /**
+             * @event Tree#clickToggleBtn
+             * @param {object} evt - Event data
+             *     @param {string} evt.nodeId - Node id
+             *     @param {HTMLElement} target - Element of toggle button
+             * @example
+             * tree.on('clickToggleBtn', function(evt) {
+             *     console.log(evt.target);
+             * });
+             */
+            this.fire('clickToggleBtn', {
+                nodeId: nodeId,
+                target: target
+            });
 
             return;
         }
@@ -603,7 +613,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * @returns {number} - padding left of tree node division
      */
     getIndentWidth: function(nodeId) {
-        return this.getDepth(nodeId) * INDENT_WIDTH_PIXEL;
+        return this.getDepth(nodeId) * this._indent;
     },
 
     /**
@@ -681,10 +691,6 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
             this.each(function(child) {
                 this._setClassNameAndVisibilityByFeature(child);
             }, nodeId, this);
-        }
-
-        if (element && element.childNodes) {
-            element.childNodes[0].style.paddingLeft = this._calculateIndentationWidth(nodeId) + 'px';
         }
     },
 

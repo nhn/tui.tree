@@ -47,7 +47,7 @@ var Checkbox = snippet.defineClass(/** @lends Checkbox.prototype */{ /*eslint-di
             return API_LIST.slice();
         }
     },
-    init: function(tree, option) {/*eslint-enable*/
+    init: function(tree, option) {
         option = snippet.extend({}, option);
 
         this.tree = tree;

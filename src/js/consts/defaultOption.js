@@ -45,7 +45,7 @@ module.exports = {
     },
     template: {
         internalNode:
-            '<div class="tui-tree-content-wrapper" style="padding-left: {{indent}}px">' +
+            '<div class="tui-tree-content-wrapper">' +
                 '<button type="button" class="tui-tree-toggle-btn {{toggleBtnClass}}">' +
                     '<span class="tui-ico-tree"></span>' +
                     '{{stateLabel}}' +
@@ -57,12 +57,12 @@ module.exports = {
             '</div>' +
             '<ul class="tui-tree-subtree {{subtreeClass}}">{{children}}</ul>',
         leafNode:
-            '<div class="tui-tree-content-wrapper" style="padding-left: {{indent}}px">' +
+            '<div class="tui-tree-content-wrapper">' +
                 '<span class="tui-tree-text {{textClass}}">' +
                     '<span class="tui-tree-ico tui-ico-file"></span>' +
                     '{{text}}' +
                 '</span>' +
             '</div>'
     },
-    indent: 23
+    indent: 23 // value of default css
 };

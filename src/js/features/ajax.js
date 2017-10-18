@@ -28,7 +28,7 @@ var Ajax = snippet.defineClass(/** @lends Ajax.prototype */{/*eslint-disable*/
             return API_LIST.slice();
         }
     },
-    init: function(tree, options) { /*eslint-enable*/
+    init: function(tree, options) {
         options = snippet.extend({}, options);
 
         /**

@@ -40,7 +40,7 @@ var Editable = snippet.defineClass(/** @lends Editable.prototype */{/*eslint-dis
             return API_LIST.slice();
         }
     },
-    init: function(tree, options) { /*eslint-enable*/
+    init: function(tree, options) {
         options = snippet.extend({}, options);
 
         /**
@@ -246,12 +246,13 @@ var Editable = snippet.defineClass(/** @lends Editable.prototype */{/*eslint-dis
         }
 
         wrapperElement = util.getChildElementByClassName(target, WRAPPER_CLASSNAME);
+
         if (!wrapperElement) {
             wrapperElement = document.createElement('DIV');
             inputElement = this._createInputElement();
 
             util.addClass(wrapperElement, WRAPPER_CLASSNAME);
-            wrapperElement.style.paddingLeft = (tree.getIndentWidth(nodeId) + tree.ICON_WIDTH_PIXEL) + 'px';
+            wrapperElement.style.paddingLeft = tree.getIndentWidth(nodeId) + 'px';
 
             inputElement.value = tree.getNodeData(nodeId)[this.dataKey] || '';
 
@@ -262,7 +263,7 @@ var Editable = snippet.defineClass(/** @lends Editable.prototype */{/*eslint-dis
             util.addEventListener(inputElement, 'blur', this.boundOnBlur);
 
             if (this.inputElement) {
-                $(this.inputElement).blur();
+                this.inputElement.blur();
             }
             this.inputElement = inputElement;
         }

@@ -33,7 +33,7 @@ var Selectable = snippet.defineClass(/** @lends Selectable.prototype */{/*eslint
             return API_LIST.slice();
         }
     },
-    init: function(tree, options) { /*eslint-enable*/
+    init: function(tree, options) {
         options = snippet.extend({}, defaults, options);
 
         this.tree = tree;
