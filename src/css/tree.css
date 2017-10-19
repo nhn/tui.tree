@@ -268,22 +268,6 @@
     padding-left: 93px;
 }
 
-.tui-tree-root>.tui-tree-node>.tui-input-wrap {
-    padding-left: 63px;
-}
-
-.tui-tree-subtree .tui-input-wrap {
-    padding-left: 83px;
-}
-
-.tui-tree-subtree .tui-tree-subtree .tui-input-wrap {
-    padding-left: 110px;
-}
-
-.tui-tree-subtree .tui-tree-subtree .tui-tree-subtree .tui-input-wrap {
-    padding-left: 134px;
-}
-
 .tui-tree-wrap-checkbox .tui-tree-toggle-btn {
     margin-right: 4px;
 }
