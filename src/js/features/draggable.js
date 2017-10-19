@@ -64,7 +64,7 @@ var Draggable = snippet.defineClass(/** @lends Draggable.prototype */{/*eslint-d
         }
     },
 
-    init: function(tree, options) { /*eslint-enable*/
+    init: function(tree, options) {
         options = snippet.extend({}, defaultOptions, options);
 
         /**

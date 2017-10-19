@@ -102,17 +102,21 @@ describe('Tree', function() {
     });
 
     it('should calculate input element\'s paddingLeft by it\'s depth when editable feature is enabled.', function() {
-        /* expected padding-left: 23 * depth + 37 */
+        /* expected padding-left: 23 */
 
         var nodeElements = util.getElementsByClassName(tree.rootElement, 'tui-tree-node');
-        var inputWrapper;
+        var inputWrapper, result;
 
         tree.editNode(nodeElements[0].id); // depth 1
         inputWrapper = util.getChildElementByClassName(nodeElements[0], WRAPPER_CLASSNAME);
-        expect(inputWrapper.style.paddingLeft).toBe(((23 * 1) + 37) + 'px');
+        result = tree.getIndentWidth(nodeElements[0].id);
+
+        expect(inputWrapper.style.paddingLeft).toBe(result + 'px');
 
         tree.editNode(nodeElements[1].id); // depth 2
         inputWrapper = util.getChildElementByClassName(nodeElements[1], WRAPPER_CLASSNAME);
-        expect(inputWrapper.style.paddingLeft).toBe(((23 * 2) + 37) + 'px');
+        result = tree.getIndentWidth(nodeElements[1].id);
+
+        expect(inputWrapper.style.paddingLeft).toBe(result + 'px');
     });
 });

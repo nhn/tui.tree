@@ -38,9 +38,13 @@
                 {text: 'sub-A2'},
                 {text: 'sub-A3'},
                 {text: 'sub-A4'},
-                {text: 'sub-A5', state: 'closed', children: [
+                {text: 'sub-A5', state: 'opened', children: [
                     {text:'sub-A5A', children:[
-                        {text:'sub-A5A1'}
+                        {text:'sub-A5AA', children: [
+                            {text: 'sub-A5AAA', children: [
+                                {text: 'sub-A5AAAA'}
+                            ]}
+                        ]}
                     ]},
                     {text:'sub_A5B'}
                 ]},
@@ -89,7 +93,7 @@
             nodeDefaultState: 'opened',
             template: {
                 internalNode: // Change to Mustache's format
-                    '<div class="tui-tree-content-wrapper" style="padding-left: {{indent}}px">' +
+                    '<div class="tui-tree-content-wrapper" style="padding-left: {{indent}}px">' + // Example for using indent value
                         '<button type="button" class="tui-tree-toggle-btn tui-js-tree-toggle-btn">' +
                             '<span class="tui-ico-tree"></span>' +
                             '{{stateLabel}}' +
@@ -100,21 +104,31 @@
                         '</span>' +
                     '</div>' +
                     '<ul class="tui-tree-subtree tui-js-tree-subtree">' +
-                        '{{{children}}}' +
-                    '</ul>'
+                        '{{{children}}}' + // Mustache's format
+                    '</ul>',
+                leafNode:
+                    '<div class="tui-tree-content-wrapper" style="padding-left: {{indent}}px">' + // Example for using indent value
+                        '<span class="tui-tree-text {{textClass}}">' +
+                            '<span class="tui-tree-ico tui-ico-file"></span>' +
+                            '{{text}}' +
+                        '</span>' +
+                    '</div>'
             },
             renderTemplate: function(tmpl, props) {
                 var id = props.id;
+                var depth = this.getDepth(id);
                 var isFirstDepth = (this.getDepth(id) === 1);
                 var isLeaf = this.isLeaf(id);
 
-                if (isFirstDepth) {
+                if (isFirstDepth) { // customizing node template
                     if (isLeaf) {
                         tmpl = customLeafNode;
                     } else {
                         tmpl = customInternalNode;
                     }
                 }
+
+                props.indent = 20 * depth; // customizing indent
 
                 return Mustache.render(tmpl, props);
             }

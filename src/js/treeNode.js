@@ -43,7 +43,7 @@ var TreeNode = snippet.defineClass(/** @lends TreeNode.prototype */{ /*eslint-di
          */
         idPrefix: ''
     },
-    init: function(nodeData, parentId) { /*eslint-enable*/
+    init: function(nodeData, parentId) {
         /**
          * Node id
          * @type {string}

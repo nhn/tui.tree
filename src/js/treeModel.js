@@ -18,7 +18,7 @@ var extend = snippet.extend,
  * @ignore
  **/
 var TreeModel = snippet.defineClass(/** @lends TreeModel.prototype */{ /* eslint-disable */
-    init: function(options) {/*eslint-enable*/
+    init: function(options) {
         TreeNode.setIdPrefix(options.nodeIdPrefix);
 
         /**

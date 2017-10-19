@@ -4,8 +4,8 @@
         <meta charset="UTF-8">
         <title>Tree with "Ajax" feature</title>
         <link rel="stylesheet" href="css/docs.css" />
-        <link rel="stylesheet" href="../dist/tui-tree.css" /> 
-        <link rel="stylesheet" href="//rawgit.com/nhnent/tui.context-menu/v2.0.0/dist/tui-context-menu.css" /> 
+        <link rel="stylesheet" href="../dist/tui-tree.css" />
+        <link rel="stylesheet" href="//rawgit.com/nhnent/tui.context-menu/v2.0.0/dist/tui-context-menu.css" />
     </head>
 
     <body>
@@ -19,7 +19,7 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
         <script src="https://cdn.rawgit.com/nhnent/tui.code-snippet/v1.2.5/dist/tui-code-snippet.min.js"></script>
         <script src="https://cdn.rawgit.com/nhnent/tui.dom/v3.0.0/dist/tui-dom.min.js"></script>
-        <script src="https://rawgit.com/nhnent/tui.context-menu/v2.0.0/dist/tui-context-menu.min.js"></script> 
+        <script src="https://rawgit.com/nhnent/tui.context-menu/v2.0.0/dist/tui-context-menu.min.js"></script>
         <script src="../dist/tui-tree.js"></script>
         <script class="code-js">
 
@@ -27,7 +27,30 @@
 
         // Create Tree component
         var tree = new tui.Tree('tree', {
-            nodeDefaultState: 'opened'
+            nodeDefaultState: 'opened',
+            template: {
+                internalNode: // Change to Mustache's format
+                    '<div class="tui-tree-content-wrapper" style="padding-left: {{indent}}px">' + // Example for using indent value
+                        '<button type="button" class="tui-tree-toggle-btn tui-js-tree-toggle-btn">' +
+                            '<span class="tui-ico-tree"></span>' +
+                            '{{stateLabel}}' +
+                        '</button>' +
+                        '<span class="tui-tree-text tui-js-tree-text">' +
+                            '<span class="tui-tree-ico tui-ico-folder"></span>' +
+                            '{{text}}' +
+                        '</span>' +
+                    '</div>' +
+                    '<ul class="tui-tree-subtree tui-js-tree-subtree">' +
+                        '{{children}}' + // Mustache's format
+                    '</ul>',
+                leafNode:
+                    '<div class="tui-tree-content-wrapper" style="padding-left: {{indent}}px">' + // Example for using indent value
+                        '<span class="tui-tree-text {{textClass}}">' +
+                            '<span class="tui-tree-ico tui-ico-file"></span>' +
+                            '{{text}}' +
+                        '</span>' +
+                    '</div>'
+            }
         });
 
         // Add features
