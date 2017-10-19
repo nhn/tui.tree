@@ -1,6 +1,6 @@
 /*!
  * tui-tree.js
- * @version 3.0.0
+ * @version 3.1.0
  * @author NHNEnt FE Development Lab <dl_javascript@nhnent.com>
  * @license MIT
  */
@@ -113,8 +113,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var TIMEOUT_TO_DIFFERENTIATE_CLICK_AND_DBLCLICK = 200;
 	var MOUSE_MOVING_THRESHOLD = 5;
-	var INDENT_WIDTH_PIXEL = 23;
-	var ICON_WIDTH_PIXEL = 37;
 
 	/**
 	 * Create tree model and inject data to model
@@ -241,7 +239,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * });
 	 */
 	var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
-	    ICON_WIDTH_PIXEL: ICON_WIDTH_PIXEL,
 	    init: function(container, options) {
 	        options = extend({}, defaultOption, options);
 
@@ -322,21 +319,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	         */
 	        this.isMovingNode = false;
 
-	        this.indent = options.indent;
+	        /**
+	         * Indentation value
+	         * @type {number}
+	         * @private
+	         */
+	        this._indent = options.indent;
 
 	        this._setRoot(container);
 	        this._draw(this.getRootNodeId());
 	        this._setEvents();
-	    },
-
-	    /*
-	     * Calculate list item's indentation width by it's depth
-	     * @param {string} nodeId - list item's id
-	     * @returns {number} - indentation width
-	     * @private
-	     */
-	    _calculateIndentationWidth: function(nodeId) {
-	        return this.indent * this.getDepth(nodeId);
 	    },
 
 	    /**
@@ -473,6 +465,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _onClick: function(event) {
 	        var target = util.getTarget(event);
 	        var self = this;
+	        var nodeId;
 
 	        if (util.isRightButton(event)) {
 	            this.clickTimer = null;
@@ -481,7 +474,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        if (this._isClickedToggleButton(target)) {
-	            this.toggle(this.getNodeIdFromElement(target));
+	            nodeId = this.getNodeIdFromElement(target);
+
+	            this.toggle(nodeId);
+
+	            /**
+	             * @event Tree#clickToggleBtn
+	             * @param {object} evt - Event data
+	             *     @param {string} evt.nodeId - Node id
+	             *     @param {HTMLElement} target - Element of toggle button
+	             * @example
+	             * tree.on('clickToggleBtn', function(evt) {
+	             *     console.log(evt.target);
+	             * });
+	             */
+	            this.fire('clickToggleBtn', {
+	                nodeId: nodeId,
+	                target: target
+	            });
 
 	            return;
 	        }
@@ -685,7 +695,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @returns {number} - padding left of tree node division
 	     */
 	    getIndentWidth: function(nodeId) {
-	        return this.getDepth(nodeId) * INDENT_WIDTH_PIXEL;
+	        return this.getDepth(nodeId) * this._indent;
 	    },
 
 	    /**
@@ -763,10 +773,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.each(function(child) {
 	                this._setClassNameAndVisibilityByFeature(child);
 	            }, nodeId, this);
-	        }
-
-	        if (element && element.childNodes) {
-	            element.childNodes[0].style.paddingLeft = this._calculateIndentationWidth(nodeId) + 'px';
 	        }
 	    },
 
@@ -2142,7 +2148,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 	    template: {
 	        internalNode:
-	            '<div class="tui-tree-content-wrapper" style="padding-left: {{indent}}px">' +
+	            '<div class="tui-tree-content-wrapper">' +
 	                '<button type="button" class="tui-tree-toggle-btn {{toggleBtnClass}}">' +
 	                    '<span class="tui-ico-tree"></span>' +
 	                    '{{stateLabel}}' +
@@ -2154,14 +2160,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	            '</div>' +
 	            '<ul class="tui-tree-subtree {{subtreeClass}}">{{children}}</ul>',
 	        leafNode:
-	            '<div class="tui-tree-content-wrapper" style="padding-left: {{indent}}px">' +
+	            '<div class="tui-tree-content-wrapper">' +
 	                '<span class="tui-tree-text {{textClass}}">' +
 	                    '<span class="tui-tree-ico tui-ico-file"></span>' +
 	                    '{{text}}' +
 	                '</span>' +
 	            '</div>'
 	    },
-	    indent: 23
+	    indent: 23 // value of default css
 	};
 
 
@@ -2286,7 +2292,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @ignore
 	 **/
 	var TreeModel = snippet.defineClass(/** @lends TreeModel.prototype */{ /* eslint-disable */
-	    init: function(options) {/*eslint-enable*/
+	    init: function(options) {
 	        TreeNode.setIdPrefix(options.nodeIdPrefix);
 
 	        /**
@@ -2772,7 +2778,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	         */
 	        idPrefix: ''
 	    },
-	    init: function(nodeData, parentId) { /*eslint-enable*/
+	    init: function(nodeData, parentId) {
 	        /**
 	         * Node id
 	         * @type {string}
@@ -3061,7 +3067,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            return API_LIST.slice();
 	        }
 	    },
-	    init: function(tree, options) { /*eslint-enable*/
+	    init: function(tree, options) {
 	        options = snippet.extend({}, defaults, options);
 
 	        this.tree = tree;
@@ -3325,7 +3331,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	    },
 
-	    init: function(tree, options) { /*eslint-enable*/
+	    init: function(tree, options) {
 	        options = snippet.extend({}, defaultOptions, options);
 
 	        /**
@@ -3930,7 +3936,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            return API_LIST.slice();
 	        }
 	    },
-	    init: function(tree, options) { /*eslint-enable*/
+	    init: function(tree, options) {
 	        options = snippet.extend({}, options);
 
 	        /**
@@ -4136,12 +4142,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        wrapperElement = util.getChildElementByClassName(target, WRAPPER_CLASSNAME);
+
 	        if (!wrapperElement) {
 	            wrapperElement = document.createElement('DIV');
 	            inputElement = this._createInputElement();
 
 	            util.addClass(wrapperElement, WRAPPER_CLASSNAME);
-	            wrapperElement.style.paddingLeft = (tree.getIndentWidth(nodeId) + tree.ICON_WIDTH_PIXEL) + 'px';
+	            wrapperElement.style.paddingLeft = tree.getIndentWidth(nodeId) + 'px';
 
 	            inputElement.value = tree.getNodeData(nodeId)[this.dataKey] || '';
 
@@ -4152,7 +4159,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            util.addEventListener(inputElement, 'blur', this.boundOnBlur);
 
 	            if (this.inputElement) {
-	                $(this.inputElement).blur();
+	                this.inputElement.blur();
 	            }
 	            this.inputElement = inputElement;
 	        }
@@ -4327,7 +4334,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            return API_LIST.slice();
 	        }
 	    },
-	    init: function(tree, option) {/*eslint-enable*/
+	    init: function(tree, option) {
 	        option = snippet.extend({}, option);
 
 	        this.tree = tree;
@@ -4923,7 +4930,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            return API_LIST.slice();
 	        }
 	    },
-	    init: function(tree, options) { /*eslint-enable*/
+	    init: function(tree, options) {
 	        var containerId = tree.rootElement.parentNode.id;
 
 	        options = options || {};
@@ -5169,7 +5176,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            return API_LIST.slice();
 	        }
 	    },
-	    init: function(tree, options) { /*eslint-enable*/
+	    init: function(tree, options) {
 	        options = snippet.extend({}, options);
 
 	        /**
