@@ -68,7 +68,7 @@
 
         // Custom template string
         var customInternalNode =
-            '<div class="tui-tree-content-wrapper tui-tree-root-btn" style="padding-left: {{indent}}px">' +
+            '<div class="tui-tree-content-wrapper tui-tree-root-btn" style="padding-left: {{paddingLeft}}px">' +
                 '<button type="button" class="tui-tree-toggle-btn tui-js-tree-toggle-btn">' +
                     '<span class="tui-ico-tree"></span>' +
                     '{{stateLabel}}' +
@@ -82,7 +82,7 @@
             '</ul>';
 
         var customLeafNode =
-            '<div class="tui-tree-content-wrapper tui-tree-root-btn" style="padding-left: {{indent}}px">' +
+            '<div class="tui-tree-content-wrapper tui-tree-root-btn" style="padding-left: {{paddingLeft}}px">' +
                 '<span class="tui-tree-text tui-js-tree-text">' +
                     '{{text}}' +
                 '</span>' +
@@ -116,16 +116,19 @@
             },
             renderTemplate: function(tmpl, props) {
                 var id = props.id;
+                var depth = this.getDepth(id);
                 var isFirstDepth = (this.getDepth(id) === 1);
                 var isLeaf = this.isLeaf(id);
 
-                if (isFirstDepth) {
+                if (isFirstDepth) { // customizing node template
                     if (isLeaf) {
                         tmpl = customLeafNode;
                     } else {
                         tmpl = customInternalNode;
                     }
                 }
+
+                props.indent = 20 * depth; // customizing indent
 
                 return Mustache.render(tmpl, props);
             }
