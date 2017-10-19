@@ -68,7 +68,7 @@
 
         // Custom template string
         var customInternalNode =
-            '<div class="tui-tree-content-wrapper tui-tree-root-btn" style="padding-left: {{paddingLeft}}px">' +
+            '<div class="tui-tree-content-wrapper tui-tree-root-btn" style="padding-left: {{indent}}px">' +
                 '<button type="button" class="tui-tree-toggle-btn tui-js-tree-toggle-btn">' +
                     '<span class="tui-ico-tree"></span>' +
                     '{{stateLabel}}' +
@@ -82,7 +82,7 @@
             '</ul>';
 
         var customLeafNode =
-            '<div class="tui-tree-content-wrapper tui-tree-root-btn" style="padding-left: {{paddingLeft}}px">' +
+            '<div class="tui-tree-content-wrapper tui-tree-root-btn" style="padding-left: {{indent}}px">' +
                 '<span class="tui-tree-text tui-js-tree-text">' +
                     '{{text}}' +
                 '</span>' +
