@@ -107,8 +107,10 @@ describe('TreeModel', function() {
         expect(iteratee.calls.count()).toEqual(17);
     });
 
-    it('- Sort method', function() {
-        var childIds = treeModel.rootNode.getChildIds(),
+    describe('- Sort method', function() {
+        var comparator;
+
+        beforeEach(function() {
             comparator = function(nodeA, nodeB) {
                 var aValue = nodeA.getData('text'),
                     bValue = nodeB.getData('text');
@@ -119,9 +121,23 @@ describe('TreeModel', function() {
 
                 return bValue.localeCompare(aValue);
             };
+        });
 
-        treeModel.sort(comparator);
-        expect(childIds.reverse()).toEqual(treeModel.rootNode.getChildIds());
+        it('called basically', function() {
+            var childIds = treeModel.rootNode.getChildIds();
+
+            treeModel.sort(comparator);
+            expect(childIds.reverse()).toEqual(treeModel.rootNode.getChildIds());
+        });
+
+        it('called with id of a node to sort partially', function() {
+            var parentId = treeModel.rootNode.getChildIds()[1];
+            var childIds = treeModel.getNode(parentId).getChildIds();
+
+            treeModel.sort(comparator, false, parentId);
+
+            expect(childIds.reverse()).toEqual(treeModel.getNode(parentId).getChildIds());
+        });
     });
 
     it('should support initial state for each node', function() {

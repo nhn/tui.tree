@@ -987,9 +987,9 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * Sort all nodes
      * @param {Function} comparator - Comparator for sorting
      * @param {boolean} [isSilent] - If true, it doesn't redraw tree
+     * @param {string} [parentId] - Id of a node to sort partially
      * @example
-     * // Sort with redrawing tree
-     * tree.sort(function(nodeA, nodeB) {
+     * var comparator = function(nodeA, nodeB) {
      *     var aValue = nodeA.getData('text'),
      *         bValue = nodeB.getData('text');
      *
@@ -997,23 +997,22 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      *         return 0;
      *     }
      *     return bValue.localeCompare(aValue);
-     * });
+     * };
+     *
+     * // Sort with redrawing tree
+     * tree.sort(comparator);
      *
      * // Sort, but not redraw tree
-     * tree.sort(function(nodeA, nodeB) {
-     *     var aValue = nodeA.getData('text'),
-     *         bValue = nodeB.getData('text');
+     * tree.sort(comparator, true);
      *
-     *     if (!bValue || !bValue.localeCompare) {
-     *         return 0;
-     *     }
-     *     return bValue.localeCompare(aValue);
-     * }, true);
+     * // Sort partially
+     * tree.sort(comparator, false, parentId)
      */
-    sort: function(comparator, isSilent) {
-        this.model.sort(comparator);
+    sort: function(comparator, isSilent, parentId) {
+        this.model.sort(comparator, parentId);
+
         if (!isSilent) {
-            this.refresh();
+            this.refresh(parentId);
         }
     },
 
