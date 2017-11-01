@@ -16,8 +16,8 @@ var extend = snippet.extend,
  * @param {Array} data - Data
  * @param {Object} options - Options for defaultState and nodeIdPrefix
  * @ignore
- **/
-var TreeModel = snippet.defineClass(/** @lends TreeModel.prototype */{ /* eslint-disable */
+ */
+var TreeModel = snippet.defineClass(/** @lends TreeModel.prototype */{
     init: function(options) {
         TreeNode.setIdPrefix(options.nodeIdPrefix);
 
@@ -380,11 +380,12 @@ var TreeModel = snippet.defineClass(/** @lends TreeModel.prototype */{ /* eslint
     /**
      * Sort nodes
      * @param {Function} comparator - Comparator function
+     * @param {string} [parentId] - Id of a node to sort partially
      */
-    sort: function(comparator) {
-        this.eachAll(function(node, nodeId) {
-            var children = this.getChildren(nodeId),
-                childIds;
+    sort: function(comparator, parentId) {
+        var iteratee = function(node, nodeId) {
+            var children = this.getChildren(nodeId);
+            var childIds;
 
             if (children.length > 1) {
                 children.sort(comparator);
@@ -394,7 +395,15 @@ var TreeModel = snippet.defineClass(/** @lends TreeModel.prototype */{ /* eslint
                 });
                 node.replaceChildIds(childIds);
             }
-        });
+        };
+        var node;
+
+        if (parentId) {
+            node = this.getNode(parentId);
+            iteratee.call(this, node, parentId);
+        } else {
+            this.eachAll(iteratee, this);
+        }
     },
 
     /**
