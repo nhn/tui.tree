@@ -1,6 +1,6 @@
 /*!
  * tui-tree.js
- * @version 3.1.0
+ * @version 3.2.0
  * @author NHNEnt FE Development Lab <dl_javascript@nhnent.com>
  * @license MIT
  */
@@ -1069,9 +1069,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Sort all nodes
 	     * @param {Function} comparator - Comparator for sorting
 	     * @param {boolean} [isSilent] - If true, it doesn't redraw tree
+	     * @param {string} [parentId] - Id of a node to sort partially
 	     * @example
-	     * // Sort with redrawing tree
-	     * tree.sort(function(nodeA, nodeB) {
+	     * var comparator = function(nodeA, nodeB) {
 	     *     var aValue = nodeA.getData('text'),
 	     *         bValue = nodeB.getData('text');
 	     *
@@ -1079,23 +1079,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	     *         return 0;
 	     *     }
 	     *     return bValue.localeCompare(aValue);
-	     * });
+	     * };
+	     *
+	     * // Sort with redrawing tree
+	     * tree.sort(comparator);
 	     *
 	     * // Sort, but not redraw tree
-	     * tree.sort(function(nodeA, nodeB) {
-	     *     var aValue = nodeA.getData('text'),
-	     *         bValue = nodeB.getData('text');
+	     * tree.sort(comparator, true);
 	     *
-	     *     if (!bValue || !bValue.localeCompare) {
-	     *         return 0;
-	     *     }
-	     *     return bValue.localeCompare(aValue);
-	     * }, true);
+	     * // Sort partially
+	     * tree.sort(comparator, false, parentId)
 	     */
-	    sort: function(comparator, isSilent) {
-	        this.model.sort(comparator);
+	    sort: function(comparator, isSilent, parentId) {
+	        this.model.sort(comparator, parentId);
+
 	        if (!isSilent) {
-	            this.refresh();
+	            this.refresh(parentId);
 	        }
 	    },
 
@@ -2290,8 +2289,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @param {Array} data - Data
 	 * @param {Object} options - Options for defaultState and nodeIdPrefix
 	 * @ignore
-	 **/
-	var TreeModel = snippet.defineClass(/** @lends TreeModel.prototype */{ /* eslint-disable */
+	 */
+	var TreeModel = snippet.defineClass(/** @lends TreeModel.prototype */{
 	    init: function(options) {
 	        TreeNode.setIdPrefix(options.nodeIdPrefix);
 
@@ -2654,11 +2653,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Sort nodes
 	     * @param {Function} comparator - Comparator function
+	     * @param {string} [parentId] - Id of a node to sort partially
 	     */
-	    sort: function(comparator) {
-	        this.eachAll(function(node, nodeId) {
-	            var children = this.getChildren(nodeId),
-	                childIds;
+	    sort: function(comparator, parentId) {
+	        var iteratee = function(node, nodeId) {
+	            var children = this.getChildren(nodeId);
+	            var childIds;
 
 	            if (children.length > 1) {
 	                children.sort(comparator);
@@ -2668,7 +2668,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	                });
 	                node.replaceChildIds(childIds);
 	            }
-	        });
+	        };
+	        var node;
+
+	        if (parentId) {
+	            node = this.getNode(parentId);
+	            iteratee.call(this, node, parentId);
+	        } else {
+	            this.eachAll(iteratee, this);
+	        }
 	    },
 
 	    /**
