@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+    <head lang="en">
+        <meta charset="UTF-8">
+        <title>Tree with depth label using template option</title>
+        <link rel="stylesheet" href="css/docs.css" />
+        <link rel="stylesheet" href="../dist/tui-tree.css" /> 
+    </head>
+
+    <body>
+        <div class="code-html">
+            <div id="tree" class="tui-tree-wrap"></div>
+        </div>
+        <div class="explain">
+            <p>트리요소 뒤에 뎁스에 맞는 레이블 ['층', '열', '구역', '블록'] 을 설정한다.</p>
+            <p>트리가 생성될때 자동으로 설정된 레이블을 부여한다.</p>
+            <p>뎁스별로 Label이 적용되어 노드명과 함께 노출된다.<br />
+                - 1Depth : 노드명 + "층"<br />
+                - 2Depth : 노드명 + "열"<br />
+                - 3Depth : 노드명 + "구역"<br />
+                - 4Depth : 노드명 + "블럭"<br />
+            </p>
+
+            <div class="imagewrap">
+                적용 전<br>
+                <img src="img/nolabel.png" alt="레이블이 적용됨" />
+            </div>
+            <div class="imagewrap">
+                적용 후<br>
+                <img src="img/label.png" alt="레이블이 적용되지 않음" />
+            </div>
+        </div>
+
+        <script src="https://cdn.rawgit.com/nhnent/tui.code-snippet/v1.2.5/dist/tui-code-snippet.min.js"></script>
+        <script src="../dist/tui-tree.js"></script>
+        <script class="code-js">
+
+        var data = [
+            {text: 'rootA', children: [
+                {text: 'root-1A'},
+                {text: 'root-1B'},
+                {text: 'root-1C'},
+                {text: 'root-1D'},
+                {text: 'root-2A', children: [
+                    {text:'sub_1A', children:[
+                        {text:'sub_sub_1A'}
+                    ]},
+                    {text:'sub_2A'}
+                ]},
+                {text: 'root-2B'},
+                {text: 'root-2C'},
+                {text: 'root-2D'},
+                {text: 'root-3A', children: [
+                    {text:'sub3_a'},
+                    {text:'sub3_b'}
+                ]},
+                {text: 'root-3B'},
+                {text: 'root-3C'},
+                {text: 'root-3D'}
+            ]},
+            {text: 'rootB', children: [
+                {text:'B_sub1'},
+                {text:'B_sub2'}
+            ]}
+        ];
+
+        var depthLabels = ['층', '열', '구역', '블록'];
+
+        var tree = new tui.Tree('tree', {
+            data: data,
+            nodeDefaultState: 'opened',
+            template: {
+                internalNode:
+                    '<div class="tui-tree-content-wrapper" style="padding-left: {{indent}}px">' +
+                        '<button type="button" class="tui-tree-toggle-btn tui-js-tree-toggle-btn">' +
+                            '<span class="tui-ico-tree"></span>' +
+                            '{{stateLabel}}' +
+                        '</button>' +
+                        '</button>' +
+                        '<span class="tui-tree-text tui-js-tree-text">' +
+                            '<span class="tui-tree-ico tui-ico-folder"></span>' +
+                            '{{text}}<b>{{depthLabel}}</b>' +
+                        '</span>' +
+                    '</div>' +
+                    '<ul class="tui-tree-subtree tui-js-tree-subtree">{{children}}</ul>',
+                leafNode:
+                    '<div class="tui-tree-content-wrapper" style="padding-left: {{indent}}px">' +
+                        '<span class="tui-tree-text tui-js-tree-text">' +
+                            '<span class="tui-tree-ico tui-ico-file"></span>' +
+                            '{{text}}<b>{{depthLabel}}</b>' +
+                        '</span>' +
+                    '</div>'
+            }
+        }).enableFeature('Draggable', {
+            useHelper: true
+        });
+
+        tree.on('beforeDraw', function(nodeId) {
+            tree.each(function(child, childId) {
+                var depth = tree.getDepth(childId);
+
+                depth = Math.min(depth, depthLabels.length);
+                child.setData({
+                    depthLabel: depthLabels[depth - 1] || ''
+                });
+            }, nodeId);
+        });
+
+        tree.refresh();
+
+        </script>
+    </body>
+</html>
