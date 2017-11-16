@@ -1416,7 +1416,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * @returns {boolean} Whether a node contains another node
      */
     contains: function(containerNodeId, containedNodeId) {
-        return this.model.contains(containedNodeId, containedNodeId);
+        return this.model.contains(containerNodeId, containedNodeId);
     },
 
     /**
