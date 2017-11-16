@@ -1,6 +1,6 @@
 /*!
  * tui-tree.js
- * @version 3.2.0
+ * @version 3.2.1
  * @author NHNEnt FE Development Lab <dl_javascript@nhnent.com>
  * @license MIT
  */
@@ -1498,7 +1498,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @returns {boolean} Whether a node contains another node
 	     */
 	    contains: function(containerNodeId, containedNodeId) {
-	        return this.model.contains(containedNodeId, containedNodeId);
+	        return this.model.contains(containerNodeId, containedNodeId);
 	    },
 
 	    /**
@@ -4393,11 +4393,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    this._changeCustomCheckbox(target);
 	                }
 	            },
-	            afterDraw: function(nodeId) {
+	            afterDraw: function(ev) {
 	                if (this.tree.isMovingNode) {
 	                    return;
 	                }
-	                this._reflectChanges(nodeId);
+	                this._reflectChanges(ev.nodeId);
 	            },
 	            move: function(data) {
 	                // @TODO - Optimization
