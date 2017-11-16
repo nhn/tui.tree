@@ -98,11 +98,11 @@ var Checkbox = snippet.defineClass(/** @lends Checkbox.prototype */{ /*eslint-di
                     this._changeCustomCheckbox(target);
                 }
             },
-            afterDraw: function(nodeId) {
+            afterDraw: function(ev) {
                 if (this.tree.isMovingNode) {
                     return;
                 }
-                this._reflectChanges(nodeId);
+                this._reflectChanges(ev.nodeId);
             },
             move: function(data) {
                 // @TODO - Optimization
