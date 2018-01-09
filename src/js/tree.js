@@ -989,8 +989,8 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * @private
      */
     _closeNode: function(nodeId) {
-        var node = this.model.getNode(nodeId),
-            state = nodeStates.CLOSED;
+        var node = this.model.getNode(nodeId);
+        var state = nodeStates.CLOSED;
         var isAllowStateChange = (
             node &&
             !node.isRoot() &&
