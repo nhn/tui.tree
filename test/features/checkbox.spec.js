@@ -193,4 +193,29 @@ describe('Tree', function() {
         expect(tree.isIndeterminate(rootChildIds[0])).toBe(true);
         expect(tree.isChecked(rootChildIds[1])).toBe(true);
     });
+
+    describe('disable - ThreeOption', function() {
+        beforeEach(function() {
+            tree.enableFeature('Checkbox', {
+                checkboxClassName: 'tui-tree-checkbox',
+                checkboxThreeState: false
+            });
+        });
+        it('should children remain unchecked even if parents are checked.', function() {
+            var firstChildId = tree.getChildIds(tree.getRootNodeId())[0];
+
+            tree.check(firstChildId);
+            tree.each(function(node, nodeId) {
+                expect(tree.isChecked(nodeId)).toBe(false);
+            }, firstChildId);
+        });
+        it('should be not indeterminate even if some children are checked', function() {
+            var baseNodeId = tree.getChildIds(tree.getRootNodeId())[0],
+                childIds = tree.getChildIds(baseNodeId);
+
+            tree.check(childIds[0]);
+            expect(tree.isIndeterminate(baseNodeId)).toBe(false);
+            expect(tree.isChecked(baseNodeId)).toBe(false);
+        });
+    });
 });

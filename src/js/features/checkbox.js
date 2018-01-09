@@ -34,6 +34,7 @@ var filter = snippet.filter,
  * @param {Tree} tree - Tree
  * @param {Object} option - Option
  *  @param {string} option.checkboxClassName - Classname of checkbox element
+ *  @param {boolean} option.checkboxThreeState - Use of three state option (default: true)
  * @ignore
  */
 var Checkbox = snippet.defineClass(/** @lends Checkbox.prototype */{ /*eslint-disable*/
@@ -52,6 +53,7 @@ var Checkbox = snippet.defineClass(/** @lends Checkbox.prototype */{ /*eslint-di
 
         this.tree = tree;
         this.checkboxClassName = option.checkboxClassName;
+        this.checkboxThreeState = (option.checkboxThreeState === false) ? option.checkboxThreeState : true;
         this.checkedList = [];
         this.rootCheckbox = document.createElement('INPUT');
         this.rootCheckbox.type = 'checkbox';
@@ -282,7 +284,9 @@ var Checkbox = snippet.defineClass(/** @lends Checkbox.prototype */{ /*eslint-di
         this._setClassName(nodeId, state);
 
         if (!stopPropagation) {
-            this._propagateState(nodeId, state);
+            if (this.checkboxThreeState) {
+                this._propagateState(nodeId, state);
+            }
             tree.fire(eventName, {nodeId: nodeId});
         }
     },
