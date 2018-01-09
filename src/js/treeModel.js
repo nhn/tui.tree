@@ -136,22 +136,6 @@ var TreeModel = snippet.defineClass(/** @lends TreeModel.prototype */{
     },
 
     /**
-     * Get recursive child internal node ids
-     * @param {string} nodeId - Node id
-     * @returns {?Array.<string>} Child ids
-     */
-    getChildInternalNodeIds: function(nodeId) {
-        var childInternalNodeIds = [];
-        this.each(function(searchNode, searchNodeId) {
-            if (!searchNode.isLeaf()) {
-                childInternalNodeIds.push(searchNodeId);
-            }
-        }, nodeId);
-
-        return childInternalNodeIds;
-    },
-
-    /**
      * Get the number of nodes
      * @returns {number} The number of nodes
      */
@@ -228,8 +212,7 @@ var TreeModel = snippet.defineClass(/** @lends TreeModel.prototype */{
         var parentNodeId = node.getParentId();
 
         while (parentNodeId) {
-            id = parentNodeId;
-            node = this.getNode(id);
+            node = this.getNode(parentNodeId);
             parentNodeId = node.getParentId();
             parentsNodeList.push(node);
         }

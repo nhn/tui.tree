@@ -197,16 +197,7 @@ describe('TreeModel', function() {
         var oneDepthId = treeModel.rootNode.getChildIds()[0];
         var twoDepthId = treeModel.getNode(oneDepthId).getChildIds()[4];
         var lastDepthId = treeModel.getNode(twoDepthId).getChildIds()[1];
+
         expect(treeModel.getParentIds(lastDepthId)).toEqual([twoDepthId, oneDepthId, rootNodeId]);
-    });
-
-    it('getChildInternalNodeIds should return an array of recursive child internal node ids of that node.', function() {
-        var targetNodeId = treeModel.rootNode.getChildIds()[0];
-        var twoDepthId1 = treeModel.getNode(targetNodeId).getChildIds()[4];
-        var twoDepthId2 = treeModel.getNode(targetNodeId).getChildIds()[8];
-        var twoDepthId3 = treeModel.getNode(twoDepthId1).getChildIds()[0];
-        var allInternalNodeIds = treeModel.getChildInternalNodeIds(targetNodeId).sort();
-
-        expect(allInternalNodeIds).toEqual([twoDepthId1, twoDepthId2, twoDepthId3].sort());
     });
 });

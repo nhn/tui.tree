@@ -132,7 +132,7 @@ describe('Tree', function() {
         expect(textNode.nodeValue).toEqual(tree.stateLabels.opened);
     });
 
-    describe('"open(), close() recursive action"', function() {
+    describe('"open(), close()" recursive action', function() {
         var oneDepthId;
         var twoDepthId;
         var lastDepthId;
@@ -150,13 +150,11 @@ describe('Tree', function() {
         });
 
         it('"open()" use recursive option should change the state of all parent nodes to "open"', function() {
-            tree.open(lastDepthId, {
-                recursive: true
-            });
+            tree.open(lastDepthId, true);
 
-            expect(oneDepthNode.getState()).toEqual('opened');
-            expect(twoDepthNode.getState()).toEqual('opened');
-            expect(lastDepthNode.getState()).toEqual('opened');
+            expect(oneDepthNode.getState()).toBe('opened');
+            expect(twoDepthNode.getState()).toBe('opened');
+            expect(lastDepthNode.getState()).toBe('opened');
         });
 
         it('"close()" use recursive option should change the state of all children nodes to "close"', function() {
@@ -164,13 +162,11 @@ describe('Tree', function() {
             tree.open(oneDepthNode.getChildIds()[4]);
             tree.open(twoDepthNode.getChildIds()[0]);
 
-            tree.close(tree.model.rootNode.getChildIds()[0], {
-                recursive: true
-            });
+            tree.close(tree.model.rootNode.getChildIds()[0], true);
 
-            expect(oneDepthNode.getState()).toEqual('closed');
-            expect(twoDepthNode.getState()).toEqual('closed');
-            expect(lastDepthNode.getState()).toEqual('closed');
+            expect(oneDepthNode.getState()).toBe('closed');
+            expect(twoDepthNode.getState()).toBe('closed');
+            expect(lastDepthNode.getState()).toBe('closed');
         });
     });
 

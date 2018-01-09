@@ -907,18 +907,11 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
     /**
      * Open node
      * @param {string} nodeId - Node id
-     * @param {object} [options] - Options
-     *     @param {boolean} [options.recursive] - If true, it open all parent
+     * @param {boolean} recursive - If true, it open all parent (default: false)
      * @example
-     * tree.close(nodeId);
-     * // Add option
-     * tree.open(nodeId ,{
-     *    recursive: true
-     * });
+     * tree.open(nodeId ,true);
      */
-    open: function(nodeId, options) {
-        var recursive = options ? options.recursive : false;
-
+    open: function(nodeId, recursive) {
         if (recursive) {
             this._openRecursiveNode(nodeId);
         } else {
@@ -931,9 +924,9 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * @private
      */
     _openRecursiveNode: function(nodeId) {
-        var parentIdList = this.model.getParentIds(nodeId);
-        parentIdList.push(nodeId);
-        snippet.forEach(parentIdList, function(parentId) {
+        var parentIds = this.model.getParentIds(nodeId);
+        parentIds.push(nodeId);
+        snippet.forEach(parentIds, function(parentId) {
             this._openNode(parentId);
         }, this);
     },
@@ -943,10 +936,15 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * @private
      */
     _openNode: function(nodeId) {
-        var node = this.model.getNode(nodeId),
-            state = nodeStates.OPENED;
+        var node = this.model.getNode(nodeId);
+        var state = nodeStates.OPENED;
+        var isAllowStateChange = (
+            node &&
+            !node.isRoot() &&
+            node.getState() === nodeStates.CLOSED
+        );
 
-        if (node && node.getState() === nodeStates.CLOSED && !node.isRoot()) {
+        if (isAllowStateChange) {
             node.setState(state);
             this._setDisplayFromNodeState(nodeId, state);
         }
@@ -959,36 +957,32 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
     /**
      * Close node
      * @param {string} nodeId - Node id
-     * @param {object} [options] - Options
-     *     @param {boolean} [options.recursive] - If true, it close all child node
+     * @param {boolean} recursive - If true, it close all child node (default: false)
      * @example
-     * tree.close(nodeId);
-     * // Add option
-     * tree.close(nodeId ,{
-     *    recursive: true
-     * });
+     * tree.close(nodeId, true);
      */
-    close: function(nodeId, options) {
-        var recursive = options ? options.recursive : false;
-
+    close: function(nodeId, recursive) {
         if (recursive) {
             this._closeRecursiveNode(nodeId);
         } else {
             this._closeNode(nodeId);
         }
     },
+
     /**
      * Close all child node
      * @param {string} nodeId - Node id
      * @private
      */
     _closeRecursiveNode: function(nodeId) {
-        var childInternalIdList = this.model.getChildInternalNodeIds(nodeId);
-        childInternalIdList.push(nodeId);
-        snippet.forEach(childInternalIdList, function(childId) {
-            this._closeNode(childId);
-        }, this);
+        this._closeNode(nodeId);
+        this.model.each(function(searchNode, searchNodeId) {
+            if (!searchNode.isLeaf()) {
+                this._closeNode(searchNodeId);
+            }
+        }, nodeId, this);
     },
+
     /**
      * Close one target node
      * @param {string} nodeId - Node id
@@ -997,8 +991,12 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
     _closeNode: function(nodeId) {
         var node = this.model.getNode(nodeId),
             state = nodeStates.CLOSED;
-
-        if (node && node.getState() === nodeStates.OPENED && !node.isRoot()) {
+        var isAllowStateChange = (
+            node &&
+            !node.isRoot() &&
+            node.getState() === nodeStates.OPENED
+        );
+        if (isAllowStateChange) {
             node.setState(state);
             this._setDisplayFromNodeState(nodeId, state);
         }
