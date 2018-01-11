@@ -26,14 +26,22 @@ var STATE_CHECKED = 1,
     CHECKED_CLASSNAME = 'tui-is-checked',
     INDETERMINATE_CLASSNAME = 'tui-checkbox-root';
 
+/* Checkbox cascade-states */
+var CASCADE_UP = 'up',
+    CASCADE_DOWN = 'down',
+    CASCADE_BOTH = 'both',
+    CASCADE_NONE = false;
+
 var filter = snippet.filter,
-    forEach = snippet.forEach;
+    forEach = snippet.forEach,
+    inArray = snippet.inArray;
 /**
  * Set the checkbox-api
  * @class Checkbox
  * @param {Tree} tree - Tree
  * @param {Object} option - Option
  *  @param {string} option.checkboxClassName - Classname of checkbox element
+ *  @param {string|boolean} [option.checkboxCascade='both'] - 'up', 'down', 'both', false
  * @ignore
  */
 var Checkbox = snippet.defineClass(/** @lends Checkbox.prototype */{ /*eslint-disable*/
@@ -52,6 +60,7 @@ var Checkbox = snippet.defineClass(/** @lends Checkbox.prototype */{ /*eslint-di
 
         this.tree = tree;
         this.checkboxClassName = option.checkboxClassName;
+        this.checkboxCascade = this._initCascadeOption(option.checkboxCascade);
         this.checkedList = [];
         this.rootCheckbox = document.createElement('INPUT');
         this.rootCheckbox.type = 'checkbox';
@@ -70,6 +79,19 @@ var Checkbox = snippet.defineClass(/** @lends Checkbox.prototype */{ /*eslint-di
         forEach(API_LIST, function(apiName) {
             delete tree[apiName];
         });
+    },
+
+    /**
+     * @param {string|boolean} - Cascade option
+     * @returns {string|boolean} Cascade option
+     * @private
+     */
+    _initCascadeOption: function(cascadeOption) {
+        var cascadeOptions = [CASCADE_UP, CASCADE_DOWN, CASCADE_BOTH, CASCADE_NONE];
+        if (inArray(cascadeOption, cascadeOptions) === -1) {
+            cascadeOption = CASCADE_BOTH;
+        }
+        return cascadeOption;
     },
 
     /**
@@ -321,9 +343,12 @@ var Checkbox = snippet.defineClass(/** @lends Checkbox.prototype */{ /*eslint-di
         if (state === STATE_INDETERMINATE) {
             return;
         }
-
-        this._updateAllDescendantsState(nodeId, state);
-        this._updateAllAncestorsState(nodeId);
+        if (inArray(this.checkboxCascade, [CASCADE_DOWN, CASCADE_BOTH]) > -1) {
+            this._updateAllDescendantsState(nodeId, state);
+        }
+        if (inArray(this.checkboxCascade, [CASCADE_UP, CASCADE_BOTH]) > -1) {
+            this._updateAllAncestorsState(nodeId);
+        }
     },
 
     /**

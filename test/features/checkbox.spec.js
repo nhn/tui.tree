@@ -193,4 +193,94 @@ describe('Tree', function() {
         expect(tree.isIndeterminate(rootChildIds[0])).toBe(true);
         expect(tree.isChecked(rootChildIds[1])).toBe(true);
     });
+
+    describe('When cascade option is both', function() {
+        beforeEach(function() {
+            tree.enableFeature('Checkbox', {
+                checkboxClassName: 'tui-tree-checkbox',
+                checkboxCascade: 'both'
+            });
+            this.firstChildId = tree.getChildIds(tree.getRootNodeId())[0];
+            this.childIds = tree.getChildIds(this.firstChildId);
+        });
+        it('should check with all descendants', function() {
+            tree.check(this.firstChildId);
+            tree.each(function(node, nodeId) {
+                expect(tree.isChecked(nodeId)).toBe(true);
+            }, this.firstChildId);
+        });
+        it('should be indeterminate if some children are checked', function() {
+            tree.check(this.childIds[0]);
+            expect(tree.isIndeterminate(this.firstChildId)).toBe(true);
+        });
+    });
+
+    describe('When cascade option is false', function() {
+        beforeEach(function() {
+            tree.enableFeature('Checkbox', {
+                checkboxClassName: 'tui-tree-checkbox',
+                checkboxCascade: false
+            });
+            this.firstChildId = tree.getChildIds(tree.getRootNodeId())[0];
+            this.childIds = tree.getChildIds(this.firstChildId);
+        });
+
+        it('should children remain unchecked even if parents are checked.', function() {
+            tree.check(this.firstChildId);
+            tree.each(function(node, nodeId) {
+                expect(tree.isChecked(nodeId)).toBe(false);
+            }, this.firstChildId);
+        });
+
+        it('should be not indeterminate even if some children are checked', function() {
+            tree.check(this.childIds[0]);
+            expect(tree.isIndeterminate(this.firstChildId)).toBe(false);
+        });
+    });
+
+    describe('When cascade option is up', function() {
+        beforeEach(function() {
+            tree.enableFeature('Checkbox', {
+                checkboxClassName: 'tui-tree-checkbox',
+                checkboxCascade: 'up'
+            });
+            this.firstChildId = tree.getChildIds(tree.getRootNodeId())[0];
+            this.childIds = tree.getChildIds(this.firstChildId);
+        });
+
+        it('should children remain unchecked even if parents are checked.', function() {
+            tree.check(this.firstChildId);
+            tree.each(function(node, nodeId) {
+                expect(tree.isChecked(nodeId)).toBe(false);
+            }, this.firstChildId);
+        });
+
+        it('should be indeterminate if some children are checked', function() {
+            tree.check(this.childIds[0]);
+            expect(tree.isIndeterminate(this.firstChildId)).toBe(true);
+        });
+    });
+
+    describe('When cascade option is down', function() {
+        beforeEach(function() {
+            tree.enableFeature('Checkbox', {
+                checkboxClassName: 'tui-tree-checkbox',
+                checkboxCascade: 'down'
+            });
+            this.firstChildId = tree.getChildIds(tree.getRootNodeId())[0];
+            this.childIds = tree.getChildIds(this.firstChildId);
+        });
+
+        it('should check with all descendants', function() {
+            tree.check(this.firstChildId);
+            tree.each(function(node, nodeId) {
+                expect(tree.isChecked(nodeId)).toBe(true);
+            }, this.firstChildId);
+        });
+
+        it('should be not indeterminate even if some children are checked', function() {
+            tree.check(this.childIds[0]);
+            expect(tree.isIndeterminate(this.firstChildId)).toBe(false);
+        });
+    });
 });
