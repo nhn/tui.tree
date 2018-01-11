@@ -41,7 +41,7 @@ var filter = snippet.filter,
  * @param {Tree} tree - Tree
  * @param {Object} option - Option
  *  @param {string} option.checkboxClassName - Classname of checkbox element
- *  @param {string|boolean} option.checkboxCascade - 'up', 'down', 'both', false (default: 'both')
+ *  @param {string|boolean} [option.checkboxCascade='both'] - 'up', 'down', 'both', false
  * @ignore
  */
 var Checkbox = snippet.defineClass(/** @lends Checkbox.prototype */{ /*eslint-disable*/
@@ -60,7 +60,7 @@ var Checkbox = snippet.defineClass(/** @lends Checkbox.prototype */{ /*eslint-di
 
         this.tree = tree;
         this.checkboxClassName = option.checkboxClassName;
-        this.checkboxCascade = this._purifyCascadeOption(option.checkboxCascade);
+        this.checkboxCascade = this._initCascadeOption(option.checkboxCascade);
         this.checkedList = [];
         this.rootCheckbox = document.createElement('INPUT');
         this.rootCheckbox.type = 'checkbox';
@@ -84,8 +84,9 @@ var Checkbox = snippet.defineClass(/** @lends Checkbox.prototype */{ /*eslint-di
     /**
      * @param {string|boolean} - Cascade option
      * @returns {string|boolean} Cascade option
+     * @private
      */
-    _purifyCascadeOption: function(cascadeOption) {
+    _initCascadeOption: function(cascadeOption) {
         var cascadeOptions = [CASCADE_UP, CASCADE_DOWN, CASCADE_BOTH, CASCADE_NONE];
         if (inArray(cascadeOption, cascadeOptions) === -1) {
             cascadeOption = CASCADE_BOTH;
