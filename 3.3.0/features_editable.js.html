@@ -1,0 +1,476 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Source: features/editable.js | Tree</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-jsdoc.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/tui-doc.css">
+
+    
+</head>
+<body>
+<nav class="lnb" id="lnb">
+    <div class="logo" style="width: 150px; height: 13px">
+        
+            <a href="https://github.com/nhnent/tui.jsdoc-template" rel="noopener noreferrer" target="_blank">
+                <img src="https://cloud.githubusercontent.com/assets/12269563/20029815/01133928-a39a-11e6-80f3-12500a91c755.png" width="100%" height="100%">
+            </a>
+        
+    </div>
+    <div class="title">
+        <h1><a href="index.html" class="link">Tree</a></h1>
+        
+            <span class="version">v3.3.0</span>
+        
+    </div>
+    <div class="search-container" id="search-container">
+        <input type="text" placeholder="Search">
+        <ul></ul>
+    </div>
+    
+        <ol class="lnb-tab">
+            <li id="api-tab">
+                <a href="#"><h4>API</h4></a>
+            </li>
+            <li id="examples-tab">
+                <a href="#"><h4>Examples</h4></a>
+            </li>
+        </ol>
+    
+    <div class="lnb-examples hidden"><h3>Examples</h3><ul><li><a href="tutorial-example01-basic.html">1. Basic</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example01-basic_sub"></div></li><li><a href="tutorial-example02-template.html">2. Using template</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example02-template_sub"></div></li><li><a href="tutorial-example03-selectable.html">3. Selectable feature</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example03-selectable_sub"></div></li><li><a href="tutorial-example04-draggable.html">4. Draggable feature</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example04-draggable_sub"></div></li><li><a href="tutorial-example05-editable.html">5. Editable feature</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example05-editable_sub"></div></li><li><a href="tutorial-example06-contextmenu.html">6. ContextMenu feature</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example06-contextmenu_sub"></div></li><li><a href="tutorial-example07-checkbox.html">7. Checkbox feature</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example07-checkbox_sub"></div></li><li><a href="tutorial-example08-ajax.html">8. Ajax feature</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example08-ajax_sub"></div></li><li><a href="tutorial-example09-customizing.html">9. Customizing - Make depth label</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example09-customizing_sub"></div></li></ul></div><div class="lnb-api hidden"><h3>Classes</h3><ul><li><a href="Tree.html">Tree</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Tree_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="Tree.html#add">add</a></li><li><a href="Tree.html#changeContextMenu">changeContextMenu</a></li><li><a href="Tree.html#check">check</a></li><li><a href="Tree.html#close">close</a></li><li><a href="Tree.html#contains">contains</a></li><li><a href="Tree.html#createChildNode">createChildNode</a></li><li><a href="Tree.html#deselect">deselect</a></li><li><a href="Tree.html#disableFeature">disableFeature</a></li><li><a href="Tree.html#each">each</a></li><li><a href="Tree.html#eachAll">eachAll</a></li><li><a href="Tree.html#editNode">editNode</a></li><li><a href="Tree.html#enableFeature">enableFeature</a></li><li><a href="Tree.html#getBottomCheckedList">getBottomCheckedList</a></li><li><a href="Tree.html#getCheckedList">getCheckedList</a></li><li><a href="Tree.html#getChildIds">getChildIds</a></li><li><a href="Tree.html#getDepth">getDepth</a></li><li><a href="Tree.html#getIndentWidth">getIndentWidth</a></li><li><a href="Tree.html#getLastDepth">getLastDepth</a></li><li><a href="Tree.html#getNodeData">getNodeData</a></li><li><a href="Tree.html#getNodeIdFromElement">getNodeIdFromElement</a></li><li><a href="Tree.html#getNodeIdPrefix">getNodeIdPrefix</a></li><li><a href="Tree.html#getNodeIndex">getNodeIndex</a></li><li><a href="Tree.html#getParentId">getParentId</a></li><li><a href="Tree.html#getRootNodeId">getRootNodeId</a></li><li><a href="Tree.html#getSelectedNodeId">getSelectedNodeId</a></li><li><a href="Tree.html#getState">getState</a></li><li><a href="Tree.html#getTopCheckedList">getTopCheckedList</a></li><li><a href="Tree.html#isChecked">isChecked</a></li><li><a href="Tree.html#isIndeterminate">isIndeterminate</a></li><li><a href="Tree.html#isLeaf">isLeaf</a></li><li><a href="Tree.html#isUnchecked">isUnchecked</a></li><li><a href="Tree.html#move">move</a></li><li><a href="Tree.html#open">open</a></li><li><a href="Tree.html#refresh">refresh</a></li><li><a href="Tree.html#remove">remove</a></li><li><a href="Tree.html#removeAllChildren">removeAllChildren</a></li><li><a href="Tree.html#removeNodeData">removeNodeData</a></li><li><a href="Tree.html#resetAllData">resetAllData</a></li><li><a href="Tree.html#resetClickTimer">resetClickTimer</a></li><li><a href="Tree.html#search">search</a></li><li><a href="Tree.html#select">select</a></li><li><a href="Tree.html#setNodeData">setNodeData</a></li><li><a href="Tree.html#sort">sort</a></li><li><a href="Tree.html#toggle">toggle</a></li><li><a href="Tree.html#toggleCheck">toggleCheck</a></li><li><a href="Tree.html#uncheck">uncheck</a></li></ul><div class="member-type">Events</div><ul class="inner"><li><a href="Tree.html#event:afterDraw">afterDraw</a></li><li><a href="Tree.html#event:beforeAjaxRequest">beforeAjaxRequest</a></li><li><a href="Tree.html#event:beforeCreateChildNode">beforeCreateChildNode</a></li><li><a href="Tree.html#event:beforeDraw">beforeDraw</a></li><li><a href="Tree.html#event:beforeEditNode">beforeEditNode</a></li><li><a href="Tree.html#event:beforeMove">beforeMove</a></li><li><a href="Tree.html#event:beforeOpenContextMenu">beforeOpenContextMenu</a></li><li><a href="Tree.html#event:beforeSelect">beforeSelect</a></li><li><a href="Tree.html#event:check">check</a></li><li><a href="Tree.html#event:clickToggleBtn">clickToggleBtn</a></li><li><a href="Tree.html#event:deselect">deselect</a></li><li><a href="Tree.html#event:errorAjaxResponse">errorAjaxResponse</a></li><li><a href="Tree.html#event:failAjaxResponse">failAjaxResponse</a></li><li><a href="Tree.html#event:move">move</a></li><li><a href="Tree.html#event:select">select</a></li><li><a href="Tree.html#event:selectContextMenu">selectContextMenu</a></li><li><a href="Tree.html#event:successAjaxResponse">successAjaxResponse</a></li><li><a href="Tree.html#event:uncheck">uncheck</a></li></ul></div></li></ul></div>
+</nav>
+<div id="resizer"></div>
+
+<div class="main" id="main">
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @fileoverview Feature that each tree node is possible to edit as double click
+ * @author NHN Ent. FE dev Lab &lt;dl_javascript@nhnent.com>
+ */
+var util = require('./../util');
+var ajaxCommand = require('./../consts/ajaxCommand');
+var states = require('./../consts/states');
+var snippet = require('tui-code-snippet');
+
+var API_LIST = [
+    'createChildNode',
+    'editNode'
+];
+var EDIT_TYPE = {
+    CREATE: 'create',
+    UPDATE: 'update'
+};
+var WRAPPER_CLASSNAME = 'tui-input-wrap';
+var INPUT_CLASSNAME = 'tui-tree-input';
+
+/**
+ * Set the tree selectable
+ * @class Editable
+ * @param {Tree} tree - Tree
+ * @param {Object} options - Options
+ *  @param {string} options.editableClassName - Classname of editable element
+ *  @param {string} options.dataKey - Key of node data to set value
+ *  @param {string} [options.dataValue] - Value of node data to set value (Use "createNode" API)
+ *  @param {string} [options.inputClassName] - Classname of input element
+ * @ignore
+ */
+var Editable = snippet.defineClass(/** @lends Editable.prototype */{/*eslint-disable*/
+    static: {
+        /**
+         * @static
+         * @memberof Selectable
+         * @returns {Array.&lt;string>} API list of Editable
+         */
+        getAPIList: function() {
+            return API_LIST.slice();
+        }
+    },
+    init: function(tree, options) {
+        options = snippet.extend({}, options);
+
+        /**
+         * Tree
+         * @type {Tree}
+         */
+        this.tree = tree;
+
+        /**
+         * Classname of editable element
+         * @type {string}
+         */
+        this.editableClassName = options.editableClassName || tree.classNames.textClass;
+
+        /**
+         * Key of node data to set value
+         * @type {string}
+         */
+        this.dataKey = options.dataKey;
+
+        /**
+         * Default value for creating node
+         * @type {string}
+         */
+        this.defaultValue = options.defaultValue || '';
+
+        /**
+         * Input element for create or edit
+         * @type {HTMLElement}
+         */
+        this.inputElement = null;
+
+        /**
+         * Action mode - create or edit
+         * @type {string}
+         */
+        this.mode = null;
+
+        /**
+         * Whether custom event is ignored or not
+         * @type {Boolean}
+         */
+        this.isCustomEventIgnored = false;
+
+        /**
+         * Keyup event handler
+         * @type {Function}
+         */
+        this.boundOnKeyup = snippet.bind(this._onKeyup, this);
+
+        /**
+         * Blur event handler
+         * @type {Function}
+         */
+        this.boundOnBlur = snippet.bind(this._onBlur, this);
+
+        tree.on('doubleClick', this._onDoubleClick, this);
+
+        this._setAPIs();
+    },
+
+    /**
+     * Disable this module
+     */
+    destroy: function() {
+        var tree = this.tree;
+
+        this._detachInputElement();
+        tree.off(this);
+        snippet.forEach(API_LIST, function(apiName) {
+            delete tree[apiName];
+        });
+    },
+
+    /**
+     * Create child node
+     * @memberof Tree.prototype
+     * @requires Editable
+     * @param {string} parentId - Parent node id to create new node
+     * @example
+     * tree.createChildNode('tui-tree-node-1');
+     */
+    createChildNode: function(parentId) {
+        var tree = this.tree;
+        var useAjax = tree.enabledFeatures.Ajax;
+        var nodeId;
+
+        this.mode = EDIT_TYPE.CREATE;
+
+        if (useAjax) {
+            tree.on('successAjaxResponse', this._onSuccessResponse, this);
+        }
+
+        if (!tree.isLeaf(parentId) &amp;&amp;
+            tree.getState(parentId) === states.node.CLOSED) {
+            tree.open(parentId);
+        } else {
+            nodeId = tree._add({}, parentId)[0];
+            this._attachInputElement(nodeId);
+        }
+    },
+
+    /**
+     * Edit node
+     * @memberof Tree.prototype
+     * @requires Editable
+     * @param {string} nodeId - Node id
+     * @example
+     * tree.editNode('tui-tree-node-1');
+     */
+    editNode: function(nodeId) {
+        this.mode = EDIT_TYPE.UPDATE;
+        this._attachInputElement(nodeId);
+    },
+
+    /**
+     * Custom event handler "successResponse"
+     * @param {string} type - Ajax command type
+     * @param {Array.&lt;string>} nodeIds - Added node ids on tree
+     * @private
+     */
+    _onSuccessResponse: function(type, nodeIds) {
+        var tree = this.tree;
+        var parentId, nodeId;
+
+        if (type === ajaxCommand.READ &amp;&amp; nodeIds) {
+            parentId = tree.getParentId(nodeIds[0]);
+            nodeId = tree._add({}, parentId)[0];
+            this._attachInputElement(nodeId);
+        }
+    },
+
+    /**
+     * Custom event handler "doubleClick"
+     * @param {MouseEvent} event - Mouse event
+     * @private
+     */
+    _onDoubleClick: function(event) {
+        var target = util.getTarget(event);
+        var nodeId;
+
+        if (util.hasClass(target, this.editableClassName)) {
+            nodeId = this.tree.getNodeIdFromElement(target);
+            this.editNode(nodeId);
+        }
+    },
+
+    /**
+     * Event handler: keyup - input element
+     * @param {Event} event - Key event
+     * @private
+     */
+    _onKeyup: function(event) {
+        if (util.getKeyCode(event) === 13) {
+            this.inputElement.blur();
+        }
+    },
+
+    /**
+     * Event handler: blur - input element
+     * @private
+     */
+    _onBlur: function() {
+        if (this.isCustomEventIgnored || !this.inputElement) {
+            this.isCustomEventIgnored = false;
+
+            return;
+        }
+
+        if (this.mode === EDIT_TYPE.CREATE) {
+            this._addData();
+        } else {
+            this._setData();
+        }
+    },
+
+    /**
+     * Create input element
+     * @returns {HTMLElement} Input element
+     * @private
+     */
+    _createInputElement: function() {
+        var element = document.createElement('INPUT');
+        element.setAttribute('type', 'text');
+        util.addClass(element, INPUT_CLASSNAME);
+
+        return element;
+    },
+
+    /**
+     * Attach input element on tree
+     * @param {string} nodeId - Node id
+     * @private
+     */
+    _attachInputElement: function(nodeId) {
+        var tree = this.tree;
+        var target = document.getElementById(nodeId);
+        var wrapperElement = document.createElement('DIV');
+        var inputElement = this._createInputElement();
+
+        if (!target) {
+            return;
+        }
+
+        wrapperElement = util.getChildElementByClassName(target, WRAPPER_CLASSNAME);
+
+        if (!wrapperElement) {
+            wrapperElement = document.createElement('DIV');
+            inputElement = this._createInputElement();
+
+            util.addClass(wrapperElement, WRAPPER_CLASSNAME);
+            wrapperElement.style.paddingLeft = tree.getIndentWidth(nodeId) + 'px';
+
+            inputElement.value = tree.getNodeData(nodeId)[this.dataKey] || '';
+
+            wrapperElement.appendChild(inputElement);
+            target.appendChild(wrapperElement);
+
+            util.addEventListener(inputElement, 'keyup', this.boundOnKeyup);
+            util.addEventListener(inputElement, 'blur', this.boundOnBlur);
+
+            if (this.inputElement) {
+                this.inputElement.blur();
+            }
+            this.inputElement = inputElement;
+        }
+
+        this.inputElement.focus();
+    },
+
+    /**
+     * Detach input element on tree
+     * @private
+     */
+    _detachInputElement: function() {
+        var tree = this.tree;
+        var inputElement = this.inputElement;
+
+        util.removeEventListener(inputElement, 'keyup', this.boundOnKeyup);
+        util.removeEventListener(inputElement, 'blur', this.boundOnBlur);
+
+        util.removeElement(inputElement);
+
+        if (tree.enabledFeatures.Ajax) {
+            tree.off(this, 'successAjaxResponse');
+        }
+
+        this.isCustomEventIgnored = false;
+        this.inputElement = null;
+    },
+
+    /**
+     * Add data of input element to node and detach input element on tree
+     * @private
+     */
+    _addData: function() {
+        var tree = this.tree;
+        var nodeId = tree.getNodeIdFromElement(this.inputElement);
+        var parentId = tree.getParentId(nodeId);
+        var value = this.inputElement.value || this.defaultValue;
+        var data = {};
+
+        /**
+         * @event Tree#beforeCreateChildNode
+         * @param {{value: string}} evt - Event data
+         *     @param {string} evt.value - Return value of creating input element
+         * @example
+         * tree
+         *  .enableFeature('Editable')
+         *  .on('beforeCreateChildNode', function(evt) {
+         *      console.log(evt.value);
+         *      return false; // It cancels
+         *      // return true; // It execute next
+         *  });
+         */
+        if (!this.tree.invoke('beforeCreateChildNode', {value: value})) {
+            this.isCustomEventIgnored = true;
+            this.inputElement.focus();
+
+            return;
+        }
+
+        if (nodeId) {
+            data[this.dataKey] = value;
+            tree._remove(nodeId);
+            tree.add(data, parentId);
+        }
+        this._detachInputElement();
+    },
+
+    /**
+     * Set data of input element to node and detach input element on tree
+     * @private
+     */
+    _setData: function() {
+        var tree = this.tree;
+        var nodeId = tree.getNodeIdFromElement(this.inputElement);
+        var value = this.inputElement.value;
+        var data = {};
+
+        /**
+         * @event Tree#beforeEditNode
+         * @param {{value: string}} evt - Event data
+         *     @param {string} evt.value - Return value of editing input element
+         * @example
+         * tree
+         *  .enableFeature('Editable')
+         *  .on('beforeEditNode', function(evt) {
+         *      console.log(evt.value);
+         *      return false; // It cancels
+         *      // return true; // It execute next
+         *  });
+         */
+        if (!this.tree.invoke('beforeEditNode', {value: value})) {
+            this.isCustomEventIgnored = true;
+            this.inputElement.focus();
+
+            return;
+        }
+
+        if (nodeId) {
+            data[this.dataKey] = value;
+            tree.setNodeData(nodeId, data);
+        }
+        this._detachInputElement();
+    },
+
+    /**
+     * Set apis of selectable tree
+     * @private
+     */
+    _setAPIs: function() {
+        var tree = this.tree;
+        var bind = snippet.bind;
+
+        snippet.forEach(API_LIST, function(apiName) {
+            tree[apiName] = bind(this[apiName], this);
+        }, this);
+    }
+});
+
+module.exports = Editable;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<footer>
+    <img class="logo" src="https://cloud.githubusercontent.com/assets/12269563/20029815/01133928-a39a-11e6-80f3-12500a91c755.png" style="width: 150px; height: 13px">
+    <div class="footer-text">NHN Entertainment. Frontend Development Lab</div>
+</footer>
+<script>prettyPrint();</script>
+<script src="scripts/jquery.min.js"></script>
+<script src="scripts/tui-doc.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+    <script>
+        var id = '_sub'.replace(/"/g, '_');
+        var selectedApi = document.getElementById(id); // do not use jquery selector
+        var $selectedApi = $(selectedApi);
+
+        $selectedApi.removeClass('hidden');
+        $selectedApi.parent().find('.glyphicon').removeClass('glyphicon-plus').addClass('glyphicon-minus');
+        showLnbApi();
+    </script>
+
+</body>
+</html>

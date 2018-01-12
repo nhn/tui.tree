@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+    <head lang="en">
+        <meta charset="UTF-8">
+        <title>Tree with template function</title>
+        <link rel="stylesheet" href="css/docs.css" />
+        <link rel="stylesheet" href="../dist/tui-tree.css" />
+        <link rel="stylesheet" href="css/template.css" />
+    </head>
+
+    <body>
+        <div class="code-html">
+            <div id="tree" class="tui-tree-wrap"></div>
+        </div>
+        <div class="explain">
+            <button id="addChildBtn">add</button>
+            <button id="removeChildBtn">remove</button>
+        </div>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/2.3.0/mustache.min.js"></script>
+        <script src="https://cdn.rawgit.com/nhnent/tui.code-snippet/v1.2.5/dist/tui-code-snippet.js"></script>
+        <script src="../dist/tui-tree.js"></script>
+        <script class="code-js">
+
+        var util = {
+            addEventListener: function(element, eventName, handler) {
+                if (element.addEventListener) {
+                    element.addEventListener(eventName, handler, false);
+                } else {
+                    element.attachEvent('on' + eventName, handler);
+                }
+            }
+        };
+
+        var data = [
+            {text: 'rootA', children: [
+                {text: 'sub-A1'},
+                {text: 'sub-A2'},
+                {text: 'sub-A3'},
+                {text: 'sub-A4'},
+                {text: 'sub-A5', state: 'opened', children: [
+                    {text:'sub-A5A', children:[
+                        {text:'sub-A5AA', children: [
+                            {text: 'sub-A5AAA', children: [
+                                {text: 'sub-A5AAAA'}
+                            ]}
+                        ]}
+                    ]},
+                    {text:'sub_A5B'}
+                ]},
+                {text: 'sub-A6'},
+                {text: 'sub-A7'},
+                {text: 'sub-A8'},
+                {text: 'sub-A9', state: 'closed', children: [
+                    {text:'sub-A9A'},
+                    {text:'sub-A9B'}
+                ]},
+                {text: 'sub-A10'},
+                {text: 'sub-A11'},
+                {text: 'sub-A12'}
+            ]},
+            {text: 'rootB', state:'closed', children: [
+                {text:'sub-B1'},
+                {text:'sub-B2'},
+                {text:'sub-B3'}
+            ]}
+        ];
+
+        // Custom template string
+        var customInternalNode =
+            '<div class="tui-tree-content-wrapper tui-tree-root-btn" style="padding-left: {{indent}}px">' +
+                '<button type="button" class="tui-tree-toggle-btn tui-js-tree-toggle-btn">' +
+                    '<span class="tui-ico-tree"></span>' +
+                    '{{stateLabel}}' +
+                '</button>' +
+                '<span class="tui-tree-text tui-js-tree-text">' +
+                    '{{text}}' +
+                '</span>' +
+            '</div>' +
+            '<ul class="tui-tree-subtree tui-js-tree-subtree">' +
+                '{{{children}}}' + // Mustache's format
+            '</ul>';
+
+        var customLeafNode =
+            '<div class="tui-tree-content-wrapper tui-tree-root-btn" style="padding-left: {{indent}}px">' +
+                '<span class="tui-tree-text tui-js-tree-text">' +
+                    '{{text}}' +
+                '</span>' +
+            '</div>';
+
+        var tree = new tui.Tree('tree', {
+            data: data,
+            nodeDefaultState: 'opened',
+            template: {
+                internalNode: // Change to Mustache's format
+                    '<div class="tui-tree-content-wrapper" style="padding-left: {{indent}}px">' + // Example for using indent value
+                        '<button type="button" class="tui-tree-toggle-btn tui-js-tree-toggle-btn">' +
+                            '<span class="tui-ico-tree"></span>' +
+                            '{{stateLabel}}' +
+                        '</button>' +
+                        '<span class="tui-tree-text tui-js-tree-text">' +
+                            '<span class="tui-tree-ico tui-ico-folder"></span>' +
+                            '{{text}}' +
+                        '</span>' +
+                    '</div>' +
+                    '<ul class="tui-tree-subtree tui-js-tree-subtree">' +
+                        '{{{children}}}' + // Mustache's format
+                    '</ul>',
+                leafNode:
+                    '<div class="tui-tree-content-wrapper" style="padding-left: {{indent}}px">' + // Example for using indent value
+                        '<span class="tui-tree-text {{textClass}}">' +
+                            '<span class="tui-tree-ico tui-ico-file"></span>' +
+                            '{{text}}' +
+                        '</span>' +
+                    '</div>'
+            },
+            renderTemplate: function(tmpl, props) {
+                var id = props.id;
+                var depth = this.getDepth(id);
+                var isFirstDepth = (this.getDepth(id) === 1);
+                var isLeaf = this.isLeaf(id);
+
+                if (isFirstDepth) { // customizing node template
+                    if (isLeaf) {
+                        tmpl = customLeafNode;
+                    } else {
+                        tmpl = customInternalNode;
+                    }
+                }
+
+                props.indent = 20 * depth; // customizing indent
+
+                return Mustache.render(tmpl, props);
+            }
+        });
+
+        var addBtn = document.getElementById('addChildBtn');
+        var removeBtn = document.getElementById('removeChildBtn');
+        var rootNodeId = tree.getRootNodeId();
+
+        util.addEventListener(addBtn, 'click', function() {
+            tree.add({text: 'root'}, rootNodeId);
+        });
+
+        util.addEventListener(removeBtn, 'click', function() {
+            var lastGrandChildId = tree.getChildIds(rootNodeId).slice(-1)[0];
+            tree.remove(lastGrandChildId);
+        });
+
+        </script>
+    </body>
+</html>
