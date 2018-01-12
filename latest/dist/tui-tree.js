@@ -1,6 +1,6 @@
 /*!
  * tui-tree.js
- * @version 3.2.1
+ * @version 3.3.0
  * @author NHNEnt FE Development Lab <dl_javascript@nhnent.com>
  * @license MIT
  */
@@ -986,16 +986,47 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        return node.getState();
 	    },
-
 	    /**
 	     * Open node
 	     * @param {string} nodeId - Node id
+	     * @param {boolean} recursive - If true, it open all parent (default: false)
+	     * @example
+	     * tree.open(nodeId ,true);
 	     */
-	    open: function(nodeId) {
-	        var node = this.model.getNode(nodeId),
-	            state = nodeStates.OPENED;
+	    open: function(nodeId, recursive) {
+	        if (recursive) {
+	            this._openRecursiveNode(nodeId);
+	        } else {
+	            this._openNode(nodeId);
+	        }
+	    },
+	    /**
+	     * Open all parent node
+	     * @param {string} nodeId - Node id
+	     * @private
+	     */
+	    _openRecursiveNode: function(nodeId) {
+	        var parentIds = this.model.getParentIds(nodeId);
+	        parentIds.push(nodeId);
+	        snippet.forEach(parentIds, function(parentId) {
+	            this._openNode(parentId);
+	        }, this);
+	    },
+	    /**
+	     * Open one target node
+	     * @param {string} nodeId - Node id
+	     * @private
+	     */
+	    _openNode: function(nodeId) {
+	        var node = this.model.getNode(nodeId);
+	        var state = nodeStates.OPENED;
+	        var isAllowStateChange = (
+	            node &&
+	            !node.isRoot() &&
+	            node.getState() === nodeStates.CLOSED
+	        );
 
-	        if (node && !node.isRoot()) {
+	        if (isAllowStateChange) {
 	            node.setState(state);
 	            this._setDisplayFromNodeState(nodeId, state);
 	        }
@@ -1008,12 +1039,46 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Close node
 	     * @param {string} nodeId - Node id
+	     * @param {boolean} recursive - If true, it close all child node (default: false)
+	     * @example
+	     * tree.close(nodeId, true);
 	     */
-	    close: function(nodeId) {
-	        var node = this.model.getNode(nodeId),
-	            state = nodeStates.CLOSED;
+	    close: function(nodeId, recursive) {
+	        if (recursive) {
+	            this._closeRecursiveNode(nodeId);
+	        } else {
+	            this._closeNode(nodeId);
+	        }
+	    },
 
-	        if (node && !node.isRoot()) {
+	    /**
+	     * Close all child node
+	     * @param {string} nodeId - Node id
+	     * @private
+	     */
+	    _closeRecursiveNode: function(nodeId) {
+	        this._closeNode(nodeId);
+	        this.model.each(function(searchNode, searchNodeId) {
+	            if (!searchNode.isLeaf()) {
+	                this._closeNode(searchNodeId);
+	            }
+	        }, nodeId, this);
+	    },
+
+	    /**
+	     * Close one target node
+	     * @param {string} nodeId - Node id
+	     * @private
+	     */
+	    _closeNode: function(nodeId) {
+	        var node = this.model.getNode(nodeId);
+	        var state = nodeStates.CLOSED;
+	        var isAllowStateChange = (
+	            node &&
+	            !node.isRoot() &&
+	            node.getState() === nodeStates.OPENED
+	        );
+	        if (isAllowStateChange) {
 	            node.setState(state);
 	            this._setDisplayFromNodeState(nodeId, state);
 	        }
@@ -2474,7 +2539,26 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        return node.getParentId();
 	    },
+	    /**
+	     * Return parents ids of node
+	     * @param {string} id - Node id
+	     * @returns {Array.<string>} Parents node ids
+	     */
+	    getParentIds: function(id) {
+	        var parentsNodeList = [];
+	        var node = this.getNode(id);
+	        var parentNodeId = node.getParentId();
 
+	        while (parentNodeId) {
+	            node = this.getNode(parentNodeId);
+	            parentNodeId = node.getParentId();
+	            parentsNodeList.push(node);
+	        }
+
+	        return map(parentsNodeList, function(parentsNode) {
+	            return parentsNode.getId();
+	        });
+	    },
 	    /**
 	     * Remove a node with children.
 	     * - The update event will be fired with parent node.
@@ -4321,14 +4405,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	    CHECKED_CLASSNAME = 'tui-is-checked',
 	    INDETERMINATE_CLASSNAME = 'tui-checkbox-root';
 
+	/* Checkbox cascade-states */
+	var CASCADE_UP = 'up',
+	    CASCADE_DOWN = 'down',
+	    CASCADE_BOTH = 'both',
+	    CASCADE_NONE = false;
+
 	var filter = snippet.filter,
-	    forEach = snippet.forEach;
+	    forEach = snippet.forEach,
+	    inArray = snippet.inArray;
 	/**
 	 * Set the checkbox-api
 	 * @class Checkbox
 	 * @param {Tree} tree - Tree
 	 * @param {Object} option - Option
 	 *  @param {string} option.checkboxClassName - Classname of checkbox element
+	 *  @param {string|boolean} [option.checkboxCascade='both'] - 'up', 'down', 'both', false
 	 * @ignore
 	 */
 	var Checkbox = snippet.defineClass(/** @lends Checkbox.prototype */{ /*eslint-disable*/
@@ -4347,6 +4439,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        this.tree = tree;
 	        this.checkboxClassName = option.checkboxClassName;
+	        this.checkboxCascade = this._initCascadeOption(option.checkboxCascade);
 	        this.checkedList = [];
 	        this.rootCheckbox = document.createElement('INPUT');
 	        this.rootCheckbox.type = 'checkbox';
@@ -4365,6 +4458,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	        forEach(API_LIST, function(apiName) {
 	            delete tree[apiName];
 	        });
+	    },
+
+	    /**
+	     * @param {string|boolean} - Cascade option
+	     * @returns {string|boolean} Cascade option
+	     * @private
+	     */
+	    _initCascadeOption: function(cascadeOption) {
+	        var cascadeOptions = [CASCADE_UP, CASCADE_DOWN, CASCADE_BOTH, CASCADE_NONE];
+	        if (inArray(cascadeOption, cascadeOptions) === -1) {
+	            cascadeOption = CASCADE_BOTH;
+	        }
+	        return cascadeOption;
 	    },
 
 	    /**
@@ -4616,9 +4722,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (state === STATE_INDETERMINATE) {
 	            return;
 	        }
-
-	        this._updateAllDescendantsState(nodeId, state);
-	        this._updateAllAncestorsState(nodeId);
+	        if (inArray(this.checkboxCascade, [CASCADE_DOWN, CASCADE_BOTH]) > -1) {
+	            this._updateAllDescendantsState(nodeId, state);
+	        }
+	        if (inArray(this.checkboxCascade, [CASCADE_UP, CASCADE_BOTH]) > -1) {
+	            this._updateAllAncestorsState(nodeId);
+	        }
 	    },
 
 	    /**

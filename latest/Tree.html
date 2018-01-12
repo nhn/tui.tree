@@ -28,7 +28,7 @@
     <div class="title">
         <h1><a href="index.html" class="link">Tree</a></h1>
         
-            <span class="version">v3.2.1</span>
+            <span class="version">v3.3.0</span>
         
     </div>
     <div class="search-container" id="search-container">
@@ -801,7 +801,7 @@ var tree = new Tree(container, {
             
             <div class="container-source members">
                 <code><a href="tree.js.html">tree.js</a></code>,
-                <code><a href="tree.js.html#line1078">line 1078</a></code>
+                <code><a href="tree.js.html#line1143">line 1143</a></code>
             </div>
             
         </h4>
@@ -1307,7 +1307,7 @@ console.log(secondAddedIds); // ["tui-tree-node-11", "tui-tree-node-12"]</code><
             
             <div class="container-source members">
                 <code><a href="features_checkbox.js.html">features/checkbox.js</a></code>,
-                <code><a href="features_checkbox.js.html#line422">line 422</a></code>
+                <code><a href="features_checkbox.js.html#line447">line 447</a></code>
             </div>
             
         </h4>
@@ -1447,12 +1447,12 @@ tree.check(nodeId);</code></pre>
     
         <h4 class="name" id="close">
             
-                <span class="type-signature"></span>close<span class="signature">(nodeId)</span><span class="type-signature"></span>
+                <span class="type-signature"></span>close<span class="signature">(nodeId, recursive)</span><span class="type-signature"></span>
                 
             
             <div class="container-source members">
                 <code><a href="tree.js.html">tree.js</a></code>,
-                <code><a href="tree.js.html#line930">line 930</a></code>
+                <code><a href="tree.js.html#line964">line 964</a></code>
             </div>
             
         </h4>
@@ -1520,6 +1520,29 @@ tree.check(nodeId);</code></pre>
         </tr>
 
     
+
+        <tr>
+            
+                <td class="name"><code>recursive</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>If true, it close all child node (default: false)</p></td>
+        </tr>
+
+    
     </tbody>
 </table>
 
@@ -1576,6 +1599,11 @@ tree.check(nodeId);</code></pre>
 
 
     
+        <h5>Example</h5>
+        
+    <pre class="prettyprint"><code>tree.close(nodeId, true);</code></pre>
+
+    
 
 </dd>
 
@@ -1591,7 +1619,7 @@ tree.check(nodeId);</code></pre>
             
             <div class="container-source members">
                 <code><a href="tree.js.html">tree.js</a></code>,
-                <code><a href="tree.js.html#line1418">line 1418</a></code>
+                <code><a href="tree.js.html#line1483">line 1483</a></code>
             </div>
             
         </h4>
@@ -2072,7 +2100,7 @@ tree.check(nodeId);</code></pre>
             
             <div class="container-source members">
                 <code><a href="tree.js.html">tree.js</a></code>,
-                <code><a href="tree.js.html#line1547">line 1547</a></code>
+                <code><a href="tree.js.html#line1612">line 1612</a></code>
             </div>
             
         </h4>
@@ -2243,7 +2271,7 @@ tree.check(nodeId);</code></pre>
             
             <div class="container-source members">
                 <code><a href="tree.js.html">tree.js</a></code>,
-                <code><a href="tree.js.html#line1052">line 1052</a></code>
+                <code><a href="tree.js.html#line1117">line 1117</a></code>
             </div>
             
         </h4>
@@ -2463,7 +2491,7 @@ tree.check(nodeId);</code></pre>
             
             <div class="container-source members">
                 <code><a href="tree.js.html">tree.js</a></code>,
-                <code><a href="tree.js.html#line1037">line 1037</a></code>
+                <code><a href="tree.js.html#line1102">line 1102</a></code>
             </div>
             
         </h4>
@@ -2801,7 +2829,7 @@ tree.check(nodeId);</code></pre>
             
             <div class="container-source members">
                 <code><a href="tree.js.html">tree.js</a></code>,
-                <code><a href="tree.js.html#line1523">line 1523</a></code>
+                <code><a href="tree.js.html#line1588">line 1588</a></code>
             </div>
             
         </h4>
@@ -3102,7 +3130,7 @@ tree.check(nodeId);</code></pre>
             
             <div class="container-source members">
                 <code><a href="features_checkbox.js.html">features/checkbox.js</a></code>,
-                <code><a href="features_checkbox.js.html#line592">line 592</a></code>
+                <code><a href="features_checkbox.js.html#line617">line 617</a></code>
             </div>
             
         </h4>
@@ -3291,7 +3319,7 @@ var descendantsBottomCheckedList = tree.getBottomCheekedList('node6'); // ['node
             
             <div class="container-source members">
                 <code><a href="features_checkbox.js.html">features/checkbox.js</a></code>,
-                <code><a href="features_checkbox.js.html#line520">line 520</a></code>
+                <code><a href="features_checkbox.js.html#line545">line 545</a></code>
             </div>
             
         </h4>
@@ -4521,7 +4549,7 @@ var descendantsCheckedList = tree.getCheekedList('node6'); // ['node7', 'node8']
             
             <div class="container-source members">
                 <code><a href="tree.js.html">tree.js</a></code>,
-                <code><a href="tree.js.html#line1563">line 1563</a></code>
+                <code><a href="tree.js.html#line1628">line 1628</a></code>
             </div>
             
         </h4>
@@ -5233,7 +5261,7 @@ var descendantsCheckedList = tree.getCheekedList('node6'); // ['node7', 'node8']
             
             <div class="container-source members">
                 <code><a href="features_checkbox.js.html">features/checkbox.js</a></code>,
-                <code><a href="features_checkbox.js.html#line553">line 553</a></code>
+                <code><a href="features_checkbox.js.html#line578">line 578</a></code>
             </div>
             
         </h4>
@@ -5422,7 +5450,7 @@ var descendantsTopCheckedList = tree.getTopCheekedList('node6'); // ['node7']</c
             
             <div class="container-source members">
                 <code><a href="features_checkbox.js.html">features/checkbox.js</a></code>,
-                <code><a href="features_checkbox.js.html#line468">line 468</a></code>
+                <code><a href="features_checkbox.js.html#line493">line 493</a></code>
             </div>
             
         </h4>
@@ -5589,7 +5617,7 @@ console.log(tree.isChecked(nodeId)); // true</code></pre>
             
             <div class="container-source members">
                 <code><a href="features_checkbox.js.html">features/checkbox.js</a></code>,
-                <code><a href="features_checkbox.js.html#line482">line 482</a></code>
+                <code><a href="features_checkbox.js.html#line507">line 507</a></code>
             </div>
             
         </h4>
@@ -5756,7 +5784,7 @@ console.log(tree.isIndeterminate(nodeId)); // false</code></pre>
             
             <div class="container-source members">
                 <code><a href="tree.js.html">tree.js</a></code>,
-                <code><a href="tree.js.html#line1406">line 1406</a></code>
+                <code><a href="tree.js.html#line1471">line 1471</a></code>
             </div>
             
         </h4>
@@ -5916,7 +5944,7 @@ console.log(tree.isIndeterminate(nodeId)); // false</code></pre>
             
             <div class="container-source members">
                 <code><a href="features_checkbox.js.html">features/checkbox.js</a></code>,
-                <code><a href="features_checkbox.js.html#line496">line 496</a></code>
+                <code><a href="features_checkbox.js.html#line521">line 521</a></code>
             </div>
             
         </h4>
@@ -6083,7 +6111,7 @@ console.log(tree.isUnchecked(nodeId)); // true</code></pre>
             
             <div class="container-source members">
                 <code><a href="tree.js.html">tree.js</a></code>,
-                <code><a href="tree.js.html#line1267">line 1267</a></code>
+                <code><a href="tree.js.html#line1332">line 1332</a></code>
             </div>
             
         </h4>
@@ -6424,12 +6452,12 @@ tree.move(myNodeId, newParentId, true); // move node without redrawing</code></p
     
         <h4 class="name" id="open">
             
-                <span class="type-signature"></span>open<span class="signature">(nodeId)</span><span class="type-signature"></span>
+                <span class="type-signature"></span>open<span class="signature">(nodeId, recursive)</span><span class="type-signature"></span>
                 
             
             <div class="container-source members">
                 <code><a href="tree.js.html">tree.js</a></code>,
-                <code><a href="tree.js.html#line912">line 912</a></code>
+                <code><a href="tree.js.html#line914">line 914</a></code>
             </div>
             
         </h4>
@@ -6497,6 +6525,29 @@ tree.move(myNodeId, newParentId, true); // move node without redrawing</code></p
         </tr>
 
     
+
+        <tr>
+            
+                <td class="name"><code>recursive</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>If true, it open all parent (default: false)</p></td>
+        </tr>
+
+    
     </tbody>
 </table>
 
@@ -6553,6 +6604,11 @@ tree.move(myNodeId, newParentId, true); // move node without redrawing</code></p
 
 
     
+        <h5>Example</h5>
+        
+    <pre class="prettyprint"><code>tree.open(nodeId ,true);</code></pre>
+
+    
 
 </dd>
 
@@ -6568,7 +6624,7 @@ tree.move(myNodeId, newParentId, true); // move node without redrawing</code></p
             
             <div class="container-source members">
                 <code><a href="tree.js.html">tree.js</a></code>,
-                <code><a href="tree.js.html#line1023">line 1023</a></code>
+                <code><a href="tree.js.html#line1088">line 1088</a></code>
             </div>
             
         </h4>
@@ -6719,7 +6775,7 @@ tree.move(myNodeId, newParentId, true); // move node without redrawing</code></p
             
             <div class="container-source members">
                 <code><a href="tree.js.html">tree.js</a></code>,
-                <code><a href="tree.js.html#line1226">line 1226</a></code>
+                <code><a href="tree.js.html#line1291">line 1291</a></code>
             </div>
             
         </h4>
@@ -7003,7 +7059,7 @@ tree.remove(myNodeId, true); // remove node without redrawing</code></pre>
             
             <div class="container-source members">
                 <code><a href="tree.js.html">tree.js</a></code>,
-                <code><a href="tree.js.html#line1180">line 1180</a></code>
+                <code><a href="tree.js.html#line1245">line 1245</a></code>
             </div>
             
         </h4>
@@ -7599,7 +7655,7 @@ tree.setNodeData(nodeId, 'foo', true); // not refresh</code></pre>
             
             <div class="container-source members">
                 <code><a href="tree.js.html">tree.js</a></code>,
-                <code><a href="tree.js.html#line1135">line 1135</a></code>
+                <code><a href="tree.js.html#line1200">line 1200</a></code>
             </div>
             
         </h4>
@@ -8004,7 +8060,7 @@ tree.resetAllData([
             
             <div class="container-source members">
                 <code><a href="tree.js.html">tree.js</a></code>,
-                <code><a href="tree.js.html#line1349">line 1349</a></code>
+                <code><a href="tree.js.html#line1414">line 1414</a></code>
             </div>
             
         </h4>
@@ -8683,7 +8739,7 @@ console.log(tree.getNodeData('tui-tree-node-5').foo); // 'bar'</code></pre>
             
             <div class="container-source members">
                 <code><a href="tree.js.html">tree.js</a></code>,
-                <code><a href="tree.js.html#line1011">line 1011</a></code>
+                <code><a href="tree.js.html#line1076">line 1076</a></code>
             </div>
             
         </h4>
@@ -8920,7 +8976,7 @@ tree.sort(comparator, false, parentId)</code></pre>
             
             <div class="container-source members">
                 <code><a href="tree.js.html">tree.js</a></code>,
-                <code><a href="tree.js.html#line944">line 944</a></code>
+                <code><a href="tree.js.html#line1009">line 1009</a></code>
             </div>
             
         </h4>
@@ -9059,7 +9115,7 @@ tree.sort(comparator, false, parentId)</code></pre>
             
             <div class="container-source members">
                 <code><a href="features_checkbox.js.html">features/checkbox.js</a></code>,
-                <code><a href="features_checkbox.js.html#line450">line 450</a></code>
+                <code><a href="features_checkbox.js.html#line475">line 475</a></code>
             </div>
             
         </h4>
@@ -9204,7 +9260,7 @@ tree.toggleCheck(nodeId);</code></pre>
             
             <div class="container-source members">
                 <code><a href="features_checkbox.js.html">features/checkbox.js</a></code>,
-                <code><a href="features_checkbox.js.html#line436">line 436</a></code>
+                <code><a href="features_checkbox.js.html#line461">line 461</a></code>
             </div>
             
         </h4>
@@ -10366,7 +10422,7 @@ tree.uncheck(nodeId);</code></pre>
             
             <div class="container-source members">
                 <code><a href="tree.js.html">tree.js</a></code>,
-                <code><a href="tree.js.html#line1301">line 1301</a></code>
+                <code><a href="tree.js.html#line1366">line 1366</a></code>
             </div>
             
         </h4>
@@ -11019,7 +11075,7 @@ tree.uncheck(nodeId);</code></pre>
             
             <div class="container-source members">
                 <code><a href="features_checkbox.js.html">features/checkbox.js</a></code>,
-                <code><a href="features_checkbox.js.html#line254">line 254</a></code>
+                <code><a href="features_checkbox.js.html#line276">line 276</a></code>
             </div>
             
         </h4>
@@ -12953,7 +13009,7 @@ tree.uncheck(nodeId);</code></pre>
             
             <div class="container-source members">
                 <code><a href="features_checkbox.js.html">features/checkbox.js</a></code>,
-                <code><a href="features_checkbox.js.html#line265">line 265</a></code>
+                <code><a href="features_checkbox.js.html#line287">line 287</a></code>
             </div>
             
         </h4>
