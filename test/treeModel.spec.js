@@ -191,4 +191,13 @@ describe('TreeModel', function() {
         expect(handler).toHaveBeenCalledWith(grandChildId, firstChildId, rootId, -1);
         expect(treeModel.getNode(grandChildId).getParentId()).toEqual(rootId);
     });
+
+    it('getParentIds should return an array of parent nodes of that node.', function() {
+        var rootNodeId = treeModel.rootNode.getId();
+        var oneDepthId = treeModel.rootNode.getChildIds()[0];
+        var twoDepthId = treeModel.getNode(oneDepthId).getChildIds()[4];
+        var lastDepthId = treeModel.getNode(twoDepthId).getChildIds()[1];
+
+        expect(treeModel.getParentIds(lastDepthId)).toEqual([twoDepthId, oneDepthId, rootNodeId]);
+    });
 });

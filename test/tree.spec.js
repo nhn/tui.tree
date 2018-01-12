@@ -132,6 +132,44 @@ describe('Tree', function() {
         expect(textNode.nodeValue).toEqual(tree.stateLabels.opened);
     });
 
+    describe('"open(), close()" recursive action', function() {
+        var oneDepthId;
+        var twoDepthId;
+        var lastDepthId;
+        var oneDepthNode;
+        var twoDepthNode;
+        var lastDepthNode;
+
+        beforeEach(function() {
+            oneDepthId = tree.model.rootNode.getChildIds()[0];
+            oneDepthNode = tree.model.getNode(oneDepthId);
+            twoDepthId = oneDepthNode.getChildIds()[4];
+            twoDepthNode = tree.model.getNode(twoDepthId);
+            lastDepthId = twoDepthNode.getChildIds()[0];
+            lastDepthNode = tree.model.getNode(lastDepthId);
+        });
+
+        it('"open()" use recursive option should change the state of all parent nodes to "open"', function() {
+            tree.open(lastDepthId, true);
+
+            expect(oneDepthNode.getState()).toBe('opened');
+            expect(twoDepthNode.getState()).toBe('opened');
+            expect(lastDepthNode.getState()).toBe('opened');
+        });
+
+        it('"close()" use recursive option should change the state of all children nodes to "close"', function() {
+            tree.open(tree.model.rootNode.getChildIds()[0]);
+            tree.open(oneDepthNode.getChildIds()[4]);
+            tree.open(twoDepthNode.getChildIds()[0]);
+
+            tree.close(tree.model.rootNode.getChildIds()[0], true);
+
+            expect(oneDepthNode.getState()).toBe('closed');
+            expect(twoDepthNode.getState()).toBe('closed');
+            expect(lastDepthNode.getState()).toBe('closed');
+        });
+    });
+
     it('should fire doubleClick event', function() {
         var handler = jasmine.createSpy('doubleClick handler'),
             eventMock = {

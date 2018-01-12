@@ -904,16 +904,47 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
 
         return node.getState();
     },
-
     /**
      * Open node
      * @param {string} nodeId - Node id
+     * @param {boolean} recursive - If true, it open all parent (default: false)
+     * @example
+     * tree.open(nodeId ,true);
      */
-    open: function(nodeId) {
-        var node = this.model.getNode(nodeId),
-            state = nodeStates.OPENED;
+    open: function(nodeId, recursive) {
+        if (recursive) {
+            this._openRecursiveNode(nodeId);
+        } else {
+            this._openNode(nodeId);
+        }
+    },
+    /**
+     * Open all parent node
+     * @param {string} nodeId - Node id
+     * @private
+     */
+    _openRecursiveNode: function(nodeId) {
+        var parentIds = this.model.getParentIds(nodeId);
+        parentIds.push(nodeId);
+        snippet.forEach(parentIds, function(parentId) {
+            this._openNode(parentId);
+        }, this);
+    },
+    /**
+     * Open one target node
+     * @param {string} nodeId - Node id
+     * @private
+     */
+    _openNode: function(nodeId) {
+        var node = this.model.getNode(nodeId);
+        var state = nodeStates.OPENED;
+        var isAllowStateChange = (
+            node &&
+            !node.isRoot() &&
+            node.getState() === nodeStates.CLOSED
+        );
 
-        if (node && !node.isRoot()) {
+        if (isAllowStateChange) {
             node.setState(state);
             this._setDisplayFromNodeState(nodeId, state);
         }
@@ -926,12 +957,46 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
     /**
      * Close node
      * @param {string} nodeId - Node id
+     * @param {boolean} recursive - If true, it close all child node (default: false)
+     * @example
+     * tree.close(nodeId, true);
      */
-    close: function(nodeId) {
-        var node = this.model.getNode(nodeId),
-            state = nodeStates.CLOSED;
+    close: function(nodeId, recursive) {
+        if (recursive) {
+            this._closeRecursiveNode(nodeId);
+        } else {
+            this._closeNode(nodeId);
+        }
+    },
 
-        if (node && !node.isRoot()) {
+    /**
+     * Close all child node
+     * @param {string} nodeId - Node id
+     * @private
+     */
+    _closeRecursiveNode: function(nodeId) {
+        this._closeNode(nodeId);
+        this.model.each(function(searchNode, searchNodeId) {
+            if (!searchNode.isLeaf()) {
+                this._closeNode(searchNodeId);
+            }
+        }, nodeId, this);
+    },
+
+    /**
+     * Close one target node
+     * @param {string} nodeId - Node id
+     * @private
+     */
+    _closeNode: function(nodeId) {
+        var node = this.model.getNode(nodeId);
+        var state = nodeStates.CLOSED;
+        var isAllowStateChange = (
+            node &&
+            !node.isRoot() &&
+            node.getState() === nodeStates.OPENED
+        );
+        if (isAllowStateChange) {
             node.setState(state);
             this._setDisplayFromNodeState(nodeId, state);
         }

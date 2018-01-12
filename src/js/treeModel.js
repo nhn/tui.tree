@@ -201,7 +201,26 @@ var TreeModel = snippet.defineClass(/** @lends TreeModel.prototype */{
 
         return node.getParentId();
     },
+    /**
+     * Return parents ids of node
+     * @param {string} id - Node id
+     * @returns {Array.<string>} Parents node ids
+     */
+    getParentIds: function(id) {
+        var parentsNodeList = [];
+        var node = this.getNode(id);
+        var parentNodeId = node.getParentId();
 
+        while (parentNodeId) {
+            node = this.getNode(parentNodeId);
+            parentNodeId = node.getParentId();
+            parentsNodeList.push(node);
+        }
+
+        return map(parentsNodeList, function(parentsNode) {
+            return parentsNode.getId();
+        });
+    },
     /**
      * Remove a node with children.
      * - The update event will be fired with parent node.
