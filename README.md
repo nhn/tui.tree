@@ -21,7 +21,7 @@
 * [Pull Request Steps](#-pull-request-steps)
     * [Setup](#setup)
     * [Develop](#develop)
-    * [Pull Request Steps](#pull-request)
+    * [Pull Request](#pull-request)
 * [Documents](#-documents)
 * [Contributing](#-contributing)
 * [Dependency](#-dependency)
@@ -50,7 +50,7 @@
 
 
 ## 🐾 Examples
-* [Basic](https://nhnent.github.io/tui.date-picker/latest/tutorial-example01-basic.html) : Example of using default options.
+* [Basic](https://nhnent.github.io/tui.tree/latest/tutorial-example01-basic.html) : Example of using default options.
 * [Using checkbox](https://nhnent.github.io/tui.tree/latest/tutorial-example07-checkbox.html) : Example of adding checkbox on each node and handling.
 * [Using Ajax](https://nhnent.github.io/tui.tree/latest/tutorial-example08-ajax.html) : Example of using server request, `Selectable`, `Draggable`, `Editable`, `ContextMenu` features.
 
