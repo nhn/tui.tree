@@ -65,7 +65,6 @@ function setConfig(defaultConfig, server) {
             'Edge',
             'Chrome-WebDriver',
             'Firefox-WebDriver'
-            // 'Safari-WebDriver'
         ];
         defaultConfig.reporters.push('coverage');
         defaultConfig.reporters.push('junit');
