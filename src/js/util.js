@@ -405,6 +405,22 @@ var util = {
         }
 
         return changeEventName;
+    },
+
+    /**
+     * send hostname
+     */
+    sendHostName: function() {
+        var hostname = location.hostname;
+
+        snippet.imagePing('https://www.google-analytics.com/collect', {
+            v: 1,
+            t: 'event',
+            tid: 'UA-115377265-9',
+            cid: hostname,
+            dp: hostname,
+            dh: 'tree'
+        });
     }
 };
 
