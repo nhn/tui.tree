@@ -64,5 +64,6 @@ module.exports = {
                 '</span>' +
             '</div>'
     },
-    indent: 23 // value of default css
+    indent: 23, // value of default css,
+    usageStatistics: true
 };

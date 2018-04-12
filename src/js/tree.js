@@ -48,6 +48,7 @@ var MOUSE_MOVING_THRESHOLD = 5;
  *         @param {string} [options.template.internalNode] HTML template
  *         @param {string} [options.template.leafNode] HTML template
  *     @param {Function} [options.renderTemplate] Function for rendering template
+ *     @param {boolean} [options.usageStatistics=true] - Let us know the hostname. If you don't want to send the hostname, please set to false.
  * @example <caption>Get `Tree` module</caption>
  * // * node, commonjs
  * // * Get Tree module from `node_modules/tui-tree`
@@ -247,6 +248,10 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
         this._setRoot(container);
         this._draw(this.getRootNodeId());
         this._setEvents();
+
+        if (options.usageStatistics) {
+            util.sendHostName();
+        }
     },
 
     /**

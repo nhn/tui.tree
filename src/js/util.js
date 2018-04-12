@@ -15,7 +15,8 @@ var isUndefined = snippet.isUndefined,
     browser = snippet.browser,
     isSupportPageOffset = typeof window.pageXOffset !== 'undefined',
     isCSS1Compat = document.compatMode === 'CSS1Compat',
-    isOlderIE = (browser.msie && browser.version < 9);
+    isOlderIE = (browser.msie && browser.version < 9),
+    hostnameSent = false;
 
 /**
  * @ignore
@@ -405,6 +406,27 @@ var util = {
         }
 
         return changeEventName;
+    },
+
+    /**
+     * send hostname
+     */
+    sendHostName: function() {
+        var hostname = location.hostname;
+
+        if (hostnameSent) {
+            return;
+        }
+        hostnameSent = true;
+
+        snippet.imagePing('https://www.google-analytics.com/collect', {
+            v: 1,
+            t: 'event',
+            tid: 'UA-115377265-9',
+            cid: hostname,
+            dp: hostname,
+            dh: 'tree'
+        });
     }
 };
 
