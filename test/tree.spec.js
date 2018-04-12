@@ -363,16 +363,16 @@ describe('Tree', function() {
         });
     });
 
-    describe('option', () => {
+    describe('option', function() {
         // hostnameSent module scope variable can not be reset.
         // maintain cases with xit as it always fail, if you want to test these cases, change xit to fit one by one
-        beforeEach(() => {
+        beforeEach(function() {
             spyOn(snippet, 'imagePing');
             loadFixtures('basicFixture.html');
             container = 'tree';
         });
 
-        xit('should send hostname by default', () => {
+        xit('should send hostname by default', function() {
             tree = new Tree(container, {
                 rootElement: 'treeRoot',
                 data: data
@@ -381,7 +381,7 @@ describe('Tree', function() {
             expect(snippet.imagePing).toHaveBeenCalled();
         });
 
-        xit('should not send hostname on usageStatistics option false', () => {
+        xit('should not send hostname on usageStatistics option false', function() {
             tree = new Tree(container, {
                 rootElement: 'treeRoot',
                 data: data,
