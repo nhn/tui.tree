@@ -90,6 +90,7 @@ You can use the CDN as below.
 
 ```html
 <script src="https://uicdn.toast.com/tui-tree/latest/tui-tree.js"></script>
+<link rel="stylesheet" type="text/css" href="https://uicdn.toast.com/tui-tree/latest/tui-tree.css">
 ```
 
 If you want to use a specific version, use the tag name instead of `latest` in the url's path.
@@ -100,7 +101,8 @@ The CDN directory has the following structure.
 tui-tree/
 ├─ latest/
 │  ├─ tui-tree.js
-│  └─ tui-tree.min.js
+│  ├─ tui-tree.min.js
+│  └─ tui-tree.css
 ├─ v3.3.0/
 │  ├─ ...
 ```
