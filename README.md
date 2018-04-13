@@ -14,6 +14,7 @@
 * [Examples](#-examples)
 * [Install](#-install)
     * [Via Package Manager](#via-package-manager)
+    * [Via Contents Delivery Network (CDN)](#via-contents-delivery-network-cdn)
     * [Download Source Files](#download-source-files)
 * [Usage](#-usage)
     * [HTML](#html)
@@ -29,9 +30,9 @@
 
 
 ## 🌏 Browser Support
-| <img src="https://user-images.githubusercontent.com/1215767/34348387-a2e64588-ea4d-11e7-8267-a43365103afe.png" alt="Chrome" width="16px" height="16px" /> Chrome | <img src="https://user-images.githubusercontent.com/1215767/34348383-9e7ed492-ea4d-11e7-910c-03b39d52f496.png" alt="Firefox" width="16px" height="16px" /> Firefox | <img src="https://user-images.githubusercontent.com/1215767/34348394-a981f892-ea4d-11e7-9156-d128d58386b9.png" alt="Safari" width="16px" height="16px" /> Safari | <img src="https://user-images.githubusercontent.com/1215767/34348380-93e77ae8-ea4d-11e7-8696-9a989ddbbbf5.png" alt="Edge" width="16px" height="16px" /> Edge | <img src="https://user-images.githubusercontent.com/1215767/34348590-250b3ca2-ea4f-11e7-9efb-da953359321f.png" alt="IE" width="16px" height="16px" /> Internet Explorer |
+| <img src="https://user-images.githubusercontent.com/1215767/34348387-a2e64588-ea4d-11e7-8267-a43365103afe.png" alt="Chrome" width="16px" height="16px" /> Chrome | <img src="https://user-images.githubusercontent.com/1215767/34348590-250b3ca2-ea4f-11e7-9efb-da953359321f.png" alt="IE" width="16px" height="16px" /> Internet Explorer | <img src="https://user-images.githubusercontent.com/1215767/34348380-93e77ae8-ea4d-11e7-8696-9a989ddbbbf5.png" alt="Edge" width="16px" height="16px" /> Edge | <img src="https://user-images.githubusercontent.com/1215767/34348394-a981f892-ea4d-11e7-9156-d128d58386b9.png" alt="Safari" width="16px" height="16px" /> Safari | <img src="https://user-images.githubusercontent.com/1215767/34348383-9e7ed492-ea4d-11e7-910c-03b39d52f496.png" alt="Firefox" width="16px" height="16px" /> Firefox |
 | :---------: | :---------: | :---------: | :---------: | :---------: |
-| Yes | Yes | Yes | Yes | 8+ |
+| Yes | 8+ | Yes | Yes | Yes |
 
 
 ## 🎨 Features
@@ -80,6 +81,30 @@ $ npm install --save tui-tree@<version> # Specific version
 ``` sh
 $ bower install tui-tree # Latest version
 $ bower install tui-tree#<tag> # Specific version
+```
+
+### Via Contents Delivery Network (CDN)
+TOAST UI products are available over the CDN powered by [TOAST Cloud](https://www.toast.com).
+
+You can use the CDN as below.
+
+```html
+<script src="https://uicdn.toast.com/tui-tree/latest/tui-tree.js"></script>
+<link rel="stylesheet" type="text/css" href="https://uicdn.toast.com/tui-tree/latest/tui-tree.css">
+```
+
+If you want to use a specific version, use the tag name instead of `latest` in the url's path.
+
+The CDN directory has the following structure.
+
+```
+tui-tree/
+├─ latest/
+│  ├─ tui-tree.js
+│  ├─ tui-tree.min.js
+│  └─ tui-tree.css
+├─ v3.3.0/
+│  ├─ ...
 ```
 
 ### Download Source Files
