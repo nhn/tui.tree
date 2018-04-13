@@ -1,6 +1,6 @@
 /*!
  * tui-tree.js
- * @version 3.3.0
+ * @version 3.4.0
  * @author NHNEnt FE Development Lab <dl_javascript@nhnent.com>
  * @license MIT
  */
@@ -130,6 +130,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *         @param {string} [options.template.internalNode] HTML template
 	 *         @param {string} [options.template.leafNode] HTML template
 	 *     @param {Function} [options.renderTemplate] Function for rendering template
+	 *     @param {boolean} [options.usageStatistics=true] - Let us know the hostname. If you don't want to send the hostname, please set to false.
 	 * @example <caption>Get `Tree` module</caption>
 	 * // * node, commonjs
 	 * // * Get Tree module from `node_modules/tui-tree`
@@ -329,6 +330,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this._setRoot(container);
 	        this._draw(this.getRootNodeId());
 	        this._setEvents();
+
+	        if (options.usageStatistics) {
+	            util.sendHostName();
+	        }
 	    },
 
 	    /**
@@ -1759,7 +1764,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    browser = snippet.browser,
 	    isSupportPageOffset = typeof window.pageXOffset !== 'undefined',
 	    isCSS1Compat = document.compatMode === 'CSS1Compat',
-	    isOlderIE = (browser.msie && browser.version < 9);
+	    isOlderIE = (browser.msie && browser.version < 9),
+	    hostnameSent = false;
 
 	/**
 	 * @ignore
@@ -2149,6 +2155,27 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        return changeEventName;
+	    },
+
+	    /**
+	     * send hostname
+	     */
+	    sendHostName: function() {
+	        var hostname = location.hostname;
+
+	        if (hostnameSent) {
+	            return;
+	        }
+	        hostnameSent = true;
+
+	        snippet.imagePing('https://www.google-analytics.com/collect', {
+	            v: 1,
+	            t: 'event',
+	            tid: 'UA-115377265-9',
+	            cid: hostname,
+	            dp: hostname,
+	            dh: 'tree'
+	        });
 	    }
 	};
 
@@ -2231,7 +2258,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                '</span>' +
 	            '</div>'
 	    },
-	    indent: 23 // value of default css
+	    indent: 23, // value of default css,
+	    usageStatistics: true
 	};
 
 
