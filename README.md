@@ -51,7 +51,7 @@
 
 
 ## 🐾 Examples
-* [Basic](https://nhnent.github.io/tui.date-picker/latest/tutorial-example01-basic.html) : Example of using default options.
+* [Basic](https://nhnent.github.io/tui.tree/latest/tutorial-example01-basic.html) : Example of using default options.
 * [Using checkbox](https://nhnent.github.io/tui.tree/latest/tutorial-example07-checkbox.html) : Example of adding checkbox on each node and handling.
 * [Using Ajax](https://nhnent.github.io/tui.tree/latest/tutorial-example08-ajax.html) : Example of using server request, `Selectable`, `Draggable`, `Editable`, `ContextMenu` features.
 
