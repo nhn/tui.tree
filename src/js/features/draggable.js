@@ -472,7 +472,9 @@ var Draggable = snippet.defineClass(/** @lends Draggable.prototype */{
         if (!this.hoveredElement && isContain) {
             this.hoveredElement = currentElement;
             this._hover(nodeId);
-        } else if (!hasClass || (hasClass && !isContain)) {
+        } else if (!hasClass) {
+            this._unhover();
+        } else if (!isContain) {
             this._unhover();
         }
 
