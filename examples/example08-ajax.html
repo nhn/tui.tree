@@ -149,11 +149,20 @@
             }
         });
 
-        tree.on('beforeCreateChildNode', function() {
+        tree.on('beforeCreateChildNode', function(event) {
+            if (event.cause === 'blur') {
+                tree.exitEdit();
+                tree.remove(event.nodeId);
+                return false;
+            }
             return confirm('create?');
         });
 
-        tree.on('beforeEditNode', function() {
+        tree.on('beforeEditNode', function(event) {
+            if (event.cause === 'blur') {
+                tree.exitEdit();
+                return false;
+            }
             return confirm('edit?');
         });
 
