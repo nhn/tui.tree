@@ -213,6 +213,58 @@ var Editable = snippet.defineClass(/** @lends Editable.prototype */{/*eslint-dis
     },
 
     /**
+     * Invoke 'beforeCreateChildNode'
+     * @param {Event} event - Information of 'beforeCreateChildNode'
+     * @private
+     */
+    _invokeBeforeCreateChildNode: function(event) {
+        /**
+         * @event Tree#beforeCreateChildNode
+         * @param {{value: string}} evt - Event data
+         *     @param {string} evt.value - Return value of creating input element
+         *     @param {string} evt.nodeId - Return id of creating node
+         *     @param {string} cause - Return 'blur' or 'enter' according cause of the event
+         * @example
+         * tree
+         *  .enableFeature('Editable')
+         *  .on('beforeCreateChildNode', function(evt) {
+         *      console.log(evt.value);
+         *      console.log(evt.nodeId);
+         *      console.log(evt.cause);
+         *      return false; // It cancels
+         *      // return true; // It execute next
+         *  });
+         */
+        return this.tree.invoke('beforeCreateChildNode', event);
+    },
+
+    /**
+     * Invoke 'beforeEditNode'
+     * @param {Event} event - Information of 'beforeEditNode'
+     * @private
+     */
+    _invokeBeforeEditNode: function(event) {
+        /**
+         * @event Tree#beforeEditNode
+         * @param {{value: string}} evt - Event data
+         *     @param {string} evt.value - Return value of creating input element
+         *     @param {string} evt.nodeId - Return id of editing node
+         *     @param {string} evt.cause - Return 'blur' or 'enter' according cause of the event
+         * @example
+         * tree
+         *  .enableFeature('Editable')
+         *  .on('beforeEditNode', function(evt) {
+         *      console.log(evt.value);
+         *      console.log(evt.nodeId);
+         *      console.log(evt.cause);
+         *      return false; // It cancels
+         *      // return true; // It execute next
+         *  });
+         */
+        return this.tree.invoke('beforeEditNode', event);
+    },
+
+    /**
      * Reflect the value of inputElement to node for creating or editing
      * @private
      */
@@ -227,48 +279,14 @@ var Editable = snippet.defineClass(/** @lends Editable.prototype */{/*eslint-dis
         };
 
         if (this.mode === EDIT_TYPE.CREATE) {
-            /**
-             * @event Tree#beforeCreateChildNode
-             * @param {{value: string}} evt - Event data
-             *     @param {string} evt.value - Return value of creating input element
-             *     @param {string} evt.nodeId - Return id of creating node
-             *     @param {string} cause - Return 'blur' or 'enter' according cause of the event
-             * @example
-             * tree
-             *  .enableFeature('Editable')
-             *  .on('beforeCreateChildNode', function(evt) {
-             *      console.log(evt.value);
-             *      console.log(evt.nodeId);
-             *      console.log(evt.cause);
-             *      return false; // It cancels
-             *      // return true; // It execute next
-             *  });
-             */
-            if (!this.tree.invoke('beforeCreateChildNode', event)) {
+            if (!this._invokeBeforeCreateChildNode(event)) {
                 this._keepEdit();
 
                 return false;
             }
             this._addData(nodeId, value);
         } else {
-            /**
-             * @event Tree#beforeEditNode
-             * @param {{value: string}} evt - Event data
-             *     @param {string} evt.value - Return value of creating input element
-             *     @param {string} evt.nodeId - Return id of editing node
-             *     @param {string} evt.cause - Return 'blur' or 'enter' according cause of the event
-             * @example
-             * tree
-             *  .enableFeature('Editable')
-             *  .on('beforeEditNode', function(evt) {
-             *      console.log(evt.value);
-             *      console.log(evt.nodeId);
-             *      console.log(evt.cause);
-             *      return false; // It cancels
-             *      // return true; // It execute next
-             *  });
-             */
-            if (!this.tree.invoke('beforeEditNode', event)) {
+            if (!this._invokeBeforeEditNode(event)) {
                 this._keepEdit();
 
                 return false;
