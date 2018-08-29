@@ -119,4 +119,14 @@ describe('Tree', function() {
 
         expect(inputWrapper.style.paddingLeft).toBe(result + 'px');
     });
+
+    it('"finishEditing()" should remove input element of editing node', function() {
+        var inputElements;
+
+        tree.editNode(firstChildElement);
+        tree.finishEditing();
+        inputElements = firstChildElement.getElementsByTagName('input');
+
+        expect(inputElements.length).toBe(0);
+    });
 });
