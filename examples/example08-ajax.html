@@ -151,7 +151,7 @@
 
         tree.on('beforeCreateChildNode', function(event) {
             if (event.cause === 'blur') {
-                tree.exitEdit();
+                tree.finishEditing();
                 tree.remove(event.nodeId);
                 return false;
             }
@@ -160,7 +160,7 @@
 
         tree.on('beforeEditNode', function(event) {
             if (event.cause === 'blur') {
-                tree.exitEdit();
+                tree.finishEditing();
                 return false;
             }
             return confirm('edit?');

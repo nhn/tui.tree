@@ -10,7 +10,7 @@ var snippet = require('tui-code-snippet');
 var API_LIST = [
     'createChildNode',
     'editNode',
-    'exitEdit'
+    'finishEditing'
 ];
 var EDIT_TYPE = {
     CREATE: 'create',
@@ -84,7 +84,7 @@ var Editable = snippet.defineClass(/** @lends Editable.prototype */{/*eslint-dis
          * For block blur when unintentional blur event occur when alert popup
          * @type {Boolean}
          */
-        this.blockBlur = false;
+        this._blockBlur = false;
 
         /**
          * Keyup event handler
@@ -162,9 +162,9 @@ var Editable = snippet.defineClass(/** @lends Editable.prototype */{/*eslint-dis
      * @memberof Tree.prototype
      * @requires Editable
      * @example
-     * tree.exitEdit();
+     * tree.finishEditing();
      */
-    exitEdit: function() {
+    finishEditing: function() {
         if (this.inputElement) {
             this._detachInputElement();
         }
@@ -246,6 +246,7 @@ var Editable = snippet.defineClass(/** @lends Editable.prototype */{/*eslint-dis
              */
             if (!this.tree.invoke('beforeCreateChildNode', event)) {
                 this._keepEdit();
+
                 return false;
             }
             this._addData(nodeId, value);
@@ -269,12 +270,13 @@ var Editable = snippet.defineClass(/** @lends Editable.prototype */{/*eslint-dis
              */
             if (!this.tree.invoke('beforeEditNode', event)) {
                 this._keepEdit();
+
                 return false;
             }
             this._setData(nodeId, value);
         }
-
         this._detachInputElement();
+
         return true;
     },
 
@@ -285,7 +287,7 @@ var Editable = snippet.defineClass(/** @lends Editable.prototype */{/*eslint-dis
      */
     _onKeyup: function(event) {
         if (util.getKeyCode(event) === 13) {
-            this.blockBlur = true;
+            this._blockBlur = true;
             this._submitInputResult('enter');
         }
     },
@@ -295,10 +297,10 @@ var Editable = snippet.defineClass(/** @lends Editable.prototype */{/*eslint-dis
      * @private
      */
     _onBlur: function() {
-        if (this.blockBlur) {
-            this.blockBlur = false;
+        if (this._blockBlur) {
+            this._blockBlur = false;
         } else {
-            this.blockBlur = !this._submitInputResult('blur');
+            this._blockBlur = !this._submitInputResult('blur');
         }
     },
 
@@ -353,7 +355,7 @@ var Editable = snippet.defineClass(/** @lends Editable.prototype */{/*eslint-dis
             this.inputElement = inputElement;
         }
 
-        this.blockBlur = false;
+        this._blockBlur = false;
         this.inputElement.focus();
     },
 
@@ -369,7 +371,6 @@ var Editable = snippet.defineClass(/** @lends Editable.prototype */{/*eslint-dis
         util.removeEventListener(inputElement, 'keyup', this.boundOnKeyup);
         util.removeEventListener(inputElement, 'blur', this.boundOnBlur);
 
-        util.removeElement(inputElement);
         util.removeElement(wrapperElement)
 
         if (tree.enabledFeatures.Ajax) {
@@ -381,6 +382,8 @@ var Editable = snippet.defineClass(/** @lends Editable.prototype */{/*eslint-dis
 
     /**
      * Add data of input element to node and detach input element on tree
+     * @param {string} nodeId - Node id to add
+     * @param {string} value - Content for that node
      * @private
      */
     _addData: function(nodeId, value) {
@@ -389,7 +392,7 @@ var Editable = snippet.defineClass(/** @lends Editable.prototype */{/*eslint-dis
         var data = {};
 
         if (nodeId) {
-            data[this.dataKey] = value? value : this.defaultValue;
+            data[this.dataKey] = value || this.defaultValue;
             tree._remove(nodeId);
             tree.add(data, parentId);
         }
@@ -397,6 +400,8 @@ var Editable = snippet.defineClass(/** @lends Editable.prototype */{/*eslint-dis
 
     /**
      * Set data of input element to node and detach input element on tree
+     * @param {string} nodeId - Node id to change
+     * @param {string} value - Content for that node
      * @private
      */
     _setData: function(nodeId, value) {
