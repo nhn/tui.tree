@@ -52,7 +52,7 @@ var API_LIST = [];
  *     @param {{top: number, bottom: number}} options.lineBoundary - Boundary value for visible moving line
  * @ignore
  */
-var Draggable = snippet.defineClass(/** @lends Draggable.prototype */{/*eslint-disable*/
+var Draggable = snippet.defineClass(/** @lends Draggable.prototype */{
     static: {
         /**
          * @static

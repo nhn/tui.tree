@@ -27,7 +27,7 @@ var lastIndex = 0,
  * @param {string} [parentId] - Parent node id
  * @ignore
  */
-var TreeNode = snippet.defineClass(/** @lends TreeNode.prototype */{ /*eslint-disable*/
+var TreeNode = snippet.defineClass(/** @lends TreeNode.prototype */{
     static: {
         /**
          * Set prefix of id

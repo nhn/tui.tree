@@ -20,7 +20,7 @@ var bind = snippet.bind;
  *     @param {Array.<Object>} options.menuData - Context menu data
  * @ignore
  */
-var ContextMenu = snippet.defineClass(/** @lends ContextMenu.prototype */{/*eslint-disable*/
+var ContextMenu = snippet.defineClass(/** @lends ContextMenu.prototype */{
     static: {
         /**
          * @static

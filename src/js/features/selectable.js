@@ -22,7 +22,7 @@ var API_LIST = [
  *  @param {string} options.selectedClassName - Classname for selected node.
  * @ignore
  */
-var Selectable = snippet.defineClass(/** @lends Selectable.prototype */{/*eslint-disable*/
+var Selectable = snippet.defineClass(/** @lends Selectable.prototype */{
     static: {
         /**
          * @static

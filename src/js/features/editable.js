@@ -30,7 +30,7 @@ var INPUT_CLASSNAME = 'tui-tree-input';
  *  @param {string} [options.inputClassName] - Classname of input element
  * @ignore
  */
-var Editable = snippet.defineClass(/** @lends Editable.prototype */{/*eslint-disable*/
+var Editable = snippet.defineClass(/** @lends Editable.prototype */{
     static: {
         /**
          * @static
@@ -214,7 +214,8 @@ var Editable = snippet.defineClass(/** @lends Editable.prototype */{/*eslint-dis
 
     /**
      * Invoke 'beforeCreateChildNode'
-     * @param {Event} event - Information of 'beforeCreateChildNode'
+     * @param {Object} event - Information of 'beforeCreateChildNode'
+     * @returns {boolean} Result of invoke event
      * @private
      */
     _invokeBeforeCreateChildNode: function(event) {
@@ -241,6 +242,7 @@ var Editable = snippet.defineClass(/** @lends Editable.prototype */{/*eslint-dis
     /**
      * Invoke 'beforeEditNode'
      * @param {Event} event - Information of 'beforeEditNode'
+     * @returns {boolean} Result of invoke event
      * @private
      */
     _invokeBeforeEditNode: function(event) {
@@ -266,6 +268,8 @@ var Editable = snippet.defineClass(/** @lends Editable.prototype */{/*eslint-dis
 
     /**
      * Reflect the value of inputElement to node for creating or editing
+     * @param {string} cause - how finish editing ('blur' or 'enter')
+     * @returns {boolean} Result of submit input result
      * @private
      */
     _submitInputResult: function(cause) {
@@ -389,7 +393,7 @@ var Editable = snippet.defineClass(/** @lends Editable.prototype */{/*eslint-dis
         util.removeEventListener(inputElement, 'keyup', this.boundOnKeyup);
         util.removeEventListener(inputElement, 'blur', this.boundOnBlur);
 
-        util.removeElement(wrapperElement)
+        util.removeElement(wrapperElement);
 
         if (tree.enabledFeatures.Ajax) {
             tree.off(this, 'successAjaxResponse');
