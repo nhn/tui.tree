@@ -123,10 +123,12 @@ describe('Tree', function() {
     it('"finishEditing()" should remove input element of editing node', function() {
         var inputElements;
 
-        tree.editNode(firstChildElement);
+        tree.editNode(firstChildId);
+        inputElements = firstChildElement.getElementsByTagName('input');
+        expect(inputElements.length).toBe(1);
+
         tree.finishEditing();
         inputElements = firstChildElement.getElementsByTagName('input');
-
         expect(inputElements.length).toBe(0);
     });
 });
