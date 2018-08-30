@@ -52,7 +52,7 @@ var API_LIST = [];
  *     @param {{top: number, bottom: number}} options.lineBoundary - Boundary value for visible moving line
  * @ignore
  */
-var Draggable = snippet.defineClass(/** @lends Draggable.prototype */{/*eslint-disable*/
+var Draggable = snippet.defineClass(/** @lends Draggable.prototype */{
     static: {
         /**
          * @static
@@ -472,7 +472,9 @@ var Draggable = snippet.defineClass(/** @lends Draggable.prototype */{/*eslint-d
         if (!this.hoveredElement && isContain) {
             this.hoveredElement = currentElement;
             this._hover(nodeId);
-        } else if (!hasClass || (hasClass && !isContain)) {
+        } else if (!hasClass) {
+            this._unhover();
+        } else if (!isContain) {
             this._unhover();
         }
 
