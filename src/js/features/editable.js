@@ -9,7 +9,8 @@ var snippet = require('tui-code-snippet');
 
 var API_LIST = [
     'createChildNode',
-    'editNode'
+    'editNode',
+    'finishEditing'
 ];
 var EDIT_TYPE = {
     CREATE: 'create',
@@ -29,7 +30,7 @@ var INPUT_CLASSNAME = 'tui-tree-input';
  *  @param {string} [options.inputClassName] - Classname of input element
  * @ignore
  */
-var Editable = snippet.defineClass(/** @lends Editable.prototype */{/*eslint-disable*/
+var Editable = snippet.defineClass(/** @lends Editable.prototype */{
     static: {
         /**
          * @static
@@ -80,10 +81,10 @@ var Editable = snippet.defineClass(/** @lends Editable.prototype */{/*eslint-dis
         this.mode = null;
 
         /**
-         * Whether custom event is ignored or not
+         * For block blur when unintentional blur event occur when alert popup
          * @type {Boolean}
          */
-        this.isCustomEventIgnored = false;
+        this._blockBlur = false;
 
         /**
          * Keyup event handler
@@ -157,6 +158,19 @@ var Editable = snippet.defineClass(/** @lends Editable.prototype */{/*eslint-dis
     },
 
     /**
+     * Exit edit though remove input tag
+     * @memberof Tree.prototype
+     * @requires Editable
+     * @example
+     * tree.finishEditing();
+     */
+    finishEditing: function() {
+        if (this.inputElement) {
+            this._detachInputElement();
+        }
+    },
+
+    /**
      * Custom event handler "successResponse"
      * @param {string} type - Ajax command type
      * @param {Array.<string>} nodeIds - Added node ids on tree
@@ -189,13 +203,114 @@ var Editable = snippet.defineClass(/** @lends Editable.prototype */{/*eslint-dis
     },
 
     /**
+     * InputElement is keep going
+     * @private
+     */
+    _keepEdit: function() {
+        if (this.inputElement) {
+            this.inputElement.focus();
+        }
+    },
+
+    /**
+     * Invoke 'beforeCreateChildNode'
+     * @param {Object} event - Information of 'beforeCreateChildNode'
+     * @returns {boolean} Result of invoke event
+     * @private
+     */
+    _invokeBeforeCreateChildNode: function(event) {
+        /**
+         * @event Tree#beforeCreateChildNode
+         * @param {{value: string}} evt - Event data
+         *     @param {string} evt.value - Return value of creating input element
+         *     @param {string} evt.nodeId - Return id of creating node
+         *     @param {string} cause - Return 'blur' or 'enter' according cause of the event
+         * @example
+         * tree
+         *  .enableFeature('Editable')
+         *  .on('beforeCreateChildNode', function(evt) {
+         *      console.log(evt.value);
+         *      console.log(evt.nodeId);
+         *      console.log(evt.cause);
+         *      return false; // It cancels
+         *      // return true; // It execute next
+         *  });
+         */
+        return this.tree.invoke('beforeCreateChildNode', event);
+    },
+
+    /**
+     * Invoke 'beforeEditNode'
+     * @param {Event} event - Information of 'beforeEditNode'
+     * @returns {boolean} Result of invoke event
+     * @private
+     */
+    _invokeBeforeEditNode: function(event) {
+        /**
+         * @event Tree#beforeEditNode
+         * @param {{value: string}} evt - Event data
+         *     @param {string} evt.value - Return value of creating input element
+         *     @param {string} evt.nodeId - Return id of editing node
+         *     @param {string} evt.cause - Return 'blur' or 'enter' according cause of the event
+         * @example
+         * tree
+         *  .enableFeature('Editable')
+         *  .on('beforeEditNode', function(evt) {
+         *      console.log(evt.value);
+         *      console.log(evt.nodeId);
+         *      console.log(evt.cause);
+         *      return false; // It cancels
+         *      // return true; // It execute next
+         *  });
+         */
+        return this.tree.invoke('beforeEditNode', event);
+    },
+
+    /**
+     * Reflect the value of inputElement to node for creating or editing
+     * @param {string} cause - how finish editing ('blur' or 'enter')
+     * @returns {boolean} Result of submit input result
+     * @private
+     */
+    _submitInputResult: function(cause) {
+        var tree = this.tree;
+        var nodeId = tree.getNodeIdFromElement(this.inputElement);
+        var value = this.inputElement.value;
+        var event = {
+            value: value,
+            nodeId: nodeId,
+            cause: cause
+        };
+
+        if (this.mode === EDIT_TYPE.CREATE) {
+            if (!this._invokeBeforeCreateChildNode(event)) {
+                this._keepEdit();
+
+                return false;
+            }
+            this._addData(nodeId, value);
+        } else {
+            if (!this._invokeBeforeEditNode(event)) {
+                this._keepEdit();
+
+                return false;
+            }
+            this._setData(nodeId, value);
+        }
+        this._detachInputElement();
+
+        return true;
+    },
+
+    /**
      * Event handler: keyup - input element
      * @param {Event} event - Key event
      * @private
      */
     _onKeyup: function(event) {
         if (util.getKeyCode(event) === 13) {
-            this.inputElement.blur();
+            this._blockBlur = true;
+            this._submitInputResult('enter');
         }
     },
 
@@ -204,16 +319,10 @@ var Editable = snippet.defineClass(/** @lends Editable.prototype */{/*eslint-dis
      * @private
      */
     _onBlur: function() {
-        if (this.isCustomEventIgnored || !this.inputElement) {
-            this.isCustomEventIgnored = false;
-
-            return;
-        }
-
-        if (this.mode === EDIT_TYPE.CREATE) {
-            this._addData();
+        if (this._blockBlur) {
+            this._blockBlur = false;
         } else {
-            this._setData();
+            this._blockBlur = !this._submitInputResult('blur');
         }
     },
 
@@ -268,6 +377,7 @@ var Editable = snippet.defineClass(/** @lends Editable.prototype */{/*eslint-dis
             this.inputElement = inputElement;
         }
 
+        this._blockBlur = false;
         this.inputElement.focus();
     },
 
@@ -278,94 +388,52 @@ var Editable = snippet.defineClass(/** @lends Editable.prototype */{/*eslint-dis
     _detachInputElement: function() {
         var tree = this.tree;
         var inputElement = this.inputElement;
+        var wrapperElement = this.inputElement.parentNode;
 
         util.removeEventListener(inputElement, 'keyup', this.boundOnKeyup);
         util.removeEventListener(inputElement, 'blur', this.boundOnBlur);
 
-        util.removeElement(inputElement);
+        util.removeElement(wrapperElement);
 
         if (tree.enabledFeatures.Ajax) {
             tree.off(this, 'successAjaxResponse');
         }
 
-        this.isCustomEventIgnored = false;
         this.inputElement = null;
     },
 
     /**
      * Add data of input element to node and detach input element on tree
+     * @param {string} nodeId - Node id to add
+     * @param {string} value - Content for that node
      * @private
      */
-    _addData: function() {
+    _addData: function(nodeId, value) {
         var tree = this.tree;
-        var nodeId = tree.getNodeIdFromElement(this.inputElement);
         var parentId = tree.getParentId(nodeId);
-        var value = this.inputElement.value || this.defaultValue;
         var data = {};
 
-        /**
-         * @event Tree#beforeCreateChildNode
-         * @param {{value: string}} evt - Event data
-         *     @param {string} evt.value - Return value of creating input element
-         * @example
-         * tree
-         *  .enableFeature('Editable')
-         *  .on('beforeCreateChildNode', function(evt) {
-         *      console.log(evt.value);
-         *      return false; // It cancels
-         *      // return true; // It execute next
-         *  });
-         */
-        if (!this.tree.invoke('beforeCreateChildNode', {value: value})) {
-            this.isCustomEventIgnored = true;
-            this.inputElement.focus();
-
-            return;
-        }
-
         if (nodeId) {
-            data[this.dataKey] = value;
+            data[this.dataKey] = value || this.defaultValue;
             tree._remove(nodeId);
             tree.add(data, parentId);
         }
-        this._detachInputElement();
     },
 
     /**
      * Set data of input element to node and detach input element on tree
+     * @param {string} nodeId - Node id to change
+     * @param {string} value - Content for that node
      * @private
      */
-    _setData: function() {
+    _setData: function(nodeId, value) {
         var tree = this.tree;
-        var nodeId = tree.getNodeIdFromElement(this.inputElement);
-        var value = this.inputElement.value;
         var data = {};
-
-        /**
-         * @event Tree#beforeEditNode
-         * @param {{value: string}} evt - Event data
-         *     @param {string} evt.value - Return value of editing input element
-         * @example
-         * tree
-         *  .enableFeature('Editable')
-         *  .on('beforeEditNode', function(evt) {
-         *      console.log(evt.value);
-         *      return false; // It cancels
-         *      // return true; // It execute next
-         *  });
-         */
-        if (!this.tree.invoke('beforeEditNode', {value: value})) {
-            this.isCustomEventIgnored = true;
-            this.inputElement.focus();
-
-            return;
-        }
 
         if (nodeId) {
             data[this.dataKey] = value;
             tree.setNodeData(nodeId, data);
         }
-        this._detachInputElement();
     },
 
     /**

@@ -17,7 +17,7 @@ var LOADER_CLASSNAME = 'tui-tree-loader';
  *  @param {boolean} [options.isLoadRoot] - Whether load data from root node or not
  * @ignore
  */
-var Ajax = snippet.defineClass(/** @lends Ajax.prototype */{/*eslint-disable*/
+var Ajax = snippet.defineClass(/** @lends Ajax.prototype */{
     static: {
         /**
          * @static

@@ -44,7 +44,7 @@ var filter = snippet.filter,
  *  @param {string|boolean} [option.checkboxCascade='both'] - 'up', 'down', 'both', false
  * @ignore
  */
-var Checkbox = snippet.defineClass(/** @lends Checkbox.prototype */{ /*eslint-disable*/
+var Checkbox = snippet.defineClass(/** @lends Checkbox.prototype */{
     static: {
         /**
          * @static
@@ -82,7 +82,7 @@ var Checkbox = snippet.defineClass(/** @lends Checkbox.prototype */{ /*eslint-di
     },
 
     /**
-     * @param {string|boolean} - Cascade option
+     * @param {string|boolean} cascadeOption - Cascade option
      * @returns {string|boolean} Cascade option
      * @private
      */
@@ -91,6 +91,7 @@ var Checkbox = snippet.defineClass(/** @lends Checkbox.prototype */{ /*eslint-di
         if (inArray(cascadeOption, cascadeOptions) === -1) {
             cascadeOption = CASCADE_BOTH;
         }
+
         return cascadeOption;
     },
 
