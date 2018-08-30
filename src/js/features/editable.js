@@ -224,7 +224,7 @@ var Editable = snippet.defineClass(/** @lends Editable.prototype */{
          * @param {{value: string}} evt - Event data
          *     @param {string} evt.value - Return value of creating input element
          *     @param {string} evt.nodeId - Return id of creating node
-         *     @param {string} cause - Return 'blur' or 'enter' according cause of the event
+         *     @param {string} evt.cause - Return 'blur' or 'enter' according cause of the event
          * @example
          * tree
          *  .enableFeature('Editable')
