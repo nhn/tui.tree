@@ -223,7 +223,7 @@ var Ajax = snippet.defineClass(/** @lends Ajax.prototype */{
      * @private
      */
     _getDefaultRequestOptions: function(type, params) {
-        var options = this.command[type];
+        var options = snippet.extend({}, this.command[type]);
 
         if (snippet.isFunction(options.url)) { // for restful API url
             options.url = options.url(params);
