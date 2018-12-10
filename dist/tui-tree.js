@@ -1,6 +1,6 @@
 /*!
  * tui-tree.js
- * @version 3.5.0
+ * @version 3.5.1
  * @author NHNEnt FE Development Lab <dl_javascript@nhnent.com>
  * @license MIT
  */
@@ -2161,21 +2161,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * send hostname
 	     */
 	    sendHostName: function() {
-	        var hostname = location.hostname;
-
 	        if (hostnameSent) {
 	            return;
 	        }
 	        hostnameSent = true;
 
-	        snippet.imagePing('https://www.google-analytics.com/collect', {
-	            v: 1,
-	            t: 'event',
-	            tid: 'UA-115377265-9',
-	            cid: hostname,
-	            dp: hostname,
-	            dh: 'tree'
-	        });
+	        snippet.sendHostname('tree', 'UA-129987462-1');
 	    }
 	};
 
