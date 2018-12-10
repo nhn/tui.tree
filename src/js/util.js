@@ -412,21 +412,12 @@ var util = {
      * send hostname
      */
     sendHostName: function() {
-        var hostname = location.hostname;
-
         if (hostnameSent) {
             return;
         }
         hostnameSent = true;
 
-        snippet.imagePing('https://www.google-analytics.com/collect', {
-            v: 1,
-            t: 'event',
-            tid: 'UA-115377265-9',
-            cid: hostname,
-            dp: hostname,
-            dh: 'tree'
-        });
+        snippet.sendHostname('tree', 'UA-129987462-1');
     }
 };
 
