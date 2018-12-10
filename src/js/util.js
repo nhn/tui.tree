@@ -412,6 +412,11 @@ var util = {
      * send hostname
      */
     sendHostName: function() {
+        if (hostnameSent) {
+            return;
+        }
+        hostnameSent = true;
+
         snippet.sendHostname('tree', 'UA-129987462-1');
     }
 };
