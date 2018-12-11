@@ -138,7 +138,7 @@
             useHelper: true
         });
 
-        tree.on('beforeDraw', function(nodeId) {
+        tree.on('beforeDraw', function(evt) {
             tree.each(function(child, childId) {
                 var depth = tree.getDepth(childId);
 
@@ -146,7 +146,7 @@
                 child.setData({
                     depthLabel: depthLabels[depth - 1] || ''
                 });
-            }, nodeId);
+            }, evt.nodeId);
         });
 
         tree.refresh();
