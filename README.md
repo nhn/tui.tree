@@ -39,7 +39,7 @@ var options = {
     ...
     usageStatistics: false
 }
-var instance = new Tree(options);
+var instance = new Tree(container, options);
 ```
 
 ## 🌏 Browser Support
