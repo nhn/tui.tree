@@ -228,7 +228,7 @@ You can also see the older versions of API page on the [releases page](https://g
 
 ## 🔩 Dependency
 * [tui-code-snippet](https://github.com/nhnent/tui.code-snippet) >=1.5.0
-* [tui-context-menu](https://github.com/nhnent/tui.context-menu) >=2.0.0 (Optional, needs forusing `ContextMenu` feature)
+* [tui-context-menu](https://github.com/nhnent/tui.context-menu) >=2.1.1 (Optional, needs forusing `ContextMenu` feature)
 * [jQuery](https://github.com/jquery/jquery/tree/1.12-stable) >=1.11.0 (Optional, needs for using `Ajax` feature)
 
 
