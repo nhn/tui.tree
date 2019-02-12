@@ -288,10 +288,11 @@ var util = {
      * @private
      */
     _getButton: function(event) {
-        var button,
-            primary = '0,1,3,5,7',
-            secondary = '2,6',
-            wheel = '4';
+        var primary = '0,1,3,5,7';
+        var secondary = '2,6';
+        var wheel = '4';
+        var result = null;
+        var button;
 
         if (document.implementation.hasFeature('MouseEvents', '2.0')) {
             return event.button;
@@ -299,14 +300,14 @@ var util = {
 
         button = String(event.button);
         if (primary.indexOf(button) > -1) {
-            return 0;
+            result = 0;
         } else if (secondary.indexOf(button) > -1) {
-            return 2;
+            result = 2;
         } else if (wheel.indexOf(button) > -1) {
-            return 1;
+            result = 1;
         }
 
-        return null;
+        return result;
     },
 
     /**

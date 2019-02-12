@@ -39,7 +39,7 @@ var options = {
     ...
     usageStatistics: false
 }
-var instance = new Tree(options);
+var instance = new Tree(container, options);
 ```
 
 ## 🌏 Browser Support
@@ -64,9 +64,9 @@ var instance = new Tree(options);
 
 
 ## 🐾 Examples
-* [Basic](https://nhnent.github.io/tui.tree/latest/tutorial-example01-basic.html) : Example of using default options.
-* [Using checkbox](https://nhnent.github.io/tui.tree/latest/tutorial-example07-checkbox.html) : Example of adding checkbox on each node and handling.
-* [Using Ajax](https://nhnent.github.io/tui.tree/latest/tutorial-example08-ajax.html) : Example of using server request, `Selectable`, `Draggable`, `Editable`, `ContextMenu` features.
+* [Basic](https://nhnent.github.io/tui.tree/latest/tutorial-example01-basic) : Example of using default options.
+* [Using checkbox](https://nhnent.github.io/tui.tree/latest/tutorial-example07-checkbox) : Example of adding checkbox on each node and handling.
+* [Using Ajax](https://nhnent.github.io/tui.tree/latest/tutorial-example08-ajax) : Example of using server request, `Selectable`, `Draggable`, `Editable`, `ContextMenu` features.
 
 More examples can be found on the left sidebar of each example page, and have fun with it.
 
@@ -154,7 +154,7 @@ var Tree = require('tui-tree'); /* CommonJS */
 import {Tree} from 'tui-tree'; /* ES6 */
 ```
 
-You can create an instance with [options](https://nhnent.github.io/tui.tree/latest/Tree.html) and call various APIs after creating an instance.
+You can create an instance with [options](https://nhnent.github.io/tui.tree/latest/Tree) and call various APIs after creating an instance.
 
 ``` javascript
 var container = document.getElementById('tui-tree-container');
@@ -163,7 +163,7 @@ var instance = new Tree(container, { ... });
 instance.add( ... );
 ```
 
-For more information about the API, please see [here](https://nhnent.github.io/tui.tree/latest/Tree.html).
+For more information about the API, please see [here](https://nhnent.github.io/tui.tree/latest/Tree).
 
 
 ## 🔧 Pull Request Steps
@@ -228,7 +228,7 @@ You can also see the older versions of API page on the [releases page](https://g
 
 ## 🔩 Dependency
 * [tui-code-snippet](https://github.com/nhnent/tui.code-snippet) >=1.5.0
-* [tui-context-menu](https://github.com/nhnent/tui.context-menu) >=2.0.0 (Optional, needs forusing `ContextMenu` feature)
+* [tui-context-menu](https://github.com/nhnent/tui.context-menu) >=2.1.1 (Optional, needs forusing `ContextMenu` feature)
 * [jQuery](https://github.com/jquery/jquery/tree/1.12-stable) >=1.11.0 (Optional, needs for using `Ajax` feature)
 
 

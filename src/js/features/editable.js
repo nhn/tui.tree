@@ -221,10 +221,10 @@ var Editable = snippet.defineClass(/** @lends Editable.prototype */{
     _invokeBeforeCreateChildNode: function(event) {
         /**
          * @event Tree#beforeCreateChildNode
-         * @param {{value: string}} evt - Event data
-         *     @param {string} evt.value - Return value of creating input element
-         *     @param {string} evt.nodeId - Return id of creating node
-         *     @param {string} evt.cause - Return 'blur' or 'enter' according cause of the event
+         * @type {object} evt - Event data
+         * @property {string} value - Return value of creating input element
+         * @property {string} nodeId - Return id of creating node
+         * @property {string} cause - Return 'blur' or 'enter' according cause of the event
          * @example
          * tree
          *  .enableFeature('Editable')
@@ -248,10 +248,10 @@ var Editable = snippet.defineClass(/** @lends Editable.prototype */{
     _invokeBeforeEditNode: function(event) {
         /**
          * @event Tree#beforeEditNode
-         * @param {{value: string}} evt - Event data
-         *     @param {string} evt.value - Return value of creating input element
-         *     @param {string} evt.nodeId - Return id of editing node
-         *     @param {string} evt.cause - Return 'blur' or 'enter' according cause of the event
+         * @type {object} evt - Event data
+         * @property {string} value - Return value of creating input element
+         * @property {string} nodeId - Return id of editing node
+         * @property {string} cause - Return 'blur' or 'enter' according cause of the event
          * @example
          * tree
          *  .enableFeature('Editable')

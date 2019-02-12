@@ -3,8 +3,9 @@
     <head lang="en">
         <meta charset="UTF-8">
         <title>Tree with depth label using template option</title>
-        <link rel="stylesheet" href="css/docs.css" />
-        <link rel="stylesheet" href="../dist/tui-tree.css" />
+        <link rel="stylesheet" type="text/css" href="./css/tui-example-style.css" />
+        <link rel="stylesheet" type="text/css" href="./css/docs.css" />
+        <link rel="stylesheet" type="text/css" href="../dist/tui-tree.css" />
     </head>
 
     <body>
@@ -95,7 +96,7 @@
             useHelper: true
         });
 
-        tree.on('beforeDraw', function(nodeId) {
+        tree.on('beforeDraw', function(evt) {
             tree.each(function(child, childId) {
                 var depth = tree.getDepth(childId);
 
@@ -103,7 +104,7 @@
                 child.setData({
                     depthLabel: depthLabels[depth - 1] || ''
                 });
-            }, nodeId);
+            }, evt.nodeId);
         });
 
         tree.refresh();
