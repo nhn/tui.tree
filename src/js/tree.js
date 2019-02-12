@@ -35,7 +35,6 @@ var MOUSE_MOVING_THRESHOLD = 5;
 /**
  * Create tree model and inject data to model
  * @class Tree
- * @mixes tui.util.CustomEvents
  * @param {string|HTMLElement|jQueryObject} container - Tree container element or id string value
  * @param {Object} options The options
  *     @param {Object} [options.data] A data to be used on tree
@@ -290,11 +289,11 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
 
         /**
          * @event Tree#move
-         * @param {{nodeId: string, originalParentId: string, newParentId: string, index: number}} evt - Event data
-         *     @param {string} evt.nodeId - Current node id to move
-         *     @param {string} evt.originalParentId - Original parent node id of moved node
-         *     @param {string} evt.newParentId - New parent node id of moved node
-         *     @param {number} evt.index - Moved index number
+         * @type {object} evt - Event data
+         * @property {string} nodeId - Current node id to move
+         * @property {string} originalParentId - Original parent node id of moved node
+         * @property {string} newParentId - New parent node id of moved node
+         * @property {number} index - Moved index number
          * @example
          * tree.on('move', function(evt) {
          *     var nodeId = evt.nodeId;
@@ -403,9 +402,9 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
 
             /**
              * @event Tree#clickToggleBtn
-             * @param {object} evt - Event data
-             *     @param {string} evt.nodeId - Node id
-             *     @param {HTMLElement} target - Element of toggle button
+             * @type {object} evt - Event data
+             * @property {string} nodeId - Node id
+             * @property {HTMLElement} target - Element of toggle button
              * @example
              * tree.on('clickToggleBtn', function(evt) {
              *     console.log(evt.target);
@@ -636,8 +635,8 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
 
         /**
          * @event Tree#beforeDraw
-         * @param {{nodeId: string}} evt - Event data
-         *     @param {string} evt.nodeId - Node id
+         * @type {object} evt - Event data
+         * @property {string} nodeId - Node id
          * @example
          * tree.on('beforeDraw', function(evt) {
          *     if (tree.isMovingNode) {
@@ -660,8 +659,8 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
 
         /**
          * @event Tree#afterDraw
-         * @param {{nodeId: string}} evt - Event data
-         *     @param {string} evt.nodeId - Node id
+         * @type {object} evt - Event data
+         * @property {string} nodeId - Node id
          * @example
          * tree.on('afterDraw', function(evt) {
          *     if (tree.isMovingNode) {
@@ -1370,9 +1369,9 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
     _move: function(nodeId, newParentId, index, isSilent) {
         /**
          * @event Tree#beforeMove
-         * @param {{nodeId: string, newParentId: string}} evt - Event data
-         *     @param {string} evt.nodeId - Current dragging node id
-         *     @param {string} evt.newParentId - New parent id
+         * @type {object} evt - Event data
+         * @property {string} nodeId - Current dragging node id
+         * @property {string} newParentId - New parent id
          * @example
          * tree.on('beforeMove', function(evt) {
          *      console.log('dragging node: ' + evt.nodeId);

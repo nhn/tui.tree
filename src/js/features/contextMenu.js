@@ -183,8 +183,8 @@ var ContextMenu = snippet.defineClass(/** @lends ContextMenu.prototype */{
 
         /**
          * @event Tree#beforeOpenContextMenu
-         * @param {{nodeId: string}} evt - Event data
-         *     @param {string} evt.nodeId - Current selected node id
+         * @type {object} evt - Event data
+         * @property {string} nodeId - Current selected node id
          * @example
          * tree.on('beforeOpenContextMenu', function(evt) {
          *     console.log('nodeId: ' + evt.nodeId);
@@ -204,9 +204,9 @@ var ContextMenu = snippet.defineClass(/** @lends ContextMenu.prototype */{
     _onSelect: function(e, cmd) {
         /**
          * @event Tree#selectContextMenu
-         * @param {{cmd: string, nodeId: string}} evt - Event data
-         *     @param {string} evt.cmd - Command type
-         *     @param {string} evt.nodeId - Node id
+         * @type {object} evt - Event data
+         * @property {string} cmd - Command type
+         * @property {string} nodeId - Node id
          * @example
          * tree.on('selectContextMenu', function(evt) {
          *     var cmd = treeEvent.cmd; // key of context menu's data

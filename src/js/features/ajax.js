@@ -114,9 +114,9 @@ var Ajax = snippet.defineClass(/** @lends Ajax.prototype */{
 
         /**
          * @event Tree#beforeAjaxRequest
-         * @param {{command: string, data: object}} evt - Event data
-         *     @param {string} evt.command - Command type
-         *     @param {object} [evt.data] - Request data
+         * @type {object} evt - Event data
+         * @property {string} command - Command type
+         * @property {object} [data] - Request data
          * @example
          * tree.on('beforeAjaxRequest', function(evt) {
          *     console.log('before ' + evt.command + ' request!');
@@ -166,9 +166,9 @@ var Ajax = snippet.defineClass(/** @lends Ajax.prototype */{
 
             /**
              * @event Tree#successAjaxResponse
-             * @param {{command: string, data: object}} evt - Event data
-             *     @param {string} evt.command - Command type
-             *     @param {object} [evt.data] - Return value of executed command callback
+             * @type {object} evt - Event data
+             * @property {string} command - Command type
+             * @property {object} [data] - Return value of executed command callback
              * @example
              * tree.on('successAjaxResponse', function(evt) {
              *     console.log(evt.command + ' response is success!');
@@ -184,8 +184,8 @@ var Ajax = snippet.defineClass(/** @lends Ajax.prototype */{
         } else {
             /**
              * @event Tree#failAjaxResponse
-             * @param {{command: string}} evt - Event data
-             *     @param {string} evt.command - Command type
+             * @type {object} evt - Event data
+             * @property {string} command - Command type
              * @example
              * tree.on('failAjaxResponse', function(evt) {
              *     console.log(evt.command + ' response is fail!');
@@ -205,8 +205,8 @@ var Ajax = snippet.defineClass(/** @lends Ajax.prototype */{
 
         /**
          * @event Tree#errorAjaxResponse
-         * @param {{command: string}} evt - Event data
-         *     @param {string} evt.command - Command type
+         * @type {object} evt - Event data
+         * @property {string} command - Command type
          * @example
          * tree.on('errorAjaxResponse', function(evt) {
          *     console.log(evt.command + ' response is error!');

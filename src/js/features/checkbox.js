@@ -276,8 +276,8 @@ var Checkbox = snippet.defineClass(/** @lends Checkbox.prototype */{
             checkedList.push(nodeId);
             /**
              * @event Tree#check
-             * @param {{nodeId: string}} evt - Event data
-             *     @param {string} evt.nodeId - Checked node id
+             * @type {object} evt - Event data
+             * @property {string} nodeId - Checked node id
              * @example
              * tree.on('check', function(evt) {
              *     console.log('checked: ' + evt.nodeId);
@@ -287,8 +287,8 @@ var Checkbox = snippet.defineClass(/** @lends Checkbox.prototype */{
         } else if (state === STATE_UNCHECKED) {
             /**
              * @event Tree#uncheck
-             * @param {{nodeId: string}} evt - Event data
-             *     @param {string} evt.nodeId - Unchecked node id
+             * @type {object} evt - Event data
+             * @property {string} nodeId - Unchecked node id
              * @example
              * tree.on('uncheck', function(evt) {
              *     console.log('unchecked: ' + evt.nodeId);

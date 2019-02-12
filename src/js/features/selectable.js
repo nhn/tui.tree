@@ -114,10 +114,10 @@ var Selectable = snippet.defineClass(/** @lends Selectable.prototype */{
 
         /**
          * @event Tree#beforeSelect
-         * @param {{nodeId: string, prevNodeId: string, target: HTMLElement|undefined}} evt - Event data
-         *     @param {string} evt.nodeId - Selected node id
-         *     @param {string} evt.prevNodeId - Previous selected node id
-         *     @param {HTMLElement|undefined} evt.target - Target element
+         * @type {object} evt - Event data
+         * @property {string} nodeId - Selected node id
+         * @property {string} prevNodeId - Previous selected node id
+         * @property {HTMLElement|undefined} target - Target element
          * @example
          * tree
          *  .enableFeature('Selectable')
@@ -139,10 +139,10 @@ var Selectable = snippet.defineClass(/** @lends Selectable.prototype */{
 
             /**
              * @event Tree#select
-             * @param {{nodeId: string, prevNodeId: string, target: HTMLElement|undefined}} evt - Event data
-             *     @param {string} evt.nodeId - Selected node id
-             *     @param {string} evt.prevNodeId - Previous selected node id
-             *     @param {HTMLElement|undefined} evt.target - Target element
+             * @type {object} evt - Event data
+             * @property {string} nodeId - Selected node id
+             * @property {string} prevNodeId - Previous selected node id
+             * @property {HTMLElement|undefined} target - Target element
              * @example
              * tree
              *  .enableFeature('Selectable')
@@ -200,8 +200,8 @@ var Selectable = snippet.defineClass(/** @lends Selectable.prototype */{
 
         /**
          * @event Tree#deselect
-         * @param {{nodeId: string}} evt - Event data
-         *     @param {string} evt.nodeId - Deselected node id
+         * @type {object} evt - Event data
+         * @property {string} nodeId - Deselected node id
          * @example
          * tree
          *  .enableFeature('Selectable')
