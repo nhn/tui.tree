@@ -1,6 +1,6 @@
 /*!
  * tui-tree.js
- * @version 3.5.1
+ * @version 3.5.2
  * @author NHNEnt FE Development Lab <dl_javascript@nhnent.com>
  * @license MIT
  */
@@ -117,7 +117,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	/**
 	 * Create tree model and inject data to model
 	 * @class Tree
-	 * @mixes tui.util.CustomEvents
 	 * @param {string|HTMLElement|jQueryObject} container - Tree container element or id string value
 	 * @param {Object} options The options
 	 *     @param {Object} [options.data] A data to be used on tree
@@ -372,11 +371,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        /**
 	         * @event Tree#move
-	         * @param {{nodeId: string, originalParentId: string, newParentId: string, index: number}} evt - Event data
-	         *     @param {string} evt.nodeId - Current node id to move
-	         *     @param {string} evt.originalParentId - Original parent node id of moved node
-	         *     @param {string} evt.newParentId - New parent node id of moved node
-	         *     @param {number} evt.index - Moved index number
+	         * @type {object} evt - Event data
+	         * @property {string} nodeId - Current node id to move
+	         * @property {string} originalParentId - Original parent node id of moved node
+	         * @property {string} newParentId - New parent node id of moved node
+	         * @property {number} index - Moved index number
 	         * @example
 	         * tree.on('move', function(evt) {
 	         *     var nodeId = evt.nodeId;
@@ -485,9 +484,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            /**
 	             * @event Tree#clickToggleBtn
-	             * @param {object} evt - Event data
-	             *     @param {string} evt.nodeId - Node id
-	             *     @param {HTMLElement} target - Element of toggle button
+	             * @type {object} evt - Event data
+	             * @property {string} nodeId - Node id
+	             * @property {HTMLElement} target - Element of toggle button
 	             * @example
 	             * tree.on('clickToggleBtn', function(evt) {
 	             *     console.log(evt.target);
@@ -718,8 +717,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        /**
 	         * @event Tree#beforeDraw
-	         * @param {{nodeId: string}} evt - Event data
-	         *     @param {string} evt.nodeId - Node id
+	         * @type {object} evt - Event data
+	         * @property {string} nodeId - Node id
 	         * @example
 	         * tree.on('beforeDraw', function(evt) {
 	         *     if (tree.isMovingNode) {
@@ -742,8 +741,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        /**
 	         * @event Tree#afterDraw
-	         * @param {{nodeId: string}} evt - Event data
-	         *     @param {string} evt.nodeId - Node id
+	         * @type {object} evt - Event data
+	         * @property {string} nodeId - Node id
 	         * @example
 	         * tree.on('afterDraw', function(evt) {
 	         *     if (tree.isMovingNode) {
@@ -1452,9 +1451,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _move: function(nodeId, newParentId, index, isSilent) {
 	        /**
 	         * @event Tree#beforeMove
-	         * @param {{nodeId: string, newParentId: string}} evt - Event data
-	         *     @param {string} evt.nodeId - Current dragging node id
-	         *     @param {string} evt.newParentId - New parent id
+	         * @type {object} evt - Event data
+	         * @property {string} nodeId - Current dragging node id
+	         * @property {string} newParentId - New parent id
 	         * @example
 	         * tree.on('beforeMove', function(evt) {
 	         *      console.log('dragging node: ' + evt.nodeId);
@@ -2037,10 +2036,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @private
 	     */
 	    _getButton: function(event) {
-	        var button,
-	            primary = '0,1,3,5,7',
-	            secondary = '2,6',
-	            wheel = '4';
+	        var primary = '0,1,3,5,7';
+	        var secondary = '2,6';
+	        var wheel = '4';
+	        var result = null;
+	        var button;
 
 	        if (document.implementation.hasFeature('MouseEvents', '2.0')) {
 	            return event.button;
@@ -2048,14 +2048,14 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        button = String(event.button);
 	        if (primary.indexOf(button) > -1) {
-	            return 0;
+	            result = 0;
 	        } else if (secondary.indexOf(button) > -1) {
-	            return 2;
+	            result = 2;
 	        } else if (wheel.indexOf(button) > -1) {
-	            return 1;
+	            result = 1;
 	        }
 
-	        return null;
+	        return result;
 	    },
 
 	    /**
@@ -3259,10 +3259,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        /**
 	         * @event Tree#beforeSelect
-	         * @param {{nodeId: string, prevNodeId: string, target: HTMLElement|undefined}} evt - Event data
-	         *     @param {string} evt.nodeId - Selected node id
-	         *     @param {string} evt.prevNodeId - Previous selected node id
-	         *     @param {HTMLElement|undefined} evt.target - Target element
+	         * @type {object} evt - Event data
+	         * @property {string} nodeId - Selected node id
+	         * @property {string} prevNodeId - Previous selected node id
+	         * @property {HTMLElement|undefined} target - Target element
 	         * @example
 	         * tree
 	         *  .enableFeature('Selectable')
@@ -3284,10 +3284,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            /**
 	             * @event Tree#select
-	             * @param {{nodeId: string, prevNodeId: string, target: HTMLElement|undefined}} evt - Event data
-	             *     @param {string} evt.nodeId - Selected node id
-	             *     @param {string} evt.prevNodeId - Previous selected node id
-	             *     @param {HTMLElement|undefined} evt.target - Target element
+	             * @type {object} evt - Event data
+	             * @property {string} nodeId - Selected node id
+	             * @property {string} prevNodeId - Previous selected node id
+	             * @property {HTMLElement|undefined} target - Target element
 	             * @example
 	             * tree
 	             *  .enableFeature('Selectable')
@@ -3345,8 +3345,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        /**
 	         * @event Tree#deselect
-	         * @param {{nodeId: string}} evt - Event data
-	         *     @param {string} evt.nodeId - Deselected node id
+	         * @type {object} evt - Event data
+	         * @property {string} nodeId - Deselected node id
 	         * @example
 	         * tree
 	         *  .enableFeature('Selectable')
@@ -4230,10 +4230,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _invokeBeforeCreateChildNode: function(event) {
 	        /**
 	         * @event Tree#beforeCreateChildNode
-	         * @param {{value: string}} evt - Event data
-	         *     @param {string} evt.value - Return value of creating input element
-	         *     @param {string} evt.nodeId - Return id of creating node
-	         *     @param {string} evt.cause - Return 'blur' or 'enter' according cause of the event
+	         * @type {object} evt - Event data
+	         * @property {string} value - Return value of creating input element
+	         * @property {string} nodeId - Return id of creating node
+	         * @property {string} cause - Return 'blur' or 'enter' according cause of the event
 	         * @example
 	         * tree
 	         *  .enableFeature('Editable')
@@ -4257,10 +4257,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _invokeBeforeEditNode: function(event) {
 	        /**
 	         * @event Tree#beforeEditNode
-	         * @param {{value: string}} evt - Event data
-	         *     @param {string} evt.value - Return value of creating input element
-	         *     @param {string} evt.nodeId - Return id of editing node
-	         *     @param {string} evt.cause - Return 'blur' or 'enter' according cause of the event
+	         * @type {object} evt - Event data
+	         * @property {string} value - Return value of creating input element
+	         * @property {string} nodeId - Return id of editing node
+	         * @property {string} cause - Return 'blur' or 'enter' according cause of the event
 	         * @example
 	         * tree
 	         *  .enableFeature('Editable')
@@ -4744,8 +4744,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            checkedList.push(nodeId);
 	            /**
 	             * @event Tree#check
-	             * @param {{nodeId: string}} evt - Event data
-	             *     @param {string} evt.nodeId - Checked node id
+	             * @type {object} evt - Event data
+	             * @property {string} nodeId - Checked node id
 	             * @example
 	             * tree.on('check', function(evt) {
 	             *     console.log('checked: ' + evt.nodeId);
@@ -4755,8 +4755,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        } else if (state === STATE_UNCHECKED) {
 	            /**
 	             * @event Tree#uncheck
-	             * @param {{nodeId: string}} evt - Event data
-	             *     @param {string} evt.nodeId - Unchecked node id
+	             * @type {object} evt - Event data
+	             * @property {string} nodeId - Unchecked node id
 	             * @example
 	             * tree.on('uncheck', function(evt) {
 	             *     console.log('unchecked: ' + evt.nodeId);
@@ -5289,8 +5289,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        /**
 	         * @event Tree#beforeOpenContextMenu
-	         * @param {{nodeId: string}} evt - Event data
-	         *     @param {string} evt.nodeId - Current selected node id
+	         * @type {object} evt - Event data
+	         * @property {string} nodeId - Current selected node id
 	         * @example
 	         * tree.on('beforeOpenContextMenu', function(evt) {
 	         *     console.log('nodeId: ' + evt.nodeId);
@@ -5310,9 +5310,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _onSelect: function(e, cmd) {
 	        /**
 	         * @event Tree#selectContextMenu
-	         * @param {{cmd: string, nodeId: string}} evt - Event data
-	         *     @param {string} evt.cmd - Command type
-	         *     @param {string} evt.nodeId - Node id
+	         * @type {object} evt - Event data
+	         * @property {string} cmd - Command type
+	         * @property {string} nodeId - Node id
 	         * @example
 	         * tree.on('selectContextMenu', function(evt) {
 	         *     var cmd = treeEvent.cmd; // key of context menu's data
@@ -5469,9 +5469,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        /**
 	         * @event Tree#beforeAjaxRequest
-	         * @param {{command: string, data: object}} evt - Event data
-	         *     @param {string} evt.command - Command type
-	         *     @param {object} [evt.data] - Request data
+	         * @type {object} evt - Event data
+	         * @property {string} command - Command type
+	         * @property {object} [data] - Request data
 	         * @example
 	         * tree.on('beforeAjaxRequest', function(evt) {
 	         *     console.log('before ' + evt.command + ' request!');
@@ -5521,9 +5521,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            /**
 	             * @event Tree#successAjaxResponse
-	             * @param {{command: string, data: object}} evt - Event data
-	             *     @param {string} evt.command - Command type
-	             *     @param {object} [evt.data] - Return value of executed command callback
+	             * @type {object} evt - Event data
+	             * @property {string} command - Command type
+	             * @property {object} [data] - Return value of executed command callback
 	             * @example
 	             * tree.on('successAjaxResponse', function(evt) {
 	             *     console.log(evt.command + ' response is success!');
@@ -5539,8 +5539,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        } else {
 	            /**
 	             * @event Tree#failAjaxResponse
-	             * @param {{command: string}} evt - Event data
-	             *     @param {string} evt.command - Command type
+	             * @type {object} evt - Event data
+	             * @property {string} command - Command type
 	             * @example
 	             * tree.on('failAjaxResponse', function(evt) {
 	             *     console.log(evt.command + ' response is fail!');
@@ -5560,8 +5560,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        /**
 	         * @event Tree#errorAjaxResponse
-	         * @param {{command: string}} evt - Event data
-	         *     @param {string} evt.command - Command type
+	         * @type {object} evt - Event data
+	         * @property {string} command - Command type
 	         * @example
 	         * tree.on('errorAjaxResponse', function(evt) {
 	         *     console.log(evt.command + ' response is error!');
