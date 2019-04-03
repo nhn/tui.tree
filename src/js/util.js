@@ -1,6 +1,6 @@
 /**
  * @fileoverview Helper object to make easy tree elements
- * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
+ * @author NHN. FE dev Lab <dl_javascript@nhn.com>
  */
 var snippet = require('tui-code-snippet');
 var isUndefined = snippet.isUndefined,

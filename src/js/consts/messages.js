@@ -1,6 +1,6 @@
 /**
  * @fileoverview Set error messages
- * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
+ * @author NHN. FE dev Lab <dl_javascript@nhn.com>
  */
 
 /**

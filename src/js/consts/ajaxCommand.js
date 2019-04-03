@@ -1,6 +1,6 @@
 /**
  * @fileoverview Set each command name using in Ajax feature
- * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
+ * @author NHN. FE dev Lab <dl_javascript@nhn.com>
  */
 
 /**

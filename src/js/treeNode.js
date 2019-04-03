@@ -1,6 +1,6 @@
 /**
  * @fileoverview Control each tree node's data
- * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
+ * @author NHN. FE dev Lab <dl_javascript@nhn.com>
  */
 var snippet = require('tui-code-snippet');
 var states = require('./consts/states').node,
