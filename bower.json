@@ -1,7 +1,7 @@
 {
     "name": "tui-tree",
     "authors": [
-        "NHN ent. FE dev team.<dl_javascript@nhnent.com>"
+        "NHN. FE dev lab.<dl_javascript@nhn.com>"
     ],
     "main": [
         "dist/tui-tree.js",

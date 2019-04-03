@@ -1,6 +1,6 @@
 /**
  * @fileoverview Feature that each tree node is possible to check and uncheck
- * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
+ * @author NHN. FE dev Lab <dl_javascript@nhn.com>
  */
 var util = require('../util.js');
 var snippet = require('tui-code-snippet');

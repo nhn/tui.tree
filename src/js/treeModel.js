@@ -1,6 +1,6 @@
 /**
  * @fileoverview Update view and control tree data
- * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
+ * @author NHN. FE dev Lab <dl_javascript@nhn.com>
  */
 var TreeNode = require('./treeNode');
 var snippet = require('tui-code-snippet');

@@ -1,6 +1,6 @@
 /**
  * @fileoverview Render tree and update tree
- * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
+ * @author NHN. FE dev Lab <dl_javascript@nhn.com>
  */
 
 var util = require('./util');

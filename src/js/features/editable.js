@@ -1,6 +1,6 @@
 /**
  * @fileoverview Feature that each tree node is possible to edit as double click
- * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
+ * @author NHN. FE dev Lab <dl_javascript@nhn.com>
  */
 var util = require('./../util');
 var ajaxCommand = require('./../consts/ajaxCommand');
