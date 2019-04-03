@@ -20,9 +20,10 @@
     "nhnent",
     "tui",
     "component",
-    "tree"
+    "tree",
+    "NHN"
   ],
-  "author": "NHNEnt FE Development Lab <dl_javascript@nhnent.com>",
+  "author": "NHN FE Development Lab <dl_javascript@nhn.com>",
   "license": "MIT",
   "devDependencies": {
     "css-loader": "^0.26.1",

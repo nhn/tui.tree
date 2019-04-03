@@ -1,6 +1,6 @@
 /**
  * @fileoverview Feature that tree action is enable to communicate server
- * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
+ * @author NHN. FE dev Lab <dl_javascript@nhn.com>
  */
 var snippet = require('tui-code-snippet');
 var API_LIST = [];
