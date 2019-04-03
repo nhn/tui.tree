@@ -1,7 +1,7 @@
 /*!
  * tui-tree.js
- * @version 3.5.2
- * @author NHNEnt FE Development Lab <dl_javascript@nhnent.com>
+ * @version 3.5.3
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -82,7 +82,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Render tree and update tree
-	 * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
+	 * @author NHN. FE dev Lab <dl_javascript@nhn.com>
 	 */
 
 	var util = __webpack_require__(8);
@@ -1748,7 +1748,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Helper object to make easy tree elements
-	 * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
+	 * @author NHN. FE dev Lab <dl_javascript@nhn.com>
 	 */
 	var snippet = __webpack_require__(9);
 	var isUndefined = snippet.isUndefined,
@@ -2185,7 +2185,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Set default value of options
-	 * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
+	 * @author NHN. FE dev Lab <dl_javascript@nhn.com>
 	 */
 
 	/**
@@ -2260,7 +2260,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Set default value of toggle button
-	 * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
+	 * @author NHN. FE dev Lab <dl_javascript@nhn.com>
 	 */
 
 	/**
@@ -2285,7 +2285,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Set error messages
-	 * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
+	 * @author NHN. FE dev Lab <dl_javascript@nhn.com>
 	 */
 
 	/**
@@ -2308,7 +2308,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Set outer template
-	 * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
+	 * @author NHN. FE dev Lab <dl_javascript@nhn.com>
 	 */
 
 	/**
@@ -2334,7 +2334,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Set each command name using in Ajax feature
-	 * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
+	 * @author NHN. FE dev Lab <dl_javascript@nhn.com>
 	 */
 
 	/**
@@ -2357,7 +2357,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Update view and control tree data
-	 * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
+	 * @author NHN. FE dev Lab <dl_javascript@nhn.com>
 	 */
 	var TreeNode = __webpack_require__(16);
 	var snippet = __webpack_require__(9);
@@ -2846,7 +2846,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Control each tree node's data
-	 * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
+	 * @author NHN. FE dev Lab <dl_javascript@nhn.com>
 	 */
 	var snippet = __webpack_require__(9);
 	var states = __webpack_require__(11).node,
@@ -3145,7 +3145,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Feature that each tree node is possible to select as click
-	 * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
+	 * @author NHN. FE dev Lab <dl_javascript@nhn.com>
 	 */
 	var util = __webpack_require__(8);
 	var snippet = __webpack_require__(9);
@@ -3378,7 +3378,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Feature that each tree node is possible to drag and drop
-	 * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
+	 * @author NHN. FE dev Lab <dl_javascript@nhn.com>
 	 */
 	var util = __webpack_require__(8);
 	var snippet = __webpack_require__(9);
@@ -4009,7 +4009,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Feature that each tree node is possible to edit as double click
-	 * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
+	 * @author NHN. FE dev Lab <dl_javascript@nhn.com>
 	 */
 	var util = __webpack_require__(8);
 	var ajaxCommand = __webpack_require__(14);
@@ -4468,7 +4468,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Feature that each tree node is possible to check and uncheck
-	 * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
+	 * @author NHN. FE dev Lab <dl_javascript@nhn.com>
 	 */
 	var util = __webpack_require__(8);
 	var snippet = __webpack_require__(9);
@@ -5106,7 +5106,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Feature that each tree node is possible to have context-menu
-	 * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
+	 * @author NHN. FE dev Lab <dl_javascript@nhn.com>
 	 */
 	var util = __webpack_require__(8);
 	var snippet = __webpack_require__(9);
@@ -5355,7 +5355,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * @fileoverview Feature that tree action is enable to communicate server
-	 * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
+	 * @author NHN. FE dev Lab <dl_javascript@nhn.com>
 	 */
 	var snippet = __webpack_require__(9);
 	var API_LIST = [];
