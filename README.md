@@ -1,11 +1,11 @@
 # TOAST UI Component : Tree
 > Component that displays data hierarchically.
 
-[![GitHub release](https://img.shields.io/github/release/nhnent/tui.tree.svg)](https://github.com/nhnent/tui.tree/releases/latest)
+[![GitHub release](https://img.shields.io/github/release/nhn/tui.tree.svg)](https://github.com/nhn/tui.tree/releases/latest)
 [![npm](https://img.shields.io/npm/v/tui-tree.svg)](https://www.npmjs.com/package/tui-tree)
-[![GitHub license](https://img.shields.io/github/license/nhnent/tui.tree.svg)](https://github.com/nhnent/tui.tree/blob/production/LICENSE)
-[![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhnent/tui.project-name/labels/help%20wanted)
-[![code with hearth by NHN](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN-ff1414.svg)](https://github.com/nhnent)
+[![GitHub license](https://img.shields.io/github/license/nhn/tui.tree.svg)](https://github.com/nhn/tui.tree/blob/production/LICENSE)
+[![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhn/tui.project-name/labels/help%20wanted)
+[![code with hearth by NHN](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN-ff1414.svg)](https://github.com/nhn)
 
 
 ## 🚩 Table of Contents
