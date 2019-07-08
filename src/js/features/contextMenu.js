@@ -71,7 +71,8 @@ var ContextMenu = snippet.defineClass(/** @lends ContextMenu.prototype */{
          */
         this.selectedNodeId = null;
 
-        this.menu.register(this.treeSelector, bind(this._onSelect, this), options.menuData || {});
+        this.menu.register(this.treeSelector, bind(this._onSelect, this),
+            snippet.extend({}, options.menuData, options.usageStatistics));
 
         this.tree.on('contextmenu', this._onContextMenu, this);
 
