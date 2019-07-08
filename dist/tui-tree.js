@@ -1,6 +1,6 @@
 /*!
  * tui-tree.js
- * @version 3.5.3
+ * @version 3.5.4
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -303,6 +303,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this._renderTemplate = options.renderTemplate || util.renderTemplate;
 
 	        /**
+	         * Send the hostname to google analytics.
+	         *         If you do not want to send the hostname, this option set to false.
+	         * @type {boolean}
+	         * @private
+	         */
+	        this.usageStatistics = snippet.isExisty(options.usageStatistics) ?
+	            options.usageStatistics : defaultOption.usageStatistics;
+
+	        /**
 	         * True when a node is moving
 	         * @type {boolean}
 	         * @example
@@ -330,7 +339,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this._draw(this.getRootNodeId());
 	        this._setEvents();
 
-	        if (options.usageStatistics) {
+	        if (this.usageStatistics) {
 	            util.sendHostName();
 	        }
 	    },
@@ -1674,7 +1683,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    enableFeature: function(featureName, options) {
 	        var Feature = features[featureName];
 	        this.disableFeature(featureName);
+
 	        if (Feature) {
+	            options.usageStatistics = this.usageStatistics;
 	            this.enabledFeatures[featureName] = new Feature(this, options);
 	            this.fire('initFeature');
 	        }
@@ -5177,7 +5188,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	         */
 	        this.selectedNodeId = null;
 
-	        this.menu.register(this.treeSelector, bind(this._onSelect, this), options.menuData || {});
+	        this.menu.register(this.treeSelector, bind(this._onSelect, this),
+	            snippet.extend({}, options.menuData, options.usageStatistics));
 
 	        this.tree.on('contextmenu', this._onContextMenu, this);
 
