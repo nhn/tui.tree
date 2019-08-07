@@ -18,6 +18,7 @@ var bind = snippet.bind;
  * @param {Tree} tree - Tree
  * @param {Object} options - Options
  *     @param {Array.<Object>} options.menuData - Context menu data
+ *     @param {boolean} options.usageStatistics - Let us know the hostname.
  * @ignore
  */
 var ContextMenu = snippet.defineClass(/** @lends ContextMenu.prototype */{
@@ -57,7 +58,7 @@ var ContextMenu = snippet.defineClass(/** @lends ContextMenu.prototype */{
          * Info of context menu in tree
          * @type {Object}
          */
-        this.menu = this._generateContextMenu();
+        this.menu = this._generateContextMenu({usageStatistics: options.usageStatistics});
 
         /**
          * Floating layer element
@@ -71,8 +72,7 @@ var ContextMenu = snippet.defineClass(/** @lends ContextMenu.prototype */{
          */
         this.selectedNodeId = null;
 
-        this.menu.register(this.treeSelector, bind(this._onSelect, this),
-            snippet.extend({}, options.menuData, options.usageStatistics));
+        this.menu.register(this.treeSelector, bind(this._onSelect, this), options.menuData);
 
         this.tree.on('contextmenu', this._onContextMenu, this);
 
@@ -142,14 +142,15 @@ var ContextMenu = snippet.defineClass(/** @lends ContextMenu.prototype */{
     /**
      * Generate context menu in tree
      * @returns {TuiContextMenu} Instance of TuiContextMenu
+     * @param {Object} options - Options
      * @private
      */
-    _generateContextMenu: function() {
+    _generateContextMenu: function(options) {
         if (!this.flElement) {
             this._createFloatingLayer();
         }
 
-        return new TuiContextMenu(this.flElement);
+        return new TuiContextMenu(this.flElement, options);
     },
 
     /**
