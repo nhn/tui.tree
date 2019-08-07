@@ -175,4 +175,4 @@ This example show how to replace node's contents having children by a template e
 }
 ```
 
-For more information, see [the example page](https://nhnent.github.io/tui.tree/latest/tutorial-example01-basic.html).
+For more information, see [the example page](https://nhn.github.io/tui.tree/latest/tutorial-example01-basic).
