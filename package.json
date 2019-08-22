@@ -11,16 +11,15 @@
     "bundle": "webpack && webpack -p",
     "serve": "webpack-dev-server --inline --hot -d",
     "serve:ie8": "webpack-dev-server -d",
-    "doc:dev": "tuidoc --dev",
-    "doc": "tuidoc"
+    "doc": "tuidoc && tuidoc --serv"
   },
   "description": "TOAST UI Component: Tree",
   "repository": "https://github.com/nhn/tui.tree.git",
   "keywords": [
+    "nhn",
     "tui",
     "component",
-    "tree",
-    "NHN"
+    "tree"
   ],
   "author": "NHN FE Development Lab <dl_javascript@nhn.com>",
   "license": "MIT",
