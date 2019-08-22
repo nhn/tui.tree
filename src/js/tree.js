@@ -222,12 +222,11 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
 
         /**
          * Send the hostname to google analytics.
-         *         If you do not want to send the hostname, this option set to false.
+         * If you do not want to send the hostname, this option set to false.
          * @type {boolean}
          * @private
          */
-        this.usageStatistics = snippet.isExisty(options.usageStatistics) ?
-            options.usageStatistics : defaultOption.usageStatistics;
+        this.usageStatistics = options.usageStatistics;
 
         /**
          * True when a node is moving
@@ -1600,13 +1599,23 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      */
     enableFeature: function(featureName, options) {
         var Feature = features[featureName];
+
+        if (!Feature) {
+            return this;
+        }
+
         this.disableFeature(featureName);
 
-        if (Feature) {
+        if (snippet.isObject(options)) {
             options.usageStatistics = this.usageStatistics;
-            this.enabledFeatures[featureName] = new Feature(this, options);
-            this.fire('initFeature');
+        } else {
+            options = {
+                usageStatistics: this.usageStatistics
+            };
         }
+
+        this.enabledFeatures[featureName] = new Feature(this, options);
+        this.fire('initFeature');
 
         return this;
     },
