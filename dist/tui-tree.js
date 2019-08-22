@@ -1,6 +1,6 @@
 /*!
  * tui-tree.js
- * @version 3.5.4
+ * @version 3.5.5
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -304,12 +304,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        /**
 	         * Send the hostname to google analytics.
-	         *         If you do not want to send the hostname, this option set to false.
+	         * If you do not want to send the hostname, this option set to false.
 	         * @type {boolean}
 	         * @private
 	         */
-	        this.usageStatistics = snippet.isExisty(options.usageStatistics) ?
-	            options.usageStatistics : defaultOption.usageStatistics;
+	        this.usageStatistics = options.usageStatistics;
 
 	        /**
 	         * True when a node is moving
@@ -1682,13 +1681,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    enableFeature: function(featureName, options) {
 	        var Feature = features[featureName];
+
+	        if (!Feature) {
+	            return this;
+	        }
+
 	        this.disableFeature(featureName);
 
-	        if (Feature) {
+	        if (snippet.isObject(options)) {
 	            options.usageStatistics = this.usageStatistics;
-	            this.enabledFeatures[featureName] = new Feature(this, options);
-	            this.fire('initFeature');
+	        } else {
+	            options = {
+	                usageStatistics: this.usageStatistics
+	            };
 	        }
+
+	        this.enabledFeatures[featureName] = new Feature(this, options);
+	        this.fire('initFeature');
 
 	        return this;
 	    },
@@ -5135,6 +5144,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @param {Tree} tree - Tree
 	 * @param {Object} options - Options
 	 *     @param {Array.<Object>} options.menuData - Context menu data
+	 *     @param {boolean} options.usageStatistics - Whether to send the hostname to GA
 	 * @ignore
 	 */
 	var ContextMenu = snippet.defineClass(/** @lends ContextMenu.prototype */{
@@ -5174,7 +5184,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	         * Info of context menu in tree
 	         * @type {Object}
 	         */
-	        this.menu = this._generateContextMenu();
+	        this.menu = this._generateContextMenu(options.usageStatistics);
 
 	        /**
 	         * Floating layer element
@@ -5188,8 +5198,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	         */
 	        this.selectedNodeId = null;
 
-	        this.menu.register(this.treeSelector, bind(this._onSelect, this),
-	            snippet.extend({}, options.menuData, options.usageStatistics));
+	        this.menu.register(this.treeSelector, bind(this._onSelect, this), options.menuData);
 
 	        this.tree.on('contextmenu', this._onContextMenu, this);
 
@@ -5259,14 +5268,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Generate context menu in tree
 	     * @returns {TuiContextMenu} Instance of TuiContextMenu
+	     * @param {boolean} usageStatistics - Let us know the hostname.
 	     * @private
 	     */
-	    _generateContextMenu: function() {
+	    _generateContextMenu: function(usageStatistics) {
 	        if (!this.flElement) {
 	            this._createFloatingLayer();
 	        }
 
-	        return new TuiContextMenu(this.flElement);
+	        return new TuiContextMenu(this.flElement, {
+	            usageStatistics: usageStatistics
+	        });
 	    },
 
 	    /**
