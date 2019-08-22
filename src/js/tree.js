@@ -1606,7 +1606,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
 
         this.disableFeature(featureName);
 
-        if (options) {
+        if (snippet.isObject(options)) {
             options.usageStatistics = this.usageStatistics;
         } else {
             options = {

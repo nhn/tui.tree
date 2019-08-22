@@ -18,7 +18,7 @@ var bind = snippet.bind;
  * @param {Tree} tree - Tree
  * @param {Object} options - Options
  *     @param {Array.<Object>} options.menuData - Context menu data
- *     @param {boolean} options.usageStatistics - Let us know the hostname.
+ *     @param {boolean} options.usageStatistics - Whether to send the hostname to GA
  * @ignore
  */
 var ContextMenu = snippet.defineClass(/** @lends ContextMenu.prototype */{
