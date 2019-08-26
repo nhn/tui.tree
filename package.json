@@ -11,7 +11,8 @@
     "bundle": "webpack && webpack -p",
     "serve": "webpack-dev-server --inline --hot -d",
     "serve:ie8": "webpack-dev-server -d",
-    "doc": "tuidoc && tuidoc --serv"
+    "doc:serve" : "tuidoc --serv",
+    "doc" : "tuidoc"
   },
   "description": "TOAST UI Component: Tree",
   "repository": "https://github.com/nhn/tui.tree.git",
