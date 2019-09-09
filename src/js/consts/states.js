@@ -8,12 +8,12 @@
  * @type {Object.<string, string>}
  */
 module.exports = {
-    /**
-     * States of node
-     * @type {{OPENED: string, CLOSED: string}}
-     */
-    node: {
-        OPENED: 'opened',
-        CLOSED: 'closed'
-    }
+  /**
+   * States of node
+   * @type {{OPENED: string, CLOSED: string}}
+   */
+  node: {
+    OPENED: 'opened',
+    CLOSED: 'closed'
+  }
 };

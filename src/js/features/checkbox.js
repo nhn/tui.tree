@@ -6,35 +6,35 @@ var util = require('../util.js');
 var snippet = require('tui-code-snippet');
 
 var API_LIST = [
-    'check',
-    'uncheck',
-    'toggleCheck',
-    'isChecked',
-    'isIndeterminate',
-    'isUnchecked',
-    'getCheckedList',
-    'getTopCheckedList',
-    'getBottomCheckedList'
+  'check',
+  'uncheck',
+  'toggleCheck',
+  'isChecked',
+  'isIndeterminate',
+  'isUnchecked',
+  'getCheckedList',
+  'getTopCheckedList',
+  'getBottomCheckedList'
 ];
 
 /* Checkbox tri-states */
 var STATE_CHECKED = 1,
-    STATE_UNCHECKED = 2,
-    STATE_INDETERMINATE = 3,
-    DATA_KEY_FOR_CHECKBOX_STATE = '__CheckBoxState__',
-    DATA = {},
-    CHECKED_CLASSNAME = 'tui-is-checked',
-    INDETERMINATE_CLASSNAME = 'tui-checkbox-root';
+  STATE_UNCHECKED = 2,
+  STATE_INDETERMINATE = 3,
+  DATA_KEY_FOR_CHECKBOX_STATE = '__CheckBoxState__',
+  DATA = {},
+  CHECKED_CLASSNAME = 'tui-is-checked',
+  INDETERMINATE_CLASSNAME = 'tui-checkbox-root';
 
 /* Checkbox cascade-states */
 var CASCADE_UP = 'up',
-    CASCADE_DOWN = 'down',
-    CASCADE_BOTH = 'both',
-    CASCADE_NONE = false;
+  CASCADE_DOWN = 'down',
+  CASCADE_BOTH = 'both',
+  CASCADE_NONE = false;
 
 var filter = snippet.filter,
-    forEach = snippet.forEach,
-    inArray = snippet.inArray;
+  forEach = snippet.forEach,
+  inArray = snippet.inArray;
 /**
  * Set the checkbox-api
  * @class Checkbox
@@ -44,41 +44,42 @@ var filter = snippet.filter,
  *  @param {string|boolean} [option.checkboxCascade='both'] - 'up', 'down', 'both', false
  * @ignore
  */
-var Checkbox = snippet.defineClass(/** @lends Checkbox.prototype */{
+var Checkbox = snippet.defineClass(
+  /** @lends Checkbox.prototype */ {
     static: {
-        /**
-         * @static
-         * @memberof Checkbox
-         * @returns {Array.<string>} API list of checkbox
-         */
-        getAPIList: function() {
-            return API_LIST.slice();
-        }
+      /**
+       * @static
+       * @memberof Checkbox
+       * @returns {Array.<string>} API list of checkbox
+       */
+      getAPIList: function() {
+        return API_LIST.slice();
+      }
     },
     init: function(tree, option) {
-        option = snippet.extend({}, option);
+      option = snippet.extend({}, option);
 
-        this.tree = tree;
-        this.checkboxClassName = option.checkboxClassName;
-        this.checkboxCascade = this._initCascadeOption(option.checkboxCascade);
-        this.checkedList = [];
-        this.rootCheckbox = document.createElement('INPUT');
-        this.rootCheckbox.type = 'checkbox';
+      this.tree = tree;
+      this.checkboxClassName = option.checkboxClassName;
+      this.checkboxCascade = this._initCascadeOption(option.checkboxCascade);
+      this.checkedList = [];
+      this.rootCheckbox = document.createElement('INPUT');
+      this.rootCheckbox.type = 'checkbox';
 
-        this._setAPIs();
-        this._attachEvents();
+      this._setAPIs();
+      this._attachEvents();
     },
 
     /**
      * Disable this module
      */
     destroy: function() {
-        var tree = this.tree;
+      var tree = this.tree;
 
-        tree.off(this);
-        forEach(API_LIST, function(apiName) {
-            delete tree[apiName];
-        });
+      tree.off(this);
+      forEach(API_LIST, function(apiName) {
+        delete tree[apiName];
+      });
     },
 
     /**
@@ -87,12 +88,12 @@ var Checkbox = snippet.defineClass(/** @lends Checkbox.prototype */{
      * @private
      */
     _initCascadeOption: function(cascadeOption) {
-        var cascadeOptions = [CASCADE_UP, CASCADE_DOWN, CASCADE_BOTH, CASCADE_NONE];
-        if (inArray(cascadeOption, cascadeOptions) === -1) {
-            cascadeOption = CASCADE_BOTH;
-        }
+      var cascadeOptions = [CASCADE_UP, CASCADE_DOWN, CASCADE_BOTH, CASCADE_NONE];
+      if (inArray(cascadeOption, cascadeOptions) === -1) {
+        cascadeOption = CASCADE_BOTH;
+      }
 
-        return cascadeOption;
+      return cascadeOption;
     },
 
     /**
@@ -100,12 +101,16 @@ var Checkbox = snippet.defineClass(/** @lends Checkbox.prototype */{
      * @private
      */
     _setAPIs: function() {
-        var tree = this.tree,
-            bind = snippet.bind;
+      var tree = this.tree,
+        bind = snippet.bind;
 
-        forEach(API_LIST, function(apiName) {
-            tree[apiName] = bind(this[apiName], this);
-        }, this);
+      forEach(
+        API_LIST,
+        function(apiName) {
+          tree[apiName] = bind(this[apiName], this);
+        },
+        this
+      );
     },
 
     /**
@@ -113,26 +118,29 @@ var Checkbox = snippet.defineClass(/** @lends Checkbox.prototype */{
      * @private
      */
     _attachEvents: function() {
-        this.tree.on({
-            singleClick: function(event) {
-                var target = util.getTarget(event);
+      this.tree.on(
+        {
+          singleClick: function(event) {
+            var target = util.getTarget(event);
 
-                if (util.getElementsByClassName(target, this.checkboxClassName)) {
-                    this._changeCustomCheckbox(target);
-                }
-            },
-            afterDraw: function(ev) {
-                if (this.tree.isMovingNode) {
-                    return;
-                }
-                this._reflectChanges(ev.nodeId);
-            },
-            move: function(data) {
-                // @TODO - Optimization
-                this._reflectChanges(data.originalParentId);
-                this._reflectChanges(data.newParentId);
+            if (util.getElementsByClassName(target, this.checkboxClassName)) {
+              this._changeCustomCheckbox(target);
             }
-        }, this);
+          },
+          afterDraw: function(ev) {
+            if (this.tree.isMovingNode) {
+              return;
+            }
+            this._reflectChanges(ev.nodeId);
+          },
+          move: function(data) {
+            // @TODO - Optimization
+            this._reflectChanges(data.originalParentId);
+            this._reflectChanges(data.newParentId);
+          }
+        },
+        this
+      );
     },
 
     /**
@@ -140,22 +148,22 @@ var Checkbox = snippet.defineClass(/** @lends Checkbox.prototype */{
      * @param {HTMLElement} target - Label element
      */
     _changeCustomCheckbox: function(target) {
-        var self = this;
-        var nodeId = this.tree.getNodeIdFromElement(target);
-        var inputElement = target.getElementsByTagName('input')[0];
-        var eventType = util.getChangeEventName();
-        var state;
+      var self = this;
+      var nodeId = this.tree.getNodeIdFromElement(target);
+      var inputElement = target.getElementsByTagName('input')[0];
+      var eventType = util.getChangeEventName();
+      var state;
 
-        /**
-         * Change event handler
-         */
-        function onChange() {
-            state = self._getStateFromCheckbox(inputElement);
-            util.removeEventListener(inputElement, eventType, onChange);
-            self._continuePostprocessing(nodeId, state);
-        }
+      /**
+       * Change event handler
+       */
+      function onChange() {
+        state = self._getStateFromCheckbox(inputElement);
+        util.removeEventListener(inputElement, eventType, onChange);
+        self._continuePostprocessing(nodeId, state);
+      }
 
-        util.addEventListener(inputElement, eventType, onChange);
+      util.addEventListener(inputElement, eventType, onChange);
     },
 
     /**
@@ -164,11 +172,15 @@ var Checkbox = snippet.defineClass(/** @lends Checkbox.prototype */{
      * @private
      */
     _reflectChanges: function(nodeId) {
-        this.tree.each(function(descendant, descendantId) {
-            this._setState(descendantId, this._getState(descendantId), true);
-        }, nodeId, this);
-        this._judgeOwnState(nodeId);
-        this._updateAllAncestorsState(nodeId);
+      this.tree.each(
+        function(descendant, descendantId) {
+          this._setState(descendantId, this._getState(descendantId), true);
+        },
+        nodeId,
+        this
+      );
+      this._judgeOwnState(nodeId);
+      this._updateAllAncestorsState(nodeId);
     },
 
     /**
@@ -179,8 +191,8 @@ var Checkbox = snippet.defineClass(/** @lends Checkbox.prototype */{
      * @private
      */
     _setCheckboxAttr: function(checkbox, isChecked, isIndeterminate) {
-        checkbox.indeterminate = isIndeterminate;
-        checkbox.checked = isChecked;
+      checkbox.indeterminate = isIndeterminate;
+      checkbox.checked = isChecked;
     },
 
     /**
@@ -191,27 +203,28 @@ var Checkbox = snippet.defineClass(/** @lends Checkbox.prototype */{
      * @private
      */
     _setState: function(nodeId, state, stopPropagation) {
-        var checkbox = this._getCheckboxElement(nodeId);
+      var checkbox = this._getCheckboxElement(nodeId);
 
-        if (!checkbox) {
-            return;
-        }
+      if (!checkbox) {
+        return;
+      }
 
-        switch (state) {
-            case STATE_CHECKED:
-                this._setCheckboxAttr(checkbox, true, false);
-                break;
-            case STATE_UNCHECKED:
-                this._setCheckboxAttr(checkbox, false, false);
-                break;
-            case STATE_INDETERMINATE:
-                this._setCheckboxAttr(checkbox, false, true);
-                break;
-            default: // no more process if the state is invalid
-                return;
-        }
+      switch (state) {
+        case STATE_CHECKED:
+          this._setCheckboxAttr(checkbox, true, false);
+          break;
+        case STATE_UNCHECKED:
+          this._setCheckboxAttr(checkbox, false, false);
+          break;
+        case STATE_INDETERMINATE:
+          this._setCheckboxAttr(checkbox, false, true);
+          break;
+        default:
+          // no more process if the state is invalid
+          return;
+      }
 
-        this._continuePostprocessing(nodeId, state, stopPropagation);
+      this._continuePostprocessing(nodeId, state, stopPropagation);
     },
 
     /**
@@ -221,16 +234,16 @@ var Checkbox = snippet.defineClass(/** @lends Checkbox.prototype */{
      * @private
      */
     _getState: function(nodeId) {
-        var tree = this.tree,
-            state = tree.getNodeData(nodeId)[DATA_KEY_FOR_CHECKBOX_STATE],
-            checkbox;
+      var tree = this.tree,
+        state = tree.getNodeData(nodeId)[DATA_KEY_FOR_CHECKBOX_STATE],
+        checkbox;
 
-        if (!state) {
-            checkbox = this._getCheckboxElement(nodeId);
-            state = this._getStateFromCheckbox(checkbox);
-        }
+      if (!state) {
+        checkbox = this._getCheckboxElement(nodeId);
+        state = this._getStateFromCheckbox(checkbox);
+      }
 
-        return state;
+      return state;
     },
 
     /**
@@ -240,21 +253,21 @@ var Checkbox = snippet.defineClass(/** @lends Checkbox.prototype */{
      * @returns {?number} Checking state
      */
     _getStateFromCheckbox: function(checkbox) {
-        var state;
+      var state;
 
-        if (!checkbox) {
-            return null;
-        }
+      if (!checkbox) {
+        return null;
+      }
 
-        if (checkbox.checked) {
-            state = STATE_CHECKED;
-        } else if (checkbox.indeterminate) {
-            state = STATE_INDETERMINATE;
-        } else {
-            state = STATE_UNCHECKED;
-        }
+      if (checkbox.checked) {
+        state = STATE_CHECKED;
+      } else if (checkbox.indeterminate) {
+        state = STATE_INDETERMINATE;
+      } else {
+        state = STATE_UNCHECKED;
+      }
 
-        return state;
+      return state;
     },
 
     /**
@@ -265,49 +278,49 @@ var Checkbox = snippet.defineClass(/** @lends Checkbox.prototype */{
      * @private
      */
     _continuePostprocessing: function(nodeId, state, stopPropagation) {
-        var tree = this.tree,
-            checkedList = this.checkedList,
-            eventName;
+      var tree = this.tree,
+        checkedList = this.checkedList,
+        eventName;
 
-        /* Prevent duplicated node id */
-        util.removeItemFromArray(nodeId, checkedList);
+      /* Prevent duplicated node id */
+      util.removeItemFromArray(nodeId, checkedList);
 
-        if (state === STATE_CHECKED) {
-            checkedList.push(nodeId);
-            /**
-             * @event Tree#check
-             * @type {object} evt - Event data
-             * @property {string} nodeId - Checked node id
-             * @example
-             * tree.on('check', function(evt) {
-             *     console.log('checked: ' + evt.nodeId);
-             * });
-             */
-            eventName = 'check';
-        } else if (state === STATE_UNCHECKED) {
-            /**
-             * @event Tree#uncheck
-             * @type {object} evt - Event data
-             * @property {string} nodeId - Unchecked node id
-             * @example
-             * tree.on('uncheck', function(evt) {
-             *     console.log('unchecked: ' + evt.nodeId);
-             * });
-             */
-            eventName = 'uncheck';
-        }
-        DATA[DATA_KEY_FOR_CHECKBOX_STATE] = state;
+      if (state === STATE_CHECKED) {
+        checkedList.push(nodeId);
+        /**
+         * @event Tree#check
+         * @type {object} evt - Event data
+         * @property {string} nodeId - Checked node id
+         * @example
+         * tree.on('check', function(evt) {
+         *     console.log('checked: ' + evt.nodeId);
+         * });
+         */
+        eventName = 'check';
+      } else if (state === STATE_UNCHECKED) {
+        /**
+         * @event Tree#uncheck
+         * @type {object} evt - Event data
+         * @property {string} nodeId - Unchecked node id
+         * @example
+         * tree.on('uncheck', function(evt) {
+         *     console.log('unchecked: ' + evt.nodeId);
+         * });
+         */
+        eventName = 'uncheck';
+      }
+      DATA[DATA_KEY_FOR_CHECKBOX_STATE] = state;
 
-        tree.setNodeData(nodeId, DATA, {
-            isSilent: true
-        });
+      tree.setNodeData(nodeId, DATA, {
+        isSilent: true
+      });
 
-        this._setClassName(nodeId, state);
+      this._setClassName(nodeId, state);
 
-        if (!stopPropagation) {
-            this._propagateState(nodeId, state);
-            tree.fire(eventName, {nodeId: nodeId});
-        }
+      if (!stopPropagation) {
+        this._propagateState(nodeId, state);
+        tree.fire(eventName, {nodeId: nodeId});
+      }
     },
 
     /**
@@ -316,22 +329,22 @@ var Checkbox = snippet.defineClass(/** @lends Checkbox.prototype */{
      * @param {number} state - Checked state number
      */
     _setClassName: function(nodeId, state) {
-        var parentElement = this._getCheckboxElement(nodeId).parentNode;
-        var labelElement;
+      var parentElement = this._getCheckboxElement(nodeId).parentNode;
+      var labelElement;
 
-        if (parentElement && parentElement.parentNode) {
-            labelElement = parentElement.parentNode;
+      if (parentElement && parentElement.parentNode) {
+        labelElement = parentElement.parentNode;
 
-            util.removeClass(labelElement, INDETERMINATE_CLASSNAME);
-            util.removeClass(labelElement, CHECKED_CLASSNAME);
+        util.removeClass(labelElement, INDETERMINATE_CLASSNAME);
+        util.removeClass(labelElement, CHECKED_CLASSNAME);
 
-            if (state === 1) {
-                util.addClass(labelElement, CHECKED_CLASSNAME);
-            } else if (state === 3) {
-                util.addClass(labelElement, INDETERMINATE_CLASSNAME);
-                util.addClass(labelElement, CHECKED_CLASSNAME);
-            }
+        if (state === 1) {
+          util.addClass(labelElement, CHECKED_CLASSNAME);
+        } else if (state === 3) {
+          util.addClass(labelElement, INDETERMINATE_CLASSNAME);
+          util.addClass(labelElement, CHECKED_CLASSNAME);
         }
+      }
     },
 
     /**
@@ -341,15 +354,15 @@ var Checkbox = snippet.defineClass(/** @lends Checkbox.prototype */{
      * @private
      */
     _propagateState: function(nodeId, state) {
-        if (state === STATE_INDETERMINATE) {
-            return;
-        }
-        if (inArray(this.checkboxCascade, [CASCADE_DOWN, CASCADE_BOTH]) > -1) {
-            this._updateAllDescendantsState(nodeId, state);
-        }
-        if (inArray(this.checkboxCascade, [CASCADE_UP, CASCADE_BOTH]) > -1) {
-            this._updateAllAncestorsState(nodeId);
-        }
+      if (state === STATE_INDETERMINATE) {
+        return;
+      }
+      if (inArray(this.checkboxCascade, [CASCADE_DOWN, CASCADE_BOTH]) > -1) {
+        this._updateAllDescendantsState(nodeId, state);
+      }
+      if (inArray(this.checkboxCascade, [CASCADE_UP, CASCADE_BOTH]) > -1) {
+        this._updateAllAncestorsState(nodeId);
+      }
     },
 
     /**
@@ -359,9 +372,13 @@ var Checkbox = snippet.defineClass(/** @lends Checkbox.prototype */{
      * @private
      */
     _updateAllDescendantsState: function(nodeId, state) {
-        this.tree.each(function(descendant, descendantId) {
-            this._setState(descendantId, state, true);
-        }, nodeId, this);
+      this.tree.each(
+        function(descendant, descendantId) {
+          this._setState(descendantId, state, true);
+        },
+        nodeId,
+        this
+      );
     },
 
     /**
@@ -370,13 +387,13 @@ var Checkbox = snippet.defineClass(/** @lends Checkbox.prototype */{
      * @private
      */
     _updateAllAncestorsState: function(nodeId) {
-        var tree = this.tree,
-            parentId = tree.getParentId(nodeId);
+      var tree = this.tree,
+        parentId = tree.getParentId(nodeId);
 
-        while (parentId) {
-            this._judgeOwnState(parentId);
-            parentId = tree.getParentId(parentId);
-        }
+      while (parentId) {
+        this._judgeOwnState(parentId);
+        parentId = tree.getParentId(parentId);
+      }
     },
 
     /**
@@ -385,30 +402,34 @@ var Checkbox = snippet.defineClass(/** @lends Checkbox.prototype */{
      * @private
      */
     _judgeOwnState: function(nodeId) {
-        var tree = this.tree,
-            childIds = tree.getChildIds(nodeId),
-            checked = true,
-            unchecked = true;
+      var tree = this.tree,
+        childIds = tree.getChildIds(nodeId),
+        checked = true,
+        unchecked = true;
 
-        if (!childIds.length) {
-            checked = this.isChecked(nodeId);
-        } else {
-            forEach(childIds, function(childId) {
-                var state = this._getState(childId);
-                checked = (checked && state === STATE_CHECKED);
-                unchecked = (unchecked && state === STATE_UNCHECKED);
+      if (!childIds.length) {
+        checked = this.isChecked(nodeId);
+      } else {
+        forEach(
+          childIds,
+          function(childId) {
+            var state = this._getState(childId);
+            checked = checked && state === STATE_CHECKED;
+            unchecked = unchecked && state === STATE_UNCHECKED;
 
-                return checked || unchecked;
-            }, this);
-        }
+            return checked || unchecked;
+          },
+          this
+        );
+      }
 
-        if (checked) {
-            this._setState(nodeId, STATE_CHECKED, true);
-        } else if (unchecked) {
-            this._setState(nodeId, STATE_UNCHECKED, true);
-        } else {
-            this._setState(nodeId, STATE_INDETERMINATE, true);
-        }
+      if (checked) {
+        this._setState(nodeId, STATE_CHECKED, true);
+      } else if (unchecked) {
+        this._setState(nodeId, STATE_UNCHECKED, true);
+      } else {
+        this._setState(nodeId, STATE_INDETERMINATE, true);
+      }
     },
 
     /**
@@ -418,23 +439,21 @@ var Checkbox = snippet.defineClass(/** @lends Checkbox.prototype */{
      * @private
      */
     _getCheckboxElement: function(nodeId) {
-        var tree = this.tree,
-            el, nodeEl;
+      var tree = this.tree,
+        el,
+        nodeEl;
 
-        if (nodeId === tree.getRootNodeId()) {
-            el = this.rootCheckbox;
-        } else {
-            nodeEl = document.getElementById(nodeId);
-            if (!nodeEl) {
-                return null;
-            }
-            el = util.getElementsByClassName(
-                nodeEl,
-                this.checkboxClassName
-            )[0];
+      if (nodeId === tree.getRootNodeId()) {
+        el = this.rootCheckbox;
+      } else {
+        nodeEl = document.getElementById(nodeId);
+        if (!nodeEl) {
+          return null;
         }
+        el = util.getElementsByClassName(nodeEl, this.checkboxClassName)[0];
+      }
 
-        return el;
+      return el;
     },
 
     /**
@@ -446,9 +465,9 @@ var Checkbox = snippet.defineClass(/** @lends Checkbox.prototype */{
      * tree.check(nodeId);
      */
     check: function(nodeId) {
-        if (!this.isChecked(nodeId)) {
-            this._setState(nodeId, STATE_CHECKED);
-        }
+      if (!this.isChecked(nodeId)) {
+        this._setState(nodeId, STATE_CHECKED);
+      }
     },
 
     /**
@@ -460,9 +479,9 @@ var Checkbox = snippet.defineClass(/** @lends Checkbox.prototype */{
      * tree.uncheck(nodeId);
      */
     uncheck: function(nodeId) {
-        if (!this.isUnchecked(nodeId)) {
-            this._setState(nodeId, STATE_UNCHECKED);
-        }
+      if (!this.isUnchecked(nodeId)) {
+        this._setState(nodeId, STATE_UNCHECKED);
+      }
     },
 
     /**
@@ -474,11 +493,11 @@ var Checkbox = snippet.defineClass(/** @lends Checkbox.prototype */{
      * tree.toggleCheck(nodeId);
      */
     toggleCheck: function(nodeId) {
-        if (!this.isChecked(nodeId)) {
-            this.check(nodeId);
-        } else {
-            this.uncheck(nodeId);
-        }
+      if (!this.isChecked(nodeId)) {
+        this.check(nodeId);
+      } else {
+        this.uncheck(nodeId);
+      }
     },
 
     /**
@@ -492,7 +511,7 @@ var Checkbox = snippet.defineClass(/** @lends Checkbox.prototype */{
      * console.log(tree.isChecked(nodeId)); // true
      */
     isChecked: function(nodeId) {
-        return STATE_CHECKED === this._getState(nodeId);
+      return STATE_CHECKED === this._getState(nodeId);
     },
 
     /**
@@ -506,7 +525,7 @@ var Checkbox = snippet.defineClass(/** @lends Checkbox.prototype */{
      * console.log(tree.isIndeterminate(nodeId)); // false
      */
     isIndeterminate: function(nodeId) {
-        return STATE_INDETERMINATE === this._getState(nodeId);
+      return STATE_INDETERMINATE === this._getState(nodeId);
     },
 
     /**
@@ -520,7 +539,7 @@ var Checkbox = snippet.defineClass(/** @lends Checkbox.prototype */{
      * console.log(tree.isUnchecked(nodeId)); // true
      */
     isUnchecked: function(nodeId) {
-        return STATE_UNCHECKED === this._getState(nodeId);
+      return STATE_UNCHECKED === this._getState(nodeId);
     },
 
     /**
@@ -544,16 +563,16 @@ var Checkbox = snippet.defineClass(/** @lends Checkbox.prototype */{
      * var descendantsCheckedList = tree.getCheekedList('node6'); // ['node7', 'node8']
      */
     getCheckedList: function(parentId) {
-        var tree = this.tree,
-            checkedList = this.checkedList;
+      var tree = this.tree,
+        checkedList = this.checkedList;
 
-        if (!parentId) {
-            return checkedList.slice();
-        }
+      if (!parentId) {
+        return checkedList.slice();
+      }
 
-        return filter(checkedList, function(nodeId) {
-            return tree.contains(parentId, nodeId);
-        });
+      return filter(checkedList, function(nodeId) {
+        return tree.contains(parentId, nodeId);
+      });
     },
 
     /**
@@ -577,22 +596,26 @@ var Checkbox = snippet.defineClass(/** @lends Checkbox.prototype */{
      * var descendantsTopCheckedList = tree.getTopCheekedList('node6'); // ['node7']
      */
     getTopCheckedList: function(parentId) {
-        var tree = this.tree,
-            checkedList = [],
-            state;
+      var tree = this.tree,
+        checkedList = [],
+        state;
 
-        parentId = parentId || tree.getRootNodeId();
-        state = this._getState(parentId);
-        if (state === STATE_CHECKED) {
-            checkedList = tree.getChildIds(parentId);
-        } else if (state === STATE_INDETERMINATE) {
-            checkedList = this.getCheckedList(parentId);
-            checkedList = filter(checkedList, function(nodeId) {
-                return !this.isChecked(tree.getParentId(nodeId));
-            }, this);
-        }
+      parentId = parentId || tree.getRootNodeId();
+      state = this._getState(parentId);
+      if (state === STATE_CHECKED) {
+        checkedList = tree.getChildIds(parentId);
+      } else if (state === STATE_INDETERMINATE) {
+        checkedList = this.getCheckedList(parentId);
+        checkedList = filter(
+          checkedList,
+          function(nodeId) {
+            return !this.isChecked(tree.getParentId(nodeId));
+          },
+          this
+        );
+      }
 
-        return checkedList;
+      return checkedList;
     },
 
     /**
@@ -616,17 +639,18 @@ var Checkbox = snippet.defineClass(/** @lends Checkbox.prototype */{
      * var descendantsBottomCheckedList = tree.getBottomCheekedList('node6'); // ['node8']
      */
     getBottomCheckedList: function(parentId) {
-        var tree = this.tree,
-            checkedList;
+      var tree = this.tree,
+        checkedList;
 
-        parentId = parentId || tree.getRootNodeId();
-        checkedList = this.getCheckedList(parentId);
+      parentId = parentId || tree.getRootNodeId();
+      checkedList = this.getCheckedList(parentId);
 
-        return filter(checkedList, function(nodeId) {
-            return tree.isLeaf(nodeId);
-        });
+      return filter(checkedList, function(nodeId) {
+        return tree.isLeaf(nodeId);
+      });
     }
-});
+  }
+);
 
 snippet.CustomEvents.mixin(Checkbox);
 module.exports = Checkbox;

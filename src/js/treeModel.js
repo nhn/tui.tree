@@ -6,9 +6,9 @@ var TreeNode = require('./treeNode');
 var snippet = require('tui-code-snippet');
 
 var extend = snippet.extend,
-    keys = snippet.keys,
-    forEach = snippet.forEach,
-    map = snippet.map;
+  keys = snippet.keys,
+  forEach = snippet.forEach,
+  map = snippet.map;
 
 /**
  * Tree model
@@ -17,31 +17,35 @@ var extend = snippet.extend,
  * @param {Object} options - Options for defaultState and nodeIdPrefix
  * @ignore
  */
-var TreeModel = snippet.defineClass(/** @lends TreeModel.prototype */{
+var TreeModel = snippet.defineClass(
+  /** @lends TreeModel.prototype */ {
     init: function(options) {
-        TreeNode.setIdPrefix(options.nodeIdPrefix);
+      TreeNode.setIdPrefix(options.nodeIdPrefix);
 
-        /**
-         * Default state of node
-         * @type {String}
-         */
-        this.nodeDefaultState = options.nodeDefaultState;
+      /**
+       * Default state of node
+       * @type {String}
+       */
+      this.nodeDefaultState = options.nodeDefaultState;
 
-        /**
-         * Root node
-         * @type {TreeNode}
-         */
-        this.rootNode = new TreeNode({
-            state: 'opened'
-        }, null);
+      /**
+       * Root node
+       * @type {TreeNode}
+       */
+      this.rootNode = new TreeNode(
+        {
+          state: 'opened'
+        },
+        null
+      );
 
-        /**
-         * Tree hash having all nodes
-         * @type {object.<string, TreeNode>}
-         */
-        this.treeHash = {};
+      /**
+       * Tree hash having all nodes
+       * @type {object.<string, TreeNode>}
+       */
+      this.treeHash = {};
 
-        this._setData(options.data);
+      this._setData(options.data);
     },
 
     /**
@@ -49,7 +53,7 @@ var TreeModel = snippet.defineClass(/** @lends TreeModel.prototype */{
      * @returns {string} Prefix
      */
     getNodeIdPrefix: function() {
-        return TreeNode.idPrefix;
+      return TreeNode.idPrefix;
     },
 
     /**
@@ -57,11 +61,11 @@ var TreeModel = snippet.defineClass(/** @lends TreeModel.prototype */{
      * @param {Array} data - Tree data
      */
     _setData: function(data) {
-        var root = this.rootNode,
-            rootId = root.getId();
+      var root = this.rootNode,
+        rootId = root.getId();
 
-        this.treeHash[rootId] = root;
-        this._makeTreeHash(data, root);
+      this.treeHash[rootId] = root;
+      this._makeTreeHash(data, root);
     },
 
     /**
@@ -72,21 +76,25 @@ var TreeModel = snippet.defineClass(/** @lends TreeModel.prototype */{
      * @private
      */
     _makeTreeHash: function(data, parent) {
-        var parentId = parent.getId(),
-            ids = [];
+      var parentId = parent.getId(),
+        ids = [];
 
-        forEach(data, function(datum) {
-            var childrenData = datum.children,
-                node = this._createNode(datum, parentId),
-                nodeId = node.getId();
+      forEach(
+        data,
+        function(datum) {
+          var childrenData = datum.children,
+            node = this._createNode(datum, parentId),
+            nodeId = node.getId();
 
-            ids.push(nodeId);
-            this.treeHash[nodeId] = node;
-            parent.addChildId(nodeId);
-            this._makeTreeHash(childrenData, node);
-        }, this);
+          ids.push(nodeId);
+          this.treeHash[nodeId] = node;
+          parent.addChildId(nodeId);
+          this._makeTreeHash(childrenData, node);
+        },
+        this
+      );
 
-        return ids;
+      return ids;
     },
 
     /**
@@ -96,11 +104,14 @@ var TreeModel = snippet.defineClass(/** @lends TreeModel.prototype */{
      * @returns {TreeNode} TreeNode
      */
     _createNode: function(nodeData, parentId) {
-        nodeData = extend({
-            state: this.nodeDefaultState
-        }, nodeData);
+      nodeData = extend(
+        {
+          state: this.nodeDefaultState
+        },
+        nodeData
+      );
 
-        return new TreeNode(nodeData, parentId);
+      return new TreeNode(nodeData, parentId);
     },
 
     /**
@@ -109,15 +120,19 @@ var TreeModel = snippet.defineClass(/** @lends TreeModel.prototype */{
      * @returns {?Array.<TreeNode>} children
      */
     getChildren: function(nodeId) {
-        var childIds = this.getChildIds(nodeId);
+      var childIds = this.getChildIds(nodeId);
 
-        if (!childIds) {
-            return null;
-        }
+      if (!childIds) {
+        return null;
+      }
 
-        return map(childIds, function(childId) {
-            return this.getNode(childId);
-        }, this);
+      return map(
+        childIds,
+        function(childId) {
+          return this.getNode(childId);
+        },
+        this
+      );
     },
 
     /**
@@ -126,13 +141,13 @@ var TreeModel = snippet.defineClass(/** @lends TreeModel.prototype */{
      * @returns {?Array.<string>} Child ids
      */
     getChildIds: function(nodeId) {
-        var node = this.getNode(nodeId);
+      var node = this.getNode(nodeId);
 
-        if (!node) {
-            return null;
-        }
+      if (!node) {
+        return null;
+      }
 
-        return node.getChildIds();
+      return node.getChildIds();
     },
 
     /**
@@ -140,7 +155,7 @@ var TreeModel = snippet.defineClass(/** @lends TreeModel.prototype */{
      * @returns {number} The number of nodes
      */
     getCount: function() {
-        return keys(this.treeHash).length;
+      return keys(this.treeHash).length;
     },
 
     /**
@@ -148,11 +163,15 @@ var TreeModel = snippet.defineClass(/** @lends TreeModel.prototype */{
      * @returns {number} The last depth
      */
     getLastDepth: function() {
-        var depths = map(this.treeHash, function(node) {
-            return this.getDepth(node.getId());
-        }, this);
+      var depths = map(
+        this.treeHash,
+        function(node) {
+          return this.getDepth(node.getId());
+        },
+        this
+      );
 
-        return Math.max.apply(null, depths);
+      return Math.max.apply(null, depths);
     },
 
     /**
@@ -161,7 +180,7 @@ var TreeModel = snippet.defineClass(/** @lends TreeModel.prototype */{
      * @returns {?TreeNode} Node
      */
     getNode: function(id) {
-        return this.treeHash[id];
+      return this.treeHash[id];
     },
 
     /**
@@ -170,21 +189,21 @@ var TreeModel = snippet.defineClass(/** @lends TreeModel.prototype */{
      * @returns {?number} Depth
      */
     getDepth: function(id) {
-        var node = this.getNode(id),
-            depth = 0,
-            parent;
+      var node = this.getNode(id),
+        depth = 0,
+        parent;
 
-        if (!node) {
-            return null;
-        }
+      if (!node) {
+        return null;
+      }
 
-        parent = this.getNode(node.getParentId());
-        while (parent) {
-            depth += 1;
-            parent = this.getNode(parent.getParentId());
-        }
+      parent = this.getNode(node.getParentId());
+      while (parent) {
+        depth += 1;
+        parent = this.getNode(parent.getParentId());
+      }
 
-        return depth;
+      return depth;
     },
 
     /**
@@ -193,13 +212,13 @@ var TreeModel = snippet.defineClass(/** @lends TreeModel.prototype */{
      * @returns {?string} Parent id
      */
     getParentId: function(id) {
-        var node = this.getNode(id);
+      var node = this.getNode(id);
 
-        if (!node) {
-            return null;
-        }
+      if (!node) {
+        return null;
+      }
 
-        return node.getParentId();
+      return node.getParentId();
     },
     /**
      * Return parents ids of node
@@ -207,19 +226,19 @@ var TreeModel = snippet.defineClass(/** @lends TreeModel.prototype */{
      * @returns {Array.<string>} Parents node ids
      */
     getParentIds: function(id) {
-        var parentsNodeList = [];
-        var node = this.getNode(id);
-        var parentNodeId = node.getParentId();
+      var parentsNodeList = [];
+      var node = this.getNode(id);
+      var parentNodeId = node.getParentId();
 
-        while (parentNodeId) {
-            node = this.getNode(parentNodeId);
-            parentNodeId = node.getParentId();
-            parentsNodeList.push(node);
-        }
+      while (parentNodeId) {
+        node = this.getNode(parentNodeId);
+        parentNodeId = node.getParentId();
+        parentsNodeList.push(node);
+      }
 
-        return map(parentsNodeList, function(parentsNode) {
-            return parentsNode.getId();
-        });
+      return map(parentsNodeList, function(parentsNode) {
+        return parentsNode.getId();
+      });
     },
     /**
      * Remove a node with children.
@@ -228,25 +247,29 @@ var TreeModel = snippet.defineClass(/** @lends TreeModel.prototype */{
      * @param {boolean} [isSilent] - If true, it doesn't trigger the 'update' event
      */
     remove: function(id, isSilent) {
-        var node = this.getNode(id),
-            parent;
+      var node = this.getNode(id),
+        parent;
 
-        if (!node) {
-            return;
-        }
+      if (!node) {
+        return;
+      }
 
-        parent = this.getNode(node.getParentId());
+      parent = this.getNode(node.getParentId());
 
-        forEach(node.getChildIds(), function(childId) {
-            this.remove(childId, true);
-        }, this);
+      forEach(
+        node.getChildIds(),
+        function(childId) {
+          this.remove(childId, true);
+        },
+        this
+      );
 
-        parent.removeChildId(id);
-        delete this.treeHash[id];
+      parent.removeChildId(id);
+      delete this.treeHash[id];
 
-        if (!isSilent) {
-            this.fire('update', parent.getId());
-        }
+      if (!isSilent) {
+        this.fire('update', parent.getId());
+      }
     },
 
     /**
@@ -259,17 +282,17 @@ var TreeModel = snippet.defineClass(/** @lends TreeModel.prototype */{
      * @returns {Array.<string>} New added node ids
      */
     add: function(data, parentId, isSilent) {
-        var parent = this.getNode(parentId) || this.rootNode,
-            ids;
+      var parent = this.getNode(parentId) || this.rootNode,
+        ids;
 
-        data = [].concat(data);
-        ids = this._makeTreeHash(data, parent);
+      data = [].concat(data);
+      ids = this._makeTreeHash(data, parent);
 
-        if (!isSilent) {
-            this.fire('update', parent.getId());
-        }
+      if (!isSilent) {
+        this.fire('update', parent.getId());
+      }
 
-        return ids;
+      return ids;
     },
 
     /**
@@ -279,17 +302,17 @@ var TreeModel = snippet.defineClass(/** @lends TreeModel.prototype */{
      * @param {boolean} [isSilent] - If true, it doesn't trigger the 'update' event
      */
     setNodeData: function(id, props, isSilent) {
-        var node = this.getNode(id);
+      var node = this.getNode(id);
 
-        if (!node || !props) {
-            return;
-        }
+      if (!node || !props) {
+        return;
+      }
 
-        node.setData(props);
+      node.setData(props);
 
-        if (!isSilent) {
-            this.fire('update', id);
-        }
+      if (!isSilent) {
+        this.fire('update', id);
+      }
     },
 
     /**
@@ -299,21 +322,21 @@ var TreeModel = snippet.defineClass(/** @lends TreeModel.prototype */{
      * @param {boolean} [isSilent] - If true, it doesn't trigger the 'update' event
      */
     removeNodeData: function(id, names, isSilent) {
-        var node = this.getNode(id);
+      var node = this.getNode(id);
 
-        if (!node || !names) {
-            return;
-        }
+      if (!node || !names) {
+        return;
+      }
 
-        if (snippet.isArray(names)) {
-            node.removeData.apply(node, names);
-        } else {
-            node.removeData(names);
-        }
+      if (snippet.isArray(names)) {
+        node.removeData.apply(node, names);
+      } else {
+        node.removeData(names);
+      }
 
-        if (!isSilent) {
-            this.fire('update', id);
-        }
+      if (!isSilent) {
+        this.fire('update', id);
+      }
     },
 
     /**
@@ -325,29 +348,28 @@ var TreeModel = snippet.defineClass(/** @lends TreeModel.prototype */{
      */
     /* eslint-disable complexity*/
     move: function(nodeId, newParentId, index, isSilent) {
-        var node = this.getNode(nodeId);
-        var originalParentId, newParent, sameParent;
+      var node = this.getNode(nodeId);
+      var originalParentId, newParent, sameParent;
 
-        if (!node) {
-            return;
-        }
+      if (!node) {
+        return;
+      }
 
-        newParent = this.getNode(newParentId) || this.rootNode;
-        newParentId = newParent.getId();
-        originalParentId = node.getParentId();
-        sameParent = (index === -1) && (originalParentId === newParentId);
+      newParent = this.getNode(newParentId) || this.rootNode;
+      newParentId = newParent.getId();
+      originalParentId = node.getParentId();
+      sameParent = index === -1 && originalParentId === newParentId;
 
-        if (nodeId === newParentId || sameParent ||
-            this.contains(nodeId, newParentId)) {
-            return;
-        }
+      if (nodeId === newParentId || sameParent || this.contains(nodeId, newParentId)) {
+        return;
+      }
 
-        this._changeOrderOfIds(nodeId, newParentId, originalParentId, index);
+      this._changeOrderOfIds(nodeId, newParentId, originalParentId, index);
 
-        if (!isSilent) {
-            this.fire('move', nodeId, originalParentId, newParentId, index);
-        }
-    }, /* eslint-enable complexity*/
+      if (!isSilent) {
+        this.fire('move', nodeId, originalParentId, newParentId, index);
+      }
+    } /* eslint-enable complexity*/,
 
     /**
      * Change order of ids
@@ -358,24 +380,24 @@ var TreeModel = snippet.defineClass(/** @lends TreeModel.prototype */{
      * @private
      */
     _changeOrderOfIds: function(nodeId, newParentId, originalParentId, index) {
-        var node = this.getNode(nodeId);
-        var newParent = this.getNode(newParentId) || this.rootNode;
-        var originalParent = this.getNode(originalParentId);
-        var isSameParentIds = (newParentId === originalParentId);
+      var node = this.getNode(nodeId);
+      var newParent = this.getNode(newParentId) || this.rootNode;
+      var originalParent = this.getNode(originalParentId);
+      var isSameParentIds = newParentId === originalParentId;
 
-        if (index !== -1) {
-            if (isSameParentIds) {
-                newParent.moveChildId(nodeId, index);
-            } else {
-                newParent.insertChildId(nodeId, index);
-                originalParent.removeChildId(nodeId);
-            }
-        } else if (!isSameParentIds) {
-            newParent.addChildId(nodeId);
-            originalParent.removeChildId(nodeId);
+      if (index !== -1) {
+        if (isSameParentIds) {
+          newParent.moveChildId(nodeId, index);
+        } else {
+          newParent.insertChildId(nodeId, index);
+          originalParent.removeChildId(nodeId);
         }
+      } else if (!isSameParentIds) {
+        newParent.addChildId(nodeId);
+        originalParent.removeChildId(nodeId);
+      }
 
-        node.setParentId(newParentId);
+      node.setParentId(newParentId);
     },
 
     /**
@@ -385,15 +407,15 @@ var TreeModel = snippet.defineClass(/** @lends TreeModel.prototype */{
      * @returns {boolean} Whether a node contains another node
      */
     contains: function(containerId, containedId) {
-        var parentId = this.getParentId(containedId),
-            isContained = false;
+      var parentId = this.getParentId(containedId),
+        isContained = false;
 
-        while (!isContained && parentId) {
-            isContained = (containerId === parentId);
-            parentId = this.getParentId(parentId);
-        }
+      while (!isContained && parentId) {
+        isContained = containerId === parentId;
+        parentId = this.getParentId(parentId);
+      }
 
-        return isContained;
+      return isContained;
     },
 
     /**
@@ -402,27 +424,27 @@ var TreeModel = snippet.defineClass(/** @lends TreeModel.prototype */{
      * @param {string} [parentId] - Id of a node to sort partially
      */
     sort: function(comparator, parentId) {
-        var iteratee = function(node, nodeId) {
-            var children = this.getChildren(nodeId);
-            var childIds;
+      var iteratee = function(node, nodeId) {
+        var children = this.getChildren(nodeId);
+        var childIds;
 
-            if (children.length > 1) {
-                children.sort(comparator);
+        if (children.length > 1) {
+          children.sort(comparator);
 
-                childIds = map(children, function(child) {
-                    return child.getId();
-                });
-                node.replaceChildIds(childIds);
-            }
-        };
-        var node;
-
-        if (parentId) {
-            node = this.getNode(parentId);
-            iteratee.call(this, node, parentId);
-        } else {
-            this.eachAll(iteratee, this);
+          childIds = map(children, function(child) {
+            return child.getId();
+          });
+          node.replaceChildIds(childIds);
         }
+      };
+      var node;
+
+      if (parentId) {
+        node = this.getNode(parentId);
+        iteratee.call(this, node, parentId);
+      } else {
+        this.eachAll(iteratee, this);
+      }
     },
 
     /**
@@ -431,13 +453,13 @@ var TreeModel = snippet.defineClass(/** @lends TreeModel.prototype */{
      * @returns {?object} Node data
      */
     getNodeData: function(nodeId) {
-        var node = this.getNode(nodeId);
+      var node = this.getNode(nodeId);
 
-        if (!node) {
-            return null;
-        }
+      if (!node) {
+        return null;
+      }
 
-        return node.getAllData();
+      return node.getAllData();
     },
 
     /**
@@ -446,11 +468,11 @@ var TreeModel = snippet.defineClass(/** @lends TreeModel.prototype */{
      * @param {object} [context] - Context of iteratee
      */
     eachAll: function(iteratee, context) {
-        context = context || this;
+      context = context || this;
 
-        forEach(this.treeHash, function() {
-            iteratee.apply(context, arguments);
-        });
+      forEach(this.treeHash, function() {
+        iteratee.apply(context, arguments);
+      });
     },
 
     /**
@@ -459,25 +481,27 @@ var TreeModel = snippet.defineClass(/** @lends TreeModel.prototype */{
      * @param {string} parentId - Parent node id
      * @param {object} [context] - Context of iteratee
      */
-    each: function(iteratee, parentId, context) { // depth-first
-        var stack, nodeId, node;
+    each: function(iteratee, parentId, context) {
+      // depth-first
+      var stack, nodeId, node;
 
-        node = this.getNode(parentId);
-        if (!node) {
-            return;
-        }
-        stack = node.getChildIds();
+      node = this.getNode(parentId);
+      if (!node) {
+        return;
+      }
+      stack = node.getChildIds();
 
-        context = context || this;
-        while (stack.length) {
-            nodeId = stack.pop();
-            node = this.getNode(nodeId);
-            iteratee.call(context, node, nodeId);
+      context = context || this;
+      while (stack.length) {
+        nodeId = stack.pop();
+        node = this.getNode(nodeId);
+        iteratee.call(context, node, nodeId);
 
-            stack = stack.concat(node.getChildIds());
-        }
+        stack = stack.concat(node.getChildIds());
+      }
     }
-});
+  }
+);
 
 snippet.CustomEvents.mixin(TreeModel);
 module.exports = TreeModel;
