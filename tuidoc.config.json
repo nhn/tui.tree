@@ -23,7 +23,7 @@
   },
   "api": {
     "filePath": "src/js/**",
-    "fileLink": true
+    "permalink": true
   },
   "examples": {
     "filePath": "examples",
