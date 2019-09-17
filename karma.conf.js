@@ -60,7 +60,7 @@ function setConfig(defaultConfig, server) {
     };
     defaultConfig.browsers = [
       'IE8',
-      'IE9',
+      // 'IE9',
       'IE10',
       'IE11',
       'Edge',
