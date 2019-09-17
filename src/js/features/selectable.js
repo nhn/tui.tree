@@ -5,14 +5,10 @@
 var util = require('./../util');
 var snippet = require('tui-code-snippet');
 
-var API_LIST = [
-        'select',
-        'getSelectedNodeId',
-        'deselect'
-    ],
-    defaults = {
-        selectedClassName: 'tui-tree-selected'
-    };
+var API_LIST = ['select', 'getSelectedNodeId', 'deselect'],
+  defaults = {
+    selectedClassName: 'tui-tree-selected'
+  };
 
 /**
  * Set the tree selectable
@@ -22,29 +18,33 @@ var API_LIST = [
  *  @param {string} options.selectedClassName - Classname for selected node.
  * @ignore
  */
-var Selectable = snippet.defineClass(/** @lends Selectable.prototype */{
+var Selectable = snippet.defineClass(
+  /** @lends Selectable.prototype */ {
     static: {
-        /**
-         * @static
-         * @memberof Selectable
-         * @returns {Array.<string>} API list of Selectable
-         */
-        getAPIList: function() {
-            return API_LIST.slice();
-        }
+      /**
+       * @static
+       * @memberof Selectable
+       * @returns {Array.<string>} API list of Selectable
+       */
+      getAPIList: function() {
+        return API_LIST.slice();
+      }
     },
     init: function(tree, options) {
-        options = snippet.extend({}, defaults, options);
+      options = snippet.extend({}, defaults, options);
 
-        this.tree = tree;
-        this.selectedClassName = options.selectedClassName;
-        this.selectedNodeId = null;
+      this.tree = tree;
+      this.selectedClassName = options.selectedClassName;
+      this.selectedNodeId = null;
 
-        tree.on({
-            singleClick: this.onSingleClick,
-            afterDraw: this.onAfterDraw
-        }, this);
-        this._setAPIs();
+      tree.on(
+        {
+          singleClick: this.onSingleClick,
+          afterDraw: this.onAfterDraw
+        },
+        this
+      );
+      this._setAPIs();
     },
 
     /**
@@ -52,26 +52,30 @@ var Selectable = snippet.defineClass(/** @lends Selectable.prototype */{
      * @private
      */
     _setAPIs: function() {
-        var tree = this.tree,
-            bind = snippet.bind;
+      var tree = this.tree,
+        bind = snippet.bind;
 
-        snippet.forEach(API_LIST, function(apiName) {
-            tree[apiName] = bind(this[apiName], this);
-        }, this);
+      snippet.forEach(
+        API_LIST,
+        function(apiName) {
+          tree[apiName] = bind(this[apiName], this);
+        },
+        this
+      );
     },
 
     /**
      * Disable this module
      */
     destroy: function() {
-        var tree = this.tree,
-            nodeElement = this.getPrevElement();
+      var tree = this.tree,
+        nodeElement = this.getPrevElement();
 
-        util.removeClass(nodeElement, this.selectedClassName);
-        tree.off(this);
-        snippet.forEach(API_LIST, function(apiName) {
-            delete tree[apiName];
-        });
+      util.removeClass(nodeElement, this.selectedClassName);
+      tree.off(this);
+      snippet.forEach(API_LIST, function(apiName) {
+        delete tree[apiName];
+      });
     },
 
     /**
@@ -79,10 +83,10 @@ var Selectable = snippet.defineClass(/** @lends Selectable.prototype */{
      * @param {MouseEvent} event - Mouse event
      */
     onSingleClick: function(event) {
-        var target = util.getTarget(event),
-            nodeId = this.tree.getNodeIdFromElement(target);
+      var target = util.getTarget(event),
+        nodeId = this.tree.getNodeIdFromElement(target);
 
-        this.select(nodeId, target);
+      this.select(nodeId, target);
     },
 
     /* eslint-disable valid-jsdoc */
@@ -98,22 +102,49 @@ var Selectable = snippet.defineClass(/** @lends Selectable.prototype */{
      * @example
      * tree.select('tui-tree-node-3');
      */
-    select: function(nodeId, target) {/* eslint-enable valid-jsdoc */
-        var tree, prevElement, nodeElement,
-            selectedClassName, prevNodeId;
+    select: function(nodeId, target) {
+      /* eslint-enable valid-jsdoc */
+      var tree, prevElement, nodeElement, selectedClassName, prevNodeId;
 
-        if (!nodeId) {
-            return;
-        }
+      if (!nodeId) {
+        return;
+      }
 
-        tree = this.tree;
-        prevElement = this.getPrevElement();
-        nodeElement = document.getElementById(nodeId);
-        selectedClassName = this.selectedClassName;
-        prevNodeId = this.selectedNodeId;
+      tree = this.tree;
+      prevElement = this.getPrevElement();
+      nodeElement = document.getElementById(nodeId);
+      selectedClassName = this.selectedClassName;
+      prevNodeId = this.selectedNodeId;
+
+      /**
+       * @event Tree#beforeSelect
+       * @type {object} evt - Event data
+       * @property {string} nodeId - Selected node id
+       * @property {string} prevNodeId - Previous selected node id
+       * @property {HTMLElement|undefined} target - Target element
+       * @example
+       * tree
+       *  .enableFeature('Selectable')
+       *  .on('beforeSelect', function(evt) {
+       *      console.log('selected node: ' + evt.nodeId);
+       *      console.log('previous selected node: ' + evt.prevNodeId);
+       *      console.log('target element: ' + evt.target);
+       *      return false; // It cancels "select"
+       *      // return true; // It fires "select"
+       *  });
+       */
+      if (
+        tree.invoke('beforeSelect', {
+          nodeId: nodeId,
+          prevNodeId: prevNodeId,
+          target: target
+        })
+      ) {
+        util.removeClass(prevElement, selectedClassName);
+        util.addClass(nodeElement, selectedClassName);
 
         /**
-         * @event Tree#beforeSelect
+         * @event Tree#select
          * @type {object} evt - Event data
          * @property {string} nodeId - Selected node id
          * @property {string} prevNodeId - Previous selected node id
@@ -121,44 +152,19 @@ var Selectable = snippet.defineClass(/** @lends Selectable.prototype */{
          * @example
          * tree
          *  .enableFeature('Selectable')
-         *  .on('beforeSelect', function(evt) {
+         *  .on('select', function(evt) {
          *      console.log('selected node: ' + evt.nodeId);
          *      console.log('previous selected node: ' + evt.prevNodeId);
          *      console.log('target element: ' + evt.target);
-         *      return false; // It cancels "select"
-         *      // return true; // It fires "select"
          *  });
          */
-        if (tree.invoke('beforeSelect', {
-            nodeId: nodeId,
-            prevNodeId: prevNodeId,
-            target: target
-        })) {
-            util.removeClass(prevElement, selectedClassName);
-            util.addClass(nodeElement, selectedClassName);
-
-            /**
-             * @event Tree#select
-             * @type {object} evt - Event data
-             * @property {string} nodeId - Selected node id
-             * @property {string} prevNodeId - Previous selected node id
-             * @property {HTMLElement|undefined} target - Target element
-             * @example
-             * tree
-             *  .enableFeature('Selectable')
-             *  .on('select', function(evt) {
-             *      console.log('selected node: ' + evt.nodeId);
-             *      console.log('previous selected node: ' + evt.prevNodeId);
-             *      console.log('target element: ' + evt.target);
-             *  });
-             */
-            tree.fire('select', {
-                nodeId: nodeId,
-                prevNodeId: prevNodeId,
-                target: target
-            });
-            this.selectedNodeId = nodeId;
-        }
+        tree.fire('select', {
+          nodeId: nodeId,
+          prevNodeId: prevNodeId,
+          target: target
+        });
+        this.selectedNodeId = nodeId;
+      }
     },
 
     /**
@@ -166,7 +172,7 @@ var Selectable = snippet.defineClass(/** @lends Selectable.prototype */{
      * @returns {HTMLElement} Node element
      */
     getPrevElement: function() {
-        return document.getElementById(this.selectedNodeId);
+      return document.getElementById(this.selectedNodeId);
     },
 
     /**
@@ -175,7 +181,7 @@ var Selectable = snippet.defineClass(/** @lends Selectable.prototype */{
      * @returns {string} selected node id
      */
     getSelectedNodeId: function() {
-        return this.selectedNodeId;
+      return this.selectedNodeId;
     },
 
     /**
@@ -187,41 +193,42 @@ var Selectable = snippet.defineClass(/** @lends Selectable.prototype */{
      * tree.deselect('tui-tree-node-3');
      */
     deselect: function() {
-        var nodeId = this.selectedNodeId;
-        var nodeElement = document.getElementById(nodeId);
-        var tree = this.tree;
+      var nodeId = this.selectedNodeId;
+      var nodeElement = document.getElementById(nodeId);
+      var tree = this.tree;
 
-        if (!nodeElement) {
-            return;
-        }
+      if (!nodeElement) {
+        return;
+      }
 
-        util.removeClass(nodeElement, this.selectedClassName);
-        this.selectedNodeId = null;
+      util.removeClass(nodeElement, this.selectedClassName);
+      this.selectedNodeId = null;
 
-        /**
-         * @event Tree#deselect
-         * @type {object} evt - Event data
-         * @property {string} nodeId - Deselected node id
-         * @example
-         * tree
-         *  .enableFeature('Selectable')
-         *  .on('deselect', function(evt) {
-         *      console.log('deselected node: ' + evt.nodeId);
-         *  });
-         */
-        tree.fire('deselect', {nodeId: nodeId});
+      /**
+       * @event Tree#deselect
+       * @type {object} evt - Event data
+       * @property {string} nodeId - Deselected node id
+       * @example
+       * tree
+       *  .enableFeature('Selectable')
+       *  .on('deselect', function(evt) {
+       *      console.log('deselected node: ' + evt.nodeId);
+       *  });
+       */
+      tree.fire('deselect', {nodeId: nodeId});
     },
 
     /**
      * Custom event handler - "afterDraw"
      */
     onAfterDraw: function() {
-        var nodeElement = this.getPrevElement();
+      var nodeElement = this.getPrevElement();
 
-        if (nodeElement) {
-            util.addClass(nodeElement, this.selectedClassName);
-        }
+      if (nodeElement) {
+        util.addClass(nodeElement, this.selectedClassName);
+      }
     }
-});
+  }
+);
 
 module.exports = Selectable;
