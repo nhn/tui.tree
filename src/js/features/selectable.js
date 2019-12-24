@@ -2,8 +2,14 @@
  * @fileoverview Feature that each tree node is possible to select as click
  * @author NHN. FE dev Lab <dl_javascript@nhn.com>
  */
+
+var forEachArray = require('tui-code-snippet/collection/forEachArray');
+var defineClass = require('tui-code-snippet/defineClass/defineClass');
+var getTarget = require('tui-code-snippet/domEvent/getTarget');
+var addClass = require('tui-code-snippet/domUtil/addClass');
+var removeClass = require('tui-code-snippet/domUtil/removeClass');
+var extend = require('tui-code-snippet/object/extend');
 var util = require('./../util');
-var snippet = require('tui-code-snippet');
 
 var API_LIST = ['select', 'getSelectedNodeId', 'deselect'],
   defaults = {
@@ -18,7 +24,7 @@ var API_LIST = ['select', 'getSelectedNodeId', 'deselect'],
  *  @param {string} options.selectedClassName - Classname for selected node.
  * @ignore
  */
-var Selectable = snippet.defineClass(
+var Selectable = defineClass(
   /** @lends Selectable.prototype */ {
     static: {
       /**
@@ -31,7 +37,7 @@ var Selectable = snippet.defineClass(
       }
     },
     init: function(tree, options) {
-      options = snippet.extend({}, defaults, options);
+      options = extend({}, defaults, options);
 
       this.tree = tree;
       this.selectedClassName = options.selectedClassName;
@@ -52,13 +58,12 @@ var Selectable = snippet.defineClass(
      * @private
      */
     _setAPIs: function() {
-      var tree = this.tree,
-        bind = snippet.bind;
+      var tree = this.tree;
 
-      snippet.forEach(
+      forEachArray(
         API_LIST,
         function(apiName) {
-          tree[apiName] = bind(this[apiName], this);
+          tree[apiName] = util.bind(this[apiName], this);
         },
         this
       );
@@ -71,9 +76,11 @@ var Selectable = snippet.defineClass(
       var tree = this.tree,
         nodeElement = this.getPrevElement();
 
-      util.removeClass(nodeElement, this.selectedClassName);
+      if (nodeElement) {
+        removeClass(nodeElement, this.selectedClassName);
+      }
       tree.off(this);
-      snippet.forEach(API_LIST, function(apiName) {
+      forEachArray(API_LIST, function(apiName) {
         delete tree[apiName];
       });
     },
@@ -83,7 +90,7 @@ var Selectable = snippet.defineClass(
      * @param {MouseEvent} event - Mouse event
      */
     onSingleClick: function(event) {
-      var target = util.getTarget(event),
+      var target = getTarget(event),
         nodeId = this.tree.getNodeIdFromElement(target);
 
       this.select(nodeId, target);
@@ -104,7 +111,7 @@ var Selectable = snippet.defineClass(
      */
     select: function(nodeId, target) {
       /* eslint-enable valid-jsdoc */
-      var tree, prevElement, nodeElement, selectedClassName, prevNodeId;
+      var tree, prevElement, nodeElement, selectedClassName, prevNodeId, invokeResult;
 
       if (!nodeId) {
         return;
@@ -133,15 +140,17 @@ var Selectable = snippet.defineClass(
        *      // return true; // It fires "select"
        *  });
        */
-      if (
-        tree.invoke('beforeSelect', {
-          nodeId: nodeId,
-          prevNodeId: prevNodeId,
-          target: target
-        })
-      ) {
-        util.removeClass(prevElement, selectedClassName);
-        util.addClass(nodeElement, selectedClassName);
+      invokeResult = tree.invoke('beforeSelect', {
+        nodeId: nodeId,
+        prevNodeId: prevNodeId,
+        target: target
+      });
+
+      if (invokeResult) {
+        if (prevElement) {
+          removeClass(prevElement, selectedClassName);
+        }
+        addClass(nodeElement, selectedClassName);
 
         /**
          * @event Tree#select
@@ -201,7 +210,7 @@ var Selectable = snippet.defineClass(
         return;
       }
 
-      util.removeClass(nodeElement, this.selectedClassName);
+      removeClass(nodeElement, this.selectedClassName);
       this.selectedNodeId = null;
 
       /**
@@ -225,7 +234,7 @@ var Selectable = snippet.defineClass(
       var nodeElement = this.getPrevElement();
 
       if (nodeElement) {
-        util.addClass(nodeElement, this.selectedClassName);
+        addClass(nodeElement, this.selectedClassName);
       }
     }
   }

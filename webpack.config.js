@@ -52,12 +52,6 @@ module.exports = function(env, argv) {
       filename: FILENAME + '.js'
     },
     externals: {
-      'tui-code-snippet': {
-        commonjs: 'tui-code-snippet',
-        commonjs2: 'tui-code-snippet',
-        amd: 'tui-code-snippet',
-        root: ['tui', 'util']
-      },
       'tui-context-menu': {
         commonjs: 'tui-context-menu',
         commonjs2: 'tui-context-menu',

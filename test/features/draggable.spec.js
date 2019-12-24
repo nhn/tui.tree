@@ -1,10 +1,11 @@
+var hasClass = require('tui-code-snippet/domUtil/hasClass');
+
 var Tree = require('../../src/js/tree');
-var util = require('../../src/js/util');
 
 jasmine.getFixtures().fixturesPath = 'base/test/fixtures';
 
 describe('Tree', function() {
-  var $rootElement, tree, treeDraggable;
+  var rootElement, tree, treeDraggable;
   var data = [
     {
       title: 'A',
@@ -40,7 +41,7 @@ describe('Tree', function() {
       data: data
     });
 
-    $rootElement = $(tree.rootElement);
+    rootElement = tree.rootElement;
 
     tree.enableFeature('Draggable', {
       isSortable: true,
@@ -57,7 +58,7 @@ describe('Tree', function() {
     var currentElement, nodeId, mousePos;
 
     beforeEach(function() {
-      currentElement = $rootElement.find('li').eq(0)[0];
+      currentElement = rootElement.querySelector('li');
       nodeId = tree.getNodeIdFromElement(currentElement);
       mousePos = {
         x: 10,
@@ -96,30 +97,24 @@ describe('Tree', function() {
   });
 
   it('Mouse position is contained tree item, _hover() add hover style.', function() {
-    var currentElement = $rootElement.find('li').eq(0)[0];
+    var currentElement = rootElement.querySelector('li');
     var nodeId = tree.getNodeIdFromElement(currentElement);
-    var hasClass;
 
     spyOn(tree, 'isLeaf').and.returnValue(true);
 
     treeDraggable.hoveredElement = currentElement;
     treeDraggable._hover(nodeId);
 
-    hasClass = $(currentElement).hasClass(treeDraggable.hoverClassName);
-
-    expect(hasClass).toEqual(true);
+    expect(hasClass(currentElement, treeDraggable.hoverClassName)).toEqual(true);
   });
 
   it('Mouse position is out of tree item, _unhover() remove hover style.', function() {
-    var currentElement = $rootElement.find('li').eq(0)[0];
+    var currentElement = rootElement.querySelector('li');
     var nodeId = tree.getNodeIdFromElement(currentElement);
-    var hasClass;
 
     treeDraggable._unhover(nodeId);
 
-    hasClass = $(currentElement).hasClass(treeDraggable.hoverClassName);
-
-    expect(hasClass).toEqual(false);
+    expect(hasClass(currentElement, treeDraggable.hoverClassName)).toEqual(false);
   });
 
   describe('_isContain method is called,', function() {
@@ -170,10 +165,7 @@ describe('Tree', function() {
     });
 
     it('when mouse postion is above selected tree item, boundary type is "top".', function() {
-      mousePos = {
-        x: 3,
-        y: 3
-      };
+      mousePos = [3, 3];
 
       type = treeDraggable._getBoundaryType(targetPos, mousePos);
 
@@ -181,10 +173,7 @@ describe('Tree', function() {
     });
 
     it('when mouse postion is above selected tree item, boundary type is "bottom".', function() {
-      mousePos = {
-        x: 97,
-        y: 97
-      };
+      mousePos = [97, 97];
 
       type = treeDraggable._getBoundaryType(targetPos, mousePos);
 
@@ -209,15 +198,15 @@ describe('Tree', function() {
   });
 
   describe('_getIndexForInserting() is called,', function() {
-    var $currentElement, helperId, nodeId, index;
+    var currentElements, helperId, nodeId, index;
 
     beforeEach(function() {
-      $currentElement = $rootElement.find('li');
+      currentElements = rootElement.querySelectorAll('li');
     });
 
     it('when drag item is moving from bottom to top, index number is same.', function() {
-      helperId = tree.getNodeIdFromElement($currentElement.eq(1)[0]);
-      nodeId = tree.getNodeIdFromElement($currentElement.eq(3)[0]);
+      helperId = tree.getNodeIdFromElement(currentElements[1]);
+      nodeId = tree.getNodeIdFromElement(currentElements[3]);
 
       treeDraggable.currentNodeId = helperId;
       treeDraggable.movingLineType = 'top';
@@ -228,8 +217,8 @@ describe('Tree', function() {
     });
 
     it('when drag item is moving from top to bottom, index number increase.', function() {
-      helperId = tree.getNodeIdFromElement($currentElement.eq(3)[0]); // index: 2
-      nodeId = tree.getNodeIdFromElement($currentElement.eq(1)[0]); // index: 0
+      helperId = tree.getNodeIdFromElement(currentElements[3]); // index: 2
+      nodeId = tree.getNodeIdFromElement(currentElements[1]); // index: 0
 
       treeDraggable.currentNodeId = helperId;
       treeDraggable.movingLineType = 'bottom';
@@ -265,15 +254,16 @@ describe('Tree', function() {
       firstChildElement = document.getElementById(firstChildId);
 
       eventMock = {
-        target: firstChildElement
+        target: firstChildElement,
+        clientX: 10,
+        clientY: 10
       };
-      spyOn(util, 'getMousePos').and.returnValue({x: 10, y: 10});
     });
 
     it('add class name on dragging item element while dragging.', function() {
       treeDraggable._onMousedown(eventMock);
       treeDraggable._onMousemove(eventMock);
-      expect(util.hasClass(firstChildElement, className)).toBe(true);
+      expect(hasClass(firstChildElement, className)).toBe(true);
     });
   });
 
@@ -292,7 +282,7 @@ describe('Tree', function() {
 
       treeDraggable._onMousedown(eventMock);
 
-      dragItemElement = util.getElementsByClassName(selectedElement, tree.classNames.textClass)[0];
+      dragItemElement = selectedElement.querySelector('.' + tree.classNames.textClass);
 
       expect(treeDraggable.helperElement.innerHTML).toBe(dragItemElement.innerHTML);
     }

@@ -1,4 +1,4 @@
-var snippet = require('tui-code-snippet');
+var forEachArray = require('tui-code-snippet/collection/forEachArray');
 
 var Tree = require('../../src/js/tree'),
   messages = require('../../src/js/consts/messages'),
@@ -58,12 +58,12 @@ describe('Tree', function() {
   it('should have implemented apis about checkbox if enabled', function() {
     var apiList = Checkbox.getAPIList();
 
-    snippet.forEach(apiList, function(name) {
+    forEachArray(apiList, function(name) {
       expect(tree[name]).not.toThrowError(messages.INVALID_API_CHECKBOX);
     });
 
     tree.disableFeature('Checkbox');
-    snippet.forEach(apiList, function(name) {
+    forEachArray(apiList, function(name) {
       expect(tree[name]).toThrowError(messages.INVALID_API_CHECKBOX);
     });
   });

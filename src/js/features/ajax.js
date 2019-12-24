@@ -2,7 +2,13 @@
  * @fileoverview Feature that tree action is enable to communicate server
  * @author NHN. FE dev Lab <dl_javascript@nhn.com>
  */
-var snippet = require('tui-code-snippet');
+
+var defineClass = require('tui-code-snippet/defineClass/defineClass');
+var extend = require('tui-code-snippet/object/extend');
+var isFunction = require('tui-code-snippet/type/isFunction');
+var isUndefined = require('tui-code-snippet/type/isUndefined');
+var bind = require('../util').bind;
+
 var API_LIST = [];
 var LOADER_CLASSNAME = 'tui-tree-loader';
 
@@ -17,7 +23,7 @@ var LOADER_CLASSNAME = 'tui-tree-loader';
  *  @param {boolean} [options.isLoadRoot] - Whether load data from root node or not
  * @ignore
  */
-var Ajax = snippet.defineClass(
+var Ajax = defineClass(
   /** @lends Ajax.prototype */ {
     static: {
       /**
@@ -30,7 +36,7 @@ var Ajax = snippet.defineClass(
       }
     },
     init: function(tree, options) {
-      options = snippet.extend({}, options);
+      options = extend({}, options);
 
       /**
        * Tree
@@ -60,7 +66,7 @@ var Ajax = snippet.defineClass(
        * State of loading root data or not
        * @type {boolean}
        */
-      this.isLoadRoot = !snippet.isUndefined(options.isLoadRoot) ? options.isLoadRoot : true;
+      this.isLoadRoot = !isUndefined(options.isLoadRoot) ? options.isLoadRoot : true;
 
       /**
        * Loader element
@@ -70,7 +76,7 @@ var Ajax = snippet.defineClass(
 
       this._createLoader();
 
-      tree.on('initFeature', snippet.bind(this._onInitFeature, this));
+      tree.on('initFeature', bind(this._onInitFeature, this));
     },
 
     /**
@@ -126,7 +132,7 @@ var Ajax = snippet.defineClass(
        */
       if (
         !this.tree.invoke('beforeAjaxRequest', {
-          type: type,
+          type: type, // TODO: change to `command`
           params: params
         })
       ) {
@@ -180,7 +186,7 @@ var Ajax = snippet.defineClass(
          * });
          */
         tree.fire('successAjaxResponse', {
-          type: type,
+          type: type, // TODO: change to `command`
           data: data
         });
       } else {
@@ -193,7 +199,7 @@ var Ajax = snippet.defineClass(
          *     console.log(evt.command + ' response is fail!');
          * });
          */
-        tree.fire('failAjaxResponse', {type: type});
+        tree.fire('failAjaxResponse', {type: type}); // TODO: change to `command`
       }
     },
 
@@ -214,7 +220,7 @@ var Ajax = snippet.defineClass(
        *     console.log(evt.command + ' response is error!');
        * });
        */
-      this.tree.fire('errorAjaxResponse', {type: type});
+      this.tree.fire('errorAjaxResponse', {type: type}); // TODO: change to `command`
     },
 
     /**
@@ -227,12 +233,12 @@ var Ajax = snippet.defineClass(
     _getDefaultRequestOptions: function(type, params) {
       var options = this.command[type];
 
-      if (snippet.isFunction(options.url)) {
+      if (isFunction(options.url)) {
         // for restful API url
         options.url = options.url(params);
       }
 
-      if (snippet.isFunction(options.data)) {
+      if (isFunction(options.data)) {
         // for custom request data
         options.data = options.data(params);
       }

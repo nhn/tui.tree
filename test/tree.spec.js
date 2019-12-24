@@ -1,4 +1,5 @@
-var snippet = require('tui-code-snippet');
+var template = require('tui-code-snippet/domUtil/template');
+
 var Tree = require('../src/js/tree'),
   util = require('../src/js/util'),
   messages = require('../src/js/consts/messages');
@@ -27,7 +28,7 @@ describe('Tree', function() {
       children: [{text: '1'}, {text: '2'}, {text: '3'}, {text: '4'}, {text: '5'}]
     }
   ];
-  var $rootElement, tree, firstChildId, lastChildId, grandChildId, firstChild, container;
+  var rootElement, tree, firstChildId, lastChildId, grandChildId, firstChild, container;
 
   describe('function', function() {
     beforeEach(function() {
@@ -44,7 +45,7 @@ describe('Tree', function() {
             '<span class="{{textClass}}">{{text}}</span>'
         }
       });
-      $rootElement = $(tree.rootElement);
+      rootElement = tree.rootElement;
       firstChildId = tree.model.rootNode.getChildIds()[0];
       firstChild = tree.model.getNode(firstChildId);
       lastChildId = tree.model.rootNode.getChildIds().slice(-1)[0]; // slice(-1) returns a value of last index
@@ -66,17 +67,17 @@ describe('Tree', function() {
     });
 
     it('should make correct DOM', function() {
-      var textElement = $rootElement.find('.tui-tree-node .tui-tree-text')[0];
+      var textElement = rootElement.querySelector('.tui-tree-node .tui-tree-text');
       var textNode = util.getFirstTextNode(textElement);
 
       expect(textNode.nodeValue).toEqual('A');
     });
 
     it('should make DOM from optional-template', function() {
-      var $leafNodes = $rootElement.find('.tui-tree-leaf'),
-        $leafLabels = $leafNodes.find('.tui-tree-leaf-label');
+      var leafNodes = rootElement.querySelectorAll('.tui-tree-leaf'),
+        leafLabels = rootElement.querySelectorAll('.tui-tree-leaf .tui-tree-leaf-label');
 
-      expect($leafLabels.length).toEqual($leafNodes.length);
+      expect(leafLabels.length).toEqual(leafNodes.length);
     });
 
     it('"open()" should change state of a node to "opened"', function() {
@@ -262,7 +263,7 @@ describe('Tree', function() {
 
     it('option:"renderTemplate" should override template renderer', function() {
       var templateRenderer = jasmine.createSpy().and.callFake(function(source, props) {
-        return util.renderTemplate(source, props);
+        return template(source, props);
       });
 
       tree = new Tree(container, {
@@ -296,7 +297,7 @@ describe('Tree', function() {
 
       expect(newChildIds.length).toBe(2);
       expect(tree.getChildIds(rootNodeId)).toEqual(newChildIds);
-      expect($rootElement.children().length).toBe(2);
+      expect(rootElement.children.length).toBe(2);
     });
 
     it('"getNodeIndex()" should return index number of selected node in children list', function() {
@@ -315,66 +316,32 @@ describe('Tree', function() {
       expect(tree.getNodeData(newChildIds[0])).toEqual({text: 'A'});
       expect(tree.getNodeData(newChildIds[1])).toEqual({text: 'B'});
     });
-
-    it('"getIndentWidth()" should return padding left by element\'s depth', function() {
-      var treeData = [
-        {
-          text: 'A',
-          children: [
-            {
-              text: '1',
-              children: [
-                {
-                  text: '가',
-                  children: [{text: '*'}, {text: '#', children: [{text: 'a'}]}, {text: '@'}]
-                }
-              ]
-            }
-          ]
-        }
-      ];
-      var treeNodes;
-      tree.resetAllData([]);
-      tree = new Tree(container, {
-        rootElement: 'treeRoot',
-        data: treeData
-      });
-
-      treeNodes = $(tree.rootElement).find('.tui-tree-node');
-
-      snippet.forEach(function(treeNode) {
-        var id = treeNode.id;
-        expect(treeNode.childNodes[0].style.paddingLeft).toBe(tree.getIndentWidth(id) + 'px');
-      }, treeNodes);
-    });
   });
 
   describe('option', function() {
-    // hostnameSent module scope variable can not be reset.
-    // maintain cases with xit as it always fail, if you want to test these cases, change xit to fit one by one
     beforeEach(function() {
-      spyOn(snippet, 'sendHostname');
+      spyOn(util, 'sendHostName');
       loadFixtures('basicFixture.html');
       container = 'tree';
     });
 
-    xit('should send hostname by default', function() {
+    it('should send hostname by default', function() {
       tree = new Tree(container, {
         rootElement: 'treeRoot',
         data: data
       });
 
-      expect(snippet.sendHostname).toHaveBeenCalled();
+      expect(util.sendHostName).toHaveBeenCalled();
     });
 
-    xit('should not send hostname on usageStatistics option false', function() {
+    it('should not send hostname on usageStatistics option false', function() {
       tree = new Tree(container, {
         rootElement: 'treeRoot',
         data: data,
         usageStatistics: false
       });
 
-      expect(snippet.sendHostname).not.toHaveBeenCalled();
+      expect(util.sendHostName).not.toHaveBeenCalled();
     });
   });
 });

@@ -15,14 +15,15 @@
         "examples",
         "src",
         "test",
-        "jsdoc.conf.json",
         "karma.conf.js",
-        "webpack.config.js",
-        "package.json"
+        "package-lock.json",
+        "package.json",
+        "tui-note.config.js",
+        "tuidoc.config.json",
+        "webpack.config.js"
     ],
     "dependencies": {
-        "tui-code-snippet": "^1.5.0",
-        "tui-context-menu": "^2.1.1"
+        "tui-context-menu": "^2.1.6"
     },
     "devDependencies": {
         "jquery": "^1.11.0"

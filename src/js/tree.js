@@ -3,7 +3,25 @@
  * @author NHN. FE dev Lab <dl_javascript@nhn.com>
  */
 
+var forEachArray = require('tui-code-snippet/collection/forEachArray');
+var forEachOwnProperties = require('tui-code-snippet/collection/forEachOwnProperties');
+var CustomEvents = require('tui-code-snippet/customEvents/customEvents');
+var defineClass = require('tui-code-snippet/defineClass/defineClass');
+var getTarget = require('tui-code-snippet/domEvent/getTarget');
+var getMouseButton = require('tui-code-snippet/domEvent/getMouseButton');
+var off = require('tui-code-snippet/domEvent/off');
+var on = require('tui-code-snippet/domEvent/on');
+var addClass = require('tui-code-snippet/domUtil/addClass');
+var removeClass = require('tui-code-snippet/domUtil/removeClass');
+var template = require('tui-code-snippet/domUtil/template');
+var extend = require('tui-code-snippet/object/extend');
+var isFunction = require('tui-code-snippet/type/isFunction');
+var isHTMLNode = require('tui-code-snippet/type/isHTMLNode');
+var isObject = require('tui-code-snippet/type/isObject');
+var isString = require('tui-code-snippet/type/isString');
+var isUndefined = require('tui-code-snippet/type/isUndefined');
 var util = require('./util');
+
 var defaultOption = require('./consts/defaultOption');
 var states = require('./consts/states');
 var messages = require('./consts/messages');
@@ -26,12 +44,11 @@ var features = {
   ContextMenu: ContextMenu,
   Ajax: Ajax
 };
-var snippet = require('tui-code-snippet');
-var extend = snippet.extend;
 
 var TIMEOUT_TO_DIFFERENTIATE_CLICK_AND_DBLCLICK = 200;
 var MOUSE_MOVING_THRESHOLD = 5;
 
+// TODO: specify tui-code-snippet's version (package.json)
 /**
  * Create tree model and inject data to model
  * @class Tree
@@ -46,7 +63,7 @@ var MOUSE_MOVING_THRESHOLD = 5;
  *     @param {Object} [options.template] A markup set to make element
  *         @param {string} [options.template.internalNode] HTML template
  *         @param {string} [options.template.leafNode] HTML template
- *     @param {Function} [options.renderTemplate] Function for rendering template
+ *     @param {Function} [options.renderTemplate] Function for rendering template. Default is {@link https://nhn.github.io/tui.code-snippet/latest/domUtil#template template in the tui-code-snippet}.
  *     @param {boolean} [options.usageStatistics=true] - Let us know the hostname. If you don't want to send the hostname, please set to false.
  * @example <caption>Get `Tree` module</caption>
  * // * node, commonjs
@@ -156,7 +173,7 @@ var MOUSE_MOVING_THRESHOLD = 5;
  *     }
  * });
  */
-var Tree = snippet.defineClass(
+var Tree = defineClass(
   /** @lends Tree.prototype */ {
     init: function(container, options) {
       options = extend({}, defaultOption, options);
@@ -216,10 +233,11 @@ var Tree = snippet.defineClass(
       /**
        * Render template
        * It can be overrode by user's template engine.
+       * Default: tui-code-snippet/domUtil/template {@link https://nhn.github.io/tui.code-snippet/latest/domUtil#template}
        * @type {Function}
        * @private
        */
-      this._renderTemplate = options.renderTemplate || util.renderTemplate;
+      this._renderTemplate = options.renderTemplate || template;
 
       /**
        * Send the hostname to google analytics.
@@ -270,13 +288,13 @@ var Tree = snippet.defineClass(
     _setRoot: function(container) {
       var rootElement = outerTemplate.ROOT;
 
-      if (snippet.isString(container)) {
+      if (isString(container)) {
         container = document.getElementById(container);
       } else if (container.jquery) {
         container = container[0];
       }
 
-      if (!snippet.isHTMLNode(container)) {
+      if (!isHTMLNode(container)) {
         throw new Error(messages.INVALID_CONTAINER_ELEMENT);
       }
 
@@ -333,14 +351,13 @@ var Tree = snippet.defineClass(
         },
         this
       );
-      util.addEventListener(this.rootElement, 'click', snippet.bind(this._onClick, this));
-      util.addEventListener(this.rootElement, 'mousedown', snippet.bind(this._onMousedown, this));
-      util.addEventListener(this.rootElement, 'dblclick', snippet.bind(this._onDoubleClick, this));
-      util.addEventListener(
-        this.rootElement,
-        'contextmenu',
-        snippet.bind(this._onContextMenu, this)
-      );
+
+      on(this.rootElement, {
+        click: this._onClick,
+        mousedown: this._onMousedown,
+        dblclick: this._onDoubleClick,
+        contextmenu: this._onContextMenu
+      }, this);
     },
 
     /**
@@ -376,9 +393,11 @@ var Tree = snippet.defineClass(
 
       function onMouseUp(upEvent) {
         self.fire('mouseup', upEvent);
-        util.removeEventListener(document, 'mousemove', onMouseMove);
-        util.removeEventListener(document, 'mouseup', onMouseUp);
-        util.removeEventListener(document, 'mouseout', onMouseOut);
+        off(document, {
+          mousemove: onMouseMove,
+          mouseup: onMouseUp,
+          mouseout: onMouseOut
+        });
       }
 
       function onMouseOut(event) {
@@ -390,22 +409,24 @@ var Tree = snippet.defineClass(
 
       this._mouseMovingFlag = false;
       this.fire('mousedown', downEvent);
-      util.addEventListener(document, 'mousemove', onMouseMove);
-      util.addEventListener(document, 'mouseup', onMouseUp);
-      util.addEventListener(document, 'mouseout', onMouseOut);
+      on(document, {
+        mousemove: onMouseMove,
+        mouseup: onMouseUp,
+        mouseout: onMouseOut
+      });
     },
 
     /**
      * Event handler - click
-     * @param {MouseEvent} event - Click event
+     * @param {MouseEvent} ev - Click event
      * @private
      */
-    _onClick: function(event) {
-      var target = util.getTarget(event);
-      var self = this;
+    _onClick: function(ev) {
+      var target = getTarget(ev);
+      var isRightButton = getMouseButton(ev) === 2;
       var nodeId;
 
-      if (util.isRightButton(event)) {
+      if (isRightButton) {
         this.clickTimer = null;
 
         return;
@@ -435,10 +456,10 @@ var Tree = snippet.defineClass(
       }
 
       if (!this.clickTimer && !this._mouseMovingFlag) {
-        this.fire('singleClick', event);
-        this.clickTimer = setTimeout(function() {
-          self.resetClickTimer();
-        }, TIMEOUT_TO_DIFFERENTIATE_CLICK_AND_DBLCLICK);
+        this.fire('singleClick', ev);
+        this.clickTimer = setTimeout(util.bind(function() {
+          this.resetClickTimer();
+        }, this), TIMEOUT_TO_DIFFERENTIATE_CLICK_AND_DBLCLICK);
       }
     },
 
@@ -466,10 +487,7 @@ var Tree = snippet.defineClass(
         return false;
       }
 
-      nodeElement = util.getElementsByClassName(
-        document.getElementById(nodeId),
-        this.classNames.toggleBtnClass
-      )[0];
+      nodeElement = document.querySelector('#' + nodeId + ' .' + this.classNames.toggleBtnClass);
 
       return nodeElement && nodeElement.contains(target);
     },
@@ -493,7 +511,7 @@ var Tree = snippet.defineClass(
       label = this.stateLabels[state];
       nodeElement = document.getElementById(nodeId);
 
-      btnElement = util.getElementsByClassName(nodeElement, this.classNames.toggleBtnClass)[0];
+      btnElement = nodeElement.querySelector('.' + this.classNames.toggleBtnClass);
 
       if (state === nodeStates.OPENED) {
         subtreeElement.style.display = '';
@@ -519,9 +537,9 @@ var Tree = snippet.defineClass(
         openedClassName = classNames[nodeStates.OPENED + 'Class'],
         closedClassName = classNames[nodeStates.CLOSED + 'Class'];
 
-      util.removeClass(nodeElement, openedClassName);
-      util.removeClass(nodeElement, closedClassName);
-      util.addClass(nodeElement, classNames[state + 'Class']);
+      removeClass(nodeElement, openedClassName);
+      removeClass(nodeElement, closedClassName);
+      addClass(nodeElement, classNames[state + 'Class']);
     },
 
     /**
@@ -529,13 +547,14 @@ var Tree = snippet.defineClass(
      * @param {Array.<string>} nodeIds - Node id list
      * @returns {string} HTML
      * @private
-     * @see outerTemplate uses "util.renderTemplate"
+     * @see https://nhn.github.io/tui.code-snippet/latest/domUtil#template
+     * TODO: specify tui-code-snippet's version (package.json)
      */
     _makeHtml: function(nodeIds) {
       var model = this.model,
         html = '';
 
-      snippet.forEach(
+      forEachArray(
         nodeIds,
         function(nodeId) {
           var node = model.getNode(nodeId),
@@ -552,7 +571,7 @@ var Tree = snippet.defineClass(
             source: sources.inner,
             props: props
           });
-          html += util.renderTemplate(sources.outer, props);
+          html += template(sources.outer, props);
         },
         this
       );
@@ -706,14 +725,20 @@ var Tree = snippet.defineClass(
     _setClassNameAndVisibilityByFeature: function(node) {
       var nodeId = node.getId(),
         element = document.getElementById(nodeId),
-        classNames = this.classNames;
+        classNames = this.classNames,
+        isLeaf = node.isLeaf();
 
-      if (node.isLeaf()) {
-        util.removeClass(element, classNames.openedClass);
-        util.removeClass(element, classNames.closedClass);
-        util.addClass(element, classNames.leafClass);
-      } else {
-        util.removeClass(element, classNames.leafClass);
+      if (element) {
+        if (isLeaf) {
+          removeClass(element, classNames.openedClass);
+          removeClass(element, classNames.closedClass);
+          addClass(element, classNames.leafClass);
+        } else {
+          removeClass(element, classNames.leafClass);
+        }
+      }
+
+      if (!isLeaf) {
         this._setDisplayFromNodeState(nodeId, node.getState());
         this.each(
           function(child) {
@@ -740,10 +765,7 @@ var Tree = snippet.defineClass(
       } else if (node.isRoot()) {
         subtreeElement = this.rootElement;
       } else {
-        subtreeElement = util.getElementsByClassName(
-          document.getElementById(nodeId),
-          this.classNames.subtreeClass
-        )[0];
+        subtreeElement = document.querySelector('#' + nodeId + ' .' + this.classNames.subtreeClass);
       }
 
       return subtreeElement;
@@ -965,7 +987,7 @@ var Tree = snippet.defineClass(
     _openRecursiveNode: function(nodeId) {
       var parentIds = this.model.getParentIds(nodeId);
       parentIds.push(nodeId);
-      snippet.forEach(
+      forEachArray(
         parentIds,
         function(parentId) {
           this._openNode(parentId);
@@ -1070,7 +1092,7 @@ var Tree = snippet.defineClass(
     _reload: function(nodeId) {
       var node = this.model.getNode(nodeId);
       var state = node.getState();
-      var isReload = snippet.isUndefined(node.getData('reload')) || node.getData('reload');
+      var isReload = isUndefined(node.getData('reload')) || node.getData('reload');
 
       if (state === nodeStates.CLOSED) {
         // open -> close action
@@ -1324,8 +1346,8 @@ var Tree = snippet.defineClass(
     _removeAllChildren: function(nodeId, isSilent) {
       var children = this.getChildIds(nodeId);
 
-      snippet.forEach(
-        children,
+      forEachArray(
+        children || [],
         function(childId) {
           this._remove(childId, true);
         },
@@ -1487,11 +1509,11 @@ var Tree = snippet.defineClass(
      * console.log(tree.getNodeData('tui-tree-node-5').foo); // 'bar'
      */
     search: function(predicate, context) {
-      if (!snippet.isObject(predicate)) {
+      if (!isObject(predicate)) {
         return [];
       }
 
-      if (snippet.isFunction(predicate)) {
+      if (isFunction(predicate)) {
         return this._filter(predicate, context);
       }
 
@@ -1509,7 +1531,7 @@ var Tree = snippet.defineClass(
         var result = true,
           data = node.getAllData();
 
-        snippet.forEach(props, function(value, key) {
+        forEachOwnProperties(props, function(value, key) {
           result = key in data && data[key] === value;
 
           return result;
@@ -1669,7 +1691,7 @@ var Tree = snippet.defineClass(
 
       this.disableFeature(featureName);
 
-      if (snippet.isObject(options)) {
+      if (isObject(options)) {
         options.usageStatistics = this.usageStatistics;
       } else {
         options = {
@@ -1730,15 +1752,15 @@ function setAbstractAPIs(featureName, feature) {
   var messageName = 'INVALID_API_' + featureName.toUpperCase(),
     apiList = feature.getAPIList ? feature.getAPIList() : [];
 
-  snippet.forEach(apiList, function(api) {
+  forEachArray(apiList, function(api) {
     Tree.prototype[api] = function() {
       throw new Error(messages[messageName] || messages.INVALID_API);
     };
   });
 }
-snippet.forEach(features, function(Feature, name) {
+forEachOwnProperties(features, function(Feature, name) {
   setAbstractAPIs(name, Feature);
 });
-snippet.CustomEvents.mixin(Tree);
+CustomEvents.mixin(Tree);
 
 module.exports = Tree;

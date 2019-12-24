@@ -1,11 +1,8 @@
 var Tree = require('../../src/js/tree');
-var util = require('../../src/js//util');
 var TuiContextMenu = require('tui-context-menu');
-var styleKeys = ['userSelect', 'WebkitUserSelect', 'OUserSelect', 'MozUserSelect', 'msUserSelect'];
-var enableProp = util.testProp(styleKeys);
 
 describe('contextMenu.js', function() {
-  var $rootElement, tree, contextMenu, menuData;
+  var rootElement, tree, contextMenu, menuData;
   var data = [
     {
       text: 'A',
@@ -54,21 +51,9 @@ describe('contextMenu.js', function() {
       menuData: menuData
     });
 
-    $rootElement = $(tree.rootElement);
+    rootElement = tree.rootElement;
 
     contextMenu = tree.enabledFeatures.ContextMenu;
-  });
-
-  it('When context-menu feature is enabled, element is not selected by style.', function() {
-    tree.disableFeature('ContextMenu');
-
-    tree.enableFeature('ContextMenu', {
-      menuData: menuData
-    });
-
-    if (enableProp) {
-      expect($rootElement[0].style[enableProp]).toEqual('none');
-    }
   });
 
   describe('When _generateContextMenu() is called,', function() {
@@ -90,13 +75,14 @@ describe('contextMenu.js', function() {
   });
 
   it('When "contextmenu" event is fired, id of selected tree item set value.', function() {
-    var target = $rootElement.find('li').eq(0);
-    var nodeId = target.attr('id');
+    var target = rootElement.querySelector('li');
+    var nodeId = target.getAttribute('id');
 
-    spyOn(util, 'getTarget').and.returnValue(target);
     spyOn(tree, 'getNodeIdFromElement').and.returnValue(nodeId);
 
-    tree._onContextMenu();
+    tree._onContextMenu({
+      target: target
+    });
 
     expect(contextMenu.selectedNodeId).toEqual(nodeId);
   });
@@ -117,6 +103,7 @@ describe('contextMenu.js', function() {
 
   describe('When context-menu feature is disabled,', function() {
     beforeEach(function() {
+      spyOn(contextMenu, '_restoreTextSelection');
       tree.disableFeature('ContextMenu');
     });
 
@@ -129,9 +116,7 @@ describe('contextMenu.js', function() {
     });
 
     it('text selection property restore.', function() {
-      if (enableProp) {
-        expect($rootElement[0].style[enableProp]).not.toEqual('none');
-      }
+      expect(contextMenu._restoreTextSelection).toHaveBeenCalled();
     });
   });
 });

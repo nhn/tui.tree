@@ -1,47 +1,41 @@
-## Add dependency files
-
-To use a tree component, you must include CSS and JavaScript files.
-Main bundling files can download from a `dist` folder in this repository.
-And this component has `CodeSnippet` dependency by default.
-
-#### CSS File
+## Load files
 
 ```html
-<link rel="stylesheet" href="tui-tree.css">
+<html>
+    <head>
+        ....
+        <link href="tui-tree.css" rel="stylesheet">
+    </head>
+    <body>
+        ....
+        <script type="text/javascript" src="tui-tree.js"></script>
+    </body>
+</html>
 ```
 
-#### JS Files
-
-```html
-<script type="text/javascript" src="tui-code-snippet.js"></script>
-<script type="text/javascript" src="tui-tree.js"></script>
-```
-
-## Create a tree component
-
-#### Step 1. Add a container element that the pagination component will be created.
+## Write a wrapper element
 
 ```html
 <div id="tree" class="tui-tree-wrap"></div>
 ```
 
-### Step 2. Create instance.
-
-Create an instance by passing the container element and option values as parameters.
-And create the tree data and pass it as an option.
+## Create instance
 
 * Create with the id selector of the container element
+
 ```js
 var tree = new tui.Tree('tree', options);
 ```
 
 * Create with a container element
+
 ```js
 var container = document.getElementById('tree');
 var tree = new tui.Tree(container, options);
 ```
 
-* Create with options (default values)
+* Create with options
+
 ```js
 var options = {
     data: [],
@@ -81,7 +75,7 @@ var options = {
 var tree = new tui.Tree('tree', options);
 ```
 
-Information about each option is as follows:
+## Options
 
 |Name|Type|Description|
 |---|---|---|
@@ -96,7 +90,7 @@ Information about each option is as follows:
 |`[template.leafNode]`|`{string}`|Template of leaf node|
 |`[renderTemplate]`|`{function}`|Render template function|
 
-## Tree data format
+### Tree data format: `data`
 
 * Default : Set `text`, `children` properties.
 ```js
@@ -129,6 +123,7 @@ var data = [
 ```
 
 * Customizing : It is possible to set other properties.
+
 ```js
 var data = [
    {
@@ -151,11 +146,12 @@ var data = [
 ];
 ```
 
-## How to use template
+### How to use template: `template` and `renderTemplate`
 
 You can customize each tree node's contents using `template` and `renderTemplate` options.
 `template` option is override default template string.
 `renderTemplate` option can process template using a template engine like [mustache.js](https://github.com/janl/mustache.js/).
+tui.tree uses [tui-code-snippet's template](https://nhn.github.io/tui.code-snippet/latest/domUtil#template) as default template engine.
 
 This example show how to replace node's contents having children by a template engine.
 

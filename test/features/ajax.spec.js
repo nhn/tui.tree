@@ -24,7 +24,7 @@ describe('Tree', function() {
 
     className = tree.enabledFeatures.Ajax.loaderClassName;
 
-    expect($('.' + className).length).toBe(1);
+    expect(document.querySelectorAll('.' + className).length).toBe(1);
   });
 
   it('When Ajax feature is disabled, the loader is removed in tree.', function() {
@@ -36,7 +36,7 @@ describe('Tree', function() {
 
     tree.disableFeature('Ajax');
 
-    expect($('.' + className).length).toBe(0);
+    expect(document.querySelectorAll('.' + className).length).toBe(0);
   });
 
   describe('Options test', function() {
@@ -209,7 +209,7 @@ describe('Tree', function() {
       treeAjax._showLoader();
       treeAjax.loadData('read', callback);
 
-      expect($('.' + className).css('display')).toBe('none');
+      expect(document.querySelector('.' + className).style.display).toBe('none');
     });
 
     it('When response is failed, the Ajax loader is hidden.', function() {
@@ -222,7 +222,7 @@ describe('Tree', function() {
       treeAjax._showLoader();
       treeAjax.loadData('read', callback);
 
-      expect($('.' + className).css('display')).toBe('none');
+      expect(document.querySelector('.' + className).style.display).toBe('none');
     });
 
     it('When response is failed, the "errorAjaxResponse" custom event is fired.', function() {

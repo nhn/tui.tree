@@ -2,13 +2,16 @@
  * @fileoverview Update view and control tree data
  * @author NHN. FE dev Lab <dl_javascript@nhn.com>
  */
-var TreeNode = require('./treeNode');
-var snippet = require('tui-code-snippet');
 
-var extend = snippet.extend,
-  keys = snippet.keys,
-  forEach = snippet.forEach,
-  map = snippet.map;
+var forEachArray = require('tui-code-snippet/collection/forEachArray');
+var forEachOwnProperties = require('tui-code-snippet/collection/forEachOwnProperties');
+var CustomEvents = require('tui-code-snippet/customEvents/customEvents');
+var defineClass = require('tui-code-snippet/defineClass/defineClass');
+var extend = require('tui-code-snippet/object/extend');
+var isArray = require('tui-code-snippet/type/isArray');
+var util = require('./util');
+
+var TreeNode = require('./treeNode');
 
 /**
  * Tree model
@@ -17,7 +20,7 @@ var extend = snippet.extend,
  * @param {Object} options - Options for defaultState and nodeIdPrefix
  * @ignore
  */
-var TreeModel = snippet.defineClass(
+var TreeModel = defineClass(
   /** @lends TreeModel.prototype */ {
     init: function(options) {
       TreeNode.setIdPrefix(options.nodeIdPrefix);
@@ -79,8 +82,8 @@ var TreeModel = snippet.defineClass(
       var parentId = parent.getId(),
         ids = [];
 
-      forEach(
-        data,
+      forEachArray(
+        data || [],
         function(datum) {
           var childrenData = datum.children,
             node = this._createNode(datum, parentId),
@@ -126,7 +129,7 @@ var TreeModel = snippet.defineClass(
         return null;
       }
 
-      return map(
+      return util.map(
         childIds,
         function(childId) {
           return this.getNode(childId);
@@ -155,7 +158,16 @@ var TreeModel = snippet.defineClass(
      * @returns {number} The number of nodes
      */
     getCount: function() {
-      return keys(this.treeHash).length;
+      var treeHash = this.treeHash;
+      var length = 0;
+      var node;
+
+      // eslint-disable-next-line guard-for-in
+      for (node in treeHash) {
+        length += treeHash.hasOwnProperty(node);
+      }
+
+      return length;
     },
 
     /**
@@ -163,7 +175,7 @@ var TreeModel = snippet.defineClass(
      * @returns {number} The last depth
      */
     getLastDepth: function() {
-      var depths = map(
+      var depths = util.map(
         this.treeHash,
         function(node) {
           return this.getDepth(node.getId());
@@ -236,7 +248,7 @@ var TreeModel = snippet.defineClass(
         parentsNodeList.push(node);
       }
 
-      return map(parentsNodeList, function(parentsNode) {
+      return util.map(parentsNodeList, function(parentsNode) {
         return parentsNode.getId();
       });
     },
@@ -256,7 +268,7 @@ var TreeModel = snippet.defineClass(
 
       parent = this.getNode(node.getParentId());
 
-      forEach(
+      forEachArray(
         node.getChildIds(),
         function(childId) {
           this.remove(childId, true);
@@ -328,7 +340,7 @@ var TreeModel = snippet.defineClass(
         return;
       }
 
-      if (snippet.isArray(names)) {
+      if (isArray(names)) {
         node.removeData.apply(node, names);
       } else {
         node.removeData(names);
@@ -431,7 +443,7 @@ var TreeModel = snippet.defineClass(
         if (children.length > 1) {
           children.sort(comparator);
 
-          childIds = map(children, function(child) {
+          childIds = util.map(children, function(child) {
             return child.getId();
           });
           node.replaceChildIds(childIds);
@@ -470,7 +482,7 @@ var TreeModel = snippet.defineClass(
     eachAll: function(iteratee, context) {
       context = context || this;
 
-      forEach(this.treeHash, function() {
+      forEachOwnProperties(this.treeHash, function() {
         iteratee.apply(context, arguments);
       });
     },
@@ -503,5 +515,5 @@ var TreeModel = snippet.defineClass(
   }
 );
 
-snippet.CustomEvents.mixin(TreeModel);
+CustomEvents.mixin(TreeModel);
 module.exports = TreeModel;
