@@ -39,7 +39,7 @@ var options = {
 var instance = new Tree(container, options);
 ```
 
-Or, include [`tui-code-snippet`](https://github.com/nhn/tui.code-snippet)(**v2.1.0** or **later**) and then immediately write the options as follows:
+Or, include [`tui-code-snippet`](https://github.com/nhn/tui.code-snippet)(**v2.2.0** or **later**) and then immediately write the options as follows:
 
 ```js
 tui.usageStatistics = false;
@@ -173,7 +173,7 @@ For more information about the API, please see [here](https://nhn.github.io/tui.
 
 
 ## 🔩 Dependency
-* [tui-code-snippet](https://github.com/nhn/tui.code-snippet) >= 2.1.0
+* [tui-code-snippet](https://github.com/nhn/tui.code-snippet) >= 2.2.0
 * [tui-context-menu](https://github.com/nhn/tui.context-menu) >= 2.1.6 (Optional, needs forusing `ContextMenu` feature)
 * [jQuery](https://github.com/jquery/jquery/tree/1.12-stable) >= 1.11.0 (Optional, needs for using `Ajax` feature)
 
