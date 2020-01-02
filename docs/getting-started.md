@@ -1,43 +1,52 @@
-## Load files
+## Install
 
-```html
-<html>
-    <head>
-        ....
-        <link href="tui-tree.css" rel="stylesheet">
-    </head>
-    <body>
-        ....
-        <script type="text/javascript" src="tui-tree.js"></script>
-    </body>
-</html>
+``` sh
+# npm
+$ npm install --save tui-tree # Latest version
+$ npm install --save tui-tree@<version> # Specific version
 ```
 
-## Write a wrapper element
+It can also be installed by using bower or downloaded by CDN. Please refer to the [💾 Install](https://github.com/nhn/tui.tree#-install).
+
+## Usage
+
+### Write a wrapper element
+
+A wrapper element should have `tui-tree-wrapper` as a class name to apply tui-tree's style.
 
 ```html
 <div id="tree" class="tui-tree-wrap"></div>
 ```
 
-## Create instance
+### Import a component
+
+```javascript
+// ES6
+import Tree from 'tui-tree';
+import 'tui-tree/dist/tui-tree.css';
+```
+
+It can also be used by namespace or CommonJS module. Please refer to the [🔨 Usage](https://github.com/nhn/tui.pagination#-usage).
+
+### Create an instance
 
 * Create with the id selector of the container element
 
 ```js
-var tree = new tui.Tree('tree', options);
+const tree = new Tree('tree', options);
 ```
 
 * Create with a container element
 
 ```js
-var container = document.getElementById('tree');
-var tree = new tui.Tree(container, options);
+const container = document.getElementById('tree');
+const tree = new Tree(container, options);
 ```
 
 * Create with options
 
 ```js
-var options = {
+const options = {
     data: [],
     nodeIdPrefix: 'tui-tree-node-',
     nodeDefaultState: 'closed',
@@ -66,16 +75,15 @@ var options = {
                 '</span>' +
             '</div>'
     },
-    renderTemplate: function(tmpl, props) {
-        // Mustache template engine
-        return Mustache.render(tmpl, props);
-    }
+    renderTemplate: (tmpl, props) => Mustache.render(tmpl, props) // Mustache template engine
 };
 
-var tree = new tui.Tree('tree', options);
+const tree = new Tree('tree', options);
 ```
 
 ## Options
+
+Information about each option is as follows:
 
 |Name|Type|Description|
 |---|---|---|
@@ -151,7 +159,7 @@ var data = [
 You can customize each tree node's contents using `template` and `renderTemplate` options.
 `template` option is override default template string.
 `renderTemplate` option can process template using a template engine like [mustache.js](https://github.com/janl/mustache.js/).
-tui.tree uses [tui-code-snippet's template](https://nhn.github.io/tui.code-snippet/latest/domUtil#template) as default template engine.
+tui.tree uses [tui-code-snippet's template](https://nhn.github.io/tui.code-snippet/2.2.0/domUtil#template) as default template engine.
 
 This example show how to replace node's contents having children by a template engine.
 
@@ -171,4 +179,4 @@ This example show how to replace node's contents having children by a template e
 }
 ```
 
-For more information, see [the example page](https://nhn.github.io/tui.tree/latest/tutorial-example01-basic).
+For more information about the API, please see [here](https://nhn.github.io/tui.tree/latest/Tree).

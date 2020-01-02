@@ -32,11 +32,11 @@ It also serves as important index to determine the future course of projects.
 `location.hostname` (e.g. > “ui.toast.com") is to be collected and the sole purpose is nothing but to measure statistics on the usage.
  To disable GA, use the following `usageStatistics` option when creating the instance.
  ```js
-var options = {
+const options = {
     ...
     usageStatistics: false
 }
-var instance = new Tree(container, options);
+const instance = new Tree(container, options);
 ```
 
 Or, include [`tui-code-snippet`](https://github.com/nhn/tui.code-snippet)(**v2.2.0** or **later**) and then immediately write the options as follows:
@@ -119,9 +119,10 @@ The CDN directory has the following structure.
 ```
 tui-tree/
 ├─ latest/
+│  ├─ tui-tree.css
 │  ├─ tui-tree.js
-│  ├─ tui-tree.min.js
-│  └─ tui-tree.css
+│  ├─ tui-tree.min.css
+│  └─ tui-tree.min.js
 ├─ v3.3.0/
 │  ├─ ...
 ```
@@ -135,10 +136,10 @@ tui-tree/
 
 ### HTML
 
-Add the container element to create the component.
+Add the container element to create the component. A wrapper element should have `tui-tree-wrap` as a class name to apply tui-tree's style.
 
 ``` html
-<div id="tui-tree-container" class="tui-tree-wrap"></div>
+<div id="tree" class="tui-tree-wrap"></div>
 ```
 
 ### JavaScript
@@ -148,23 +149,23 @@ To get the constructor function, you should import the module using one of the f
 
 #### Using namespace in browser environment
 ``` javascript
-var Tree = tui.Tree;
+const Tree = tui.Tree;
 ```
 
 #### Using module format in node environment
 ``` javascript
-var Tree = require('tui-tree'); /* CommonJS */
+const Tree = require('tui-tree'); /* CommonJS */
 ```
 
 ``` javascript
-import {Tree} from 'tui-tree'; /* ES6 */
+import Tree from 'tui-tree'; /* ES6 */
 ```
 
 You can create an instance with [options](https://nhn.github.io/tui.tree/latest/Tree) and call various APIs after creating an instance.
 
 ``` javascript
-var container = document.getElementById('tui-tree-container');
-var instance = new Tree(container, { ... });
+const container = document.getElementById('tree');
+const instance = new Tree(container, { ... });
 
 instance.add( ... );
 ```
@@ -173,9 +174,9 @@ For more information about the API, please see [here](https://nhn.github.io/tui.
 
 
 ## 🔩 Dependency
-* [tui-code-snippet](https://github.com/nhn/tui.code-snippet) >= 2.2.0
-* [tui-context-menu](https://github.com/nhn/tui.context-menu) >= 2.1.6 (Optional, needs forusing `ContextMenu` feature)
-* [jQuery](https://github.com/jquery/jquery/tree/1.12-stable) >= 1.11.0 (Optional, needs for using `Ajax` feature)
+* [tui-code-snippet](https://github.com/nhn/tui.code-snippet) >=2.2.0
+* [tui-context-menu](https://github.com/nhn/tui.context-menu) >=2.1.6 (Optional, needs forusing `ContextMenu` feature)
+* [jQuery](https://github.com/jquery/jquery/tree/1.12-stable) >=1.11.0 (Optional, needs for using `Ajax` feature)
 
 
 ## 🌏 Browser Support
