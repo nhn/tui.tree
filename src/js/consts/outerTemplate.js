@@ -1,4 +1,3 @@
-/* eslint-disable no-useless-concat */
 /**
  * @fileoverview Set outer template
  * @author NHN. FE dev Lab <dl_javascript@nhn.com>

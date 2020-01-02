@@ -1,6 +1,6 @@
 var Tree = require('../../src/js/tree');
 
-describe('Tree', function() {
+describe('editable feature', function() {
   var tree, treeEditable, rootNodeId;
   var firstChildId, lastChildId;
   var firstChildElement;

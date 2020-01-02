@@ -48,7 +48,6 @@ var features = {
 var TIMEOUT_TO_DIFFERENTIATE_CLICK_AND_DBLCLICK = 200;
 var MOUSE_MOVING_THRESHOLD = 5;
 
-// TODO: specify tui-code-snippet's version (package.json)
 /**
  * Create tree model and inject data to model
  * @class Tree
@@ -63,7 +62,7 @@ var MOUSE_MOVING_THRESHOLD = 5;
  *     @param {Object} [options.template] A markup set to make element
  *         @param {string} [options.template.internalNode] HTML template
  *         @param {string} [options.template.leafNode] HTML template
- *     @param {Function} [options.renderTemplate] Function for rendering template. Default is {@link https://nhn.github.io/tui.code-snippet/latest/domUtil#template template in the tui-code-snippet}.
+ *     @param {Function} [options.renderTemplate] Function for rendering template. Default is {@link https://nhn.github.io/tui.code-snippet/2.2.0/domUtil#template template in the tui-code-snippet}.
  *     @param {boolean} [options.usageStatistics=true] - Let us know the hostname. If you don't want to send the hostname, please set to false.
  * @example <caption>Get `Tree` module</caption>
  * // * node, commonjs
@@ -233,7 +232,7 @@ var Tree = defineClass(
       /**
        * Render template
        * It can be overrode by user's template engine.
-       * Default: tui-code-snippet/domUtil/template {@link https://nhn.github.io/tui.code-snippet/latest/domUtil#template}
+       * Default: tui-code-snippet/domUtil/template {@link https://nhn.github.io/tui.code-snippet/2.2.0/domUtil#template}
        * @type {Function}
        * @private
        */
@@ -380,7 +379,6 @@ var Tree = defineClass(
         clientY = downEvent.clientY,
         abs = Math.abs;
 
-      /* eslint-disable require-jsdoc */
       function onMouseMove(moveEvent) {
         var newClientX = moveEvent.clientX,
           newClientY = moveEvent.clientY;
@@ -405,7 +403,6 @@ var Tree = defineClass(
           self.fire('mouseup', event);
         }
       }
-      /* eslint-enable require-jsdoc */
 
       this._mouseMovingFlag = false;
       this.fire('mousedown', downEvent);
@@ -547,8 +544,7 @@ var Tree = defineClass(
      * @param {Array.<string>} nodeIds - Node id list
      * @returns {string} HTML
      * @private
-     * @see https://nhn.github.io/tui.code-snippet/latest/domUtil#template
-     * TODO: specify tui-code-snippet's version (package.json)
+     * @see https://nhn.github.io/tui.code-snippet/2.2.0/domUtil#template
      */
     _makeHtml: function(nodeIds) {
       var model = this.model,
@@ -870,7 +866,6 @@ var Tree = defineClass(
      * tree.setNodeData(nodeId, {foo: 'bar'}, true); // not refresh
      */
     setNodeData: function(nodeId, data, options) {
-      var self = this;
       var treeAjax = this.enabledFeatures.Ajax;
       var useAjax = options ? options.useAjax : !!treeAjax;
       var isSilent = options ? options.isSilent : false;
@@ -878,9 +873,9 @@ var Tree = defineClass(
       if (useAjax) {
         treeAjax.loadData(
           ajaxCommand.UPDATE,
-          function() {
-            self._setNodeData(nodeId, data);
-          },
+          util.bind(function() {
+            this._setNodeData(nodeId, data);
+          }, this),
           {
             nodeId: nodeId,
             data: data,
@@ -915,7 +910,6 @@ var Tree = defineClass(
      * tree.setNodeData(nodeId, 'foo', true); // not refresh
      */
     removeNodeData: function(nodeId, names, options) {
-      var self = this;
       var treeAjax = this.enabledFeatures.Ajax;
       var useAjax = options ? options.useAjax : !!treeAjax;
       var isSilent = options ? options.isSilent : false;
@@ -923,9 +917,9 @@ var Tree = defineClass(
       if (useAjax) {
         treeAjax.loadData(
           ajaxCommand.UPDATE,
-          function() {
-            self._removeNodeData(nodeId, names);
-          },
+          util.bind(function() {
+            this._removeNodeData(nodeId, names);
+          }, this),
           {
             nodeId: nodeId,
             names: names,
@@ -1207,7 +1201,6 @@ var Tree = defineClass(
      * console.log(secondAddedIds); // ["tui-tree-node-11", "tui-tree-node-12"]
      */
     add: function(data, parentId, options) {
-      var self = this;
       var treeAjax = this.enabledFeatures.Ajax;
       var useAjax = options ? options.useAjax : !!treeAjax;
       var isSilent = options ? options.isSilent : false;
@@ -1216,9 +1209,9 @@ var Tree = defineClass(
       if (useAjax) {
         treeAjax.loadData(
           ajaxCommand.CREATE,
-          function() {
-            return self._add(data, parentId);
-          },
+          util.bind(function() {
+            return this._add(data, parentId);
+          }, this),
           {
             parentId: parentId,
             data: data
@@ -1268,7 +1261,6 @@ var Tree = defineClass(
      * });
      */
     resetAllData: function(data, options) {
-      var self = this;
       var treeAjax = this.enabledFeatures.Ajax;
       var nodeId = options ? options.nodeId : this.getRootNodeId();
       var useAjax = options ? options.useAjax : !!treeAjax;
@@ -1277,9 +1269,9 @@ var Tree = defineClass(
       if (useAjax) {
         treeAjax.loadData(
           ajaxCommand.READ,
-          function(response) {
-            return self._resetAllData(response, nodeId);
-          },
+          util.bind(function(response) {
+            return this._resetAllData(response, nodeId);
+          }, this),
           {
             nodeId: nodeId
           }
@@ -1317,7 +1309,6 @@ var Tree = defineClass(
      * tree.removeAllChildren(nodId, true); // Doesn't redraw the node
      */
     removeAllChildren: function(nodeId, options) {
-      var self = this;
       var treeAjax = this.enabledFeatures.Ajax;
       var useAjax = options ? options.useAjax : !!treeAjax;
       var isSilent = options ? options.isSilent : false;
@@ -1325,9 +1316,9 @@ var Tree = defineClass(
       if (useAjax) {
         treeAjax.loadData(
           ajaxCommand.DELETE_ALL_CHILDREN,
-          function() {
-            self._removeAllChildren(nodeId);
-          },
+          util.bind(function() {
+            this._removeAllChildren(nodeId);
+          }, this),
           {
             parentId: nodeId
           }
@@ -1371,7 +1362,6 @@ var Tree = defineClass(
      * tree.remove(myNodeId, true); // remove node without redrawing
      */
     remove: function(nodeId, options) {
-      var self = this;
       var treeAjax = this.enabledFeatures.Ajax;
       var useAjax = options ? options.useAjax : !!treeAjax;
       var isSilent = options ? options.isSilent : false;
@@ -1379,9 +1369,9 @@ var Tree = defineClass(
       if (useAjax) {
         treeAjax.loadData(
           ajaxCommand.DELETE,
-          function() {
-            self._remove(nodeId);
-          },
+          util.bind(function() {
+            this._remove(nodeId);
+          }, this),
           {
             nodeId: nodeId
           }
@@ -1416,7 +1406,6 @@ var Tree = defineClass(
      * tree.move(myNodeId, newParentId, true); // move node without redrawing
      */
     move: function(nodeId, newParentId, index, options) {
-      var self = this;
       var treeAjax = this.enabledFeatures.Ajax;
       var useAjax = options ? options.useAjax : !!treeAjax;
       var isSilent = options ? options.isSilent : false;
@@ -1424,10 +1413,10 @@ var Tree = defineClass(
       if (useAjax) {
         treeAjax.loadData(
           ajaxCommand.MOVE,
-          function() {
-            if (self.getParentId(nodeId) !== newParentId) {
+          util.bind(function() {
+            if (this.getParentId(nodeId) !== newParentId) {
               // just move, not sort!
-              self.setNodeData(
+              this.setNodeData(
                 newParentId,
                 {
                   reload: true
@@ -1435,8 +1424,8 @@ var Tree = defineClass(
                 true
               );
             }
-            self._move(nodeId, newParentId, index);
-          },
+            this._move(nodeId, newParentId, index);
+          }, this),
           {
             nodeId: nodeId,
             newParentId: newParentId,

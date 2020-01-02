@@ -147,7 +147,7 @@ describe('Tree', function() {
         lastDepthNode = tree.model.getNode(lastDepthId);
       });
 
-      it('"open()" use recursive option should change the state of all parent nodes to "open"', function() {
+      it('"open()" using recursive option should change the state of all parent nodes to "open"', function() {
         tree.open(lastDepthId, true);
 
         expect(oneDepthNode.getState()).toBe('opened');
@@ -155,7 +155,7 @@ describe('Tree', function() {
         expect(lastDepthNode.getState()).toBe('opened');
       });
 
-      it('"close()" use recursive option should change the state of all children nodes to "close"', function() {
+      it('"close()" using recursive option should change the state of all children nodes to "close"', function() {
         tree.open(tree.model.rootNode.getChildIds()[0]);
         tree.open(oneDepthNode.getChildIds()[4]);
         tree.open(twoDepthNode.getChildIds()[0]);
@@ -308,7 +308,7 @@ describe('Tree', function() {
       expect(prevNodeIdx).toEqual(1);
     });
 
-    it('When "resetAllData()" have nodeId parameter, it should reset children data of nodeId', function() {
+    it('it should reset children data of nodeId when "resetAllData()" have nodeId parameter', function() {
       var testData = [{text: 'A'}, {text: 'B'}];
       var nodeId = tree.getChildIds(tree.getRootNodeId())[0];
       var newChildIds = tree.resetAllData(testData, nodeId);

@@ -189,7 +189,7 @@ describe('TreeModel', function() {
     expect(treeModel.getNode(grandChildId).getParentId()).toEqual(rootId);
   });
 
-  it('getParentIds should return an array of parent nodes of that node.', function() {
+  it('getParentIds should return an array of parent nodes of that node', function() {
     var rootNodeId = treeModel.rootNode.getId();
     var oneDepthId = treeModel.rootNode.getChildIds()[0];
     var twoDepthId = treeModel.getNode(oneDepthId).getChildIds()[4];

@@ -1,4 +1,3 @@
-/* eslint-disable no-useless-concat */
 var util = require('../src/js/util.js');
 
 describe('Util', function() {
@@ -13,7 +12,7 @@ describe('Util', function() {
     expect(arr).toEqual([1, 2, 5]);
   });
 
-  it('"getFirstText" should return first text of element.', function() {
+  it('"getFirstText" should return first text of element', function() {
     var element = document.createElement('div');
     var firstTextNode;
 

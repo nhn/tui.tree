@@ -362,10 +362,9 @@ var Draggable = defineClass(
       }
 
       this._setClassNameOnDragItem('add');
-      this._changeHelperPosition(mousePos); // TODO: test Failed
+      this._changeHelperPosition(mousePos);
 
       nodeId = this.tree.getNodeIdFromElement(target);
-
       if (nodeId) {
         this._applyMoveAction(nodeId, mousePos);
       }

@@ -153,14 +153,13 @@ var Checkbox = defineClass(
      * @param {HTMLElement} target - Label element
      */
     _changeCustomCheckbox: function(target) {
-      var self = this;
       var nodeId = this.tree.getNodeIdFromElement(target);
       var inputElement = target.getElementsByTagName('input')[0];
 
-      once(inputElement, 'change propertychange', function() {
-        var state = self._getStateFromCheckbox(inputElement);
-        self._continuePostprocessing(nodeId, state);
-      });
+      once(inputElement, 'change propertychange', util.bind(function() {
+        var state = this._getStateFromCheckbox(inputElement);
+        this._continuePostprocessing(nodeId, state);
+      }, this));
     },
 
     /**

@@ -160,12 +160,10 @@ var TreeModel = defineClass(
     getCount: function() {
       var treeHash = this.treeHash;
       var length = 0;
-      var node;
 
-      // eslint-disable-next-line guard-for-in
-      for (node in treeHash) {
-        length += treeHash.hasOwnProperty(node);
-      }
+      forEachOwnProperties(treeHash, function() {
+        length += 1;
+      });
 
       return length;
     },

@@ -12,7 +12,7 @@ describe('TreeNode', function() {
     node = new TreeNode(data, parentId);
   });
 
-  it('Set/Get/Toggle state', function() {
+  it('should set/get/toggle its state', function() {
     expect(node.getState()).toEqual('closed');
 
     node.setState('opened');
@@ -25,7 +25,7 @@ describe('TreeNode', function() {
     expect(node.getState()).toEqual('closed');
   });
 
-  it('Add/Remove/Replace childId(s)', function() {
+  it('should add/remove/replace by childId(s)', function() {
     node.addChildId(4);
     expect(node.getChildIds()).toContain(4);
 
@@ -36,7 +36,7 @@ describe('TreeNode', function() {
     expect(node.getChildIds()).toEqual([4, 5, 6]);
   });
 
-  it('Add/Remove node data', function() {
+  it('should add/remove a node by data', function() {
     expect(node.getAllData()).toEqual(
       jasmine.objectContaining({
         title: 'My node'
@@ -77,13 +77,13 @@ describe('TreeNode', function() {
     expect(node.getId()).toContain('new-tree-node-');
   });
 
-  it('children property in "setData" will be ignored', function() {
+  it('children property in "setData" should be ignored', function() {
     node.setData({children: []});
 
     expect(node.getData('children')).toBeUndefined();
   });
 
-  it('"getChildIndex()" should return index number of child node.', function() {
+  it('"getChildIndex()" should return index number of child node', function() {
     var index;
 
     node.replaceChildIds(['1', '2', '3']);
@@ -93,7 +93,7 @@ describe('TreeNode', function() {
     expect(index).toEqual(1);
   });
 
-  it('"insertChildId()" add the node id in the position corresponding to the index .', function() {
+  it('"insertChildId()" should add the node id in the position corresponding to the index ', function() {
     var ids;
 
     node.replaceChildIds(['node-a', 'node-b', 'node-c']);
@@ -104,7 +104,7 @@ describe('TreeNode', function() {
     expect(ids).toEqual(['node-a', 'node-d', 'node-b', 'node-c']);
   });
 
-  it('"moveChildId()" changes the node id position.', function() {
+  it('"moveChildId()" should change the node id position', function() {
     var ids;
 
     node.replaceChildIds(['node-a', 'node-b', 'node-c', 'node-d']);

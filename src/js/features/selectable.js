@@ -97,7 +97,7 @@ var Selectable = defineClass(
     },
 
     /* eslint-disable valid-jsdoc */
-    /* Ignore "target" parameter annotation for API page
+    /* Ignore "target" parameter annotation for API page // TODO: question
        "tree.select(nodeId)"
      */
 

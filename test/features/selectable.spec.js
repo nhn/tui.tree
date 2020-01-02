@@ -3,7 +3,7 @@ var hasClass = require('tui-code-snippet/domUtil/hasClass');
 var Tree = require('../../src/js/tree'),
   messages = require('../../src/js/consts/messages');
 
-describe('Tree', function() {
+describe('selectable feature', function() {
   var data = [
     {
       title: 'A',
@@ -151,7 +151,7 @@ describe('Tree', function() {
       expect(tree.getSelectedNodeId()).toEqual(targetId);
     });
 
-    it('deselect() should reset node state after selecting.', function() {
+    it('deselect() should reset node state after selecting', function() {
       var nodeId = rootElement.querySelectorAll('.tui-tree-node')[0].id;
       var className = treeSelection.selectedClassName;
       var selectedNode;
@@ -164,7 +164,7 @@ describe('Tree', function() {
       expect(hasClass(selectedNode, className)).toBe(false);
     });
 
-    it('deselect() should invoke "deselect" event.', function() {
+    it('deselect() should invoke "deselect" event', function() {
       var nodeId = rootElement.querySelector('.tui-tree-node').id;
       var handler = jasmine.createSpy();
 
@@ -175,7 +175,7 @@ describe('Tree', function() {
       expect(handler).toHaveBeenCalled();
     });
 
-    it('deselect() should not invoke "deselect" event when node is removed.', function() {
+    it('deselect() should not invoke "deselect" event when node is removed', function() {
       var nodeId = rootElement.querySelector('.tui-tree-node').id;
       var handler = jasmine.createSpy();
 

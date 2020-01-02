@@ -4,7 +4,7 @@ var Tree = require('../../src/js/tree'),
   messages = require('../../src/js/consts/messages'),
   Checkbox = require('../../src/js/features/checkbox');
 
-describe('Tree', function() {
+describe('checkbox feature', function() {
   var data = [
     {
       title: 'A',
@@ -223,14 +223,14 @@ describe('Tree', function() {
       this.childIds = tree.getChildIds(this.firstChildId);
     });
 
-    it('should children remain unchecked even if parents are checked.', function() {
+    it('should children remain unchecked even if parents are checked', function() {
       tree.check(this.firstChildId);
       tree.each(function(node, nodeId) {
         expect(tree.isChecked(nodeId)).toBe(false);
       }, this.firstChildId);
     });
 
-    it('should be not indeterminate even if some children are checked', function() {
+    it('should not be indeterminate even if some children are checked', function() {
       tree.check(this.childIds[0]);
       expect(tree.isIndeterminate(this.firstChildId)).toBe(false);
     });
@@ -246,7 +246,7 @@ describe('Tree', function() {
       this.childIds = tree.getChildIds(this.firstChildId);
     });
 
-    it('should children remain unchecked even if parents are checked.', function() {
+    it('should children remain unchecked even if parents are checked', function() {
       tree.check(this.firstChildId);
       tree.each(function(node, nodeId) {
         expect(tree.isChecked(nodeId)).toBe(false);
@@ -276,7 +276,7 @@ describe('Tree', function() {
       }, this.firstChildId);
     });
 
-    it('should be not indeterminate even if some children are checked', function() {
+    it('should not be indeterminate even if some children are checked', function() {
       tree.check(this.childIds[0]);
       expect(tree.isIndeterminate(this.firstChildId)).toBe(false);
     });

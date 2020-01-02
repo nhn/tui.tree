@@ -109,7 +109,6 @@ var Ajax = defineClass(
      * @param {Object} [params] - Values to make "data" property using request
      */
     loadData: function(type, callback, params) {
-      var self = this;
       var options;
 
       if (!this.command || !this.command[type] || !this.command[type].url) {
@@ -141,13 +140,13 @@ var Ajax = defineClass(
 
       this._showLoader();
 
-      options.success = function(response) {
-        self._responseSuccess(type, callback, response);
-      };
+      options.success = bind(function(response) {
+        this._responseSuccess(type, callback, response);
+      }, this);
 
-      options.error = function() {
-        self._responseError(type);
-      };
+      options.error = bind(function() {
+        this._responseError(type);
+      }, this);
 
       $.ajax(options);
     },

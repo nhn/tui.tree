@@ -1,7 +1,7 @@
 var Tree = require('../../src/js/tree');
 var TuiContextMenu = require('tui-context-menu');
 
-describe('contextMenu.js', function() {
+describe('contextMenu feature', function() {
   var rootElement, tree, contextMenu, menuData;
   var data = [
     {
@@ -57,7 +57,7 @@ describe('contextMenu.js', function() {
   });
 
   describe('When _generateContextMenu() is called,', function() {
-    it('new floating layer is generarated.', function() {
+    it('new floating layer should be generarated', function() {
       contextMenu.flElement = null;
 
       spyOn(contextMenu, '_createFloatingLayer');
@@ -67,14 +67,14 @@ describe('contextMenu.js', function() {
       expect(contextMenu._createFloatingLayer).toHaveBeenCalled();
     });
 
-    it('generates and returns instance of ContextMenu.', function() {
+    it('should generate and return instance of ContextMenu', function() {
       var menu = contextMenu._generateContextMenu();
 
       expect(menu instanceof TuiContextMenu).toEqual(true);
     });
   });
 
-  it('When "contextmenu" event is fired, id of selected tree item set value.', function() {
+  it('id of selected tree item should set value when "contextmenu" event is fired', function() {
     var target = rootElement.querySelector('li');
     var nodeId = target.getAttribute('id');
 
@@ -87,7 +87,7 @@ describe('contextMenu.js', function() {
     expect(contextMenu.selectedNodeId).toEqual(nodeId);
   });
 
-  it('When the context menu is selected, custom event as "selectContextMenu" is fired.', function() {
+  it('custom event as "selectContextMenu" should be fired when the context menu is selected', function() {
     var spyListener = jasmine.createSpy();
     var mock = {
       cmd: 'test',
@@ -107,7 +107,7 @@ describe('contextMenu.js', function() {
       tree.disableFeature('ContextMenu');
     });
 
-    it('events are removed.', function() {
+    it('events should be removed', function() {
       var spyListener = jasmine.createSpy();
 
       tree.on('selectContextMenu', spyListener);
@@ -115,7 +115,7 @@ describe('contextMenu.js', function() {
       expect(spyListener).not.toHaveBeenCalled();
     });
 
-    it('text selection property restore.', function() {
+    it('text selection property should restore', function() {
       expect(contextMenu._restoreTextSelection).toHaveBeenCalled();
     });
   });
