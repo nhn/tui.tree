@@ -7,26 +7,26 @@ describe('contextMenu feature', function() {
     {
       text: 'A',
       children: [
-        {text: '1'},
-        {text: '2'},
-        {text: '3'},
-        {text: '4'},
+        { text: '1' },
+        { text: '2' },
+        { text: '3' },
+        { text: '4' },
         {
           text: '5',
-          children: [{text: '가', children: [{text: '*'}]}, {text: '나'}]
+          children: [{ text: '가', children: [{ text: '*' }] }, { text: '나' }]
         },
-        {text: '6'},
-        {text: '7'},
-        {text: '8'},
-        {text: '9', children: [{text: '가'}, {text: '나'}]},
-        {text: '10'},
-        {text: '11'},
-        {text: '12'}
+        { text: '6' },
+        { text: '7' },
+        { text: '8' },
+        { text: '9', children: [{ text: '가' }, { text: '나' }] },
+        { text: '10' },
+        { text: '11' },
+        { text: '12' }
       ]
     },
     {
       text: 'B',
-      children: [{text: '1'}, {text: '2'}, {text: '3'}, {text: '4'}, {text: '5'}]
+      children: [{ text: '1' }, { text: '2' }, { text: '3' }, { text: '4' }, { text: '5' }]
     }
   ];
 
@@ -39,11 +39,11 @@ describe('contextMenu feature', function() {
     });
 
     menuData = [
-      {title: 'menu1'},
-      {title: 'menu2'},
+      { title: 'menu1' },
+      { title: 'menu2' },
       {
         title: 'menu3',
-        menu: [{title: 'submenu1'}, {title: 'submenu2'}]
+        menu: [{ title: 'submenu1' }, { title: 'submenu2' }]
       }
     ];
 
@@ -90,7 +90,8 @@ describe('contextMenu feature', function() {
   it('custom event as "selectContextMenu" should be fired when the context menu is selected', function() {
     var spyListener = jasmine.createSpy();
     var mock = {
-      cmd: 'test',
+      cmd: 'test', // TODO: deprecate in v4.0
+      command: 'test',
       nodeId: null
     };
 

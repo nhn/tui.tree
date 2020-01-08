@@ -64,8 +64,8 @@ var TreeModel = defineClass(
      * @param {Array} data - Tree data
      */
     _setData: function(data) {
-      var root = this.rootNode,
-        rootId = root.getId();
+      var root = this.rootNode;
+      var rootId = root.getId();
 
       this.treeHash[rootId] = root;
       this._makeTreeHash(data, root);
@@ -79,15 +79,15 @@ var TreeModel = defineClass(
      * @private
      */
     _makeTreeHash: function(data, parent) {
-      var parentId = parent.getId(),
-        ids = [];
+      var parentId = parent.getId();
+      var ids = [];
 
       forEachArray(
         data || [],
         function(datum) {
-          var childrenData = datum.children,
-            node = this._createNode(datum, parentId),
-            nodeId = node.getId();
+          var childrenData = datum.children;
+          var node = this._createNode(datum, parentId);
+          var nodeId = node.getId();
 
           ids.push(nodeId);
           this.treeHash[nodeId] = node;
@@ -199,9 +199,9 @@ var TreeModel = defineClass(
      * @returns {?number} Depth
      */
     getDepth: function(id) {
-      var node = this.getNode(id),
-        depth = 0,
-        parent;
+      var node = this.getNode(id);
+      var depth = 0;
+      var parent;
 
       if (!node) {
         return null;
@@ -257,8 +257,8 @@ var TreeModel = defineClass(
      * @param {boolean} [isSilent] - If true, it doesn't trigger the 'update' event
      */
     remove: function(id, isSilent) {
-      var node = this.getNode(id),
-        parent;
+      var node = this.getNode(id);
+      var parent;
 
       if (!node) {
         return;
@@ -292,8 +292,8 @@ var TreeModel = defineClass(
      * @returns {Array.<string>} New added node ids
      */
     add: function(data, parentId, isSilent) {
-      var parent = this.getNode(parentId) || this.rootNode,
-        ids;
+      var parent = this.getNode(parentId) || this.rootNode;
+      var ids;
 
       data = [].concat(data);
       ids = this._makeTreeHash(data, parent);
@@ -417,8 +417,8 @@ var TreeModel = defineClass(
      * @returns {boolean} Whether a node contains another node
      */
     contains: function(containerId, containedId) {
-      var parentId = this.getParentId(containedId),
-        isContained = false;
+      var parentId = this.getParentId(containedId);
+      var isContained = false;
 
       while (!isContained && parentId) {
         isContained = containerId === parentId;

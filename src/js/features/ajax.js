@@ -104,24 +104,26 @@ var Ajax = defineClass(
 
     /**
      * Load data to request server
-     * @param {string} type - Command type
+     * @param {string} command - Command type
      * @param {Function} callback - Executed function after response
-     * @param {Object} [params] - Values to make "data" property using request
+     * @param {Object} [data] - Values to make "data" property using request
      */
-    loadData: function(type, callback, params) {
+    loadData: function(command, callback, data) {
       var options;
 
-      if (!this.command || !this.command[type] || !this.command[type].url) {
+      if (!this.command || !this.command[command] || !this.command[command].url) {
         return;
       }
 
-      options = this._getDefaultRequestOptions(type, params);
+      options = this._getDefaultRequestOptions(command, data);
 
       /**
        * @event Tree#beforeAjaxRequest
        * @type {object} evt - Event data
        * @property {string} command - Command type
+       * @property {string} type - Command type. It will be deprecated since version 4.0
        * @property {object} [data] - Request data
+       * @property {object} [params] - Request data. It will be deprecated since version 4.0
        * @example
        * tree.on('beforeAjaxRequest', function(evt) {
        *     console.log('before ' + evt.command + ' request!');
@@ -131,8 +133,10 @@ var Ajax = defineClass(
        */
       if (
         !this.tree.invoke('beforeAjaxRequest', {
-          type: type, // TODO: change to `command`
-          params: params
+          type: command, // TODO: deprecate in v4.0
+          params: data, // TODO: deprecate in v4.0
+          command: command,
+          data: data
         })
       ) {
         return;
@@ -141,11 +145,11 @@ var Ajax = defineClass(
       this._showLoader();
 
       options.success = bind(function(response) {
-        this._responseSuccess(type, callback, response);
+        this._responseSuccess(command, callback, response);
       }, this);
 
       options.error = bind(function() {
-        this._responseError(type);
+        this._responseError(command);
       }, this);
 
       $.ajax(options);
@@ -153,19 +157,19 @@ var Ajax = defineClass(
 
     /**
      * Processing when response is success
-     * @param {string} type - Command type
+     * @param {string} command - Command type
      * @param {Function} callback - Executed function after response
      * @param {Object|boolean} [response] - Response data from server or return value of "parseData"
      * @private
      */
-    _responseSuccess: function(type, callback, response) {
+    _responseSuccess: function(command, callback, response) {
       var tree = this.tree;
       var data;
 
       this._hideLoader();
 
       if (this.parseData) {
-        response = this.parseData(type, response);
+        response = this.parseData(command, response);
       }
 
       if (response) {
@@ -175,6 +179,7 @@ var Ajax = defineClass(
          * @event Tree#successAjaxResponse
          * @type {object} evt - Event data
          * @property {string} command - Command type
+         * @property {string} type - Command type. It will be deprecated since version 4.0
          * @property {object} [data] - Return value of executed command callback
          * @example
          * tree.on('successAjaxResponse', function(evt) {
@@ -185,7 +190,8 @@ var Ajax = defineClass(
          * });
          */
         tree.fire('successAjaxResponse', {
-          type: type, // TODO: change to `command`
+          type: command, // TODO: deprecate in v4.0
+          command: command,
           data: data
         });
       } else {
@@ -193,33 +199,41 @@ var Ajax = defineClass(
          * @event Tree#failAjaxResponse
          * @type {object} evt - Event data
          * @property {string} command - Command type
+         * @property {string} type - Command type. It will be deprecated since version 4.0
          * @example
          * tree.on('failAjaxResponse', function(evt) {
          *     console.log(evt.command + ' response is fail!');
          * });
          */
-        tree.fire('failAjaxResponse', {type: type}); // TODO: change to `command`
+        tree.fire('failAjaxResponse', {
+          type: command, // TODO: deprecate in v4.0
+          command: command
+        });
       }
     },
 
     /**
      * Processing when response is error
-     * @param {string} type - Command type
+     * @param {string} command - Command type
      * @private
      */
-    _responseError: function(type) {
+    _responseError: function(command) {
       this._hideLoader();
 
       /**
        * @event Tree#errorAjaxResponse
        * @type {object} evt - Event data
        * @property {string} command - Command type
+       * @property {string} type - Command type. It will be deprecated since version 4.0
        * @example
        * tree.on('errorAjaxResponse', function(evt) {
        *     console.log(evt.command + ' response is error!');
        * });
        */
-      this.tree.fire('errorAjaxResponse', {type: type}); // TODO: change to `command`
+      this.tree.fire('errorAjaxResponse', {
+        type: command, // TODO: deprecate in v4.0
+        command: command
+      });
     },
 
     /**

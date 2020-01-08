@@ -27,19 +27,19 @@ var API_LIST = [
 ];
 
 /* Checkbox tri-states */
-var STATE_CHECKED = 1,
-  STATE_UNCHECKED = 2,
-  STATE_INDETERMINATE = 3,
-  DATA_KEY_FOR_CHECKBOX_STATE = '__CheckBoxState__',
-  DATA = {},
-  CHECKED_CLASSNAME = 'tui-is-checked',
-  INDETERMINATE_CLASSNAME = 'tui-checkbox-root';
+var STATE_CHECKED = 1;
+var STATE_UNCHECKED = 2;
+var STATE_INDETERMINATE = 3;
+var DATA_KEY_FOR_CHECKBOX_STATE = '__CheckBoxState__';
+var DATA = {};
+var CHECKED_CLASSNAME = 'tui-is-checked';
+var INDETERMINATE_CLASSNAME = 'tui-checkbox-root';
 
 /* Checkbox cascade-states */
-var CASCADE_UP = 'up',
-  CASCADE_DOWN = 'down',
-  CASCADE_BOTH = 'both',
-  CASCADE_NONE = false;
+var CASCADE_UP = 'up';
+var CASCADE_DOWN = 'down';
+var CASCADE_BOTH = 'both';
+var CASCADE_NONE = false;
 
 /**
  * Set the checkbox-api
@@ -156,10 +156,14 @@ var Checkbox = defineClass(
       var nodeId = this.tree.getNodeIdFromElement(target);
       var inputElement = target.getElementsByTagName('input')[0];
 
-      once(inputElement, 'change propertychange', util.bind(function() {
-        var state = this._getStateFromCheckbox(inputElement);
-        this._continuePostprocessing(nodeId, state);
-      }, this));
+      once(
+        inputElement,
+        'change propertychange',
+        util.bind(function() {
+          var state = this._getStateFromCheckbox(inputElement);
+          this._continuePostprocessing(nodeId, state);
+        }, this)
+      );
     },
 
     /**
@@ -230,9 +234,9 @@ var Checkbox = defineClass(
      * @private
      */
     _getState: function(nodeId) {
-      var tree = this.tree,
-        state = tree.getNodeData(nodeId)[DATA_KEY_FOR_CHECKBOX_STATE],
-        checkbox;
+      var tree = this.tree;
+      var state = tree.getNodeData(nodeId)[DATA_KEY_FOR_CHECKBOX_STATE];
+      var checkbox;
 
       if (!state) {
         checkbox = this._getCheckboxElement(nodeId);
@@ -274,9 +278,9 @@ var Checkbox = defineClass(
      * @private
      */
     _continuePostprocessing: function(nodeId, state, stopPropagation) {
-      var tree = this.tree,
-        checkedList = this.checkedList,
-        eventName;
+      var tree = this.tree;
+      var checkedList = this.checkedList;
+      var eventName;
 
       /* Prevent duplicated node id */
       util.removeItemFromArray(nodeId, checkedList);
@@ -315,7 +319,7 @@ var Checkbox = defineClass(
 
       if (!stopPropagation) {
         this._propagateState(nodeId, state);
-        tree.fire(eventName, {nodeId: nodeId});
+        tree.fire(eventName, { nodeId: nodeId });
       }
     },
 
@@ -383,8 +387,8 @@ var Checkbox = defineClass(
      * @private
      */
     _updateAllAncestorsState: function(nodeId) {
-      var tree = this.tree,
-        parentId = tree.getParentId(nodeId);
+      var tree = this.tree;
+      var parentId = tree.getParentId(nodeId);
 
       while (parentId) {
         this._judgeOwnState(parentId);
@@ -398,10 +402,10 @@ var Checkbox = defineClass(
      * @private
      */
     _judgeOwnState: function(nodeId) {
-      var tree = this.tree,
-        childIds = tree.getChildIds(nodeId),
-        checked = true,
-        unchecked = true;
+      var tree = this.tree;
+      var childIds = tree.getChildIds(nodeId);
+      var checked = true;
+      var unchecked = true;
 
       if (!childIds.length) {
         checked = this.isChecked(nodeId);
@@ -435,9 +439,8 @@ var Checkbox = defineClass(
      * @private
      */
     _getCheckboxElement: function(nodeId) {
-      var tree = this.tree,
-        el,
-        nodeEl;
+      var tree = this.tree;
+      var el, nodeEl;
 
       if (nodeId === tree.getRootNodeId()) {
         el = this.rootCheckbox;
@@ -559,8 +562,8 @@ var Checkbox = defineClass(
      * var descendantsCheckedList = tree.getCheekedList('node6'); // ['node7', 'node8']
      */
     getCheckedList: function(parentId) {
-      var tree = this.tree,
-        checkedList = this.checkedList;
+      var tree = this.tree;
+      var checkedList = this.checkedList;
 
       if (!parentId) {
         return checkedList.slice();
@@ -592,9 +595,9 @@ var Checkbox = defineClass(
      * var descendantsTopCheckedList = tree.getTopCheekedList('node6'); // ['node7']
      */
     getTopCheckedList: function(parentId) {
-      var tree = this.tree,
-        checkedList = [],
-        state;
+      var tree = this.tree;
+      var checkedList = [];
+      var state;
 
       parentId = parentId || tree.getRootNodeId();
       state = this._getState(parentId);
@@ -620,23 +623,12 @@ var Checkbox = defineClass(
      * @param {string} [parentId] - Node id (default: rootNode id)
      * @returns {Array.<string>} Checked node ids
      * @example
-     * //
-     * // node1(v)
-     * //   node2(v)
-     * //   node3(v)
-     * // node4
-     * //   node5(v)
-     * // node6
-     * //   node7(v)
-     * //     node8(v)
-     * //   node9
-     *
      * var allBottomCheckedList = tree.getBottomCheckedList(); // ['node2', 'node3', 'node5', 'node8']
      * var descendantsBottomCheckedList = tree.getBottomCheekedList('node6'); // ['node8']
      */
     getBottomCheckedList: function(parentId) {
-      var tree = this.tree,
-        checkedList;
+      var tree = this.tree;
+      var checkedList;
 
       parentId = parentId || tree.getRootNodeId();
       checkedList = this.getCheckedList(parentId);

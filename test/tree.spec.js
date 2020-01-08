@@ -1,31 +1,31 @@
 var template = require('tui-code-snippet/domUtil/template');
 
-var Tree = require('../src/js/tree'),
-  util = require('../src/js/util'),
-  messages = require('../src/js/consts/messages');
+var Tree = require('../src/js/tree');
+var util = require('../src/js/util');
+var messages = require('../src/js/consts/messages');
 
 describe('Tree', function() {
   var data = [
     {
       text: 'A',
       children: [
-        {text: '1'},
-        {text: '2'},
-        {text: '3'},
-        {text: '4'},
-        {text: '5', children: [{text: '가', children: [{text: '*'}]}, {text: '나'}]},
-        {text: '6'},
-        {text: '7'},
-        {text: '8'},
-        {text: '9', children: [{text: '가'}, {text: '나'}]},
-        {text: '10'},
-        {text: '11'},
-        {text: '12'}
+        { text: '1' },
+        { text: '2' },
+        { text: '3' },
+        { text: '4' },
+        { text: '5', children: [{ text: '가', children: [{ text: '*' }] }, { text: '나' }] },
+        { text: '6' },
+        { text: '7' },
+        { text: '8' },
+        { text: '9', children: [{ text: '가' }, { text: '나' }] },
+        { text: '10' },
+        { text: '11' },
+        { text: '12' }
       ]
     },
     {
       text: 'B',
-      children: [{text: '1'}, {text: '2'}, {text: '3'}, {text: '4'}, {text: '5'}]
+      children: [{ text: '1' }, { text: '2' }, { text: '3' }, { text: '4' }, { text: '5' }]
     }
   ];
   var rootElement, tree, firstChildId, lastChildId, grandChildId, firstChild, container;
@@ -74,8 +74,8 @@ describe('Tree', function() {
     });
 
     it('should make DOM from optional-template', function() {
-      var leafNodes = rootElement.querySelectorAll('.tui-tree-leaf'),
-        leafLabels = rootElement.querySelectorAll('.tui-tree-leaf .tui-tree-leaf-label');
+      var leafNodes = rootElement.querySelectorAll('.tui-tree-leaf');
+      var leafLabels = rootElement.querySelectorAll('.tui-tree-leaf .tui-tree-leaf-label');
 
       expect(leafLabels.length).toEqual(leafNodes.length);
     });
@@ -100,10 +100,10 @@ describe('Tree', function() {
     });
 
     it('should fire singleClick event', function() {
-      var handler = jasmine.createSpy('singleClick handler'),
-        eventMock = {
-          target: document.createElement('DIV')
-        };
+      var handler = jasmine.createSpy('singleClick handler');
+      var eventMock = {
+        target: document.createElement('DIV')
+      };
 
       jasmine.clock().uninstall();
       jasmine.clock().install();
@@ -119,9 +119,9 @@ describe('Tree', function() {
     });
 
     it('"open(), close()" should change button label', function() {
-      var firstChildElement = document.getElementById(firstChildId),
-        btnElement = $(firstChildElement).find('.' + tree.classNames.toggleBtnClass)[0],
-        textNode = util.getFirstTextNode(btnElement);
+      var firstChildElement = document.getElementById(firstChildId);
+      var btnElement = $(firstChildElement).find('.' + tree.classNames.toggleBtnClass)[0];
+      var textNode = util.getFirstTextNode(btnElement);
 
       tree.close(firstChildId);
       expect(textNode.nodeValue).toEqual(tree.stateLabels.closed);
@@ -169,10 +169,10 @@ describe('Tree', function() {
     });
 
     it('should fire doubleClick event', function() {
-      var handler = jasmine.createSpy('doubleClick handler'),
-        eventMock = {
-          target: document.createElement('DIV')
-        };
+      var handler = jasmine.createSpy('doubleClick handler');
+      var eventMock = {
+        target: document.createElement('DIV')
+      };
 
       tree.on('doubleClick', handler);
       tree._onDoubleClick(eventMock);
@@ -183,7 +183,7 @@ describe('Tree', function() {
     it('"add() with no "isSilent" flag" should redraw nodes', function() {
       var childCount = firstChild.getChildIds().length;
       var subtreeElement;
-      var testData = [{text: 'hello world'}, {text: 'new world'}];
+      var testData = [{ text: 'hello world' }, { text: 'new world' }];
 
       spyOn(tree, '_draw').and.callThrough();
 
@@ -196,8 +196,8 @@ describe('Tree', function() {
 
     it('"add()" should return node ids of new added nodes', function() {
       var testData = [
-        {text: 'hello world', children: [{text: 'foo'}, {text: 'bar'}]},
-        {text: 'new world'}
+        { text: 'hello world', children: [{ text: 'foo' }, { text: 'bar' }] },
+        { text: 'new world' }
       ];
       var ids = tree.add(testData, firstChildId, false, false);
 
@@ -206,9 +206,9 @@ describe('Tree', function() {
     });
 
     it('"remove()" should redraw nodes without removed node(s)', function() {
-      var childCount = firstChild.getChildIds().length,
-        idForRemoving = firstChild.getChildIds()[0],
-        subtreeElement;
+      var childCount = firstChild.getChildIds().length;
+      var idForRemoving = firstChild.getChildIds()[0];
+      var subtreeElement;
 
       tree.remove(idForRemoving);
       subtreeElement = document.getElementById(firstChildId).lastChild;
@@ -291,7 +291,7 @@ describe('Tree', function() {
     });
 
     it('"resetAllData()" should reset all nodes from new data', function() {
-      var testData = [{text: 'hello'}, {text: 'wolrd'}];
+      var testData = [{ text: 'hello' }, { text: 'wolrd' }];
       var newChildIds = tree.resetAllData(testData);
       var rootNodeId = tree.getRootNodeId();
 
@@ -301,7 +301,7 @@ describe('Tree', function() {
     });
 
     it('"getNodeIndex()" should return index number of selected node in children list', function() {
-      var testData = [{text: 'child1'}, {text: 'child2'}];
+      var testData = [{ text: 'child1' }, { text: 'child2' }];
       var newChildIds = tree.resetAllData(testData);
       var prevNodeIdx = tree.getNodeIndex(newChildIds[1]);
 
@@ -309,12 +309,12 @@ describe('Tree', function() {
     });
 
     it('it should reset children data of nodeId when "resetAllData()" have nodeId parameter', function() {
-      var testData = [{text: 'A'}, {text: 'B'}];
+      var testData = [{ text: 'A' }, { text: 'B' }];
       var nodeId = tree.getChildIds(tree.getRootNodeId())[0];
       var newChildIds = tree.resetAllData(testData, nodeId);
 
-      expect(tree.getNodeData(newChildIds[0])).toEqual({text: 'A'});
-      expect(tree.getNodeData(newChildIds[1])).toEqual({text: 'B'});
+      expect(tree.getNodeData(newChildIds[0])).toEqual({ text: 'A' });
+      expect(tree.getNodeData(newChildIds[1])).toEqual({ text: 'B' });
     });
   });
 

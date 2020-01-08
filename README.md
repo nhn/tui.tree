@@ -33,8 +33,8 @@ It also serves as important index to determine the future course of projects.
  To disable GA, use the following `usageStatistics` option when creating the instance.
  ```js
 const options = {
-    ...
-    usageStatistics: false
+  ...
+  usageStatistics: false
 }
 const instance = new Tree(container, options);
 ```
@@ -61,7 +61,7 @@ You can also see the older versions of API page on the [releases page](https://g
     * `Selectable` : Each node can be selected.
     * `Draggable` : Each node can be moved.
     * `Editable` : Each node can be edited.
-    * `ContextMenu` : A context menu can be created for each node.
+    * `ContextMenu` : A context menu can be created for each node. (*Not supporting IE8*)
     * `Checkbox` : A checkbox can be added to each node and a 3-state checkbox is used.
     * `Ajax` : Requests server and handles the `CRUD` for each node.
 * Supports templates.
@@ -175,7 +175,7 @@ For more information about the API, please see [here](https://nhn.github.io/tui.
 
 ## 🔩 Dependency
 * [tui-code-snippet](https://github.com/nhn/tui.code-snippet) >=2.2.0
-* [tui-context-menu](https://github.com/nhn/tui.context-menu) >=2.1.6 (Optional, needs forusing `ContextMenu` feature)
+* [tui-context-menu](https://github.com/nhn/tui.context-menu) >=2.1.6 (Optional, needs forusing `ContextMenu` feature, *not supporting IE8*)
 * [jQuery](https://github.com/jquery/jquery/tree/1.12-stable) >=1.11.0 (Optional, needs for using `Ajax` feature)
 
 
@@ -184,6 +184,7 @@ For more information about the API, please see [here](https://nhn.github.io/tui.
 | :---------: | :---------: | :---------: | :---------: | :---------: |
 | Yes | 8+ | Yes | Yes | Yes |
 
+* ContextMenu feature does not support IE8.
 
 ## 🔧 Pull Request Steps
 

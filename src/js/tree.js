@@ -47,6 +47,7 @@ var features = {
 
 var TIMEOUT_TO_DIFFERENTIATE_CLICK_AND_DBLCLICK = 200;
 var MOUSE_MOVING_THRESHOLD = 5;
+var MOUSE_RIGHT_BUTTON = 2;
 
 /**
  * Create tree model and inject data to model
@@ -351,12 +352,16 @@ var Tree = defineClass(
         this
       );
 
-      on(this.rootElement, {
-        click: this._onClick,
-        mousedown: this._onMousedown,
-        dblclick: this._onDoubleClick,
-        contextmenu: this._onContextMenu
-      }, this);
+      on(
+        this.rootElement,
+        {
+          click: this._onClick,
+          mousedown: this._onMousedown,
+          dblclick: this._onDoubleClick,
+          contextmenu: this._onContextMenu
+        },
+        this
+      );
     },
 
     /**
@@ -374,35 +379,34 @@ var Tree = defineClass(
      * @private
      */
     _onMousedown: function(downEvent) {
-      var self = this,
-        clientX = downEvent.clientX,
-        clientY = downEvent.clientY,
-        abs = Math.abs;
+      var clientX = downEvent.clientX;
+      var clientY = downEvent.clientY;
+      var abs = Math.abs;
 
-      function onMouseMove(moveEvent) {
-        var newClientX = moveEvent.clientX,
-          newClientY = moveEvent.clientY;
+      var onMouseMove = util.bind(function onMouseMove(moveEvent) {
+        var newClientX = moveEvent.clientX;
+        var newClientY = moveEvent.clientY;
 
         if (abs(newClientX - clientX) + abs(newClientY - clientY) > MOUSE_MOVING_THRESHOLD) {
-          self.fire('mousemove', moveEvent);
-          self._mouseMovingFlag = true;
+          this.fire('mousemove', moveEvent);
+          this._mouseMovingFlag = true;
         }
-      }
+      }, this);
 
-      function onMouseUp(upEvent) {
-        self.fire('mouseup', upEvent);
+      var onMouseOut = util.bind(function onMouseOut(event) {
+        if (event.toElement === null) {
+          this.fire('mouseup', event);
+        }
+      }, this);
+
+      var onMouseUp = util.bind(function onMouseUp(upEvent) {
+        this.fire('mouseup', upEvent);
         off(document, {
           mousemove: onMouseMove,
           mouseup: onMouseUp,
           mouseout: onMouseOut
         });
-      }
-
-      function onMouseOut(event) {
-        if (event.toElement === null) {
-          self.fire('mouseup', event);
-        }
-      }
+      }, this);
 
       this._mouseMovingFlag = false;
       this.fire('mousedown', downEvent);
@@ -420,7 +424,7 @@ var Tree = defineClass(
      */
     _onClick: function(ev) {
       var target = getTarget(ev);
-      var isRightButton = getMouseButton(ev) === 2;
+      var isRightButton = getMouseButton(ev) === MOUSE_RIGHT_BUTTON;
       var nodeId;
 
       if (isRightButton) {
@@ -454,9 +458,12 @@ var Tree = defineClass(
 
       if (!this.clickTimer && !this._mouseMovingFlag) {
         this.fire('singleClick', ev);
-        this.clickTimer = setTimeout(util.bind(function() {
-          this.resetClickTimer();
-        }, this), TIMEOUT_TO_DIFFERENTIATE_CLICK_AND_DBLCLICK);
+        this.clickTimer = setTimeout(
+          util.bind(function() {
+            this.resetClickTimer();
+          }, this),
+          TIMEOUT_TO_DIFFERENTIATE_CLICK_AND_DBLCLICK
+        );
       }
     },
 
@@ -496,11 +503,8 @@ var Tree = defineClass(
      * @private
      */
     _setDisplayFromNodeState: function(nodeId, state) {
-      var subtreeElement = this._getSubtreeElement(nodeId),
-        label,
-        btnElement,
-        nodeElement,
-        firstTextNode;
+      var subtreeElement = this._getSubtreeElement(nodeId);
+      var label, btnElement, nodeElement, firstTextNode;
 
       if (!subtreeElement || subtreeElement === this.rootElement) {
         return;
@@ -530,9 +534,9 @@ var Tree = defineClass(
      * @private
      */
     _setNodeClassNameFromState: function(nodeElement, state) {
-      var classNames = this.classNames,
-        openedClassName = classNames[nodeStates.OPENED + 'Class'],
-        closedClassName = classNames[nodeStates.CLOSED + 'Class'];
+      var classNames = this.classNames;
+      var openedClassName = classNames[nodeStates.OPENED + 'Class'];
+      var closedClassName = classNames[nodeStates.CLOSED + 'Class'];
 
       removeClass(nodeElement, openedClassName);
       removeClass(nodeElement, closedClassName);
@@ -547,15 +551,14 @@ var Tree = defineClass(
      * @see https://nhn.github.io/tui.code-snippet/2.2.0/domUtil#template
      */
     _makeHtml: function(nodeIds) {
-      var model = this.model,
-        html = '';
+      var model = this.model;
+      var html = '';
 
       forEachArray(
         nodeIds,
         function(nodeId) {
-          var node = model.getNode(nodeId),
-            sources,
-            props;
+          var node = model.getNode(nodeId);
+          var sources, props;
 
           if (!node) {
             return;
@@ -624,13 +627,13 @@ var Tree = defineClass(
      * @private
      */
     _makeTemplateProps: function(node) {
-      var classNames = this.classNames,
-        id = node.getId(),
-        props = {
-          id: id,
-          indent: this.getIndentWidth(id)
-        },
-        state;
+      var classNames = this.classNames;
+      var id = node.getId();
+      var props = {
+        id: id,
+        indent: this.getIndentWidth(id)
+      };
+      var state;
 
       if (node.isLeaf()) {
         extend(props, {
@@ -663,9 +666,8 @@ var Tree = defineClass(
      * @private
      */
     _draw: function(nodeId) {
-      var node = this.model.getNode(nodeId),
-        element,
-        html;
+      var node = this.model.getNode(nodeId);
+      var element, html;
 
       if (!node) {
         return;
@@ -683,7 +685,7 @@ var Tree = defineClass(
        *     console.log('beforeDraw: ' + evt.nodeId);
        * });
        */
-      this.fire('beforeDraw', {nodeId: nodeId});
+      this.fire('beforeDraw', { nodeId: nodeId });
 
       if (node.isRoot()) {
         html = this._makeHtml(node.getChildIds());
@@ -707,7 +709,7 @@ var Tree = defineClass(
        *     console.log('afterDraw: ' + evt.nodeId);
        * });
        */
-      this.fire('afterDraw', {nodeId: nodeId});
+      this.fire('afterDraw', { nodeId: nodeId });
     },
 
     /**
@@ -719,10 +721,10 @@ var Tree = defineClass(
      * @private
      */
     _setClassNameAndVisibilityByFeature: function(node) {
-      var nodeId = node.getId(),
-        element = document.getElementById(nodeId),
-        classNames = this.classNames,
-        isLeaf = node.isLeaf();
+      var nodeId = node.getId();
+      var element = document.getElementById(nodeId);
+      var classNames = this.classNames;
+      var isLeaf = node.isLeaf();
 
       if (element) {
         if (isLeaf) {
@@ -753,8 +755,8 @@ var Tree = defineClass(
      * @private
      */
     _getSubtreeElement: function(nodeId) {
-      var node = this.model.getNode(nodeId),
-        subtreeElement;
+      var node = this.model.getNode(nodeId);
+      var subtreeElement;
 
       if (!node || node.isLeaf()) {
         subtreeElement = null;
@@ -1517,8 +1519,8 @@ var Tree = defineClass(
      */
     _where: function(props) {
       return this._filter(function(node) {
-        var result = true,
-          data = node.getAllData();
+        var result = true;
+        var data = node.getAllData();
 
         forEachOwnProperties(props, function(value, key) {
           result = key in data && data[key] === value;
@@ -1573,7 +1575,7 @@ var Tree = defineClass(
     /**
      * Enable facility of tree
      * @param {string} featureName - 'Selectable', 'Draggable', 'Editable', 'ContextMenu'
-     * @param {object} [options] - Feature options
+     * @param {object} [options] - Feature options // TODO: define Feature options
      * @returns {Tree} this
      * @example
      * tree
@@ -1662,8 +1664,8 @@ var Tree = defineClass(
      *              type: 'post'
      *          }
      *      },
-     *      parseData: function(type, response) {
-     *          if (type === 'read' && response.code === '200') {
+     *      parseData: function(command, response) {
+     *          if (command === 'read' && response.code === '200') {
      *              return response;
      *          } else {
      *              return false;
@@ -1738,8 +1740,8 @@ var Tree = defineClass(
  * @ignore
  */
 function setAbstractAPIs(featureName, feature) {
-  var messageName = 'INVALID_API_' + featureName.toUpperCase(),
-    apiList = feature.getAPIList ? feature.getAPIList() : [];
+  var messageName = 'INVALID_API_' + featureName.toUpperCase();
+  var apiList = feature.getAPIList ? feature.getAPIList() : [];
 
   forEachArray(apiList, function(api) {
     Tree.prototype[api] = function() {

@@ -15,6 +15,7 @@
         </div>
         <div class="explain">
             <h3>To create / update / remove a tree node, please right-click.</h3>
+            <p>ContextMenu feature does not support IE8.</p>
             <textarea id="infoArea" readonly></textarea>
         </div>
 
@@ -170,11 +171,10 @@
         });
 
         tree.on('successAjaxResponse', function(eventData) {
-            var command = eventData.type; // TODO: change to `command`
             var message = '';
             
             message += 'jQuery request : \n';
-            message += JSON.stringify(tree.enabledFeatures.Ajax.command[command], null, 8) + '\n\n';
+            message += JSON.stringify(tree.enabledFeatures.Ajax.command[eventData.command], null, 8) + '\n\n';
 
             message += 'jQuery response : \n';
             message += JSON.stringify(eventData, null, 8);

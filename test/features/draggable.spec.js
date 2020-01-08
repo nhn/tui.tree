@@ -10,26 +10,26 @@ describe('draggable feature', function() {
     {
       title: 'A',
       children: [
-        {title: '1'},
-        {title: '2'},
-        {title: '3'},
-        {title: '4'},
+        { title: '1' },
+        { title: '2' },
+        { title: '3' },
+        { title: '4' },
         {
           title: '5',
-          children: [{title: '가', children: [{title: '*'}]}, {title: '나'}]
+          children: [{ title: '가', children: [{ title: '*' }] }, { title: '나' }]
         },
-        {title: '6'},
-        {title: '7'},
-        {title: '8'},
-        {title: '9', children: [{title: '가'}, {title: '나'}]},
-        {title: '10'},
-        {title: '11'},
-        {title: '12'}
+        { title: '6' },
+        { title: '7' },
+        { title: '8' },
+        { title: '9', children: [{ title: '가' }, { title: '나' }] },
+        { title: '10' },
+        { title: '11' },
+        { title: '12' }
       ]
     },
     {
       title: 'B',
-      children: [{title: '1'}, {title: '2'}, {title: '3'}]
+      children: [{ title: '1' }, { title: '2' }, { title: '3' }]
     }
   ];
 
@@ -267,23 +267,20 @@ describe('draggable feature', function() {
     });
   });
 
-  it(
-    'the contents of the helper element should be same as the contents of the dragging node when the node is dragging',
-    function() {
-      var firstChildId, selectedElement, dragItemElement, eventMock;
+  it('the contents of the helper element should be same as the contents of the dragging node when the node is dragging', function() {
+    var firstChildId, selectedElement, dragItemElement, eventMock;
 
-      firstChildId = tree.model.rootNode.getChildIds()[0];
-      selectedElement = document.getElementById(firstChildId);
+    firstChildId = tree.model.rootNode.getChildIds()[0];
+    selectedElement = document.getElementById(firstChildId);
 
-      eventMock = {
-        target: selectedElement
-      };
+    eventMock = {
+      target: selectedElement
+    };
 
-      treeDraggable._onMousedown(eventMock);
+    treeDraggable._onMousedown(eventMock);
 
-      dragItemElement = selectedElement.querySelector('.' + tree.classNames.textClass);
+    dragItemElement = selectedElement.querySelector('.' + tree.classNames.textClass);
 
-      expect(treeDraggable.helperElement.innerHTML).toBe(dragItemElement.innerHTML);
-    }
-  );
+    expect(treeDraggable.helperElement.innerHTML).toBe(dragItemElement.innerHTML);
+  });
 });

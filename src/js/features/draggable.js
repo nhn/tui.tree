@@ -196,11 +196,13 @@ var Draggable = defineClass(
      * @private
      */
     _changeHelperPosition: function(mousePos) {
+      var mousePosX = mousePos[0];
+      var mousePosY = mousePos[1];
       var helperStyle = this.helperElement.style;
       var pos = this.tree.rootElement.getBoundingClientRect();
 
-      helperStyle.top = mousePos[1] - pos.top + this.helperPos.y + 'px';
-      helperStyle.left = mousePos[0] - pos.left + this.helperPos.x + 'px';
+      helperStyle.top = mousePosY - pos.top + this.helperPos.y + 'px';
+      helperStyle.left = mousePosX - pos.left + this.helperPos.x + 'px';
       helperStyle.display = '';
     },
 
@@ -334,7 +336,9 @@ var Draggable = defineClass(
       this.currentNodeId = tree.getNodeIdFromElement(target);
 
       if (this.useHelper) {
-        nodeElement = document.querySelector('#' + this.currentNodeId + ' .' + tree.classNames.textClass);
+        nodeElement = document.querySelector(
+          '#' + this.currentNodeId + ' .' + tree.classNames.textClass
+        );
         this._setHelper(nodeElement.innerHTML);
       }
 

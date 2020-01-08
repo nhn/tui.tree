@@ -1,31 +1,31 @@
 var hasClass = require('tui-code-snippet/domUtil/hasClass');
 
-var Tree = require('../../src/js/tree'),
-  messages = require('../../src/js/consts/messages');
+var Tree = require('../../src/js/tree');
+var messages = require('../../src/js/consts/messages');
 
 describe('selectable feature', function() {
   var data = [
     {
       title: 'A',
       children: [
-        {title: '1'},
-        {title: '2'},
-        {title: '3'},
-        {title: '4'},
+        { title: '1' },
+        { title: '2' },
+        { title: '3' },
+        { title: '4' },
         {
           title: '5',
-          children: [{title: '가', children: [{title: '*'}]}, {title: '나'}]
+          children: [{ title: '가', children: [{ title: '*' }] }, { title: '나' }]
         },
-        {title: '6'},
-        {title: '7'},
-        {title: '8'},
-        {title: '9', children: [{title: '가'}, {title: '나'}]},
-        {title: '10'},
-        {title: '11'},
-        {title: '12'}
+        { title: '6' },
+        { title: '7' },
+        { title: '8' },
+        { title: '9', children: [{ title: '가' }, { title: '나' }] },
+        { title: '10' },
+        { title: '11' },
+        { title: '12' }
       ]
     },
-    {title: 'B', children: [{title: '1'}, {title: '2'}, {title: '3'}]}
+    { title: 'B', children: [{ title: '1' }, { title: '2' }, { title: '3' }] }
   ];
   var rootElement, tree, treeSelection;
 
@@ -100,11 +100,11 @@ describe('selectable feature', function() {
     });
 
     it('should fire custom events with args containing "nodeId" and "prevNodeId"', function() {
-      var beforeSelectListenerSpy = jasmine.createSpy(),
-        selectListenerSpy = jasmine.createSpy(),
-        curNodeId = target.id,
-        prevNodeId = 'previousNodeId',
-        expected;
+      var beforeSelectListenerSpy = jasmine.createSpy();
+      var selectListenerSpy = jasmine.createSpy();
+      var curNodeId = target.id;
+      var prevNodeId = 'previousNodeId';
+      var expected;
 
       treeSelection.selectedNodeId = prevNodeId;
       tree.on('beforeSelect', beforeSelectListenerSpy);
@@ -130,9 +130,9 @@ describe('selectable feature', function() {
     });
 
     it('should invoke "beforeSelect" and fire "select"', function() {
-      var beforeSelectListenerSpy = jasmine.createSpy(),
-        selectListenerSpy = jasmine.createSpy(),
-        targetId = rootElement.querySelectorAll('.tui-tree-node')[2].id;
+      var beforeSelectListenerSpy = jasmine.createSpy();
+      var selectListenerSpy = jasmine.createSpy();
+      var targetId = rootElement.querySelectorAll('.tui-tree-node')[2].id;
 
       tree.on({
         beforeSelect: beforeSelectListenerSpy,

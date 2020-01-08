@@ -237,7 +237,7 @@ describe('Ajax feature', function() {
 
     beforeEach(function() {
       rootNodeId = tree.getRootNodeId();
-      response = [{text: 'A', state: 'opened', hasChild: true}, {text: 'B'}];
+      response = [{ text: 'A', state: 'opened', hasChild: true }, { text: 'B' }];
 
       spyOn($, 'ajax').and.callFake(function(e) {
         e.success(response);
@@ -294,7 +294,7 @@ describe('Ajax feature', function() {
         newChildIds = evt.data;
       });
 
-      tree.add({text: 'C'}, parentId);
+      tree.add({ text: 'C' }, parentId);
 
       expect(tree.getChildIds(parentId)).toEqual(newChildIds);
     });
@@ -304,7 +304,7 @@ describe('Ajax feature', function() {
         e.success(false);
       });
 
-      tree.add({text: 'C'}, parentId);
+      tree.add({ text: 'C' }, parentId);
 
       expect(tree.getChildIds(parentId).length).toBe(0);
     });
@@ -314,7 +314,7 @@ describe('Ajax feature', function() {
     var children, parentId, nodeId;
 
     beforeEach(function() {
-      children = [{text: 'A'}, {text: 'B'}];
+      children = [{ text: 'A' }, { text: 'B' }];
 
       tree.add(children);
       tree.enableFeature('Ajax', {
@@ -354,7 +354,7 @@ describe('Ajax feature', function() {
     var children, nodeId, changedData;
 
     beforeEach(function() {
-      children = [{text: 'A', propA: 'aa', propB: 'bb'}];
+      children = [{ text: 'A', propA: 'aa', propB: 'bb' }];
 
       tree.add(children);
       tree.enableFeature('Ajax', {
@@ -366,7 +366,7 @@ describe('Ajax feature', function() {
       });
 
       nodeId = tree.getChildIds(tree.getRootNodeId())[0];
-      changedData = {text: 'B'};
+      changedData = { text: 'B' };
     });
 
     it('selected node data should be updated when response data is success', function() {
@@ -414,7 +414,7 @@ describe('Ajax feature', function() {
     var children, nodeId;
 
     beforeEach(function() {
-      children = [{text: 'A'}, {text: 'B'}, {text: 'C'}];
+      children = [{ text: 'A' }, { text: 'B' }, { text: 'C' }];
 
       tree.add(children);
       tree.enableFeature('Ajax', {
@@ -454,9 +454,9 @@ describe('Ajax feature', function() {
 
     beforeEach(function() {
       children = [
-        {text: 'A', children: [{text: 'aa'}, {text: 'bb'}]},
-        {text: 'B'},
-        {text: 'C'}
+        { text: 'A', children: [{ text: 'aa' }, { text: 'bb' }] },
+        { text: 'B' },
+        { text: 'C' }
       ];
 
       tree.add(children);

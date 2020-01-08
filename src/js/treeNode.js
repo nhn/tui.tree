@@ -10,21 +10,21 @@ var defineClass = require('tui-code-snippet/defineClass/defineClass');
 var extend = require('tui-code-snippet/object/extend');
 var isFalsy = require('tui-code-snippet/type/isFalsy');
 
-var states = require('./consts/states').node,
-  util = require('./util');
+var states = require('./consts/states').node;
+var util = require('./util');
 
-var lastIndex = 0,
-  getNextIndex = function() {
-    var index = lastIndex;
-    lastIndex += 1;
+var lastIndex = 0;
+var getNextIndex = function() {
+  var index = lastIndex;
+  lastIndex += 1;
 
-    return index;
-  },
-  RESERVED_PROPERTIES = {
-    id: '',
-    state: 'setState',
-    children: ''
-  };
+  return index;
+};
+var RESERVED_PROPERTIES = {
+  id: '',
+  state: 'setState',
+  children: ''
+};
 
 /**
  * TreeNode

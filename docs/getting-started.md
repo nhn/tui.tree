@@ -1,7 +1,6 @@
 ## Install
 
 ``` sh
-# npm
 $ npm install --save tui-tree # Latest version
 $ npm install --save tui-tree@<version> # Specific version
 ```
@@ -21,7 +20,6 @@ A wrapper element should have `tui-tree-wrapper` as a class name to apply tui-tr
 ### Import a component
 
 ```javascript
-// ES6
 import Tree from 'tui-tree';
 import 'tui-tree/dist/tui-tree.css';
 ```
@@ -47,35 +45,35 @@ const tree = new Tree(container, options);
 
 ```js
 const options = {
-    data: [],
-    nodeIdPrefix: 'tui-tree-node-',
-    nodeDefaultState: 'closed',
-    stateLabels: {
-        opened: '-',
-        closed: '+'
-    },
-    template: {
-        internalNode:
-            '<div class="tui-tree-btn">' +
-                '<button type="button" class="tui-tree-toggle-btn tui-js-tree-toggle-btn">' +
-                    '<span class="tui-ico-tree"></span>' +
-                    '{{stateLabel}}' +
-                '</button>' +
-                '<span class="tui-tree-text tui-js-tree-text">' +
-                    '<span class="tui-tree-ico tui-ico-folder"></span>' +
-                    '{{text}}' +
-                '</span>' +
-            '</div>' +
-            '<ul class="tui-tree-subtree tui-js-tree-subtree">{{children}}</ul>',
-        leafNode:
-            '<div class="tui-tree-btn">' +
-                '<span class="tui-tree-text tui-js-tree-text">' +
-                    '<span class="tui-tree-ico tui-ico-file"></span>' +
-                    '{{text}}' +
-                '</span>' +
-            '</div>'
-    },
-    renderTemplate: (tmpl, props) => Mustache.render(tmpl, props) // Mustache template engine
+  data: [],
+  nodeIdPrefix: 'tui-tree-node-',
+  nodeDefaultState: 'closed',
+  stateLabels: {
+    opened: '-',
+    closed: '+'
+  },
+  template: {
+    internalNode:
+      '<div class="tui-tree-btn">' +
+        '<button type="button" class="tui-tree-toggle-btn tui-js-tree-toggle-btn">' +
+          '<span class="tui-ico-tree"></span>' +
+          '{{stateLabel}}' +
+        '</button>' +
+        '<span class="tui-tree-text tui-js-tree-text">' +
+          '<span class="tui-tree-ico tui-ico-folder"></span>' +
+          '{{text}}' +
+        '</span>' +
+      '</div>' +
+      '<ul class="tui-tree-subtree tui-js-tree-subtree">{{children}}</ul>',
+    leafNode:
+      '<div class="tui-tree-btn">' +
+        '<span class="tui-tree-text tui-js-tree-text">' +
+          '<span class="tui-tree-ico tui-ico-file"></span>' +
+          '{{text}}' +
+        '</span>' +
+      '</div>'
+  },
+  renderTemplate: (tmpl, props) => Mustache.render(tmpl, props) // Mustache template engine
 };
 
 const tree = new Tree('tree', options);
@@ -102,55 +100,49 @@ Information about each option is as follows:
 
 * Default : Set `text`, `children` properties.
 ```js
-var data = [
-    {
-        text: 'rootA',
-        children: [
-            {text: 'root-1A'},
-            {text: 'root-1B'},
-            {text: 'root-1C'},
-            {
-                text: 'root-2A',
-                children: [
-                    {text: 'sub_sub_1A'}
-                ]
-            },
-            {text: 'sub_2A'}
-       ]
-   },
-   {
-       text: 'rootB',
-       children: [
-           {text: 'B_sub1'},
-           {text: 'B_sub2'},
-           {text: 'b'}
-       ]
-    },
-    ...
+const data = [
+  {
+    text: 'rootA',
+    children: [
+      { text: 'root-1A' },
+      { text: 'root-1B' },
+      { text: 'root-1C' },
+      {
+        text: 'root-2A',
+        children: [{ text: 'sub_sub_1A' }]
+      },
+      { text: 'sub_2A' }
+    ]
+  },
+  {
+    text: 'rootB',
+    children: [{ text: 'B_sub1' }, { text: 'B_sub2' }, { text: 'b' }]
+  },
+  ...
 ];
 ```
 
 * Customizing : It is possible to set other properties.
 
 ```js
-var data = [
-   {
-       pid: '001',
-       text: 'rootA',
-       children: [
-           {
-               pid: '003',
-               text: 'root-1A',
-               state: 'closed'
-           }
-       ]
-   },
-   {
-       pid: '002',
-       text: 'rootB',
-       state: 'opened'
-   },
-   ...
+const data = [
+  {
+    pid: '001',
+    text: 'rootA',
+    children: [
+      {
+        pid: '003',
+        text: 'root-1A',
+        state: 'closed'
+      }
+    ]
+  },
+  {
+    pid: '002',
+    text: 'rootB',
+    state: 'opened'
+  },
+  ...
 ];
 ```
 
@@ -165,18 +157,16 @@ This example show how to replace node's contents having children by a template e
 
 ```js
 {
-    ...
-    template: { // template for Mustache engine
-        internalNode:
-            '<button type="button">{{stateLabel}}</button>' +
-            '{{text}}' +
-            '<ul>{{{children}}}</ul>'
-    },
-    renderTemplate: function(tmpl, props) {
-        // Mustache template engine
-        return Mustache.render(tmpl, props);
-    }
-}
+  ...,
+  template: {
+    // template for Mustache engine
+    internalNode: '<button type="button">{{stateLabel}}</button>{{text}}<ul>{{{children}}}</ul>'
+  },
+  renderTemplate: (tmpl, props) => {
+    // Mustache template engine
+    return Mustache.render(tmpl, props);
+  }
+};
 ```
 
 For more information about the API, please see [here](https://nhn.github.io/tui.tree/latest/Tree).

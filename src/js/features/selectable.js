@@ -11,10 +11,10 @@ var removeClass = require('tui-code-snippet/domUtil/removeClass');
 var extend = require('tui-code-snippet/object/extend');
 var util = require('./../util');
 
-var API_LIST = ['select', 'getSelectedNodeId', 'deselect'],
-  defaults = {
-    selectedClassName: 'tui-tree-selected'
-  };
+var API_LIST = ['select', 'getSelectedNodeId', 'deselect'];
+var defaults = {
+  selectedClassName: 'tui-tree-selected'
+};
 
 /**
  * Set the tree selectable
@@ -73,8 +73,8 @@ var Selectable = defineClass(
      * Disable this module
      */
     destroy: function() {
-      var tree = this.tree,
-        nodeElement = this.getPrevElement();
+      var tree = this.tree;
+      var nodeElement = this.getPrevElement();
 
       if (nodeElement) {
         removeClass(nodeElement, this.selectedClassName);
@@ -90,27 +90,21 @@ var Selectable = defineClass(
      * @param {MouseEvent} event - Mouse event
      */
     onSingleClick: function(event) {
-      var target = getTarget(event),
-        nodeId = this.tree.getNodeIdFromElement(target);
+      var target = getTarget(event);
+      var nodeId = this.tree.getNodeIdFromElement(target);
 
-      this.select(nodeId, target);
+      this._select(nodeId, target);
     },
-
-    /* eslint-disable valid-jsdoc */
-    /* Ignore "target" parameter annotation for API page // TODO: question
-       "tree.select(nodeId)"
-     */
 
     /**
      * Select node if the feature-"Selectable" is enabled.
      * @memberof Tree.prototype
      * @requires Selectable
      * @param {string} nodeId - Node id
-     * @example
-     * tree.select('tui-tree-node-3');
+     * @param {object} [target] - target
+     * @private
      */
-    select: function(nodeId, target) {
-      /* eslint-enable valid-jsdoc */
+    _select: function(nodeId, target) {
       var tree, prevElement, nodeElement, selectedClassName, prevNodeId, invokeResult;
 
       if (!nodeId) {
@@ -177,6 +171,18 @@ var Selectable = defineClass(
     },
 
     /**
+     * Select node if the feature-"Selectable" is enabled.
+     * @memberof Tree.prototype
+     * @requires Selectable
+     * @param {string} nodeId - Node id
+     * @example
+     * tree.select('tui-tree-node-3');
+     */
+    select: function(nodeId) {
+      this._select(nodeId);
+    },
+
+    /**
      * Get previous selected node element
      * @returns {HTMLElement} Node element
      */
@@ -224,7 +230,7 @@ var Selectable = defineClass(
        *      console.log('deselected node: ' + evt.nodeId);
        *  });
        */
-      tree.fire('deselect', {nodeId: nodeId});
+      tree.fire('deselect', { nodeId: nodeId });
     },
 
     /**

@@ -5,8 +5,8 @@ describe('editable feature', function() {
   var firstChildId, lastChildId;
   var firstChildElement;
   var data = [
-    {title: 'A', state: 'closed', children: [{title: '1'}, {title: '2'}, {title: '3'}]},
-    {title: 'B'}
+    { title: 'A', state: 'closed', children: [{ title: '1' }, { title: '2' }, { title: '3' }] },
+    { title: 'B' }
   ];
   var WRAPPER_CLASSNAME = 'tui-input-wrap';
 

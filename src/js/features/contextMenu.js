@@ -200,14 +200,15 @@ var ContextMenu = defineClass(
     /**
      * Event handler on context menu
      * @param {MouseEvent} e - Mouse event
-     * @param {string} cmd - Options value of selected context menu ("title"|"command")
+     * @param {string} command - Options value of selected context menu ("title"|"command")
      * @private
      */
-    _onSelect: function(e, cmd) {
+    _onSelect: function(e, command) {
       /**
        * @event Tree#selectContextMenu
        * @type {object} evt - Event data
-       * @property {string} cmd - Command type
+       * @property {string} command - Command type
+       * @property {string} cmd - Command type. It will be deprecated since version 4.0
        * @property {string} nodeId - Node id
        * @example
        * tree.on('selectContextMenu', function(evt) {
@@ -218,7 +219,8 @@ var ContextMenu = defineClass(
        * });
        */
       this.tree.fire('selectContextMenu', {
-        cmd: cmd, // TODO: change to `command`
+        cmd: command, // TODO: deprecate in v4.0
+        command: command,
         nodeId: this.selectedNodeId
       });
     },

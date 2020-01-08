@@ -1,7 +1,7 @@
 /* eslint-env es6 */
 
 module.exports = {
-  downloads: ({name, version}) => {
+  downloads: ({ name, version }) => {
     const extensions = ['.css', '.js', '.min.css', '.min.js'];
     const result = {};
 

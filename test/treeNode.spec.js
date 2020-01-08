@@ -1,12 +1,12 @@
 var TreeNode = require('../src/js/treeNode');
 
 describe('TreeNode', function() {
-  var node,
-    parentId = 0,
-    data = {
-      title: 'My node',
-      state: 'closed'
-    };
+  var node;
+  var parentId = 0;
+  var data = {
+    title: 'My node',
+    state: 'closed'
+  };
 
   beforeEach(function() {
     node = new TreeNode(data, parentId);
@@ -43,7 +43,7 @@ describe('TreeNode', function() {
       })
     );
 
-    node.setData({newData: 'data2'});
+    node.setData({ newData: 'data2' });
     expect(node.getAllData()).toEqual(
       jasmine.objectContaining({
         title: 'My node',
@@ -78,7 +78,7 @@ describe('TreeNode', function() {
   });
 
   it('children property in "setData" should be ignored', function() {
-    node.setData({children: []});
+    node.setData({ children: [] });
 
     expect(node.getData('children')).toBeUndefined();
   });
