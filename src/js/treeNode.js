@@ -2,23 +2,29 @@
  * @fileoverview Control each tree node's data
  * @author NHN. FE dev Lab <dl_javascript@nhn.com>
  */
-var snippet = require('tui-code-snippet');
-var states = require('./consts/states').node,
-  util = require('./util');
 
-var lastIndex = 0,
-  getNextIndex = function() {
-    var index = lastIndex;
-    lastIndex += 1;
+var inArray = require('tui-code-snippet/array/inArray');
+var forEachArray = require('tui-code-snippet/collection/forEachArray');
+var forEachOwnProperties = require('tui-code-snippet/collection/forEachOwnProperties');
+var defineClass = require('tui-code-snippet/defineClass/defineClass');
+var extend = require('tui-code-snippet/object/extend');
+var isFalsy = require('tui-code-snippet/type/isFalsy');
 
-    return index;
-  },
-  RESERVED_PROPERTIES = {
-    id: '',
-    state: 'setState',
-    children: ''
-  },
-  inArray = snippet.inArray;
+var states = require('./consts/states').node;
+var util = require('./util');
+
+var lastIndex = 0;
+var getNextIndex = function() {
+  var index = lastIndex;
+  lastIndex += 1;
+
+  return index;
+};
+var RESERVED_PROPERTIES = {
+  id: '',
+  state: 'setState',
+  children: ''
+};
 
 /**
  * TreeNode
@@ -27,7 +33,7 @@ var lastIndex = 0,
  * @param {string} [parentId] - Parent node id
  * @ignore
  */
-var TreeNode = snippet.defineClass(
+var TreeNode = defineClass(
   /** @lends TreeNode.prototype */ {
     static: {
       /**
@@ -90,7 +96,7 @@ var TreeNode = snippet.defineClass(
      * @private
      */
     _setReservedProperties: function(data) {
-      snippet.forEachOwnProperties(
+      forEachOwnProperties(
         RESERVED_PROPERTIES,
         function(setter, name) {
           var value = data[name];
@@ -181,7 +187,7 @@ var TreeNode = snippet.defineClass(
     addChildId: function(id) {
       var childIds = this._childIds;
 
-      if (snippet.inArray(childIds, id) === -1) {
+      if (inArray(childIds, id) === -1) {
         childIds.push(id);
       }
     },
@@ -208,7 +214,7 @@ var TreeNode = snippet.defineClass(
      * @returns {Object} Data
      */
     getAllData: function() {
-      return snippet.extend({}, this._data);
+      return extend({}, this._data);
     },
 
     /**
@@ -217,7 +223,7 @@ var TreeNode = snippet.defineClass(
      */
     setData: function(data) {
       data = this._setReservedProperties(data);
-      snippet.extend(this._data, data);
+      extend(this._data, data);
     },
 
     /**
@@ -225,7 +231,7 @@ var TreeNode = snippet.defineClass(
      * @param {...string} names - Names of data
      */
     removeData: function() {
-      snippet.forEachArray(
+      forEachArray(
         arguments,
         function(name) {
           delete this._data[name];
@@ -256,7 +262,7 @@ var TreeNode = snippet.defineClass(
      * @returns {boolean} Node is root or not.
      */
     isRoot: function() {
-      return snippet.isFalsy(this._parentId);
+      return isFalsy(this._parentId);
     },
 
     /**

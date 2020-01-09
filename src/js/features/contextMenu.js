@@ -2,13 +2,16 @@
  * @fileoverview Feature that each tree node is possible to have context-menu
  * @author NHN. FE dev Lab <dl_javascript@nhn.com>
  */
+
+var forEachArray = require('tui-code-snippet/collection/forEachArray');
+var defineClass = require('tui-code-snippet/defineClass/defineClass');
+var getTarget = require('tui-code-snippet/domEvent/getTarget');
+var disableTextSelection = require('tui-code-snippet/domUtil/disableTextSelection');
+var enableTextSelection = require('tui-code-snippet/domUtil/enableTextSelection');
+
 var util = require('./../util');
-var snippet = require('tui-code-snippet');
 var TuiContextMenu = require('tui-context-menu');
 var API_LIST = ['changeContextMenu'];
-var styleKeys = ['userSelect', 'WebkitUserSelect', 'OUserSelect', 'MozUserSelect', 'msUserSelect'];
-var enableProp = util.testProp(styleKeys);
-var bind = snippet.bind;
 
 /**
  * Set ContextMenu feature on tree
@@ -19,7 +22,7 @@ var bind = snippet.bind;
  *     @param {boolean} options.usageStatistics - Whether to send the hostname to GA
  * @ignore
  */
-var ContextMenu = snippet.defineClass(
+var ContextMenu = defineClass(
   /** @lends ContextMenu.prototype */ {
     static: {
       /**
@@ -71,7 +74,7 @@ var ContextMenu = snippet.defineClass(
        */
       this.selectedNodeId = null;
 
-      this.menu.register(this.treeSelector, bind(this._onSelect, this), options.menuData);
+      this.menu.register(this.treeSelector, util.bind(this._onSelect, this), options.menuData);
 
       this.tree.on('contextmenu', this._onContextMenu, this);
 
@@ -97,7 +100,7 @@ var ContextMenu = snippet.defineClass(
      */
     changeContextMenu: function(newMenuData) {
       this.menu.unregister(this.treeSelector);
-      this.menu.register(this.treeSelector, bind(this._onSelect, this), newMenuData);
+      this.menu.register(this.treeSelector, util.bind(this._onSelect, this), newMenuData);
     },
 
     /**
@@ -113,7 +116,7 @@ var ContextMenu = snippet.defineClass(
 
       tree.off(this);
 
-      snippet.forEach(API_LIST, function(apiName) {
+      forEachArray(API_LIST, function(apiName) {
         delete tree[apiName];
       });
     },
@@ -159,9 +162,7 @@ var ContextMenu = snippet.defineClass(
      * @private
      */
     _preventTextSelection: function() {
-      if (enableProp) {
-        this.tree.rootElement.style[enableProp] = 'none';
-      }
+      disableTextSelection(this.tree.rootElement);
     },
 
     /**
@@ -169,9 +170,7 @@ var ContextMenu = snippet.defineClass(
      * @private
      */
     _restoreTextSelection: function() {
-      if (enableProp) {
-        this.tree.rootElement.style[enableProp] = '';
-      }
+      enableTextSelection(this.tree.rootElement);
     },
 
     /**
@@ -180,7 +179,7 @@ var ContextMenu = snippet.defineClass(
      * @private
      */
     _onContextMenu: function(e) {
-      var target = util.getTarget(e);
+      var target = getTarget(e);
 
       this.selectedNodeId = this.tree.getNodeIdFromElement(target);
 
@@ -201,14 +200,15 @@ var ContextMenu = snippet.defineClass(
     /**
      * Event handler on context menu
      * @param {MouseEvent} e - Mouse event
-     * @param {string} cmd - Options value of selected context menu ("title"|"command")
+     * @param {string} command - Options value of selected context menu ("title"|"command")
      * @private
      */
-    _onSelect: function(e, cmd) {
+    _onSelect: function(e, command) {
       /**
        * @event Tree#selectContextMenu
        * @type {object} evt - Event data
-       * @property {string} cmd - Command type
+       * @property {string} command - Command type
+       * @property {string} cmd - Command type. It will be deprecated since version 4.0
        * @property {string} nodeId - Node id
        * @example
        * tree.on('selectContextMenu', function(evt) {
@@ -219,7 +219,8 @@ var ContextMenu = snippet.defineClass(
        * });
        */
       this.tree.fire('selectContextMenu', {
-        cmd: cmd,
+        cmd: command, // TODO: deprecate in v4.0
+        command: command,
         nodeId: this.selectedNodeId
       });
     },
@@ -231,10 +232,10 @@ var ContextMenu = snippet.defineClass(
     _setAPIs: function() {
       var tree = this.tree;
 
-      snippet.forEach(
+      forEachArray(
         API_LIST,
         function(apiName) {
-          tree[apiName] = bind(this[apiName], this);
+          tree[apiName] = util.bind(this[apiName], this);
         },
         this
       );

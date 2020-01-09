@@ -1,34 +1,34 @@
-var snippet = require('tui-code-snippet');
+var forEachArray = require('tui-code-snippet/collection/forEachArray');
 
-var Tree = require('../../src/js/tree'),
-  messages = require('../../src/js/consts/messages'),
-  Checkbox = require('../../src/js/features/checkbox');
+var Tree = require('../../src/js/tree');
+var messages = require('../../src/js/consts/messages');
+var Checkbox = require('../../src/js/features/checkbox');
 
-describe('Tree', function() {
+describe('checkbox feature', function() {
   var data = [
     {
       title: 'A',
       children: [
-        {title: '1'},
-        {title: '2'},
-        {title: '3'},
-        {title: '4'},
+        { title: '1' },
+        { title: '2' },
+        { title: '3' },
+        { title: '4' },
         {
           title: '5',
-          children: [{title: '가', children: [{title: '*'}]}, {title: '나'}]
+          children: [{ title: '가', children: [{ title: '*' }] }, { title: '나' }]
         },
-        {title: '6'},
-        {title: '7'},
-        {title: '8'},
-        {title: '9', children: [{title: '가'}, {title: '나'}]},
-        {title: '10'},
-        {title: '11'},
-        {title: '12'}
+        { title: '6' },
+        { title: '7' },
+        { title: '8' },
+        { title: '9', children: [{ title: '가' }, { title: '나' }] },
+        { title: '10' },
+        { title: '11' },
+        { title: '12' }
       ]
     },
     {
       title: 'B',
-      children: [{title: '1'}, {title: '2'}, {title: '3'}]
+      children: [{ title: '1' }, { title: '2' }, { title: '3' }]
     }
   ];
   var tree;
@@ -58,19 +58,19 @@ describe('Tree', function() {
   it('should have implemented apis about checkbox if enabled', function() {
     var apiList = Checkbox.getAPIList();
 
-    snippet.forEach(apiList, function(name) {
+    forEachArray(apiList, function(name) {
       expect(tree[name]).not.toThrowError(messages.INVALID_API_CHECKBOX);
     });
 
     tree.disableFeature('Checkbox');
-    snippet.forEach(apiList, function(name) {
+    forEachArray(apiList, function(name) {
       expect(tree[name]).toThrowError(messages.INVALID_API_CHECKBOX);
     });
   });
 
   it('should fire "check"-event when a node is checked', function() {
-    var firstChildId = tree.getChildIds(tree.getRootNodeId())[0],
-      spy = jasmine.createSpy();
+    var firstChildId = tree.getChildIds(tree.getRootNodeId())[0];
+    var spy = jasmine.createSpy();
 
     tree.on('check', spy);
     tree.check(firstChildId);
@@ -81,8 +81,8 @@ describe('Tree', function() {
   });
 
   it('should fire "uncheck"-event when a node is unchecked', function() {
-    var firstChildId = tree.getChildIds(tree.getRootNodeId())[0],
-      spy = jasmine.createSpy();
+    var firstChildId = tree.getChildIds(tree.getRootNodeId())[0];
+    var spy = jasmine.createSpy();
     tree.on('uncheck', spy);
 
     tree.uncheck(firstChildId);
@@ -126,8 +126,8 @@ describe('Tree', function() {
   });
 
   it('should be indeterminate if some children are checked', function() {
-    var baseNodeId = tree.getChildIds(tree.getRootNodeId())[0],
-      childIds = tree.getChildIds(baseNodeId);
+    var baseNodeId = tree.getChildIds(tree.getRootNodeId())[0];
+    var childIds = tree.getChildIds(baseNodeId);
 
     tree.check(childIds[0]);
     expect(tree.isIndeterminate(baseNodeId)).toBe(true);
@@ -144,8 +144,8 @@ describe('Tree', function() {
   });
 
   it('should be indeterminate if some children are unchecked from all checked', function() {
-    var baseNodeId = tree.getChildIds(tree.getRootNodeId())[0],
-      childIds = tree.getChildIds(baseNodeId);
+    var baseNodeId = tree.getChildIds(tree.getRootNodeId())[0];
+    var childIds = tree.getChildIds(baseNodeId);
 
     tree.each(function(node, nodeId) {
       tree.check(nodeId);
@@ -223,14 +223,14 @@ describe('Tree', function() {
       this.childIds = tree.getChildIds(this.firstChildId);
     });
 
-    it('should children remain unchecked even if parents are checked.', function() {
+    it('should children remain unchecked even if parents are checked', function() {
       tree.check(this.firstChildId);
       tree.each(function(node, nodeId) {
         expect(tree.isChecked(nodeId)).toBe(false);
       }, this.firstChildId);
     });
 
-    it('should be not indeterminate even if some children are checked', function() {
+    it('should not be indeterminate even if some children are checked', function() {
       tree.check(this.childIds[0]);
       expect(tree.isIndeterminate(this.firstChildId)).toBe(false);
     });
@@ -246,7 +246,7 @@ describe('Tree', function() {
       this.childIds = tree.getChildIds(this.firstChildId);
     });
 
-    it('should children remain unchecked even if parents are checked.', function() {
+    it('should children remain unchecked even if parents are checked', function() {
       tree.check(this.firstChildId);
       tree.each(function(node, nodeId) {
         expect(tree.isChecked(nodeId)).toBe(false);
@@ -276,7 +276,7 @@ describe('Tree', function() {
       }, this.firstChildId);
     });
 
-    it('should be not indeterminate even if some children are checked', function() {
+    it('should not be indeterminate even if some children are checked', function() {
       tree.check(this.childIds[0]);
       expect(tree.isIndeterminate(this.firstChildId)).toBe(false);
     });

@@ -2,7 +2,13 @@
  * @fileoverview Feature that tree action is enable to communicate server
  * @author NHN. FE dev Lab <dl_javascript@nhn.com>
  */
-var snippet = require('tui-code-snippet');
+
+var defineClass = require('tui-code-snippet/defineClass/defineClass');
+var extend = require('tui-code-snippet/object/extend');
+var isFunction = require('tui-code-snippet/type/isFunction');
+var isUndefined = require('tui-code-snippet/type/isUndefined');
+var bind = require('../util').bind;
+
 var API_LIST = [];
 var LOADER_CLASSNAME = 'tui-tree-loader';
 
@@ -17,7 +23,7 @@ var LOADER_CLASSNAME = 'tui-tree-loader';
  *  @param {boolean} [options.isLoadRoot] - Whether load data from root node or not
  * @ignore
  */
-var Ajax = snippet.defineClass(
+var Ajax = defineClass(
   /** @lends Ajax.prototype */ {
     static: {
       /**
@@ -30,7 +36,7 @@ var Ajax = snippet.defineClass(
       }
     },
     init: function(tree, options) {
-      options = snippet.extend({}, options);
+      options = extend({}, options);
 
       /**
        * Tree
@@ -60,7 +66,7 @@ var Ajax = snippet.defineClass(
        * State of loading root data or not
        * @type {boolean}
        */
-      this.isLoadRoot = !snippet.isUndefined(options.isLoadRoot) ? options.isLoadRoot : true;
+      this.isLoadRoot = !isUndefined(options.isLoadRoot) ? options.isLoadRoot : true;
 
       /**
        * Loader element
@@ -70,7 +76,7 @@ var Ajax = snippet.defineClass(
 
       this._createLoader();
 
-      tree.on('initFeature', snippet.bind(this._onInitFeature, this));
+      tree.on('initFeature', bind(this._onInitFeature, this));
     },
 
     /**
@@ -98,25 +104,26 @@ var Ajax = snippet.defineClass(
 
     /**
      * Load data to request server
-     * @param {string} type - Command type
+     * @param {string} command - Command type
      * @param {Function} callback - Executed function after response
-     * @param {Object} [params] - Values to make "data" property using request
+     * @param {Object} [data] - Values to make "data" property using request
      */
-    loadData: function(type, callback, params) {
-      var self = this;
+    loadData: function(command, callback, data) {
       var options;
 
-      if (!this.command || !this.command[type] || !this.command[type].url) {
+      if (!this.command || !this.command[command] || !this.command[command].url) {
         return;
       }
 
-      options = this._getDefaultRequestOptions(type, params);
+      options = this._getDefaultRequestOptions(command, data);
 
       /**
        * @event Tree#beforeAjaxRequest
        * @type {object} evt - Event data
        * @property {string} command - Command type
+       * @property {string} type - Command type. It will be deprecated since version 4.0
        * @property {object} [data] - Request data
+       * @property {object} [params] - Request data. It will be deprecated since version 4.0
        * @example
        * tree.on('beforeAjaxRequest', function(evt) {
        *     console.log('before ' + evt.command + ' request!');
@@ -126,8 +133,10 @@ var Ajax = snippet.defineClass(
        */
       if (
         !this.tree.invoke('beforeAjaxRequest', {
-          type: type,
-          params: params
+          type: command, // TODO: deprecate in v4.0
+          params: data, // TODO: deprecate in v4.0
+          command: command,
+          data: data
         })
       ) {
         return;
@@ -135,32 +144,32 @@ var Ajax = snippet.defineClass(
 
       this._showLoader();
 
-      options.success = function(response) {
-        self._responseSuccess(type, callback, response);
-      };
+      options.success = bind(function(response) {
+        this._responseSuccess(command, callback, response);
+      }, this);
 
-      options.error = function() {
-        self._responseError(type);
-      };
+      options.error = bind(function() {
+        this._responseError(command);
+      }, this);
 
       $.ajax(options);
     },
 
     /**
      * Processing when response is success
-     * @param {string} type - Command type
+     * @param {string} command - Command type
      * @param {Function} callback - Executed function after response
      * @param {Object|boolean} [response] - Response data from server or return value of "parseData"
      * @private
      */
-    _responseSuccess: function(type, callback, response) {
+    _responseSuccess: function(command, callback, response) {
       var tree = this.tree;
       var data;
 
       this._hideLoader();
 
       if (this.parseData) {
-        response = this.parseData(type, response);
+        response = this.parseData(command, response);
       }
 
       if (response) {
@@ -170,6 +179,7 @@ var Ajax = snippet.defineClass(
          * @event Tree#successAjaxResponse
          * @type {object} evt - Event data
          * @property {string} command - Command type
+         * @property {string} type - Command type. It will be deprecated since version 4.0
          * @property {object} [data] - Return value of executed command callback
          * @example
          * tree.on('successAjaxResponse', function(evt) {
@@ -180,7 +190,8 @@ var Ajax = snippet.defineClass(
          * });
          */
         tree.fire('successAjaxResponse', {
-          type: type,
+          type: command, // TODO: deprecate in v4.0
+          command: command,
           data: data
         });
       } else {
@@ -188,33 +199,41 @@ var Ajax = snippet.defineClass(
          * @event Tree#failAjaxResponse
          * @type {object} evt - Event data
          * @property {string} command - Command type
+         * @property {string} type - Command type. It will be deprecated since version 4.0
          * @example
          * tree.on('failAjaxResponse', function(evt) {
          *     console.log(evt.command + ' response is fail!');
          * });
          */
-        tree.fire('failAjaxResponse', {type: type});
+        tree.fire('failAjaxResponse', {
+          type: command, // TODO: deprecate in v4.0
+          command: command
+        });
       }
     },
 
     /**
      * Processing when response is error
-     * @param {string} type - Command type
+     * @param {string} command - Command type
      * @private
      */
-    _responseError: function(type) {
+    _responseError: function(command) {
       this._hideLoader();
 
       /**
        * @event Tree#errorAjaxResponse
        * @type {object} evt - Event data
        * @property {string} command - Command type
+       * @property {string} type - Command type. It will be deprecated since version 4.0
        * @example
        * tree.on('errorAjaxResponse', function(evt) {
        *     console.log(evt.command + ' response is error!');
        * });
        */
-      this.tree.fire('errorAjaxResponse', {type: type});
+      this.tree.fire('errorAjaxResponse', {
+        type: command, // TODO: deprecate in v4.0
+        command: command
+      });
     },
 
     /**
@@ -227,12 +246,12 @@ var Ajax = snippet.defineClass(
     _getDefaultRequestOptions: function(type, params) {
       var options = this.command[type];
 
-      if (snippet.isFunction(options.url)) {
+      if (isFunction(options.url)) {
         // for restful API url
         options.url = options.url(params);
       }
 
-      if (snippet.isFunction(options.data)) {
+      if (isFunction(options.data)) {
         // for custom request data
         options.data = options.data(params);
       }

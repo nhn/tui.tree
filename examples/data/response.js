@@ -1,3 +1,3 @@
 dataCallback({
-    'code': '200'
+  'code': '200'
 });

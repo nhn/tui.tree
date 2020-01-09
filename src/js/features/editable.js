@@ -2,10 +2,20 @@
  * @fileoverview Feature that each tree node is possible to edit as double click
  * @author NHN. FE dev Lab <dl_javascript@nhn.com>
  */
+
+var forEachArray = require('tui-code-snippet/collection/forEachArray');
+var defineClass = require('tui-code-snippet/defineClass/defineClass');
+var getTarget = require('tui-code-snippet/domEvent/getTarget');
+var off = require('tui-code-snippet/domEvent/off');
+var on = require('tui-code-snippet/domEvent/on');
+var addClass = require('tui-code-snippet/domUtil/addClass');
+var hasClass = require('tui-code-snippet/domUtil/hasClass');
+var removeElement = require('tui-code-snippet/domUtil/removeElement');
+var extend = require('tui-code-snippet/object/extend');
+
 var util = require('./../util');
 var ajaxCommand = require('./../consts/ajaxCommand');
 var states = require('./../consts/states');
-var snippet = require('tui-code-snippet');
 
 var API_LIST = ['createChildNode', 'editNode', 'finishEditing'];
 var EDIT_TYPE = {
@@ -26,7 +36,7 @@ var INPUT_CLASSNAME = 'tui-tree-input';
  *  @param {string} [options.inputClassName] - Classname of input element
  * @ignore
  */
-var Editable = snippet.defineClass(
+var Editable = defineClass(
   /** @lends Editable.prototype */ {
     static: {
       /**
@@ -39,7 +49,7 @@ var Editable = snippet.defineClass(
       }
     },
     init: function(tree, options) {
-      options = snippet.extend({}, options);
+      options = extend({}, options);
 
       /**
        * Tree
@@ -87,13 +97,13 @@ var Editable = snippet.defineClass(
        * Keyup event handler
        * @type {Function}
        */
-      this.boundOnKeyup = snippet.bind(this._onKeyup, this);
+      this.boundOnKeyup = util.bind(this._onKeyup, this);
 
       /**
        * Blur event handler
        * @type {Function}
        */
-      this.boundOnBlur = snippet.bind(this._onBlur, this);
+      this.boundOnBlur = util.bind(this._onBlur, this);
 
       tree.on('doubleClick', this._onDoubleClick, this);
 
@@ -108,7 +118,7 @@ var Editable = snippet.defineClass(
 
       this._detachInputElement();
       tree.off(this);
-      snippet.forEach(API_LIST, function(apiName) {
+      forEachArray(API_LIST, function(apiName) {
         delete tree[apiName];
       });
     },
@@ -189,10 +199,10 @@ var Editable = snippet.defineClass(
      * @private
      */
     _onDoubleClick: function(event) {
-      var target = util.getTarget(event);
+      var target = getTarget(event);
       var nodeId;
 
-      if (util.hasClass(target, this.editableClassName)) {
+      if (hasClass(target, this.editableClassName)) {
         nodeId = this.tree.getNodeIdFromElement(target);
         this.editNode(nodeId);
       }
@@ -330,7 +340,7 @@ var Editable = snippet.defineClass(
     _createInputElement: function() {
       var element = document.createElement('INPUT');
       element.setAttribute('type', 'text');
-      util.addClass(element, INPUT_CLASSNAME);
+      addClass(element, INPUT_CLASSNAME);
 
       return element;
     },
@@ -350,13 +360,13 @@ var Editable = snippet.defineClass(
         return;
       }
 
-      wrapperElement = util.getChildElementByClassName(target, WRAPPER_CLASSNAME);
+      wrapperElement = target.querySelector('.' + WRAPPER_CLASSNAME);
 
       if (!wrapperElement) {
         wrapperElement = document.createElement('DIV');
         inputElement = this._createInputElement();
 
-        util.addClass(wrapperElement, WRAPPER_CLASSNAME);
+        addClass(wrapperElement, WRAPPER_CLASSNAME);
         wrapperElement.style.paddingLeft = tree.getIndentWidth(nodeId) + 'px';
 
         inputElement.value = tree.getNodeData(nodeId)[this.dataKey] || '';
@@ -364,8 +374,10 @@ var Editable = snippet.defineClass(
         wrapperElement.appendChild(inputElement);
         target.appendChild(wrapperElement);
 
-        util.addEventListener(inputElement, 'keyup', this.boundOnKeyup);
-        util.addEventListener(inputElement, 'blur', this.boundOnBlur);
+        on(inputElement, {
+          keyup: this.boundOnKeyup,
+          blur: this.boundOnBlur
+        });
 
         if (this.inputElement) {
           this.inputElement.blur();
@@ -386,10 +398,12 @@ var Editable = snippet.defineClass(
       var inputElement = this.inputElement;
       var wrapperElement = this.inputElement.parentNode;
 
-      util.removeEventListener(inputElement, 'keyup', this.boundOnKeyup);
-      util.removeEventListener(inputElement, 'blur', this.boundOnBlur);
+      off(inputElement, {
+        keyup: this.boundOnKeyup,
+        blur: this.boundOnBlur
+      });
 
-      util.removeElement(wrapperElement);
+      removeElement(wrapperElement);
 
       if (tree.enabledFeatures.Ajax) {
         tree.off(this, 'successAjaxResponse');
@@ -438,12 +452,11 @@ var Editable = snippet.defineClass(
      */
     _setAPIs: function() {
       var tree = this.tree;
-      var bind = snippet.bind;
 
-      snippet.forEach(
+      forEachArray(
         API_LIST,
         function(apiName) {
-          tree[apiName] = bind(this[apiName], this);
+          tree[apiName] = util.bind(this[apiName], this);
         },
         this
       );

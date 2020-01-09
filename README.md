@@ -32,14 +32,14 @@ It also serves as important index to determine the future course of projects.
 `location.hostname` (e.g. > “ui.toast.com") is to be collected and the sole purpose is nothing but to measure statistics on the usage.
  To disable GA, use the following `usageStatistics` option when creating the instance.
  ```js
-var options = {
-    ...
-    usageStatistics: false
+const options = {
+  ...
+  usageStatistics: false
 }
-var instance = new Tree(container, options);
+const instance = new Tree(container, options);
 ```
 
-Or, include [`tui-code-snippet`](https://github.com/nhn/tui.code-snippet)(**v1.5.0** or **later**) and then immediately write the options as follows:
+Or, include [`tui-code-snippet`](https://github.com/nhn/tui.code-snippet)(**v2.2.0** or **later**) and then immediately write the options as follows:
 
 ```js
 tui.usageStatistics = false;
@@ -48,7 +48,7 @@ tui.usageStatistics = false;
 
 ## 📙 Documents
 * [Getting Started](https://github.com/nhn/tui.tree/blob/production/docs/getting-started.md)
-* [Tutorials](https://github.com/nhn/tui.tree/tree/production/docs)
+* [How to use Ajax feature](https://github.com/nhn/tui.tree/blob/production/docs/ajax-feature.md)
 * [APIs](https://nhn.github.io/tui.tree/latest)
 
 You can also see the older versions of API page on the [releases page](https://github.com/nhn/tui.tree/releases).
@@ -61,7 +61,7 @@ You can also see the older versions of API page on the [releases page](https://g
     * `Selectable` : Each node can be selected.
     * `Draggable` : Each node can be moved.
     * `Editable` : Each node can be edited.
-    * `ContextMenu` : A context menu can be created for each node.
+    * `ContextMenu` : A context menu can be created for each node. (*Not supporting IE8*)
     * `Checkbox` : A checkbox can be added to each node and a 3-state checkbox is used.
     * `Ajax` : Requests server and handles the `CRUD` for each node.
 * Supports templates.
@@ -119,9 +119,10 @@ The CDN directory has the following structure.
 ```
 tui-tree/
 ├─ latest/
+│  ├─ tui-tree.css
 │  ├─ tui-tree.js
-│  ├─ tui-tree.min.js
-│  └─ tui-tree.css
+│  ├─ tui-tree.min.css
+│  └─ tui-tree.min.js
 ├─ v3.3.0/
 │  ├─ ...
 ```
@@ -135,10 +136,10 @@ tui-tree/
 
 ### HTML
 
-Add the container element to create the component.
+Add the container element to create the component. A wrapper element should have `tui-tree-wrap` as a class name to apply tui-tree's style.
 
 ``` html
-<div id="tui-tree-container" class="tui-tree-wrap"></div>
+<div id="tree" class="tui-tree-wrap"></div>
 ```
 
 ### JavaScript
@@ -148,23 +149,23 @@ To get the constructor function, you should import the module using one of the f
 
 #### Using namespace in browser environment
 ``` javascript
-var Tree = tui.Tree;
+const Tree = tui.Tree;
 ```
 
 #### Using module format in node environment
 ``` javascript
-var Tree = require('tui-tree'); /* CommonJS */
+const Tree = require('tui-tree'); /* CommonJS */
 ```
 
 ``` javascript
-import {Tree} from 'tui-tree'; /* ES6 */
+import Tree from 'tui-tree'; /* ES6 */
 ```
 
 You can create an instance with [options](https://nhn.github.io/tui.tree/latest/Tree) and call various APIs after creating an instance.
 
 ``` javascript
-var container = document.getElementById('tui-tree-container');
-var instance = new Tree(container, { ... });
+const container = document.getElementById('tree');
+const instance = new Tree(container, { ... });
 
 instance.add( ... );
 ```
@@ -173,8 +174,8 @@ For more information about the API, please see [here](https://nhn.github.io/tui.
 
 
 ## 🔩 Dependency
-* [tui-code-snippet](https://github.com/nhn/tui.code-snippet) >=1.5.0
-* [tui-context-menu](https://github.com/nhn/tui.context-menu) >=2.1.1 (Optional, needs forusing `ContextMenu` feature)
+* [tui-code-snippet](https://github.com/nhn/tui.code-snippet) >=2.2.0
+* [tui-context-menu](https://github.com/nhn/tui.context-menu) >=2.1.6 (Optional, needs forusing `ContextMenu` feature, *not supporting IE8*)
 * [jQuery](https://github.com/jquery/jquery/tree/1.12-stable) >=1.11.0 (Optional, needs for using `Ajax` feature)
 
 
@@ -183,6 +184,7 @@ For more information about the API, please see [here](https://nhn.github.io/tui.
 | :---------: | :---------: | :---------: | :---------: | :---------: |
 | Yes | 8+ | Yes | Yes | Yes |
 
+* ContextMenu feature does not support IE8.
 
 ## 🔧 Pull Request Steps
 
