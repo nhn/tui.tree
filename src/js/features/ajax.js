@@ -244,7 +244,7 @@ var Ajax = defineClass(
      * @private
      */
     _getDefaultRequestOptions: function(type, params) {
-      var options = this.command[type];
+      var options = extend({}, this.command[type]);
 
       if (isFunction(options.url)) {
         // for restful API url
