@@ -5,7 +5,7 @@
 ## Feature operation
 - When occurring read action on tree component, server is requested by options. And server respond with success data then tree view is updated.
 - If server respond with failed data or is on error, tree view is not updated and each custom event can handle current state.
-- View on [the example page](https://nhnent.github.io/tui.tree/latest/tutorial-example08-ajax.html)
+- View on [the example page](https://nhn.github.io/tui.tree/latest/tutorial-example08-ajax)
 
 ## How to use
 
@@ -128,4 +128,4 @@ tree.on({
 |`move`|`move`|`evt.nodeId`<br>`evt.newParentId`<br>`evt.index`|
 
 ### Reference
-- API : https://nhnent.github.io/tui.tree/latest
+- API : https://nhn.github.io/tui.tree/latest

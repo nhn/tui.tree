@@ -1,513 +1,497 @@
 var Tree = require('../../src/js/tree');
 
-describe('Tree', function() {
-    var tree;
+describe('Ajax feature', function() {
+  var tree;
+
+  beforeEach(function() {
+    loadFixtures('basicFixture.html');
+
+    jasmine.Ajax.install();
+
+    tree = new Tree('tree', {
+      rootElement: 'treeRoot'
+    });
+  });
+
+  afterEach(function() {
+    jasmine.Ajax.uninstall();
+  });
+
+  it('loader should be created in the tree when Ajax feature is enabled', function() {
+    var className;
+
+    tree.enableFeature('Ajax');
+
+    className = tree.enabledFeatures.Ajax.loaderClassName;
+
+    expect(document.querySelectorAll('.' + className).length).toBe(1);
+  });
+
+  it('loader should be removed from the tree when Ajax feature is disabled', function() {
+    var className;
+
+    tree.enableFeature('Ajax');
+
+    className = tree.enabledFeatures.Ajax.loaderClassName;
+
+    tree.disableFeature('Ajax');
+
+    expect(document.querySelectorAll('.' + className).length).toBe(0);
+  });
+  
+  describe('Options', function() {
+    var treeAjax;
 
     beforeEach(function() {
-        loadFixtures('basicFixture.html');
+      tree.enableFeature('Ajax', {
+        command: {
+          read: {
+            url: function(params) {
+              var path = params && params.path ? params.path : '';
 
-        jasmine.Ajax.install();
+              return 'api/id' + path;
+            },
+            data: function(params) {
+              params = params || { id: 1 };
 
-        tree = new Tree('tree', {
-            rootElement: 'treeRoot'
-        });
+              return { someId: params.id };
+            }
+          }
+        },
+        isLoadRoot: false
+      });
+
+      treeAjax = tree.enabledFeatures.Ajax;
     });
 
-    afterEach(function() {
-        jasmine.Ajax.uninstall();
+    it('"type" should be "get" when default command option does not have it', function() {
+      expect(treeAjax._getDefaultRequestOptions('read').type).toBe('get');
     });
 
-    it('When Ajax feature is enabled, the loader is created in tree.', function() {
-        var className;
-
-        tree.enableFeature('Ajax');
-
-        className = tree.enabledFeatures.Ajax.loaderClassName;
-
-        expect($('.' + className).length).toBe(1);
+    it('"dataType" should be "json" when default command option does not have it', function() {
+      expect(treeAjax._getDefaultRequestOptions('read').dataType).toBe('json');
     });
 
-    it('When Ajax feature is disabled, the loader is removed in tree.', function() {
-        var className;
-
-        tree.enableFeature('Ajax');
-
-        className = tree.enabledFeatures.Ajax.loaderClassName;
-
-        tree.disableFeature('Ajax');
-
-        expect($('.' + className).length).toBe(0);
+    it('"url" should be the return value when "url" property of the default command option is function', function() {
+      expect(treeAjax._getDefaultRequestOptions('read').url).toBe('api/id');
+      expect(treeAjax._getDefaultRequestOptions('read', { path: '/tree' }).url).toBe('api/id/tree');
     });
 
-    describe('Options test', function() {
-        var treeAjax;
-
-        beforeEach(function() {
-            tree.enableFeature('Ajax', {
-                command: {
-                    read: {
-                        url: function(params) {
-                            var path = params && params.path ? params.path : '';
-
-                            return 'api/id' + path;
-                        },
-                        data: function(params) {
-                            params = params || {id: 1};
-
-                            return {someId: params.id};
-                        }
-                    }
-                },
-                isLoadRoot: false
-            });
-
-            treeAjax = tree.enabledFeatures.Ajax;
-        });
-
-        it('When default command option have not "type" property, default value set to "get".', function() {
-            expect(treeAjax._getDefaultRequestOptions('read').type).toBe('get');
-        });
-
-        it('When default command option have not "dataType" property, default value set to "json".', function() {
-            expect(treeAjax._getDefaultRequestOptions('read').dataType).toBe('json');
-        });
-
-        it('When default command option have "url" property and it is function, ' +
-            '"url" value set to return value.', function() {
-            expect(treeAjax._getDefaultRequestOptions('read').url).toBe('api/id');
-
-            expect(treeAjax._getDefaultRequestOptions('read', {path: '/tree'}).url).toBe('api/id/tree');
-        });
-
-        it('When default command option have "data" property and it is function, ' +
-            '"data" value set to return value.', function() {
-            expect(treeAjax._getDefaultRequestOptions('read').data).toEqual({
-                someId: 1
-            });
-
-            expect(treeAjax._getDefaultRequestOptions('read', {id: 5}).data).toEqual({
-                someId: 5
-            });
-        });
-
-        it('When "isLoadRoot" option value is false, it is not request server on init.', function() {
-            spyOn(tree, 'resetAllData');
-
-            tree.on('initFeature');
-
-            expect(tree.resetAllData).not.toHaveBeenCalled();
-        });
+    it('"data" should be the return value when "data" property of the default command option is function', function() {
+      expect(treeAjax._getDefaultRequestOptions('read').data).toEqual({
+        someId: 1
+      });
+      expect(treeAjax._getDefaultRequestOptions('read', { id: 5 }).data).toEqual({
+        someId: 5
+      });
     });
 
-    describe('loadData() Ajax request - ', function() {
-        var request, treeAjax;
+    it('should not request to a server on init when "isLoadRoot" is false', function() {
+      spyOn(tree, 'resetAllData');
 
-        beforeEach(function() {
-            tree.enableFeature('Ajax', {
-                command: {
-                    remove: {
-                        url: 'api/test'
-                    }
-                }
-            });
+      tree.on('initFeature');
 
-            treeAjax = tree.enabledFeatures.Ajax;
-        });
+      expect(tree.resetAllData).not.toHaveBeenCalled();
+    });
+  });
 
-        it('When request url is empty, request is not executed.', function() {
-            treeAjax.loadData('read');
+  describe('loadData() Ajax request - ', function() {
+    var request, treeAjax;
 
-            request = jasmine.Ajax.requests.mostRecent();
+    beforeEach(function() {
+      tree.enableFeature('Ajax', {
+        command: {
+          remove: {
+            url: 'api/test'
+          }
+        }
+      });
 
-            expect(request).toBeUndefined();
-        });
-
-        it('When request options are valid, request is executed.', function() {
-            treeAjax.loadData('remove');
-
-            request = jasmine.Ajax.requests.mostRecent();
-
-            expect(request.url).toBe('api/test');
-            expect(request.method).toBe('GET');
-        });
-
-        it('When request is "GET" with parameters, request url include query string.', function() {
-            var expected = 'api/test?param1=a&param2=b';
-
-            spyOn(treeAjax, '_getDefaultRequestOptions').and.returnValue({
-                url: 'api/test',
-                type: 'get',
-                dataType: 'json',
-                data: {
-                    param1: 'a',
-                    param2: 'b'
-                }
-            });
-
-            treeAjax.loadData('remove');
-
-            request = jasmine.Ajax.requests.mostRecent();
-
-            expect(request.url).toBe(expected);
-        });
-
-        it('When request is "POST" with parameters, request property is not null.', function() {
-            spyOn(treeAjax, '_getDefaultRequestOptions').and.returnValue({
-                url: 'api/test',
-                type: 'post',
-                dataType: 'json',
-                data: {
-                    param1: 'a',
-                    param2: 'b'
-                }
-            });
-
-            treeAjax.loadData('remove');
-
-            request = jasmine.Ajax.requests.mostRecent();
-
-            expect(request.params).not.toBeNull();
-        });
+      treeAjax = tree.enabledFeatures.Ajax;
     });
 
-    describe('loadData() Ajax response - ', function() {
-        var callback, treeAjax;
+    it('request should not be execute when request url is empty', function() {
+      treeAjax.loadData('read');
 
-        beforeEach(function() {
-            tree.enableFeature('Ajax', {
-                command: {
-                    read: {
-                        url: 'api/test'
-                    }
-                }
-            });
+      request = jasmine.Ajax.requests.mostRecent();
 
-            treeAjax = tree.enabledFeatures.Ajax;
-            callback = jasmine.createSpy('callback function');
-        });
-
-        it('When response is success, callback function is executed.', function() {
-            spyOn($, 'ajax').and.callFake(function(e) {
-                e.success({});
-            });
-
-            treeAjax.loadData('read', callback);
-
-            expect(callback).toHaveBeenCalled();
-        });
-
-        it('When response is success, the loader is hidden.', function() {
-            var className = treeAjax.loaderClassName;
-
-            spyOn($, 'ajax').and.callFake(function(e) {
-                e.success({});
-            });
-
-            treeAjax._showLoader();
-            treeAjax.loadData('read', callback);
-
-            expect($('.' + className).css('display')).toBe('none');
-        });
-
-        it('When response is failed, the Ajax loader is hidden.', function() {
-            var className = treeAjax.loaderClassName;
-
-            spyOn($, 'ajax').and.callFake(function(e) {
-                e.error({});
-            });
-
-            treeAjax._showLoader();
-            treeAjax.loadData('read', callback);
-
-            expect($('.' + className).css('display')).toBe('none');
-        });
-
-        it('When response is failed, the "errorAjaxResponse" custom event is fired.', function() {
-            var handler = jasmine.createSpy('error event handler');
-
-            spyOn($, 'ajax').and.callFake(function(e) {
-                e.error({});
-            });
-
-            tree.on('errorAjaxResponse', handler);
-
-            treeAjax.loadData('read', callback);
-
-            expect(handler).toHaveBeenCalled();
-        });
+      expect(request).toBeUndefined();
     });
 
-    describe('READ command - ', function() {
-        var response, rootNodeId, newChildIds;
+    it('request should be executed when request options are valid', function() {
+      treeAjax.loadData('remove');
 
-        beforeEach(function() {
-            rootNodeId = tree.getRootNodeId();
-            response = [
-                {text: 'A', state: 'opened', hasChild: true},
-                {text: 'B'}
-            ];
+      request = jasmine.Ajax.requests.mostRecent();
 
-            spyOn($, 'ajax').and.callFake(function(e) {
-                e.success(response);
-            });
-
-            tree.enableFeature('Ajax', {
-                command: {
-                    read: {
-                        url: 'api/test'
-                    }
-                }
-            });
-
-            tree.on('successAjaxResponse', function(evt) {
-                newChildIds = evt.data;
-            });
-        });
-
-        it('When Ajax feature is enabled, 1 depth nodes are added.', function() {
-            expect(tree.getChildIds(rootNodeId).length).toBe(2);
-        });
-
-        it('When state label is opened, children nodes are added.', function() {
-            var nodeId = tree.getChildIds(rootNodeId)[0];
-
-            tree.close(nodeId);
-            tree.toggle(nodeId);
-
-            expect(tree.getChildIds(nodeId)).toEqual(newChildIds);
-        });
+      expect(request.url).toBe('api/test');
+      expect(request.method).toBe('GET');
     });
 
-    describe('CREATE command - ', function() {
-        var parentId, newChildIds;
+    it('request url should include query strings when request is "GET" with parameters', function() {
+      var expected = 'api/test?param1=a&param2=b';
 
-        beforeEach(function() {
-            tree.enableFeature('Ajax', {
-                command: {
-                    create: {
-                        url: 'api/test'
-                    }
-                }
-            });
+      spyOn(treeAjax, '_getDefaultRequestOptions').and.returnValue({
+        url: 'api/test',
+        type: 'get',
+        dataType: 'json',
+        data: {
+          param1: 'a',
+          param2: 'b'
+        }
+      });
 
-            parentId = tree.getRootNodeId();
-        });
+      treeAjax.loadData('remove');
 
-        it('When response data is success, new node is created.', function() {
-            spyOn($, 'ajax').and.callFake(function(e) {
-                e.success(true);
-            });
+      request = jasmine.Ajax.requests.mostRecent();
 
-            tree.on('successAjaxResponse', function(evt) {
-                newChildIds = evt.data;
-            });
-
-            tree.add({text: 'C'}, parentId);
-
-            expect(tree.getChildIds(parentId)).toEqual(newChildIds);
-        });
-
-        it('When response data is error, new node is not created.', function() {
-            spyOn($, 'ajax').and.callFake(function(e) {
-                e.success(false);
-            });
-
-            tree.add({text: 'C'}, parentId);
-
-            expect(tree.getChildIds(parentId).length).toBe(0);
-        });
+      expect(request.url).toBe(expected);
     });
 
-    describe('REMOVE command - ', function() {
-        var children, parentId, nodeId;
+    it('request property should not be null when request is "POST" with parameters', function() {
+      spyOn(treeAjax, '_getDefaultRequestOptions').and.returnValue({
+        url: 'api/test',
+        type: 'post',
+        dataType: 'json',
+        data: {
+          param1: 'a',
+          param2: 'b'
+        }
+      });
 
-        beforeEach(function() {
-            children = [
-                {text: 'A'},
-                {text: 'B'}
-            ];
+      treeAjax.loadData('remove');
 
-            tree.add(children);
-            tree.enableFeature('Ajax', {
-                command: {
-                    remove: {
-                        url: 'api/test'
-                    }
-                }
-            });
+      request = jasmine.Ajax.requests.mostRecent();
 
-            parentId = tree.getRootNodeId();
-            nodeId = tree.getChildIds(parentId)[0];
-        });
+      expect(request.params).not.toBeNull();
+    });
+  });
 
-        it('When response data is success, selected node is removed.', function() {
-            spyOn($, 'ajax').and.callFake(function(e) {
-                e.success(true);
-            });
+  describe('loadData() Ajax response - ', function() {
+    var callback, treeAjax;
 
-            tree.remove(nodeId);
+    beforeEach(function() {
+      tree.enableFeature('Ajax', {
+        command: {
+          read: {
+            url: 'api/test'
+          }
+        }
+      });
 
-            expect(tree.getChildIds(parentId).length).toBe(children.length - 1);
-        });
-
-        it('When response data is error, selected node is not removed.', function() {
-            spyOn($, 'ajax').and.callFake(function(e) {
-                e.success(false);
-            });
-
-            tree.remove(nodeId);
-
-            expect(tree.getChildIds(parentId).length).toBe(children.length);
-        });
+      treeAjax = tree.enabledFeatures.Ajax;
+      callback = jasmine.createSpy('callback function');
     });
 
-    describe('UPDATE command - ', function() {
-        var children, nodeId, changedData;
+    it('callback function should be executed when response is success', function() {
+      spyOn($, 'ajax').and.callFake(function(e) {
+        e.success({});
+      });
 
-        beforeEach(function() {
-            children = [
-                {text: 'A', propA: 'aa', propB: 'bb'}
-            ];
+      treeAjax.loadData('read', callback);
 
-            tree.add(children);
-            tree.enableFeature('Ajax', {
-                command: {
-                    update: {
-                        url: 'api/test'
-                    }
-                }
-            });
-
-            nodeId = tree.getChildIds(tree.getRootNodeId())[0];
-            changedData = {text: 'B'};
-        });
-
-        it('When response data is success, selected node data is updated.', function() {
-            spyOn($, 'ajax').and.callFake(function(e) {
-                e.success(true);
-            });
-
-            tree.setNodeData(nodeId, changedData);
-
-            expect(tree.getNodeData(nodeId).text).toBe(changedData.text);
-        });
-
-        it('When response data is error, selected node data is not updated.', function() {
-            spyOn($, 'ajax').and.callFake(function(e) {
-                e.success(false);
-            });
-
-            tree.setNodeData(nodeId, changedData);
-
-            expect(tree.getNodeData(nodeId).text).not.toBe(changedData.text);
-        });
-
-        it('When response data is success, deleted node data is updated.', function() {
-            spyOn($, 'ajax').and.callFake(function(e) {
-                e.success(true);
-            });
-
-            tree.removeNodeData(nodeId, 'propA');
-
-            expect(tree.getNodeData(nodeId).propA).toBeUndefined();
-        });
-
-        it('When response data is error, deleted node data is not updated.', function() {
-            spyOn($, 'ajax').and.callFake(function(e) {
-                e.success(false);
-            });
-
-            tree.removeNodeData(nodeId, 'propA');
-
-            expect(tree.getNodeData(nodeId).propA).toBe('aa');
-        });
+      expect(callback).toHaveBeenCalled();
     });
 
-    describe('REMOVE_ALL_CHILDREN command - ', function() {
-        var children, nodeId;
+    it('the loader should be hidden when response is success', function() {
+      var className = treeAjax.loaderClassName;
 
-        beforeEach(function() {
-            children = [
-                {text: 'A'},
-                {text: 'B'},
-                {text: 'C'}
-            ];
+      spyOn($, 'ajax').and.callFake(function(e) {
+        e.success({});
+      });
 
-            tree.add(children);
-            tree.enableFeature('Ajax', {
-                command: {
-                    removeAllChildren: {
-                        url: 'api/test'
-                    }
-                }
-            });
+      treeAjax._showLoader();
+      treeAjax.loadData('read', callback);
 
-            nodeId = tree.getRootNodeId();
-        });
-
-        it('When response data is success, all children nodes are removed.', function() {
-            spyOn($, 'ajax').and.callFake(function(e) {
-                e.success(true);
-            });
-
-            tree.removeAllChildren(nodeId);
-
-            expect(tree.getChildIds(nodeId).length).toBe(0);
-        });
-
-        it('When response data is faild, all children nodes are not removed.', function() {
-            spyOn($, 'ajax').and.callFake(function(e) {
-                e.success(false);
-            });
-
-            tree.removeAllChildren(nodeId);
-
-            expect(tree.getChildIds(nodeId).length).toBe(children.length);
-        });
+      expect(document.querySelector('.' + className).style.display).toBe('none');
     });
 
-    describe('MOVE command - ', function() {
-        var children, rootNodeId, nodeId, newParentId;
+    it('the Ajax loader should be hidden when response is failed', function() {
+      var className = treeAjax.loaderClassName;
 
-        beforeEach(function() {
-            children = [
-                {text: 'A', children: [{text: 'aa'}, {text: 'bb'}]},
-                {text: 'B'},
-                {text: 'C'}
-            ];
+      spyOn($, 'ajax').and.callFake(function(e) {
+        e.error({});
+      });
 
-            tree.add(children);
-            tree.enableFeature('Ajax', {
-                command: {
-                    move: {
-                        url: 'api/test'
-                    }
-                }
-            });
+      treeAjax._showLoader();
+      treeAjax.loadData('read', callback);
 
-            rootNodeId = tree.getRootNodeId();
-            nodeId = tree.getChildIds(rootNodeId)[0];
-            newParentId = tree.getChildIds(rootNodeId)[1];
-        });
-
-        it('When response data is success, node is moved.', function() {
-            spyOn($, 'ajax').and.callFake(function(e) {
-                e.success(true);
-            });
-
-            tree.move(nodeId, newParentId);
-
-            expect(tree.getParentId(nodeId)).toBe(newParentId);
-        });
-
-        it('When response data is error, node is not moved.', function() {
-            spyOn($, 'ajax').and.callFake(function(e) {
-                e.success(false);
-            });
-
-            tree.move(nodeId, newParentId);
-
-            expect(tree.getParentId(nodeId)).toBe(rootNodeId);
-        });
+      expect(document.querySelector('.' + className).style.display).toBe('none');
     });
+
+    it('the "errorAjaxResponse" custom event should be fired when response is failed', function() {
+      var handler = jasmine.createSpy('error event handler');
+
+      spyOn($, 'ajax').and.callFake(function(e) {
+        e.error({});
+      });
+
+      tree.on('errorAjaxResponse', handler);
+
+      treeAjax.loadData('read', callback);
+
+      expect(handler).toHaveBeenCalled();
+    });
+  });
+
+  describe('READ command - ', function() {
+    var response, rootNodeId, newChildIds;
+
+    beforeEach(function() {
+      rootNodeId = tree.getRootNodeId();
+      response = [{ text: 'A', state: 'opened', hasChild: true }, { text: 'B' }];
+
+      spyOn($, 'ajax').and.callFake(function(e) {
+        e.success(response);
+      });
+
+      tree.enableFeature('Ajax', {
+        command: {
+          read: {
+            url: 'api/test'
+          }
+        }
+      });
+
+      tree.on('successAjaxResponse', function(evt) {
+        newChildIds = evt.data;
+      });
+    });
+
+    it('1 depth nodes should be added when Ajax feature is enabled', function() {
+      expect(tree.getChildIds(rootNodeId).length).toBe(2);
+    });
+
+    it('children nodes should be added when state label is opened', function() {
+      var nodeId = tree.getChildIds(rootNodeId)[0];
+
+      tree.close(nodeId);
+      tree.toggle(nodeId);
+
+      expect(tree.getChildIds(nodeId)).toEqual(newChildIds);
+    });
+  });
+
+  describe('CREATE command - ', function() {
+    var parentId, newChildIds;
+
+    beforeEach(function() {
+      tree.enableFeature('Ajax', {
+        command: {
+          create: {
+            url: 'api/test'
+          }
+        }
+      });
+
+      parentId = tree.getRootNodeId();
+    });
+
+    it('new node should be created when response data is success', function() {
+      spyOn($, 'ajax').and.callFake(function(e) {
+        e.success(true);
+      });
+
+      tree.on('successAjaxResponse', function(evt) {
+        newChildIds = evt.data;
+      });
+
+      tree.add({ text: 'C' }, parentId);
+
+      expect(tree.getChildIds(parentId)).toEqual(newChildIds);
+    });
+
+    it('new node should not be created when response data is error', function() {
+      spyOn($, 'ajax').and.callFake(function(e) {
+        e.success(false);
+      });
+
+      tree.add({ text: 'C' }, parentId);
+
+      expect(tree.getChildIds(parentId).length).toBe(0);
+    });
+  });
+
+  describe('REMOVE command - ', function() {
+    var children, parentId, nodeId;
+
+    beforeEach(function() {
+      children = [{ text: 'A' }, { text: 'B' }];
+
+      tree.add(children);
+      tree.enableFeature('Ajax', {
+        command: {
+          remove: {
+            url: 'api/test'
+          }
+        }
+      });
+
+      parentId = tree.getRootNodeId();
+      nodeId = tree.getChildIds(parentId)[0];
+    });
+
+    it('selected node should be removed when response data is success', function() {
+      spyOn($, 'ajax').and.callFake(function(e) {
+        e.success(true);
+      });
+
+      tree.remove(nodeId);
+
+      expect(tree.getChildIds(parentId).length).toBe(children.length - 1);
+    });
+
+    it('selected node should not be removed when response data is error', function() {
+      spyOn($, 'ajax').and.callFake(function(e) {
+        e.success(false);
+      });
+
+      tree.remove(nodeId);
+
+      expect(tree.getChildIds(parentId).length).toBe(children.length);
+    });
+  });
+
+  describe('UPDATE command - ', function() {
+    var children, nodeId, changedData;
+
+    beforeEach(function() {
+      children = [{ text: 'A', propA: 'aa', propB: 'bb' }];
+
+      tree.add(children);
+      tree.enableFeature('Ajax', {
+        command: {
+          update: {
+            url: 'api/test'
+          }
+        }
+      });
+
+      nodeId = tree.getChildIds(tree.getRootNodeId())[0];
+      changedData = { text: 'B' };
+    });
+
+    it('selected node data should be updated when response data is success', function() {
+      spyOn($, 'ajax').and.callFake(function(e) {
+        e.success(true);
+      });
+
+      tree.setNodeData(nodeId, changedData);
+
+      expect(tree.getNodeData(nodeId).text).toBe(changedData.text);
+    });
+
+    it('selected node data should not be updated when response data is error', function() {
+      spyOn($, 'ajax').and.callFake(function(e) {
+        e.success(false);
+      });
+
+      tree.setNodeData(nodeId, changedData);
+
+      expect(tree.getNodeData(nodeId).text).not.toBe(changedData.text);
+    });
+
+    it('deleted node data should be updated when response data is success', function() {
+      spyOn($, 'ajax').and.callFake(function(e) {
+        e.success(true);
+      });
+
+      tree.removeNodeData(nodeId, 'propA');
+
+      expect(tree.getNodeData(nodeId).propA).toBeUndefined();
+    });
+
+    it('deleted node data should not be updated when response data is error', function() {
+      spyOn($, 'ajax').and.callFake(function(e) {
+        e.success(false);
+      });
+
+      tree.removeNodeData(nodeId, 'propA');
+
+      expect(tree.getNodeData(nodeId).propA).toBe('aa');
+    });
+  });
+
+  describe('REMOVE_ALL_CHILDREN command - ', function() {
+    var children, nodeId;
+
+    beforeEach(function() {
+      children = [{ text: 'A' }, { text: 'B' }, { text: 'C' }];
+
+      tree.add(children);
+      tree.enableFeature('Ajax', {
+        command: {
+          removeAllChildren: {
+            url: 'api/test'
+          }
+        }
+      });
+
+      nodeId = tree.getRootNodeId();
+    });
+
+    it('all children nodes should be removed when response data is success', function() {
+      spyOn($, 'ajax').and.callFake(function(e) {
+        e.success(true);
+      });
+
+      tree.removeAllChildren(nodeId);
+
+      expect(tree.getChildIds(nodeId).length).toBe(0);
+    });
+
+    it('all children nodes should not be removed when response data is faild', function() {
+      spyOn($, 'ajax').and.callFake(function(e) {
+        e.success(false);
+      });
+
+      tree.removeAllChildren(nodeId);
+
+      expect(tree.getChildIds(nodeId).length).toBe(children.length);
+    });
+  });
+
+  describe('MOVE command - ', function() {
+    var children, rootNodeId, nodeId, newParentId;
+
+    beforeEach(function() {
+      children = [
+        { text: 'A', children: [{ text: 'aa' }, { text: 'bb' }] },
+        { text: 'B' },
+        { text: 'C' }
+      ];
+
+      tree.add(children);
+      tree.enableFeature('Ajax', {
+        command: {
+          move: {
+            url: 'api/test'
+          }
+        }
+      });
+
+      rootNodeId = tree.getRootNodeId();
+      nodeId = tree.getChildIds(rootNodeId)[0];
+      newParentId = tree.getChildIds(rootNodeId)[1];
+    });
+
+    it('node should be moved when response data is success', function() {
+      spyOn($, 'ajax').and.callFake(function(e) {
+        e.success(true);
+      });
+
+      tree.move(nodeId, newParentId);
+
+      expect(tree.getParentId(nodeId)).toBe(newParentId);
+    });
+
+    it('node should not be moved when response data is error', function() {
+      spyOn($, 'ajax').and.callFake(function(e) {
+        e.success(false);
+      });
+
+      tree.move(nodeId, newParentId);
+
+      expect(tree.getParentId(nodeId)).toBe(rootNodeId);
+    });
+  });
 });

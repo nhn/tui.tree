@@ -1,24 +1,30 @@
 /**
  * @fileoverview Control each tree node's data
- * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
+ * @author NHN. FE dev Lab <dl_javascript@nhn.com>
  */
-var snippet = require('tui-code-snippet');
-var states = require('./consts/states').node,
-    util = require('./util');
 
-var lastIndex = 0,
-    getNextIndex = function() {
-        var index = lastIndex;
-        lastIndex += 1;
+var inArray = require('tui-code-snippet/array/inArray');
+var forEachArray = require('tui-code-snippet/collection/forEachArray');
+var forEachOwnProperties = require('tui-code-snippet/collection/forEachOwnProperties');
+var defineClass = require('tui-code-snippet/defineClass/defineClass');
+var extend = require('tui-code-snippet/object/extend');
+var isFalsy = require('tui-code-snippet/type/isFalsy');
 
-        return index;
-    },
-    RESERVED_PROPERTIES = {
-        id: '',
-        state: 'setState',
-        children: ''
-    },
-    inArray = snippet.inArray;
+var states = require('./consts/states').node;
+var util = require('./util');
+
+var lastIndex = 0;
+var getNextIndex = function() {
+  var index = lastIndex;
+  lastIndex += 1;
+
+  return index;
+};
+var RESERVED_PROPERTIES = {
+  id: '',
+  state: 'setState',
+  children: ''
+};
 
 /**
  * TreeNode
@@ -27,59 +33,60 @@ var lastIndex = 0,
  * @param {string} [parentId] - Parent node id
  * @ignore
  */
-var TreeNode = snippet.defineClass(/** @lends TreeNode.prototype */{
+var TreeNode = defineClass(
+  /** @lends TreeNode.prototype */ {
     static: {
-        /**
-         * Set prefix of id
-         * @param {string} prefix - Prefix of id
-         */
-        setIdPrefix: function(prefix) {
-            this.idPrefix = prefix || this.idPrefix;
-        },
+      /**
+       * Set prefix of id
+       * @param {string} prefix - Prefix of id
+       */
+      setIdPrefix: function(prefix) {
+        this.idPrefix = prefix || this.idPrefix;
+      },
 
-        /**
-         * Prefix of id
-         * @type {string}
-         */
-        idPrefix: ''
+      /**
+       * Prefix of id
+       * @type {string}
+       */
+      idPrefix: ''
     },
     init: function(nodeData, parentId) {
-        /**
-         * Node id
-         * @type {string}
-         * @private
-         */
-        this._id = this.constructor.idPrefix + getNextIndex();
+      /**
+       * Node id
+       * @type {string}
+       * @private
+       */
+      this._id = this.constructor.idPrefix + getNextIndex();
 
-        /**
-         * Parent node id
-         * @type {string}
-         * @private
-         */
-        this._parentId = parentId;
+      /**
+       * Parent node id
+       * @type {string}
+       * @private
+       */
+      this._parentId = parentId;
 
-        /**
-         * Id list of children
-         * @type {Array.<number>}
-         * @private
-         */
-        this._childIds = [];
+      /**
+       * Id list of children
+       * @type {Array.<number>}
+       * @private
+       */
+      this._childIds = [];
 
-        /**
-         * Node data
-         * @type {object}
-         * @private
-         */
-        this._data = {};
+      /**
+       * Node data
+       * @type {object}
+       * @private
+       */
+      this._data = {};
 
-        /**
-         * Node state
-         * @type {string}
-         * @private
-         */
-        this._state = states.CLOSED;
+      /**
+       * Node state
+       * @type {string}
+       * @private
+       */
+      this._state = states.CLOSED;
 
-        this.setData(nodeData);
+      this.setData(nodeData);
     },
 
     /**
@@ -89,27 +96,31 @@ var TreeNode = snippet.defineClass(/** @lends TreeNode.prototype */{
      * @private
      */
     _setReservedProperties: function(data) {
-        snippet.forEachOwnProperties(RESERVED_PROPERTIES, function(setter, name) {
-            var value = data[name];
+      forEachOwnProperties(
+        RESERVED_PROPERTIES,
+        function(setter, name) {
+          var value = data[name];
 
-            if (value && setter) {
-                this[setter](value);
-            }
-            delete data[name];
-        }, this);
+          if (value && setter) {
+            this[setter](value);
+          }
+          delete data[name];
+        },
+        this
+      );
 
-        return data;
+      return data;
     },
 
     /**
      * Toggle state
      */
     toggleState: function() {
-        if (this._state === states.CLOSED) {
-            this._state = states.OPENED;
-        } else {
-            this._state = states.CLOSED;
-        }
+      if (this._state === states.CLOSED) {
+        this._state = states.OPENED;
+      } else {
+        this._state = states.CLOSED;
+      }
     },
 
     /**
@@ -117,8 +128,8 @@ var TreeNode = snippet.defineClass(/** @lends TreeNode.prototype */{
      * @param {string} state - State of node ('closed', 'opened')
      */
     setState: function(state) {
-        state = String(state);
-        this._state = states[state.toUpperCase()] || this._state;
+      state = String(state);
+      this._state = states[state.toUpperCase()] || this._state;
     },
 
     /**
@@ -126,7 +137,7 @@ var TreeNode = snippet.defineClass(/** @lends TreeNode.prototype */{
      * @returns {string} state ('opened' or 'closed')
      */
     getState: function() {
-        return this._state;
+      return this._state;
     },
 
     /**
@@ -134,7 +145,7 @@ var TreeNode = snippet.defineClass(/** @lends TreeNode.prototype */{
      * @returns {string} Node id
      */
     getId: function() {
-        return this._id;
+      return this._id;
     },
 
     /**
@@ -142,7 +153,7 @@ var TreeNode = snippet.defineClass(/** @lends TreeNode.prototype */{
      * @returns {string} Parent node id
      */
     getParentId: function() {
-        return this._parentId;
+      return this._parentId;
     },
 
     /**
@@ -150,7 +161,7 @@ var TreeNode = snippet.defineClass(/** @lends TreeNode.prototype */{
      * @param {string} parentId - Parent node id
      */
     setParentId: function(parentId) {
-        this._parentId = parentId;
+      this._parentId = parentId;
     },
 
     /**
@@ -158,7 +169,7 @@ var TreeNode = snippet.defineClass(/** @lends TreeNode.prototype */{
      * @param {Array.<number>} childIds - Id list of children
      */
     replaceChildIds: function(childIds) {
-        this._childIds = childIds;
+      this._childIds = childIds;
     },
 
     /**
@@ -166,7 +177,7 @@ var TreeNode = snippet.defineClass(/** @lends TreeNode.prototype */{
      * @returns {Array.<number>} Id list of children
      */
     getChildIds: function() {
-        return this._childIds.slice();
+      return this._childIds.slice();
     },
 
     /**
@@ -174,11 +185,11 @@ var TreeNode = snippet.defineClass(/** @lends TreeNode.prototype */{
      * @param {string} id - Child node id
      */
     addChildId: function(id) {
-        var childIds = this._childIds;
+      var childIds = this._childIds;
 
-        if (snippet.inArray(childIds, id) === -1) {
-            childIds.push(id);
-        }
+      if (inArray(childIds, id) === -1) {
+        childIds.push(id);
+      }
     },
 
     /**
@@ -186,7 +197,7 @@ var TreeNode = snippet.defineClass(/** @lends TreeNode.prototype */{
      * @param {string} id - Child node id
      */
     removeChildId: function(id) {
-        util.removeItemFromArray(id, this._childIds);
+      util.removeItemFromArray(id, this._childIds);
     },
 
     /**
@@ -195,7 +206,7 @@ var TreeNode = snippet.defineClass(/** @lends TreeNode.prototype */{
      * @returns {*} Data
      */
     getData: function(name) {
-        return this._data[name];
+      return this._data[name];
     },
 
     /**
@@ -203,7 +214,7 @@ var TreeNode = snippet.defineClass(/** @lends TreeNode.prototype */{
      * @returns {Object} Data
      */
     getAllData: function() {
-        return snippet.extend({}, this._data);
+      return extend({}, this._data);
     },
 
     /**
@@ -211,8 +222,8 @@ var TreeNode = snippet.defineClass(/** @lends TreeNode.prototype */{
      * @param {Object} data - Data for adding
      */
     setData: function(data) {
-        data = this._setReservedProperties(data);
-        snippet.extend(this._data, data);
+      data = this._setReservedProperties(data);
+      extend(this._data, data);
     },
 
     /**
@@ -220,9 +231,13 @@ var TreeNode = snippet.defineClass(/** @lends TreeNode.prototype */{
      * @param {...string} names - Names of data
      */
     removeData: function() {
-        snippet.forEachArray(arguments, function(name) {
-            delete this._data[name];
-        }, this);
+      forEachArray(
+        arguments,
+        function(name) {
+          delete this._data[name];
+        },
+        this
+      );
     },
 
     /**
@@ -231,7 +246,7 @@ var TreeNode = snippet.defineClass(/** @lends TreeNode.prototype */{
      * @returns {boolean} - Whether this node has a provided child id.
      */
     hasChild: function(id) {
-        return inArray(id, this._childIds) !== -1;
+      return inArray(id, this._childIds) !== -1;
     },
 
     /**
@@ -239,7 +254,7 @@ var TreeNode = snippet.defineClass(/** @lends TreeNode.prototype */{
      * @returns {boolean} Node is leaf or not.
      */
     isLeaf: function() {
-        return !this._childIds.length && !this.getData('hasChild');
+      return !this._childIds.length && !this.getData('hasChild');
     },
 
     /**
@@ -247,7 +262,7 @@ var TreeNode = snippet.defineClass(/** @lends TreeNode.prototype */{
      * @returns {boolean} Node is root or not.
      */
     isRoot: function() {
-        return snippet.isFalsy(this._parentId);
+      return isFalsy(this._parentId);
     },
 
     /**
@@ -256,7 +271,7 @@ var TreeNode = snippet.defineClass(/** @lends TreeNode.prototype */{
      * @returns {number} Index of child in children list
      */
     getChildIndex: function(id) {
-        return inArray(id, this._childIds);
+      return inArray(id, this._childIds);
     },
 
     /**
@@ -265,11 +280,11 @@ var TreeNode = snippet.defineClass(/** @lends TreeNode.prototype */{
      * @param {number} index - Index number of insert position
      */
     insertChildId: function(id, index) {
-        var childIds = this._childIds;
+      var childIds = this._childIds;
 
-        if (inArray(id, childIds) === -1) {
-            childIds.splice(index, 0, id);
-        }
+      if (inArray(id, childIds) === -1) {
+        childIds.splice(index, 0, id);
+      }
     },
 
     /**
@@ -278,16 +293,17 @@ var TreeNode = snippet.defineClass(/** @lends TreeNode.prototype */{
      * @param {number} index - Index number of insert position
      */
     moveChildId: function(id, index) {
-        var childIds = this._childIds;
-        var originIdx = this.getChildIndex(id);
+      var childIds = this._childIds;
+      var originIdx = this.getChildIndex(id);
 
-        if (inArray(id, childIds) !== -1) {
-            if (originIdx < index) {
-                index -= 1;
-            }
-
-            childIds.splice(index, 0, childIds.splice(originIdx, 1)[0]);
+      if (inArray(id, childIds) !== -1) {
+        if (originIdx < index) {
+          index -= 1;
         }
+
+        childIds.splice(index, 0, childIds.splice(originIdx, 1)[0]);
+      }
     }
-});
+  }
+);
 module.exports = TreeNode;

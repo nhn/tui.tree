@@ -1,9 +1,27 @@
 /**
  * @fileoverview Render tree and update tree
- * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
+ * @author NHN. FE dev Lab <dl_javascript@nhn.com>
  */
 
+var forEachArray = require('tui-code-snippet/collection/forEachArray');
+var forEachOwnProperties = require('tui-code-snippet/collection/forEachOwnProperties');
+var CustomEvents = require('tui-code-snippet/customEvents/customEvents');
+var defineClass = require('tui-code-snippet/defineClass/defineClass');
+var getTarget = require('tui-code-snippet/domEvent/getTarget');
+var getMouseButton = require('tui-code-snippet/domEvent/getMouseButton');
+var off = require('tui-code-snippet/domEvent/off');
+var on = require('tui-code-snippet/domEvent/on');
+var addClass = require('tui-code-snippet/domUtil/addClass');
+var removeClass = require('tui-code-snippet/domUtil/removeClass');
+var template = require('tui-code-snippet/domUtil/template');
+var extend = require('tui-code-snippet/object/extend');
+var isFunction = require('tui-code-snippet/type/isFunction');
+var isHTMLNode = require('tui-code-snippet/type/isHTMLNode');
+var isObject = require('tui-code-snippet/type/isObject');
+var isString = require('tui-code-snippet/type/isString');
+var isUndefined = require('tui-code-snippet/type/isUndefined');
 var util = require('./util');
+
 var defaultOption = require('./consts/defaultOption');
 var states = require('./consts/states');
 var messages = require('./consts/messages');
@@ -19,23 +37,21 @@ var Ajax = require('./features/ajax');
 
 var nodeStates = states.node;
 var features = {
-    Selectable: Selectable,
-    Draggable: Draggable,
-    Editable: Editable,
-    Checkbox: Checkbox,
-    ContextMenu: ContextMenu,
-    Ajax: Ajax
+  Selectable: Selectable,
+  Draggable: Draggable,
+  Editable: Editable,
+  Checkbox: Checkbox,
+  ContextMenu: ContextMenu,
+  Ajax: Ajax
 };
-var snippet = require('tui-code-snippet');
-var extend = snippet.extend;
 
 var TIMEOUT_TO_DIFFERENTIATE_CLICK_AND_DBLCLICK = 200;
 var MOUSE_MOVING_THRESHOLD = 5;
+var MOUSE_RIGHT_BUTTON = 2;
 
 /**
  * Create tree model and inject data to model
  * @class Tree
- * @mixes tui.util.CustomEvents
  * @param {string|HTMLElement|jQueryObject} container - Tree container element or id string value
  * @param {Object} options The options
  *     @param {Object} [options.data] A data to be used on tree
@@ -47,7 +63,7 @@ var MOUSE_MOVING_THRESHOLD = 5;
  *     @param {Object} [options.template] A markup set to make element
  *         @param {string} [options.template.internalNode] HTML template
  *         @param {string} [options.template.leafNode] HTML template
- *     @param {Function} [options.renderTemplate] Function for rendering template
+ *     @param {Function} [options.renderTemplate] Function for rendering template. Default is {@link https://nhn.github.io/tui.code-snippet/2.2.0/domUtil#template template in the tui-code-snippet}.
  *     @param {boolean} [options.usageStatistics=true] - Let us know the hostname. If you don't want to send the hostname, please set to false.
  * @example <caption>Get `Tree` module</caption>
  * // * node, commonjs
@@ -157,101 +173,111 @@ var MOUSE_MOVING_THRESHOLD = 5;
  *     }
  * });
  */
-var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
+var Tree = defineClass(
+  /** @lends Tree.prototype */ {
     init: function(container, options) {
-        options = extend({}, defaultOption, options);
+      options = extend({}, defaultOption, options);
 
-        /**
-         * Default class names
-         * @type {object.<string, string>}
-         */
-        this.classNames = extend({}, defaultOption.classNames, options.classNames);
+      /**
+       * Default class names
+       * @type {object.<string, string>}
+       */
+      this.classNames = extend({}, defaultOption.classNames, options.classNames);
 
-        /**
-         * Default template
-         * @type {{internalNode: string, leafNode: string}}
-         */
-        this.template = extend({}, defaultOption.template, options.template);
+      /**
+       * Default template
+       * @type {{internalNode: string, leafNode: string}}
+       */
+      this.template = extend({}, defaultOption.template, options.template);
 
-        /**
-         * Root element
-         * @type {HTMLElement}
-         */
-        this.rootElement = null;
+      /**
+       * Root element
+       * @type {HTMLElement}
+       */
+      this.rootElement = null;
 
-        /**
-         * Toggle button state label
-         * @type {{opened: string, closed: string}}
-         */
-        this.stateLabels = options.stateLabels;
+      /**
+       * Toggle button state label
+       * @type {{opened: string, closed: string}}
+       */
+      this.stateLabels = options.stateLabels;
 
-        /**
-         * Make tree model
-         * @type {TreeModel}
-         * @private
-         */
-        this.model = new TreeModel(options);
+      /**
+       * Make tree model
+       * @type {TreeModel}
+       * @private
+       */
+      this.model = new TreeModel(options);
 
-        /**
-         * Enabled features
-         * @type {Object.<string, object>}
-         * @private
-         */
-        this.enabledFeatures = {};
+      /**
+       * Enabled features
+       * @type {Object.<string, object>}
+       * @private
+       */
+      this.enabledFeatures = {};
 
-        /**
-         * Click timer to prevent click-duplication with double click
-         * @type {number}
-         * @private
-         */
-        this.clickTimer = null;
+      /**
+       * Click timer to prevent click-duplication with double click
+       * @type {number}
+       * @private
+       */
+      this.clickTimer = null;
 
-        /**
-         * To prevent click event if mouse moved before mouseup.
-         * @type {number}
-         * @private
-         */
-        this._mouseMovingFlag = false;
+      /**
+       * To prevent click event if mouse moved before mouseup.
+       * @type {number}
+       * @private
+       */
+      this._mouseMovingFlag = false;
 
-        /**
-         * Render template
-         * It can be overrode by user's template engine.
-         * @type {Function}
-         * @private
-         */
-        this._renderTemplate = options.renderTemplate || util.renderTemplate;
+      /**
+       * Render template
+       * It can be overrode by user's template engine.
+       * Default: tui-code-snippet/domUtil/template {@link https://nhn.github.io/tui.code-snippet/2.2.0/domUtil#template}
+       * @type {Function}
+       * @private
+       */
+      this._renderTemplate = options.renderTemplate || template;
 
-        /**
-         * True when a node is moving
-         * @type {boolean}
-         * @example
-         * tree.on({
-         *     beforeDraw: function(nodeId) {
-         *         if (tree.isMovingNode) {
-         *             return;
-         *         }
-         *         //..
-         *     },
-         *     //....
-         * });
-         * tree.move('tui-tree-node-1', 'tui-tree-node-2');
-         */
-        this.isMovingNode = false;
+      /**
+       * Send the hostname to google analytics.
+       * If you do not want to send the hostname, this option set to false.
+       * @type {boolean}
+       * @private
+       */
+      this.usageStatistics = options.usageStatistics;
 
-        /**
-         * Indentation value
-         * @type {number}
-         * @private
-         */
-        this._indent = options.indent;
+      /**
+       * True when a node is moving
+       * @type {boolean}
+       * @example
+       * tree.on({
+       *     beforeDraw: function(nodeId) {
+       *         if (tree.isMovingNode) {
+       *             return;
+       *         }
+       *         //..
+       *     },
+       *     //....
+       * });
+       * tree.move('tui-tree-node-1', 'tui-tree-node-2');
+       */
+      this.isMovingNode = false;
 
-        this._setRoot(container);
-        this._draw(this.getRootNodeId());
-        this._setEvents();
+      /**
+       * Indentation value
+       * @type {number}
+       * @private
+       */
+      this._indent = options.indent;
 
-        if (options.usageStatistics) {
-            util.sendHostName();
-        }
+      this._setRoot(container);
+      this._draw(this.getRootNodeId());
+      this._setEvents();
+
+      if (this.usageStatistics) {
+        util.sendHostName();
+      }
     },
 
     /**
@@ -260,20 +286,20 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * @private
      */
     _setRoot: function(container) {
-        var rootElement = outerTemplate.ROOT;
+      var rootElement = outerTemplate.ROOT;
 
-        if (snippet.isString(container)) {
-            container = document.getElementById(container);
-        } else if (container.jquery) {
-            container = container[0];
-        }
+      if (isString(container)) {
+        container = document.getElementById(container);
+      } else if (container.jquery) {
+        container = container[0];
+      }
 
-        if (!snippet.isHTMLNode(container)) {
-            throw new Error(messages.INVALID_CONTAINER_ELEMENT);
-        }
+      if (!isHTMLNode(container)) {
+        throw new Error(messages.INVALID_CONTAINER_ELEMENT);
+      }
 
-        container.innerHTML = rootElement;
-        this.rootElement = container.firstChild;
+      container.innerHTML = rootElement;
+      this.rootElement = container.firstChild;
     },
 
     /**
@@ -285,32 +311,32 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * @private
      */
     _onMove: function(nodeId, originalParentId, newParentId, index) {
-        this._draw(originalParentId);
-        this._draw(newParentId);
+      this._draw(originalParentId);
+      this._draw(newParentId);
 
-        /**
-         * @event Tree#move
-         * @param {{nodeId: string, originalParentId: string, newParentId: string, index: number}} evt - Event data
-         *     @param {string} evt.nodeId - Current node id to move
-         *     @param {string} evt.originalParentId - Original parent node id of moved node
-         *     @param {string} evt.newParentId - New parent node id of moved node
-         *     @param {number} evt.index - Moved index number
-         * @example
-         * tree.on('move', function(evt) {
-         *     var nodeId = evt.nodeId;
-         *     var originalParentId = evt.originalParentId;
-         *     var newParentId = evt.newParentId;
-         *     var index = evt.index;
-         *
-         *     console.log(nodeId, originalParentId, newParentId, index);
-         * });
-         */
-        this.fire('move', {
-            nodeId: nodeId,
-            originalParentId: originalParentId,
-            newParentId: newParentId,
-            index: index
-        });
+      /**
+       * @event Tree#move
+       * @type {object} evt - Event data
+       * @property {string} nodeId - Current node id to move
+       * @property {string} originalParentId - Original parent node id of moved node
+       * @property {string} newParentId - New parent node id of moved node
+       * @property {number} index - Moved index number
+       * @example
+       * tree.on('move', function(evt) {
+       *     var nodeId = evt.nodeId;
+       *     var originalParentId = evt.originalParentId;
+       *     var newParentId = evt.newParentId;
+       *     var index = evt.index;
+       *
+       *     console.log(nodeId, originalParentId, newParentId, index);
+       * });
+       */
+      this.fire('move', {
+        nodeId: nodeId,
+        originalParentId: originalParentId,
+        newParentId: newParentId,
+        index: index
+      });
     },
 
     /**
@@ -318,14 +344,24 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * @private
      */
     _setEvents: function() {
-        this.model.on({
-            update: this._draw,
-            move: this._onMove
-        }, this);
-        util.addEventListener(this.rootElement, 'click', snippet.bind(this._onClick, this));
-        util.addEventListener(this.rootElement, 'mousedown', snippet.bind(this._onMousedown, this));
-        util.addEventListener(this.rootElement, 'dblclick', snippet.bind(this._onDoubleClick, this));
-        util.addEventListener(this.rootElement, 'contextmenu', snippet.bind(this._onContextMenu, this));
+      this.model.on(
+        {
+          update: this._draw,
+          move: this._onMove
+        },
+        this
+      );
+
+      on(
+        this.rootElement,
+        {
+          click: this._onClick,
+          mousedown: this._onMousedown,
+          dblclick: this._onDoubleClick,
+          contextmenu: this._onContextMenu
+        },
+        this
+      );
     },
 
     /**
@@ -334,7 +370,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * @private
      */
     _onContextMenu: function(mouseEvent) {
-        this.fire('contextmenu', mouseEvent);
+      this.fire('contextmenu', mouseEvent);
     },
 
     /**
@@ -343,88 +379,92 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * @private
      */
     _onMousedown: function(downEvent) {
-        var self = this,
-            clientX = downEvent.clientX,
-            clientY = downEvent.clientY,
-            abs = Math.abs;
+      var clientX = downEvent.clientX;
+      var clientY = downEvent.clientY;
+      var abs = Math.abs;
 
-        /* eslint-disable require-jsdoc */
-        function onMouseMove(moveEvent) {
-            var newClientX = moveEvent.clientX,
-                newClientY = moveEvent.clientY;
+      var onMouseMove = util.bind(function onMouseMove(moveEvent) {
+        var newClientX = moveEvent.clientX;
+        var newClientY = moveEvent.clientY;
 
-            if (abs(newClientX - clientX) + abs(newClientY - clientY) > MOUSE_MOVING_THRESHOLD) {
-                self.fire('mousemove', moveEvent);
-                self._mouseMovingFlag = true;
-            }
+        if (abs(newClientX - clientX) + abs(newClientY - clientY) > MOUSE_MOVING_THRESHOLD) {
+          this.fire('mousemove', moveEvent);
+          this._mouseMovingFlag = true;
         }
+      }, this);
 
-        function onMouseUp(upEvent) {
-            self.fire('mouseup', upEvent);
-            util.removeEventListener(document, 'mousemove', onMouseMove);
-            util.removeEventListener(document, 'mouseup', onMouseUp);
-            util.removeEventListener(document, 'mouseout', onMouseOut);
+      var onMouseOut = util.bind(function onMouseOut(event) {
+        if (event.toElement === null) {
+          this.fire('mouseup', event);
         }
+      }, this);
 
-        function onMouseOut(event) {
-            if (event.toElement === null) {
-                self.fire('mouseup', event);
-            }
-        }
-        /* eslint-enable require-jsdoc */
+      var onMouseUp = util.bind(function onMouseUp(upEvent) {
+        this.fire('mouseup', upEvent);
+        off(document, {
+          mousemove: onMouseMove,
+          mouseup: onMouseUp,
+          mouseout: onMouseOut
+        });
+      }, this);
 
-        this._mouseMovingFlag = false;
-        this.fire('mousedown', downEvent);
-        util.addEventListener(document, 'mousemove', onMouseMove);
-        util.addEventListener(document, 'mouseup', onMouseUp);
-        util.addEventListener(document, 'mouseout', onMouseOut);
+      this._mouseMovingFlag = false;
+      this.fire('mousedown', downEvent);
+      on(document, {
+        mousemove: onMouseMove,
+        mouseup: onMouseUp,
+        mouseout: onMouseOut
+      });
     },
 
     /**
      * Event handler - click
-     * @param {MouseEvent} event - Click event
+     * @param {MouseEvent} ev - Click event
      * @private
      */
-    _onClick: function(event) {
-        var target = util.getTarget(event);
-        var self = this;
-        var nodeId;
+    _onClick: function(ev) {
+      var target = getTarget(ev);
+      var isRightButton = getMouseButton(ev) === MOUSE_RIGHT_BUTTON;
+      var nodeId;
 
-        if (util.isRightButton(event)) {
-            this.clickTimer = null;
+      if (isRightButton) {
+        this.clickTimer = null;
 
-            return;
-        }
+        return;
+      }
 
-        if (this._isClickedToggleButton(target)) {
-            nodeId = this.getNodeIdFromElement(target);
+      if (this._isClickedToggleButton(target)) {
+        nodeId = this.getNodeIdFromElement(target);
 
-            this.toggle(nodeId);
+        this.toggle(nodeId);
 
-            /**
-             * @event Tree#clickToggleBtn
-             * @param {object} evt - Event data
-             *     @param {string} evt.nodeId - Node id
-             *     @param {HTMLElement} target - Element of toggle button
-             * @example
-             * tree.on('clickToggleBtn', function(evt) {
-             *     console.log(evt.target);
-             * });
-             */
-            this.fire('clickToggleBtn', {
-                nodeId: nodeId,
-                target: target
-            });
+        /**
+         * @event Tree#clickToggleBtn
+         * @type {object} evt - Event data
+         * @property {string} nodeId - Node id
+         * @property {HTMLElement} target - Element of toggle button
+         * @example
+         * tree.on('clickToggleBtn', function(evt) {
+         *     console.log(evt.target);
+         * });
+         */
+        this.fire('clickToggleBtn', {
+          nodeId: nodeId,
+          target: target
+        });
 
-            return;
-        }
+        return;
+      }
 
-        if (!this.clickTimer && !this._mouseMovingFlag) {
-            this.fire('singleClick', event);
-            this.clickTimer = setTimeout(function() {
-                self.resetClickTimer();
-            }, TIMEOUT_TO_DIFFERENTIATE_CLICK_AND_DBLCLICK);
-        }
+      if (!this.clickTimer && !this._mouseMovingFlag) {
+        this.fire('singleClick', ev);
+        this.clickTimer = setTimeout(
+          util.bind(function() {
+            this.resetClickTimer();
+          }, this),
+          TIMEOUT_TO_DIFFERENTIATE_CLICK_AND_DBLCLICK
+        );
+      }
     },
 
     /**
@@ -433,8 +473,8 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * @private
      */
     _onDoubleClick: function(event) {
-        this.fire('doubleClick', event);
-        this.resetClickTimer();
+      this.fire('doubleClick', event);
+      this.resetClickTimer();
     },
 
     /**
@@ -444,19 +484,16 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * @private
      */
     _isClickedToggleButton: function(target) {
-        var nodeId = this.getNodeIdFromElement(target);
-        var nodeElement;
+      var nodeId = this.getNodeIdFromElement(target);
+      var nodeElement;
 
-        if (!nodeId) {
-            return false;
-        }
+      if (!nodeId) {
+        return false;
+      }
 
-        nodeElement = util.getElementsByClassName(
-            document.getElementById(nodeId),
-            this.classNames.toggleBtnClass
-        )[0];
+      nodeElement = document.querySelector('#' + nodeId + ' .' + this.classNames.toggleBtnClass);
 
-        return (nodeElement && nodeElement.contains(target));
+      return nodeElement && nodeElement.contains(target);
     },
 
     /**
@@ -466,31 +503,28 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * @private
      */
     _setDisplayFromNodeState: function(nodeId, state) {
-        var subtreeElement = this._getSubtreeElement(nodeId),
-            label, btnElement, nodeElement, firstTextNode;
+      var subtreeElement = this._getSubtreeElement(nodeId);
+      var label, btnElement, nodeElement, firstTextNode;
 
-        if (!subtreeElement || subtreeElement === this.rootElement) {
-            return;
-        }
-        label = this.stateLabels[state];
-        nodeElement = document.getElementById(nodeId);
+      if (!subtreeElement || subtreeElement === this.rootElement) {
+        return;
+      }
+      label = this.stateLabels[state];
+      nodeElement = document.getElementById(nodeId);
 
-        btnElement = util.getElementsByClassName(
-            nodeElement,
-            this.classNames.toggleBtnClass
-        )[0];
+      btnElement = nodeElement.querySelector('.' + this.classNames.toggleBtnClass);
 
-        if (state === nodeStates.OPENED) {
-            subtreeElement.style.display = '';
-        } else {
-            subtreeElement.style.display = 'none';
-        }
-        this._setNodeClassNameFromState(nodeElement, state);
+      if (state === nodeStates.OPENED) {
+        subtreeElement.style.display = '';
+      } else {
+        subtreeElement.style.display = 'none';
+      }
+      this._setNodeClassNameFromState(nodeElement, state);
 
-        if (btnElement) {
-            firstTextNode = util.getFirstTextNode(btnElement);
-            firstTextNode.nodeValue = label;
-        }
+      if (btnElement) {
+        firstTextNode = util.getFirstTextNode(btnElement);
+        firstTextNode.nodeValue = label;
+      }
     },
 
     /**
@@ -500,13 +534,13 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * @private
      */
     _setNodeClassNameFromState: function(nodeElement, state) {
-        var classNames = this.classNames,
-            openedClassName = classNames[nodeStates.OPENED + 'Class'],
-            closedClassName = classNames[nodeStates.CLOSED + 'Class'];
+      var classNames = this.classNames;
+      var openedClassName = classNames[nodeStates.OPENED + 'Class'];
+      var closedClassName = classNames[nodeStates.CLOSED + 'Class'];
 
-        util.removeClass(nodeElement, openedClassName);
-        util.removeClass(nodeElement, closedClassName);
-        util.addClass(nodeElement, classNames[state + 'Class']);
+      removeClass(nodeElement, openedClassName);
+      removeClass(nodeElement, closedClassName);
+      addClass(nodeElement, classNames[state + 'Class']);
     },
 
     /**
@@ -514,30 +548,34 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * @param {Array.<string>} nodeIds - Node id list
      * @returns {string} HTML
      * @private
-     * @see outerTemplate uses "util.renderTemplate"
+     * @see https://nhn.github.io/tui.code-snippet/2.2.0/domUtil#template
      */
     _makeHtml: function(nodeIds) {
-        var model = this.model,
-            html = '';
+      var model = this.model;
+      var html = '';
 
-        snippet.forEach(nodeIds, function(nodeId) {
-            var node = model.getNode(nodeId),
-                sources, props;
+      forEachArray(
+        nodeIds,
+        function(nodeId) {
+          var node = model.getNode(nodeId);
+          var sources, props;
 
-            if (!node) {
-                return;
-            }
+          if (!node) {
+            return;
+          }
 
-            sources = this._getTemplate(node);
-            props = this._makeTemplateProps(node);
-            props.innerTemplate = this._makeInnerHTML(node, {
-                source: sources.inner,
-                props: props
-            });
-            html += util.renderTemplate(sources.outer, props);
-        }, this);
+          sources = this._getTemplate(node);
+          props = this._makeTemplateProps(node);
+          props.innerTemplate = this._makeInnerHTML(node, {
+            source: sources.inner,
+            props: props
+          });
+          html += template(sources.outer, props);
+        },
+        this
+      );
 
-        return html;
+      return html;
     },
 
     /**
@@ -549,13 +587,13 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * @see innerTemplate uses "this._renderTemplate"
      */
     _makeInnerHTML: function(node, cached) {
-        var source, props;
+      var source, props;
 
-        cached = cached || {};
-        source = cached.source || this._getTemplate(node).inner;
-        props = cached.props || this._makeTemplateProps(node);
+      cached = cached || {};
+      source = cached.source || this._getTemplate(node).inner;
+      props = cached.props || this._makeTemplateProps(node);
 
-        return this._renderTemplate(source, props);
+      return this._renderTemplate(source, props);
     },
 
     /**
@@ -565,21 +603,21 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * @private
      */
     _getTemplate: function(node) {
-        var source;
+      var source;
 
-        if (node.isLeaf()) {
-            source = {
-                inner: this.template.leafNode,
-                outer: outerTemplate.LEAF_NODE
-            };
-        } else {
-            source = {
-                inner: this.template.internalNode,
-                outer: outerTemplate.INTERNAL_NODE
-            };
-        }
+      if (node.isLeaf()) {
+        source = {
+          inner: this.template.leafNode,
+          outer: outerTemplate.LEAF_NODE
+        };
+      } else {
+        source = {
+          inner: this.template.internalNode,
+          outer: outerTemplate.INTERNAL_NODE
+        };
+      }
 
-        return source;
+      return source;
     },
 
     /**
@@ -589,27 +627,28 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * @private
      */
     _makeTemplateProps: function(node) {
-        var classNames = this.classNames,
-            id = node.getId(),
-            props = {
-                id: id,
-                indent: this.getIndentWidth(id)
-            }, state;
+      var classNames = this.classNames;
+      var id = node.getId();
+      var props = {
+        id: id,
+        indent: this.getIndentWidth(id)
+      };
+      var state;
 
-        if (node.isLeaf()) {
-            extend(props, {
-                isLeaf: true // for custom template method
-            });
-        } else {
-            state = node.getState();
-            extend(props, {
-                stateClass: classNames[state + 'Class'],
-                stateLabel: this.stateLabels[state],
-                children: this._makeHtml(node.getChildIds())
-            });
-        }
+      if (node.isLeaf()) {
+        extend(props, {
+          isLeaf: true // for custom template method
+        });
+      } else {
+        state = node.getState();
+        extend(props, {
+          stateClass: classNames[state + 'Class'],
+          stateLabel: this.stateLabels[state],
+          children: this._makeHtml(node.getChildIds())
+        });
+      }
 
-        return extend(props, classNames, node.getAllData());
+      return extend(props, classNames, node.getAllData());
     },
 
     /**
@@ -618,7 +657,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * @returns {number} - padding left of tree node division
      */
     getIndentWidth: function(nodeId) {
-        return this.getDepth(nodeId) * this._indent;
+      return this.getDepth(nodeId) * this._indent;
     },
 
     /**
@@ -627,50 +666,50 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * @private
      */
     _draw: function(nodeId) {
-        var node = this.model.getNode(nodeId),
-            element, html;
+      var node = this.model.getNode(nodeId);
+      var element, html;
 
-        if (!node) {
-            return;
-        }
+      if (!node) {
+        return;
+      }
 
-        /**
-         * @event Tree#beforeDraw
-         * @param {{nodeId: string}} evt - Event data
-         *     @param {string} evt.nodeId - Node id
-         * @example
-         * tree.on('beforeDraw', function(evt) {
-         *     if (tree.isMovingNode) {
-         *         console.log('isMovingNode');
-         *     }
-         *     console.log('beforeDraw: ' + evt.nodeId);
-         * });
-         */
-        this.fire('beforeDraw', {nodeId: nodeId});
+      /**
+       * @event Tree#beforeDraw
+       * @type {object} evt - Event data
+       * @property {string} nodeId - Node id
+       * @example
+       * tree.on('beforeDraw', function(evt) {
+       *     if (tree.isMovingNode) {
+       *         console.log('isMovingNode');
+       *     }
+       *     console.log('beforeDraw: ' + evt.nodeId);
+       * });
+       */
+      this.fire('beforeDraw', { nodeId: nodeId });
 
-        if (node.isRoot()) {
-            html = this._makeHtml(node.getChildIds());
-            element = this.rootElement;
-        } else {
-            html = this._makeInnerHTML(node);
-            element = document.getElementById(nodeId);
-        }
-        element.innerHTML = html;
-        this._setClassNameAndVisibilityByFeature(node);
+      if (node.isRoot()) {
+        html = this._makeHtml(node.getChildIds());
+        element = this.rootElement;
+      } else {
+        html = this._makeInnerHTML(node);
+        element = document.getElementById(nodeId);
+      }
+      element.innerHTML = html;
+      this._setClassNameAndVisibilityByFeature(node);
 
-        /**
-         * @event Tree#afterDraw
-         * @param {{nodeId: string}} evt - Event data
-         *     @param {string} evt.nodeId - Node id
-         * @example
-         * tree.on('afterDraw', function(evt) {
-         *     if (tree.isMovingNode) {
-         *         console.log('isMovingNode');
-         *     }
-         *     console.log('afterDraw: ' + evt.nodeId);
-         * });
-         */
-        this.fire('afterDraw', {nodeId: nodeId});
+      /**
+       * @event Tree#afterDraw
+       * @type {object} evt - Event data
+       * @property {string} nodeId - Node id
+       * @example
+       * tree.on('afterDraw', function(evt) {
+       *     if (tree.isMovingNode) {
+       *         console.log('isMovingNode');
+       *     }
+       *     console.log('afterDraw: ' + evt.nodeId);
+       * });
+       */
+      this.fire('afterDraw', { nodeId: nodeId });
     },
 
     /**
@@ -682,21 +721,31 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * @private
      */
     _setClassNameAndVisibilityByFeature: function(node) {
-        var nodeId = node.getId(),
-            element = document.getElementById(nodeId),
-            classNames = this.classNames;
+      var nodeId = node.getId();
+      var element = document.getElementById(nodeId);
+      var classNames = this.classNames;
+      var isLeaf = node.isLeaf();
 
-        if (node.isLeaf()) {
-            util.removeClass(element, classNames.openedClass);
-            util.removeClass(element, classNames.closedClass);
-            util.addClass(element, classNames.leafClass);
+      if (element) {
+        if (isLeaf) {
+          removeClass(element, classNames.openedClass);
+          removeClass(element, classNames.closedClass);
+          addClass(element, classNames.leafClass);
         } else {
-            util.removeClass(element, classNames.leafClass);
-            this._setDisplayFromNodeState(nodeId, node.getState());
-            this.each(function(child) {
-                this._setClassNameAndVisibilityByFeature(child);
-            }, nodeId, this);
+          removeClass(element, classNames.leafClass);
         }
+      }
+
+      if (!isLeaf) {
+        this._setDisplayFromNodeState(nodeId, node.getState());
+        this.each(
+          function(child) {
+            this._setClassNameAndVisibilityByFeature(child);
+          },
+          nodeId,
+          this
+        );
+      }
     },
 
     /**
@@ -706,21 +755,18 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * @private
      */
     _getSubtreeElement: function(nodeId) {
-        var node = this.model.getNode(nodeId),
-            subtreeElement;
+      var node = this.model.getNode(nodeId);
+      var subtreeElement;
 
-        if (!node || node.isLeaf()) {
-            subtreeElement = null;
-        } else if (node.isRoot()) {
-            subtreeElement = this.rootElement;
-        } else {
-            subtreeElement = util.getElementsByClassName(
-                document.getElementById(nodeId),
-                this.classNames.subtreeClass
-            )[0];
-        }
+      if (!node || node.isLeaf()) {
+        subtreeElement = null;
+      } else if (node.isRoot()) {
+        subtreeElement = this.rootElement;
+      } else {
+        subtreeElement = document.querySelector('#' + nodeId + ' .' + this.classNames.subtreeClass);
+      }
 
-        return subtreeElement;
+      return subtreeElement;
     },
 
     /**
@@ -729,7 +775,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * @returns {number|undefined} Depth
      */
     getDepth: function(nodeId) {
-        return this.model.getDepth(nodeId);
+      return this.model.getDepth(nodeId);
     },
 
     /**
@@ -737,7 +783,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * @returns {number} Last depth
      */
     getLastDepth: function() {
-        return this.model.getLastDepth();
+      return this.model.getLastDepth();
     },
 
     /**
@@ -745,7 +791,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * @returns {string} Root node id
      */
     getRootNodeId: function() {
-        return this.model.rootNode.getId();
+      return this.model.rootNode.getId();
     },
 
     /**
@@ -754,7 +800,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * @returns {Array.<string>|undefined} Child ids
      */
     getChildIds: function(nodeId) {
-        return this.model.getChildIds(nodeId);
+      return this.model.getChildIds(nodeId);
     },
 
     /**
@@ -763,15 +809,15 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * @returns {string|undefined} Parent id
      */
     getParentId: function(nodeId) {
-        return this.model.getParentId(nodeId);
+      return this.model.getParentId(nodeId);
     },
 
     /**
      * Reset click timer
      */
     resetClickTimer: function() {
-        window.clearTimeout(this.clickTimer);
-        this.clickTimer = null;
+      window.clearTimeout(this.clickTimer);
+      this.clickTimer = null;
     },
 
     /**
@@ -782,13 +828,13 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * tree.getNodeIdFromElement(elementInNode); // 'tui-tree-node-3'
      */
     getNodeIdFromElement: function(element) {
-        var idPrefix = this.getNodeIdPrefix();
+      var idPrefix = this.getNodeIdPrefix();
 
-        while (element && element.id.indexOf(idPrefix) === -1) {
-            element = element.parentElement;
-        }
+      while (element && element.id.indexOf(idPrefix) === -1) {
+        element = element.parentElement;
+      }
 
-        return element ? element.id : '';
+      return element ? element.id : '';
     },
 
     /**
@@ -798,7 +844,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * tree.getNodeIdPrefix(); // 'tui-tree-node-'
      */
     getNodeIdPrefix: function() {
-        return this.model.getNodeIdPrefix();
+      return this.model.getNodeIdPrefix();
     },
 
     /**
@@ -807,7 +853,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * @returns {object|undefined} Node data
      */
     getNodeData: function(nodeId) {
-        return this.model.getNodeData(nodeId);
+      return this.model.getNodeData(nodeId);
     },
 
     /**
@@ -822,22 +868,25 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * tree.setNodeData(nodeId, {foo: 'bar'}, true); // not refresh
      */
     setNodeData: function(nodeId, data, options) {
-        var self = this;
-        var treeAjax = this.enabledFeatures.Ajax;
-        var useAjax = options ? options.useAjax : !!treeAjax;
-        var isSilent = options ? options.isSilent : false;
+      var treeAjax = this.enabledFeatures.Ajax;
+      var useAjax = options ? options.useAjax : !!treeAjax;
+      var isSilent = options ? options.isSilent : false;
 
-        if (useAjax) {
-            treeAjax.loadData(ajaxCommand.UPDATE, function() {
-                self._setNodeData(nodeId, data);
-            }, {
-                nodeId: nodeId,
-                data: data,
-                type: 'set'
-            });
-        } else {
-            this._setNodeData(nodeId, data, isSilent);
-        }
+      if (useAjax) {
+        treeAjax.loadData(
+          ajaxCommand.UPDATE,
+          util.bind(function() {
+            this._setNodeData(nodeId, data);
+          }, this),
+          {
+            nodeId: nodeId,
+            data: data,
+            type: 'set'
+          }
+        );
+      } else {
+        this._setNodeData(nodeId, data, isSilent);
+      }
     },
 
     /**
@@ -848,7 +897,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * @private
      */
     _setNodeData: function(nodeId, data, isSilent) {
-        this.model.setNodeData(nodeId, data, isSilent);
+      this.model.setNodeData(nodeId, data, isSilent);
     },
 
     /**
@@ -863,22 +912,25 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * tree.setNodeData(nodeId, 'foo', true); // not refresh
      */
     removeNodeData: function(nodeId, names, options) {
-        var self = this;
-        var treeAjax = this.enabledFeatures.Ajax;
-        var useAjax = options ? options.useAjax : !!treeAjax;
-        var isSilent = options ? options.isSilent : false;
+      var treeAjax = this.enabledFeatures.Ajax;
+      var useAjax = options ? options.useAjax : !!treeAjax;
+      var isSilent = options ? options.isSilent : false;
 
-        if (useAjax) {
-            treeAjax.loadData(ajaxCommand.UPDATE, function() {
-                self._removeNodeData(nodeId, names);
-            }, {
-                nodeId: nodeId,
-                names: names,
-                type: 'remove'
-            });
-        } else {
-            this._removeNodeData(nodeId, names, isSilent);
-        }
+      if (useAjax) {
+        treeAjax.loadData(
+          ajaxCommand.UPDATE,
+          util.bind(function() {
+            this._removeNodeData(nodeId, names);
+          }, this),
+          {
+            nodeId: nodeId,
+            names: names,
+            type: 'remove'
+          }
+        );
+      } else {
+        this._removeNodeData(nodeId, names, isSilent);
+      }
     },
 
     /**
@@ -889,7 +941,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * @private
      */
     _removeNodeData: function(nodeId, names, isSilent) {
-        this.model.removeNodeData(nodeId, names, isSilent);
+      this.model.removeNodeData(nodeId, names, isSilent);
     },
 
     /**
@@ -901,13 +953,13 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      *                        // undefined if the node is nonexistent
      */
     getState: function(nodeId) {
-        var node = this.model.getNode(nodeId);
+      var node = this.model.getNode(nodeId);
 
-        if (!node) {
-            return null;
-        }
+      if (!node) {
+        return null;
+      }
 
-        return node.getState();
+      return node.getState();
     },
     /**
      * Open node
@@ -917,11 +969,11 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * tree.open(nodeId ,true);
      */
     open: function(nodeId, recursive) {
-        if (recursive) {
-            this._openRecursiveNode(nodeId);
-        } else {
-            this._openNode(nodeId);
-        }
+      if (recursive) {
+        this._openRecursiveNode(nodeId);
+      } else {
+        this._openNode(nodeId);
+      }
     },
     /**
      * Open all parent node
@@ -929,11 +981,15 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * @private
      */
     _openRecursiveNode: function(nodeId) {
-        var parentIds = this.model.getParentIds(nodeId);
-        parentIds.push(nodeId);
-        snippet.forEach(parentIds, function(parentId) {
-            this._openNode(parentId);
-        }, this);
+      var parentIds = this.model.getParentIds(nodeId);
+      parentIds.push(nodeId);
+      forEachArray(
+        parentIds,
+        function(parentId) {
+          this._openNode(parentId);
+        },
+        this
+      );
     },
     /**
      * Open one target node
@@ -941,22 +997,18 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * @private
      */
     _openNode: function(nodeId) {
-        var node = this.model.getNode(nodeId);
-        var state = nodeStates.OPENED;
-        var isAllowStateChange = (
-            node &&
-            !node.isRoot() &&
-            node.getState() === nodeStates.CLOSED
-        );
+      var node = this.model.getNode(nodeId);
+      var state = nodeStates.OPENED;
+      var isAllowStateChange = node && !node.isRoot() && node.getState() === nodeStates.CLOSED;
 
-        if (isAllowStateChange) {
-            node.setState(state);
-            this._setDisplayFromNodeState(nodeId, state);
-        }
+      if (isAllowStateChange) {
+        node.setState(state);
+        this._setDisplayFromNodeState(nodeId, state);
+      }
 
-        if (this.enabledFeatures.Ajax) {
-            this._reload(nodeId);
-        }
+      if (this.enabledFeatures.Ajax) {
+        this._reload(nodeId);
+      }
     },
 
     /**
@@ -967,11 +1019,11 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * tree.close(nodeId, true);
      */
     close: function(nodeId, recursive) {
-        if (recursive) {
-            this._closeRecursiveNode(nodeId);
-        } else {
-            this._closeNode(nodeId);
-        }
+      if (recursive) {
+        this._closeRecursiveNode(nodeId);
+      } else {
+        this._closeNode(nodeId);
+      }
     },
 
     /**
@@ -980,12 +1032,16 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * @private
      */
     _closeRecursiveNode: function(nodeId) {
-        this._closeNode(nodeId);
-        this.model.each(function(searchNode, searchNodeId) {
-            if (!searchNode.isLeaf()) {
-                this._closeNode(searchNodeId);
-            }
-        }, nodeId, this);
+      this._closeNode(nodeId);
+      this.model.each(
+        function(searchNode, searchNodeId) {
+          if (!searchNode.isLeaf()) {
+            this._closeNode(searchNodeId);
+          }
+        },
+        nodeId,
+        this
+      );
     },
 
     /**
@@ -994,17 +1050,13 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * @private
      */
     _closeNode: function(nodeId) {
-        var node = this.model.getNode(nodeId);
-        var state = nodeStates.CLOSED;
-        var isAllowStateChange = (
-            node &&
-            !node.isRoot() &&
-            node.getState() === nodeStates.OPENED
-        );
-        if (isAllowStateChange) {
-            node.setState(state);
-            this._setDisplayFromNodeState(nodeId, state);
-        }
+      var node = this.model.getNode(nodeId);
+      var state = nodeStates.CLOSED;
+      var isAllowStateChange = node && !node.isRoot() && node.getState() === nodeStates.OPENED;
+      if (isAllowStateChange) {
+        node.setState(state);
+        this._setDisplayFromNodeState(nodeId, state);
+      }
     },
 
     /**
@@ -1012,20 +1064,20 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * @param {string} nodeId - Node id
      */
     toggle: function(nodeId) {
-        var node = this.model.getNode(nodeId);
-        var state;
+      var node = this.model.getNode(nodeId);
+      var state;
 
-        if (!node || node.isRoot()) {
-            return;
-        }
+      if (!node || node.isRoot()) {
+        return;
+      }
 
-        node.toggleState();
-        state = node.getState();
-        this._setDisplayFromNodeState(nodeId, state);
+      node.toggleState();
+      state = node.getState();
+      this._setDisplayFromNodeState(nodeId, state);
 
-        if (this.enabledFeatures.Ajax) {
-            this._reload(nodeId);
-        }
+      if (this.enabledFeatures.Ajax) {
+        this._reload(nodeId);
+      }
     },
 
     /**
@@ -1034,23 +1086,28 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * @private
      */
     _reload: function(nodeId) {
-        var node = this.model.getNode(nodeId);
-        var state = node.getState();
-        var isReload = snippet.isUndefined(node.getData('reload')) ||
-            node.getData('reload');
+      var node = this.model.getNode(nodeId);
+      var state = node.getState();
+      var isReload = isUndefined(node.getData('reload')) || node.getData('reload');
 
-        if (state === nodeStates.CLOSED) { // open -> close action
-            this._setNodeData(nodeId, {
-                reload: false
-            }, true);
-        }
+      if (state === nodeStates.CLOSED) {
+        // open -> close action
+        this._setNodeData(
+          nodeId,
+          {
+            reload: false
+          },
+          true
+        );
+      }
 
-        if (state === nodeStates.OPENED && isReload) { // close -> open action
-            this.resetAllData(null, {
-                nodeId: nodeId,
-                useAjax: true
-            });
-        }
+      if (state === nodeStates.OPENED && isReload) {
+        // close -> open action
+        this.resetAllData(null, {
+          nodeId: nodeId,
+          useAjax: true
+        });
+      }
     },
 
     /**
@@ -1079,11 +1136,11 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * tree.sort(comparator, false, parentId)
      */
     sort: function(comparator, isSilent, parentId) {
-        this.model.sort(comparator, parentId);
+      this.model.sort(comparator, parentId);
 
-        if (!isSilent) {
-            this.refresh(parentId);
-        }
+      if (!isSilent) {
+        this.refresh(parentId);
+      }
     },
 
     /**
@@ -1091,8 +1148,8 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * @param {string} [nodeId] - TreeNode id to refresh
      */
     refresh: function(nodeId) {
-        nodeId = nodeId || this.getRootNodeId();
-        this._draw(nodeId);
+      nodeId = nodeId || this.getRootNodeId();
+      this._draw(nodeId);
     },
 
     /**
@@ -1105,7 +1162,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * });
      */
     eachAll: function(iteratee, context) {
-        this.model.eachAll(iteratee, context);
+      this.model.eachAll(iteratee, context);
     },
 
     /**
@@ -1120,7 +1177,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      *
      */
     each: function(iteratee, parentId, context) {
-        this.model.each(iteratee, parentId, context);
+      this.model.each(iteratee, parentId, context);
     },
 
     /**
@@ -1146,24 +1203,27 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * console.log(secondAddedIds); // ["tui-tree-node-11", "tui-tree-node-12"]
      */
     add: function(data, parentId, options) {
-        var self = this;
-        var treeAjax = this.enabledFeatures.Ajax;
-        var useAjax = options ? options.useAjax : !!treeAjax;
-        var isSilent = options ? options.isSilent : false;
-        var newChildIds;
+      var treeAjax = this.enabledFeatures.Ajax;
+      var useAjax = options ? options.useAjax : !!treeAjax;
+      var isSilent = options ? options.isSilent : false;
+      var newChildIds;
 
-        if (useAjax) {
-            treeAjax.loadData(ajaxCommand.CREATE, function() {
-                return self._add(data, parentId);
-            }, {
-                parentId: parentId,
-                data: data
-            });
-        } else {
-            newChildIds = this._add(data, parentId, isSilent);
-        }
+      if (useAjax) {
+        treeAjax.loadData(
+          ajaxCommand.CREATE,
+          util.bind(function() {
+            return this._add(data, parentId);
+          }, this),
+          {
+            parentId: parentId,
+            data: data
+          }
+        );
+      } else {
+        newChildIds = this._add(data, parentId, isSilent);
+      }
 
-        return newChildIds;
+      return newChildIds;
     },
 
     /**
@@ -1177,7 +1237,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * @private
      */
     _add: function(data, parentId, isSilent) {
-        return this.model.add(data, parentId, isSilent);
+      return this.model.add(data, parentId, isSilent);
     },
 
     /**
@@ -1203,23 +1263,26 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * });
      */
     resetAllData: function(data, options) {
-        var self = this;
-        var treeAjax = this.enabledFeatures.Ajax;
-        var nodeId = options ? options.nodeId : this.getRootNodeId();
-        var useAjax = options ? options.useAjax : !!treeAjax;
-        var newChildIds;
+      var treeAjax = this.enabledFeatures.Ajax;
+      var nodeId = options ? options.nodeId : this.getRootNodeId();
+      var useAjax = options ? options.useAjax : !!treeAjax;
+      var newChildIds;
 
-        if (useAjax) {
-            treeAjax.loadData(ajaxCommand.READ, function(response) {
-                return self._resetAllData(response, nodeId);
-            }, {
-                nodeId: nodeId
-            });
-        } else {
-            newChildIds = this._resetAllData(data, nodeId);
-        }
+      if (useAjax) {
+        treeAjax.loadData(
+          ajaxCommand.READ,
+          util.bind(function(response) {
+            return this._resetAllData(response, nodeId);
+          }, this),
+          {
+            nodeId: nodeId
+          }
+        );
+      } else {
+        newChildIds = this._resetAllData(data, nodeId);
+      }
 
-        return newChildIds;
+      return newChildIds;
     },
 
     /**
@@ -1230,11 +1293,11 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * @private
      */
     _resetAllData: function(data, nodeId) {
-        this._removeAllChildren(nodeId, {
-            isSilent: true
-        });
+      this._removeAllChildren(nodeId, {
+        isSilent: true
+      });
 
-        return this._add(data, nodeId);
+      return this._add(data, nodeId);
     },
 
     /**
@@ -1248,20 +1311,23 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * tree.removeAllChildren(nodId, true); // Doesn't redraw the node
      */
     removeAllChildren: function(nodeId, options) {
-        var self = this;
-        var treeAjax = this.enabledFeatures.Ajax;
-        var useAjax = options ? options.useAjax : !!treeAjax;
-        var isSilent = options ? options.isSilent : false;
+      var treeAjax = this.enabledFeatures.Ajax;
+      var useAjax = options ? options.useAjax : !!treeAjax;
+      var isSilent = options ? options.isSilent : false;
 
-        if (useAjax) {
-            treeAjax.loadData(ajaxCommand.DELETE_ALL_CHILDREN, function() {
-                self._removeAllChildren(nodeId);
-            }, {
-                parentId: nodeId
-            });
-        } else {
-            this._removeAllChildren(nodeId, isSilent);
-        }
+      if (useAjax) {
+        treeAjax.loadData(
+          ajaxCommand.DELETE_ALL_CHILDREN,
+          util.bind(function() {
+            this._removeAllChildren(nodeId);
+          }, this),
+          {
+            parentId: nodeId
+          }
+        );
+      } else {
+        this._removeAllChildren(nodeId, isSilent);
+      }
     },
 
     /**
@@ -1271,15 +1337,19 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * @private
      */
     _removeAllChildren: function(nodeId, isSilent) {
-        var children = this.getChildIds(nodeId);
+      var children = this.getChildIds(nodeId);
 
-        snippet.forEach(children, function(childId) {
-            this._remove(childId, true);
-        }, this);
+      forEachArray(
+        children || [],
+        function(childId) {
+          this._remove(childId, true);
+        },
+        this
+      );
 
-        if (!isSilent) {
-            this._draw(nodeId);
-        }
+      if (!isSilent) {
+        this._draw(nodeId);
+      }
     },
 
     /**
@@ -1294,20 +1364,23 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * tree.remove(myNodeId, true); // remove node without redrawing
      */
     remove: function(nodeId, options) {
-        var self = this;
-        var treeAjax = this.enabledFeatures.Ajax;
-        var useAjax = options ? options.useAjax : !!treeAjax;
-        var isSilent = options ? options.isSilent : false;
+      var treeAjax = this.enabledFeatures.Ajax;
+      var useAjax = options ? options.useAjax : !!treeAjax;
+      var isSilent = options ? options.isSilent : false;
 
-        if (useAjax) {
-            treeAjax.loadData(ajaxCommand.DELETE, function() {
-                self._remove(nodeId);
-            }, {
-                nodeId: nodeId
-            });
-        } else {
-            this._remove(nodeId, isSilent);
-        }
+      if (useAjax) {
+        treeAjax.loadData(
+          ajaxCommand.DELETE,
+          util.bind(function() {
+            this._remove(nodeId);
+          }, this),
+          {
+            nodeId: nodeId
+          }
+        );
+      } else {
+        this._remove(nodeId, isSilent);
+      }
     },
 
     /**
@@ -1318,7 +1391,7 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * @private
      */
     _remove: function(nodeId, isSilent) {
-        this.model.remove(nodeId, isSilent);
+      this.model.remove(nodeId, isSilent);
     },
 
     /**
@@ -1335,27 +1408,35 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * tree.move(myNodeId, newParentId, true); // move node without redrawing
      */
     move: function(nodeId, newParentId, index, options) {
-        var self = this;
-        var treeAjax = this.enabledFeatures.Ajax;
-        var useAjax = options ? options.useAjax : !!treeAjax;
-        var isSilent = options ? options.isSilent : false;
+      var treeAjax = this.enabledFeatures.Ajax;
+      var useAjax = options ? options.useAjax : !!treeAjax;
+      var isSilent = options ? options.isSilent : false;
 
-        if (useAjax) {
-            treeAjax.loadData(ajaxCommand.MOVE, function() {
-                if (self.getParentId(nodeId) !== newParentId) { // just move, not sort!
-                    self.setNodeData(newParentId, {
-                        reload: true
-                    }, true);
-                }
-                self._move(nodeId, newParentId, index);
-            }, {
-                nodeId: nodeId,
-                newParentId: newParentId,
-                index: index
-            });
-        } else {
-            this._move(nodeId, newParentId, index, isSilent);
-        }
+      if (useAjax) {
+        treeAjax.loadData(
+          ajaxCommand.MOVE,
+          util.bind(function() {
+            if (this.getParentId(nodeId) !== newParentId) {
+              // just move, not sort!
+              this.setNodeData(
+                newParentId,
+                {
+                  reload: true
+                },
+                true
+              );
+            }
+            this._move(nodeId, newParentId, index);
+          }, this),
+          {
+            nodeId: nodeId,
+            newParentId: newParentId,
+            index: index
+          }
+        );
+      } else {
+        this._move(nodeId, newParentId, index, isSilent);
+      }
     },
 
     /**
@@ -1368,31 +1449,33 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * @private
      */
     _move: function(nodeId, newParentId, index, isSilent) {
-        /**
-         * @event Tree#beforeMove
-         * @param {{nodeId: string, newParentId: string}} evt - Event data
-         *     @param {string} evt.nodeId - Current dragging node id
-         *     @param {string} evt.newParentId - New parent id
-         * @example
-         * tree.on('beforeMove', function(evt) {
-         *      console.log('dragging node: ' + evt.nodeId);
-         *      console.log('new parent node: ' + evt.newParentId);
-         *      console.log('original parent node: ' + tree.getParentId(evt.nodeId));
-         *
-         *      return false; // Cancel "move" event
-         *      // return true; // Fire "move" event
-         * });
-         */
-        if (!this.invoke('beforeMove', {
-            nodeId: nodeId,
-            newParentId: newParentId
-        })) {
-            return;
-        }
+      /**
+       * @event Tree#beforeMove
+       * @type {object} evt - Event data
+       * @property {string} nodeId - Current dragging node id
+       * @property {string} newParentId - New parent id
+       * @example
+       * tree.on('beforeMove', function(evt) {
+       *      console.log('dragging node: ' + evt.nodeId);
+       *      console.log('new parent node: ' + evt.newParentId);
+       *      console.log('original parent node: ' + tree.getParentId(evt.nodeId));
+       *
+       *      return false; // Cancel "move" event
+       *      // return true; // Fire "move" event
+       * });
+       */
+      if (
+        !this.invoke('beforeMove', {
+          nodeId: nodeId,
+          newParentId: newParentId
+        })
+      ) {
+        return;
+      }
 
-        this.isMovingNode = true;
-        this.model.move(nodeId, newParentId, index, isSilent);
-        this.isMovingNode = false;
+      this.isMovingNode = true;
+      this.model.move(nodeId, newParentId, index, isSilent);
+      this.isMovingNode = false;
     },
 
     /**
@@ -1417,15 +1500,15 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * console.log(tree.getNodeData('tui-tree-node-5').foo); // 'bar'
      */
     search: function(predicate, context) {
-        if (!snippet.isObject(predicate)) {
-            return [];
-        }
+      if (!isObject(predicate)) {
+        return [];
+      }
 
-        if (snippet.isFunction(predicate)) {
-            return this._filter(predicate, context);
-        }
+      if (isFunction(predicate)) {
+        return this._filter(predicate, context);
+      }
 
-        return this._where(predicate);
+      return this._where(predicate);
     },
 
     /**
@@ -1435,18 +1518,18 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * @private
      */
     _where: function(props) {
-        return this._filter(function(node) {
-            var result = true,
-                data = node.getAllData();
+      return this._filter(function(node) {
+        var result = true;
+        var data = node.getAllData();
 
-            snippet.forEach(props, function(value, key) {
-                result = (key in data) && (data[key] === value);
+        forEachOwnProperties(props, function(value, key) {
+          result = key in data && data[key] === value;
 
-                return result;
-            });
-
-            return result;
+          return result;
         });
+
+        return result;
+      });
     },
 
     /**
@@ -1457,15 +1540,15 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * @private
      */
     _filter: function(predicate, context) {
-        var filtered = [];
+      var filtered = [];
 
-        this.eachAll(function(node, nodeId) {
-            if (predicate(node, nodeId)) {
-                filtered.push(nodeId);
-            }
-        }, context);
+      this.eachAll(function(node, nodeId) {
+        if (predicate(node, nodeId)) {
+          filtered.push(nodeId);
+        }
+      }, context);
 
-        return filtered;
+      return filtered;
     },
 
     /**
@@ -1474,9 +1557,9 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * @returns {boolean} True if the node is leaf.
      */
     isLeaf: function(nodeId) {
-        var node = this.model.getNode(nodeId);
+      var node = this.model.getNode(nodeId);
 
-        return node && node.isLeaf();
+      return node && node.isLeaf();
     },
 
     /**
@@ -1486,13 +1569,13 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * @returns {boolean} Whether a node contains another node
      */
     contains: function(containerNodeId, containedNodeId) {
-        return this.model.contains(containerNodeId, containedNodeId);
+      return this.model.contains(containerNodeId, containedNodeId);
     },
 
     /**
      * Enable facility of tree
      * @param {string} featureName - 'Selectable', 'Draggable', 'Editable', 'ContextMenu'
-     * @param {object} [options] - Feature options
+     * @param {object} [options] - Feature options // TODO: define Feature options
      * @returns {Tree} this
      * @example
      * tree
@@ -1581,8 +1664,8 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      *              type: 'post'
      *          }
      *      },
-     *      parseData: function(type, response) {
-     *          if (type === 'read' && response.code === '200') {
+     *      parseData: function(command, response) {
+     *          if (command === 'read' && response.code === '200') {
      *              return response;
      *          } else {
      *              return false;
@@ -1591,14 +1674,26 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      *  });
      */
     enableFeature: function(featureName, options) {
-        var Feature = features[featureName];
-        this.disableFeature(featureName);
-        if (Feature) {
-            this.enabledFeatures[featureName] = new Feature(this, options);
-            this.fire('initFeature');
-        }
+      var Feature = features[featureName];
 
+      if (!Feature) {
         return this;
+      }
+
+      this.disableFeature(featureName);
+
+      if (isObject(options)) {
+        options.usageStatistics = this.usageStatistics;
+      } else {
+        options = {
+          usageStatistics: this.usageStatistics
+        };
+      }
+
+      this.enabledFeatures[featureName] = new Feature(this, options);
+      this.fire('initFeature');
+
+      return this;
     },
 
     /**
@@ -1615,14 +1710,14 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      *  .disableFeature('Ajax');
      */
     disableFeature: function(featureName) {
-        var feature = this.enabledFeatures[featureName];
+      var feature = this.enabledFeatures[featureName];
 
-        if (feature) {
-            feature.destroy();
-            delete this.enabledFeatures[featureName];
-        }
+      if (feature) {
+        feature.destroy();
+        delete this.enabledFeatures[featureName];
+      }
 
-        return this;
+      return this;
     },
 
     /**
@@ -1631,11 +1726,12 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
      * @returns {number} Index number of attached node
      */
     getNodeIndex: function(nodeId) {
-        var parentId = this.model.getParentId(nodeId);
+      var parentId = this.model.getParentId(nodeId);
 
-        return this.model.getNode(parentId).getChildIndex(nodeId);
+      return this.model.getNode(parentId).getChildIndex(nodeId);
     }
-});
+  }
+);
 
 /**
  * Set abstract apis to tree prototype
@@ -1644,18 +1740,18 @@ var Tree = snippet.defineClass(/** @lends Tree.prototype */ {
  * @ignore
  */
 function setAbstractAPIs(featureName, feature) {
-    var messageName = 'INVALID_API_' + featureName.toUpperCase(),
-        apiList = feature.getAPIList ? feature.getAPIList() : [];
+  var messageName = 'INVALID_API_' + featureName.toUpperCase();
+  var apiList = feature.getAPIList ? feature.getAPIList() : [];
 
-    snippet.forEach(apiList, function(api) {
-        Tree.prototype[api] = function() {
-            throw new Error(messages[messageName] || messages.INVALID_API);
-        };
-    });
+  forEachArray(apiList, function(api) {
+    Tree.prototype[api] = function() {
+      throw new Error(messages[messageName] || messages.INVALID_API);
+    };
+  });
 }
-snippet.forEach(features, function(Feature, name) {
-    setAbstractAPIs(name, Feature);
+forEachOwnProperties(features, function(Feature, name) {
+  setAbstractAPIs(name, Feature);
 });
-snippet.CustomEvents.mixin(Tree);
+CustomEvents.mixin(Tree);
 
 module.exports = Tree;

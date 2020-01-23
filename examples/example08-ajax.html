@@ -3,9 +3,10 @@
     <head lang="en">
         <meta charset="UTF-8">
         <title>Tree with "Ajax" feature</title>
-        <link rel="stylesheet" href="css/docs.css" />
-        <link rel="stylesheet" href="../dist/tui-tree.css" />
-        <link rel="stylesheet" href="//rawgit.com/nhnent/tui.context-menu/v2.0.0/dist/tui-context-menu.css" />
+        <link rel="stylesheet" type="text/css" href="./css/tui-example-style.css" />
+        <link rel="stylesheet" type="text/css" href="./css/docs.css" />
+        <link rel="stylesheet" type="text/css" href="../dist/tui-tree.css" />
+        <link rel="stylesheet" type="text/css" href="https://uicdn.toast.com/tui.context-menu/v2.1.6/tui-context-menu.css" />
     </head>
 
     <body>
@@ -13,16 +14,15 @@
             <div id="tree" class="tui-tree-wrap"></div>
         </div>
         <div class="explain">
-            <textarea id="infoArea"></textarea>
+            <h3>To create / update / remove a tree node, please right-click.</h3>
+            <p>ContextMenu feature does not support IE8.</p>
+            <textarea id="infoArea" readonly></textarea>
         </div>
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-        <script src="https://uicdn.toast.com/tui.code-snippet/v1.3.0/tui-code-snippet.min.js"></script>
-        <script src="https://cdn.rawgit.com/nhnent/tui.dom/v3.0.0/dist/tui-dom.min.js"></script>
-        <script src="https://rawgit.com/nhnent/tui.context-menu/v2.0.0/dist/tui-context-menu.min.js"></script>
+        <script src="https://uicdn.toast.com/tui.context-menu/v2.1.6/tui-context-menu.min.js"></script>
         <script src="../dist/tui-tree.js"></script>
         <script class="code-js">
-
         var infoArea = document.getElementById('infoArea');
 
         // Create Tree component
@@ -155,7 +155,7 @@
                 tree.remove(event.nodeId);
                 return false;
             }
-            return confirm('create?');
+            return confirm('Are you sure you want to create?');
         });
 
         tree.on('beforeEditNode', function(event) {
@@ -163,23 +163,24 @@
                 tree.finishEditing();
                 return false;
             }
-            return confirm('edit?');
-        });
-
-        tree.on('successAjaxResponse', function(command, data) {
-            var message;
-
-            message = 'Command : ' + command  + '\n';
-            message += 'jQuery request options : \n';
-            message += JSON.stringify(tree.enabledFeatures.Ajax.command[command], null, 8);
-
-            infoArea.value = message;
+            return confirm('Are you sure you want to edit?');
         });
 
         tree.on('beforeMove', function() {
             console.log('before move');
         });
 
+        tree.on('successAjaxResponse', function(eventData) {
+            var message = '';
+            
+            message += 'jQuery request : \n';
+            message += JSON.stringify(tree.enabledFeatures.Ajax.command[eventData.command], null, 8) + '\n\n';
+
+            message += 'jQuery response : \n';
+            message += JSON.stringify(eventData, null, 8);
+
+            infoArea.value = message;
+        });
         </script>
     </body>
 </html>

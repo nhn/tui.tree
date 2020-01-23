@@ -1,6 +1,6 @@
 /**
  * @fileoverview Set default value of toggle button
- * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
+ * @author NHN. FE dev Lab <dl_javascript@nhn.com>
  */
 
 /**
@@ -8,12 +8,12 @@
  * @type {Object.<string, string>}
  */
 module.exports = {
-    /**
-     * States of node
-     * @type {{OPENED: string, CLOSED: string}}
-     */
-    node: {
-        OPENED: 'opened',
-        CLOSED: 'closed'
-    }
+  /**
+   * States of node
+   * @type {{OPENED: string, CLOSED: string}}
+   */
+  node: {
+    OPENED: 'opened',
+    CLOSED: 'closed'
+  }
 };

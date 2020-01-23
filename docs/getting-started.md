@@ -1,85 +1,85 @@
-## Add dependency files
+## Install
 
-To use a tree component, you must include CSS and JavaScript files.
-Main bundling files can download from a `dist` folder in this repository.
-And this component has `CodeSnippet` dependency by default.
-
-#### CSS File
-
-```html
-<link rel="stylesheet" href="tui-tree.css">
+``` sh
+$ npm install --save tui-tree # Latest version
+$ npm install --save tui-tree@<version> # Specific version
 ```
 
-#### JS Files
+It can also be installed by using bower or downloaded by CDN. Please refer to the [💾 Install](https://github.com/nhn/tui.tree#-install).
 
-```html
-<script type="text/javascript" src="tui-code-snippet.js"></script>
-<script type="text/javascript" src="tui-tree.js"></script>
-```
+## Usage
 
-## Create a tree component
+### Write a wrapper element
 
-#### Step 1. Add a container element that the pagination component will be created.
+A wrapper element should have `tui-tree-wrapper` as a class name to apply tui-tree's style.
 
 ```html
 <div id="tree" class="tui-tree-wrap"></div>
 ```
 
-### Step 2. Create instance.
+### Import a component
 
-Create an instance by passing the container element and option values as parameters.
-And create the tree data and pass it as an option.
+```javascript
+import Tree from 'tui-tree';
+import 'tui-tree/dist/tui-tree.css';
+```
+
+It can also be used by namespace or CommonJS module. Please refer to the [🔨 Usage](https://github.com/nhn/tui.pagination#-usage).
+
+### Create an instance
 
 * Create with the id selector of the container element
+
 ```js
-var tree = new tui.Tree('tree', options);
+const tree = new Tree('tree', options);
 ```
 
 * Create with a container element
+
 ```js
-var container = document.getElementById('tree');
-var tree = new tui.Tree(container, options);
+const container = document.getElementById('tree');
+const tree = new Tree(container, options);
 ```
 
-* Create with options (default values)
+* Create with options
+
 ```js
-var options = {
-    data: [],
-    nodeIdPrefix: 'tui-tree-node-',
-    nodeDefaultState: 'closed',
-    stateLabels: {
-        opened: '-',
-        closed: '+'
-    },
-    template: {
-        internalNode:
-            '<div class="tui-tree-btn">' +
-                '<button type="button" class="tui-tree-toggle-btn tui-js-tree-toggle-btn">' +
-                    '<span class="tui-ico-tree"></span>' +
-                    '{{stateLabel}}' +
-                '</button>' +
-                '<span class="tui-tree-text tui-js-tree-text">' +
-                    '<span class="tui-tree-ico tui-ico-folder"></span>' +
-                    '{{text}}' +
-                '</span>' +
-            '</div>' +
-            '<ul class="tui-tree-subtree tui-js-tree-subtree">{{children}}</ul>',
-        leafNode:
-            '<div class="tui-tree-btn">' +
-                '<span class="tui-tree-text tui-js-tree-text">' +
-                    '<span class="tui-tree-ico tui-ico-file"></span>' +
-                    '{{text}}' +
-                '</span>' +
-            '</div>'
-    },
-    renderTemplate: function(tmpl, props) {
-        // Mustache template engine
-        return Mustache.render(tmpl, props);
-    }
+const options = {
+  data: [],
+  nodeIdPrefix: 'tui-tree-node-',
+  nodeDefaultState: 'closed',
+  stateLabels: {
+    opened: '-',
+    closed: '+'
+  },
+  template: {
+    internalNode:
+      '<div class="tui-tree-btn">' +
+        '<button type="button" class="tui-tree-toggle-btn tui-js-tree-toggle-btn">' +
+          '<span class="tui-ico-tree"></span>' +
+          '{{stateLabel}}' +
+        '</button>' +
+        '<span class="tui-tree-text tui-js-tree-text">' +
+          '<span class="tui-tree-ico tui-ico-folder"></span>' +
+          '{{text}}' +
+        '</span>' +
+      '</div>' +
+      '<ul class="tui-tree-subtree tui-js-tree-subtree">{{children}}</ul>',
+    leafNode:
+      '<div class="tui-tree-btn">' +
+        '<span class="tui-tree-text tui-js-tree-text">' +
+          '<span class="tui-tree-ico tui-ico-file"></span>' +
+          '{{text}}' +
+        '</span>' +
+      '</div>'
+  },
+  renderTemplate: (tmpl, props) => Mustache.render(tmpl, props) // Mustache template engine
 };
 
-var tree = new tui.Tree('tree', options);
+const tree = new Tree('tree', options);
 ```
+
+## Options
 
 Information about each option is as follows:
 
@@ -96,83 +96,77 @@ Information about each option is as follows:
 |`[template.leafNode]`|`{string}`|Template of leaf node|
 |`[renderTemplate]`|`{function}`|Render template function|
 
-## Tree data format
+### Tree data format: `data`
 
 * Default : Set `text`, `children` properties.
 ```js
-var data = [
-    {
-        text: 'rootA',
-        children: [
-            {text: 'root-1A'},
-            {text: 'root-1B'},
-            {text: 'root-1C'},
-            {
-                text: 'root-2A',
-                children: [
-                    {text: 'sub_sub_1A'}
-                ]
-            },
-            {text: 'sub_2A'}
-       ]
-   },
-   {
-       text: 'rootB',
-       children: [
-           {text: 'B_sub1'},
-           {text: 'B_sub2'},
-           {text: 'b'}
-       ]
-    },
-    ...
+const data = [
+  {
+    text: 'rootA',
+    children: [
+      { text: 'root-1A' },
+      { text: 'root-1B' },
+      { text: 'root-1C' },
+      {
+        text: 'root-2A',
+        children: [{ text: 'sub_sub_1A' }]
+      },
+      { text: 'sub_2A' }
+    ]
+  },
+  {
+    text: 'rootB',
+    children: [{ text: 'B_sub1' }, { text: 'B_sub2' }, { text: 'b' }]
+  },
+  ...
 ];
 ```
 
 * Customizing : It is possible to set other properties.
+
 ```js
-var data = [
-   {
-       pid: '001',
-       text: 'rootA',
-       children: [
-           {
-               pid: '003',
-               text: 'root-1A',
-               state: 'closed'
-           }
-       ]
-   },
-   {
-       pid: '002',
-       text: 'rootB',
-       state: 'opened'
-   },
-   ...
+const data = [
+  {
+    pid: '001',
+    text: 'rootA',
+    children: [
+      {
+        pid: '003',
+        text: 'root-1A',
+        state: 'closed'
+      }
+    ]
+  },
+  {
+    pid: '002',
+    text: 'rootB',
+    state: 'opened'
+  },
+  ...
 ];
 ```
 
-## How to use template
+### How to use template: `template` and `renderTemplate`
 
 You can customize each tree node's contents using `template` and `renderTemplate` options.
 `template` option is override default template string.
 `renderTemplate` option can process template using a template engine like [mustache.js](https://github.com/janl/mustache.js/).
+tui.tree uses [tui-code-snippet's template](https://nhn.github.io/tui.code-snippet/2.2.0/domUtil#template) as default template engine.
 
 This example show how to replace node's contents having children by a template engine.
 
 ```js
 {
-    ...
-    template: { // template for Mustache engine
-        internalNode:
-            '<button type="button">{{stateLabel}}</button>' +
-            '{{text}}' +
-            '<ul>{{{children}}}</ul>'
-    },
-    renderTemplate: function(tmpl, props) {
-        // Mustache template engine
-        return Mustache.render(tmpl, props);
-    }
-}
+  ...,
+  template: {
+    // template for Mustache engine
+    internalNode: '<button type="button">{{stateLabel}}</button>{{text}}<ul>{{{children}}}</ul>'
+  },
+  renderTemplate: (tmpl, props) => {
+    // Mustache template engine
+    return Mustache.render(tmpl, props);
+  }
+};
 ```
 
-For more information, see [the example page](https://nhnent.github.io/tui.tree/latest/tutorial-example01-basic.html).
+For more information about the API, please see [here](https://nhn.github.io/tui.tree/latest/Tree).

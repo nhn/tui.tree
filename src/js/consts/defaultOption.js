@@ -1,6 +1,6 @@
 /**
  * @fileoverview Set default value of options
- * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
+ * @author NHN. FE dev Lab <dl_javascript@nhn.com>
  */
 
 /**
@@ -26,44 +26,44 @@
  *  @property {string} textClass - Class name for text element in a node
  */
 module.exports = {
-    data: [],
-    nodeDefaultState: 'closed',
-    stateLabels: {
-        opened: '-',
-        closed: '+'
-    },
-    nodeIdPrefix: 'tui-tree-node-',
-    classNames: {
-        nodeClass: 'tui-tree-node',
-        leafClass: 'tui-tree-leaf',
-        openedClass: 'tui-tree-opened',
-        closedClass: 'tui-tree-closed',
-        subtreeClass: 'tui-js-tree-subtree',
-        toggleBtnClass: 'tui-js-tree-toggle-btn',
-        textClass: 'tui-js-tree-text',
-        btnClass: 'tui-tree-content-wrapper'
-    },
-    template: {
-        internalNode:
-            '<div class="tui-tree-content-wrapper">' +
-                '<button type="button" class="tui-tree-toggle-btn {{toggleBtnClass}}">' +
-                    '<span class="tui-ico-tree"></span>' +
-                    '{{stateLabel}}' +
-                '</button>' +
-                '<span class="tui-tree-text {{textClass}}">' +
-                    '<span class="tui-tree-ico tui-ico-folder"></span>' +
-                    '{{text}}' +
-                '</span>' +
-            '</div>' +
-            '<ul class="tui-tree-subtree {{subtreeClass}}">{{children}}</ul>',
-        leafNode:
-            '<div class="tui-tree-content-wrapper">' +
-                '<span class="tui-tree-text {{textClass}}">' +
-                    '<span class="tui-tree-ico tui-ico-file"></span>' +
-                    '{{text}}' +
-                '</span>' +
-            '</div>'
-    },
-    indent: 23, // value of default css,
-    usageStatistics: true
+  data: [],
+  nodeDefaultState: 'closed',
+  stateLabels: {
+    opened: '-',
+    closed: '+'
+  },
+  nodeIdPrefix: 'tui-tree-node-',
+  classNames: {
+    nodeClass: 'tui-tree-node',
+    leafClass: 'tui-tree-leaf',
+    openedClass: 'tui-tree-opened',
+    closedClass: 'tui-tree-closed',
+    subtreeClass: 'tui-js-tree-subtree',
+    toggleBtnClass: 'tui-js-tree-toggle-btn',
+    textClass: 'tui-js-tree-text',
+    btnClass: 'tui-tree-content-wrapper'
+  },
+  template: {
+    internalNode:
+      '<div class="tui-tree-content-wrapper">' +
+      '<button type="button" class="tui-tree-toggle-btn {{toggleBtnClass}}">' +
+      '<span class="tui-ico-tree"></span>' +
+      '{{stateLabel}}' +
+      '</button>' +
+      '<span class="tui-tree-text {{textClass}}">' +
+      '<span class="tui-tree-ico tui-ico-folder"></span>' +
+      '{{text}}' +
+      '</span>' +
+      '</div>' +
+      '<ul class="tui-tree-subtree {{subtreeClass}}">{{children}}</ul>',
+    leafNode:
+      '<div class="tui-tree-content-wrapper">' +
+      '<span class="tui-tree-text {{textClass}}">' +
+      '<span class="tui-tree-ico tui-ico-file"></span>' +
+      '{{text}}' +
+      '</span>' +
+      '</div>'
+  },
+  indent: 23, // value of default css,
+  usageStatistics: true
 };

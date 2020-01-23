@@ -1,37 +1,43 @@
 /**
  * @fileoverview Feature that each tree node is possible to drag and drop
- * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
+ * @author NHN. FE dev Lab <dl_javascript@nhn.com>
  */
-var util = require('./../util');
-var snippet = require('tui-code-snippet');
+
+var inArray = require('tui-code-snippet/array/inArray');
+var forEachArray = require('tui-code-snippet/collection/forEachArray');
+var defineClass = require('tui-code-snippet/defineClass/defineClass');
+var getMouseButton = require('tui-code-snippet/domEvent/getMouseButton');
+var getMousePosition = require('tui-code-snippet/domEvent/getMousePosition');
+var getTarget = require('tui-code-snippet/domEvent/getTarget');
+var off = require('tui-code-snippet/domEvent/off');
+var on = require('tui-code-snippet/domEvent/on');
+var preventDefault = require('tui-code-snippet/domEvent/preventDefault');
+var addClass = require('tui-code-snippet/domUtil/addClass');
+var disableTextSelection = require('tui-code-snippet/domUtil/disableTextSelection');
+var enableTextSelection = require('tui-code-snippet/domUtil/enableTextSelection');
+var hasClass = require('tui-code-snippet/domUtil/hasClass');
+var removeClass = require('tui-code-snippet/domUtil/removeClass');
+var removeElement = require('tui-code-snippet/domUtil/removeElement');
+var extend = require('tui-code-snippet/object/extend');
 
 var defaultOptions = {
-    useHelper: true,
-    helperPos: {
-        y: 2,
-        x: 5
-    },
-    helperClassName: 'tui-tree-drop',
-    dragItemClassName: 'tui-tree-drag',
-    hoverClassName: 'tui-tree-hover',
-    lineClassName: 'tui-tree-line',
-    lineBoundary: {
-        top: 4,
-        bottom: 4
-    },
-    autoOpenDelay: 1500,
-    isSortable: false
+  useHelper: true,
+  helperPos: {
+    y: 2,
+    x: 5
+  },
+  helperClassName: 'tui-tree-drop',
+  dragItemClassName: 'tui-tree-drag',
+  hoverClassName: 'tui-tree-hover',
+  lineClassName: 'tui-tree-line',
+  lineBoundary: {
+    top: 4,
+    bottom: 4
+  },
+  autoOpenDelay: 1500,
+  isSortable: false
 };
-var rejectedTagNames = [
-    'INPUT',
-    'BUTTON',
-    'UL'
-];
-var selectKey = util.testProp(
-    ['userSelect', 'WebkitUserSelect', 'OUserSelect', 'MozUserSelect', 'msUserSelect']
-);
-var inArray = snippet.inArray;
-var forEach = snippet.forEach;
+var rejectedTagNames = ['INPUT', 'BUTTON', 'UL'];
 var API_LIST = [];
 
 /**
@@ -52,147 +58,136 @@ var API_LIST = [];
  *     @param {{top: number, bottom: number}} options.lineBoundary - Boundary value for visible moving line
  * @ignore
  */
-var Draggable = snippet.defineClass(/** @lends Draggable.prototype */{
+var Draggable = defineClass(
+  /** @lends Draggable.prototype */ {
     static: {
-        /**
-         * @static
-         * @memberof Draggable
-         * @returns {Array.<string>} API list of Draggable
-         */
-        getAPIList: function() {
-            return API_LIST.slice();
-        }
+      /**
+       * @static
+       * @memberof Draggable
+       * @returns {Array.<string>} API list of Draggable
+       */
+      getAPIList: function() {
+        return API_LIST.slice();
+      }
     },
 
     init: function(tree, options) {
-        options = snippet.extend({}, defaultOptions, options);
+      options = extend({}, defaultOptions, options);
 
-        /**
-         * Tree data
-         * @type {Tree}
-         */
-        this.tree = tree;
+      /**
+       * Tree data
+       * @type {Tree}
+       */
+      this.tree = tree;
 
-        /**
-         * Drag helper element
-         * @type {HTMLElement}
-         */
-        this.helperElement = null;
+      /**
+       * Drag helper element
+       * @type {HTMLElement}
+       */
+      this.helperElement = null;
 
-        /**
-         * Selectable element's property
-         * @type {string}
-         */
-        this.userSelectPropertyKey = null;
+      /**
+       * Dragging element's node id
+       * @type {string}
+       */
+      this.currentNodeId = null;
 
-        /**
-         * Selectable element's property value
-         * @type {string}
-         */
-        this.userSelectPropertyValue = null;
+      /**
+       * Current mouse overed element
+       * @type {HTMLElement}
+       */
+      this.hoveredElement = null;
 
-        /**
-         * Dragging element's node id
-         * @type {string}
-         */
-        this.currentNodeId = null;
+      /**
+       * Moving line type ("top" or "bottom")
+       * @type {string}
+       */
+      this.movingLineType = null;
 
-        /**
-         * Current mouse overed element
-         * @type {HTMLElement}
-         */
-        this.hoveredElement = null;
+      /**
+       * Invoking time for setTimeout()
+       * @type {number}
+       */
+      this.timer = null;
 
-        /**
-         * Moving line type ("top" or "bottom")
-         * @type {string}
-         */
-        this.movingLineType = null;
+      /**
+       * Tag list for rejecting to drag
+       * @param {Array.<string>}
+       */
+      this.rejectedTagNames = rejectedTagNames.concat(options.rejectedTagNames);
 
-        /**
-         * Invoking time for setTimeout()
-         * @type {number}
-         */
-        this.timer = null;
+      /**
+       * Class name list for rejecting to drag
+       * @param {Array.<string>}
+       */
+      this.rejectedClassNames = [].concat(options.rejectedClassNames);
 
-        /**
-         * Tag list for rejecting to drag
-         * @param {Array.<string>}
-         */
-        this.rejectedTagNames = rejectedTagNames.concat(options.rejectedTagNames);
+      /**
+       * Using helper flag
+       * @type {boolean}
+       */
+      this.useHelper = options.useHelper;
 
-        /**
-         * Class name list for rejecting to drag
-         * @param {Array.<string>}
-         */
-        this.rejectedClassNames = [].concat(options.rejectedClassNames);
+      /**
+       * Helper position
+       * @type {Object}
+       */
+      this.helperPos = options.helperPos;
 
-        /**
-         * Using helper flag
-         * @type {boolean}
-         */
-        this.useHelper = options.useHelper;
+      /**
+       * Delay time while dragging to be opened
+       * @type {number}
+       */
+      this.autoOpenDelay = options.autoOpenDelay;
 
-        /**
-         * Helper position
-         * @type {Object}
-         */
-        this.helperPos = options.helperPos;
+      /**
+       * Flag of whether using sortable dragging
+       * @type {boolean}
+       */
+      this.isSortable = options.isSortable;
 
-        /**
-         * Delay time while dragging to be opened
-         * @type {number}
-         */
-        this.autoOpenDelay = options.autoOpenDelay;
+      /**
+       * Class name for mouse overed node
+       * @type {string}
+       */
+      this.hoverClassName = options.hoverClassName;
 
-        /**
-         * Flag of whether using sortable dragging
-         * @type {boolean}
-         */
-        this.isSortable = options.isSortable;
+      /**
+       * Class name for moving position line
+       * @type {string}
+       */
+      this.lineClassName = options.lineClassName;
 
-        /**
-         * Class name for mouse overed node
-         * @type {string}
-         */
-        this.hoverClassName = options.hoverClassName;
+      /**
+       * Boundary value for visible moving line
+       * @type {Object}
+       */
+      this.lineBoundary = options.lineBoundary;
 
-        /**
-         * Class name for moving position line
-         * @type {string}
-         */
-        this.lineClassName = options.lineClassName;
+      /**
+       * Helper's outer element class name
+       * @type {string}
+       */
+      this.helperClassName = options.helperClassName;
 
-        /**
-         * Boundary value for visible moving line
-         * @type {Object}
-         */
-        this.lineBoundary = options.lineBoundary;
+      this._initHelper();
 
-        /**
-         * Helper's outer element class name
-         * @type {string}
-         */
-        this.helperClassName = options.helperClassName;
+      if (this.isSortable) {
+        this._initMovingLine();
+      }
 
-        this._initHelper();
-
-        if (this.isSortable) {
-            this._initMovingLine();
-        }
-
-        this._attachMousedown();
+      this._attachMousedown();
     },
 
     /**
      * Disable this module (remove attached elements and unbind event)
      */
     destroy: function() {
-        util.removeElement(this.helperElement);
-        util.removeElement(this.lineElement);
+      removeElement(this.helperElement);
+      removeElement(this.lineElement);
 
-        this._restoreTextSelection();
-        this._detachMousedown();
+      this._restoreTextSelection();
+      this._detachMousedown();
     },
 
     /**
@@ -201,12 +196,14 @@ var Draggable = snippet.defineClass(/** @lends Draggable.prototype */{
      * @private
      */
     _changeHelperPosition: function(mousePos) {
-        var helperStyle = this.helperElement.style;
-        var pos = this.tree.rootElement.getBoundingClientRect();
+      var mousePosX = mousePos[0];
+      var mousePosY = mousePos[1];
+      var helperStyle = this.helperElement.style;
+      var pos = this.tree.rootElement.getBoundingClientRect();
 
-        helperStyle.top = (mousePos.y - pos.top + this.helperPos.y) + 'px';
-        helperStyle.left = (mousePos.x - pos.left + this.helperPos.x) + 'px';
-        helperStyle.display = '';
+      helperStyle.top = mousePosY - pos.top + this.helperPos.y + 'px';
+      helperStyle.left = mousePosX - pos.left + this.helperPos.x + 'px';
+      helperStyle.display = '';
     },
 
     /**
@@ -214,17 +211,17 @@ var Draggable = snippet.defineClass(/** @lends Draggable.prototype */{
      * @private
      */
     _initHelper: function() {
-        var helperElement = document.createElement('span');
-        var helperStyle = helperElement.style;
+      var helperElement = document.createElement('span');
+      var helperStyle = helperElement.style;
 
-        helperStyle.position = 'absolute';
-        helperStyle.display = 'none';
+      helperStyle.position = 'absolute';
+      helperStyle.display = 'none';
 
-        util.addClass(helperElement, this.helperClassName);
+      addClass(helperElement, this.helperClassName);
 
-        this.tree.rootElement.parentNode.appendChild(helperElement);
+      this.tree.rootElement.parentNode.appendChild(helperElement);
 
-        this.helperElement = helperElement;
+      this.helperElement = helperElement;
     },
 
     /**
@@ -232,17 +229,17 @@ var Draggable = snippet.defineClass(/** @lends Draggable.prototype */{
      * @private
      */
     _initMovingLine: function() {
-        var lineElement = document.createElement('div');
-        var lineStyle = lineElement.style;
+      var lineElement = document.createElement('div');
+      var lineStyle = lineElement.style;
 
-        lineStyle.position = 'absolute';
-        lineStyle.display = 'none';
+      lineStyle.position = 'absolute';
+      lineStyle.display = 'none';
 
-        util.addClass(lineElement, this.lineClassName);
+      addClass(lineElement, this.lineClassName);
 
-        this.tree.rootElement.parentNode.appendChild(lineElement);
+      this.tree.rootElement.parentNode.appendChild(lineElement);
 
-        this.lineElement = lineElement;
+      this.lineElement = lineElement;
     },
 
     /**
@@ -251,8 +248,8 @@ var Draggable = snippet.defineClass(/** @lends Draggable.prototype */{
      * @private
      */
     _setHelper: function(contents) {
-        this.helperElement.innerHTML = contents;
-        util.removeElement(this.helperElement.getElementsByTagName('label')[0]);
+      this.helperElement.innerHTML = contents;
+      removeElement(this.helperElement.getElementsByTagName('label')[0]);
     },
 
     /**
@@ -260,8 +257,8 @@ var Draggable = snippet.defineClass(/** @lends Draggable.prototype */{
      * @private
      */
     _attachMousedown: function() {
-        this._preventTextSelection();
-        this.tree.on('mousedown', this._onMousedown, this);
+      this._preventTextSelection();
+      this.tree.on('mousedown', this._onMousedown, this);
     },
 
     /**
@@ -269,7 +266,7 @@ var Draggable = snippet.defineClass(/** @lends Draggable.prototype */{
      * @private
      */
     _detachMousedown: function() {
-        this.tree.off(this);
+      this.tree.off(this);
     },
 
     /**
@@ -277,14 +274,8 @@ var Draggable = snippet.defineClass(/** @lends Draggable.prototype */{
      * @private
      */
     _preventTextSelection: function() {
-        var style = this.tree.rootElement.style;
-
-        util.addEventListener(this.tree.rootElement, 'selectstart', util.preventDefault);
-
-        this.userSelectPropertyKey = selectKey;
-        this.userSelectPropertyValue = style[selectKey];
-
-        style[selectKey] = 'none';
+      on(this.tree.rootElement, 'selectstart', preventDefault);
+      disableTextSelection(this.tree.rootElement);
     },
 
     /**
@@ -292,11 +283,8 @@ var Draggable = snippet.defineClass(/** @lends Draggable.prototype */{
      * @private
      */
     _restoreTextSelection: function() {
-        util.removeEventListener(this.tree.rootElement, 'selectstart', util.preventDefault);
-
-        if (this.userSelectPropertyKey) {
-            this.tree.rootElement.style[this.userSelectPropertyKey] = this.userSelectPropertyValue;
-        }
+      off(this.tree.rootElement, 'selectstart', preventDefault);
+      enableTextSelection(this.tree.rootElement);
     },
 
     /**
@@ -306,21 +294,25 @@ var Draggable = snippet.defineClass(/** @lends Draggable.prototype */{
      * @private
      */
     _isNotDraggable: function(target) {
-        var tagName = target.tagName.toUpperCase();
-        var classNames = util.getClass(target).split(/\s+/);
-        var result;
+      var tagName = target.tagName.toUpperCase();
+      var classNames = target.className.split(/\s+/);
+      var result;
 
-        if (inArray(tagName, this.rejectedTagNames) !== -1) {
-            return true;
-        }
+      if (inArray(tagName, this.rejectedTagNames) !== -1) {
+        return true;
+      }
 
-        forEach(classNames, function(className) {
-            result = inArray(className, this.rejectedClassNames) !== -1;
+      forEachArray(
+        classNames,
+        function(className) {
+          result = inArray(className, this.rejectedClassNames) !== -1;
 
-            return !result;
-        }, this);
+          return !result;
+        },
+        this
+      );
 
-        return result;
+      return result;
     },
 
     /**
@@ -329,31 +321,34 @@ var Draggable = snippet.defineClass(/** @lends Draggable.prototype */{
      * @private
      */
     _onMousedown: function(event) {
-        var tree = this.tree;
-        var target = util.getTarget(event);
-        var isEditing = (tree.enabledFeatures.Editable && tree.enabledFeatures.Editable.inputElement);
-        var nodeElement;
+      var tree = this.tree;
+      var target = getTarget(event);
+      var isRightButton = getMouseButton(event) === 2;
+      var isEditing = tree.enabledFeatures.Editable && tree.enabledFeatures.Editable.inputElement;
+      var nodeElement;
 
-        if (util.isRightButton(event) || this._isNotDraggable(target) || isEditing) {
-            return;
-        }
+      if (isRightButton || this._isNotDraggable(target) || isEditing) {
+        return;
+      }
 
-        util.preventDefault(event);
+      preventDefault(event);
 
-        this.currentNodeId = tree.getNodeIdFromElement(target);
+      this.currentNodeId = tree.getNodeIdFromElement(target);
 
-        if (this.useHelper) {
-            nodeElement = util.getElementsByClassName(
-                document.getElementById(this.currentNodeId),
-                tree.classNames.textClass
-            )[0];
-            this._setHelper(nodeElement.innerHTML);
-        }
+      if (this.useHelper) {
+        nodeElement = document.querySelector(
+          '#' + this.currentNodeId + ' .' + tree.classNames.textClass
+        );
+        this._setHelper(nodeElement.innerHTML);
+      }
 
-        tree.on({
-            mousemove: this._onMousemove,
-            mouseup: this._onMouseup
-        }, this);
+      tree.on(
+        {
+          mousemove: this._onMousemove,
+          mouseup: this._onMouseup
+        },
+        this
+      );
     },
 
     /**
@@ -362,22 +357,21 @@ var Draggable = snippet.defineClass(/** @lends Draggable.prototype */{
      * @private
      */
     _onMousemove: function(event) {
-        var mousePos = util.getMousePos(event);
-        var target = util.getTarget(event);
-        var nodeId;
+      var mousePos = getMousePosition(event);
+      var target = getTarget(event);
+      var nodeId;
 
-        if (!this.useHelper) {
-            return;
-        }
+      if (!this.useHelper) {
+        return;
+      }
 
-        this._setClassNameOnDragItem('add');
-        this._changeHelperPosition(mousePos);
+      this._setClassNameOnDragItem('add');
+      this._changeHelperPosition(mousePos);
 
-        nodeId = this.tree.getNodeIdFromElement(target);
-
-        if (nodeId) {
-            this._applyMoveAction(nodeId, mousePos);
-        }
+      nodeId = this.tree.getNodeIdFromElement(target);
+      if (nodeId) {
+        this._applyMoveAction(nodeId, mousePos);
+      }
     },
 
     /**
@@ -386,24 +380,26 @@ var Draggable = snippet.defineClass(/** @lends Draggable.prototype */{
      * @private
      */
     _onMouseup: function(event) {
-        var tree = this.tree;
-        var nodeId = this.currentNodeId;
-        var target = util.getTarget(event);
-        var targetId = this._getTargetNodeId(target);
-        var index = this._getIndexToInsert(targetId);
-        var newParentId;
+      var tree = this.tree;
+      var nodeId = this.currentNodeId;
+      var target = getTarget(event);
+      var targetId = this._getTargetNodeId(target);
+      var index = this._getIndexToInsert(targetId);
+      var newParentId;
 
-        if (index === -1) { // When the node is created as a child after moving
-            newParentId = targetId;
-        } else {
-            newParentId = tree.getParentId(targetId);
-        }
+      if (index === -1) {
+        // When the node is created as a child after moving
+        newParentId = targetId;
+      } else {
+        newParentId = tree.getParentId(targetId);
+      }
 
-        if (nodeId !== newParentId) { // Don't fire beforeMove event
-            tree.move(nodeId, newParentId, index);
-        }
+      if (nodeId !== newParentId) {
+        // Don't fire beforeMove event
+        tree.move(nodeId, newParentId, index);
+      }
 
-        this._reset();
+      this._reset();
     },
 
     /**
@@ -413,24 +409,24 @@ var Draggable = snippet.defineClass(/** @lends Draggable.prototype */{
      * @private
      */
     _getTargetNodeId: function(target) {
-        var tree = this.tree;
-        var movingType = this.movingLineType;
-        var nodeId = tree.getNodeIdFromElement(target);
-        var childIds;
+      var tree = this.tree;
+      var movingType = this.movingLineType;
+      var nodeId = tree.getNodeIdFromElement(target);
+      var childIds;
 
-        if (nodeId) {
-            return nodeId;
-        }
-
-        childIds = tree.getChildIds(tree.getRootNodeId());
-
-        if (movingType === 'top') {
-            nodeId = childIds[0];
-        } else {
-            nodeId = childIds[childIds.length - 1];
-        }
-
+      if (nodeId) {
         return nodeId;
+      }
+
+      childIds = tree.getChildIds(tree.getRootNodeId());
+
+      if (movingType === 'top') {
+        nodeId = childIds[0];
+      } else {
+        nodeId = childIds[childIds.length - 1];
+      }
+
+      return nodeId;
     },
 
     /**
@@ -440,20 +436,20 @@ var Draggable = snippet.defineClass(/** @lends Draggable.prototype */{
      * @private
      */
     _getIndexToInsert: function(nodeId) {
-        var movingType = this.movingLineType;
-        var index;
+      var movingType = this.movingLineType;
+      var index;
 
-        if (!movingType) {
-            return -1;
-        }
+      if (!movingType) {
+        return -1;
+      }
 
-        index = this.tree.getNodeIndex(nodeId);
+      index = this.tree.getNodeIndex(nodeId);
 
-        if (movingType === 'bottom') {
-            index += 1;
-        }
+      if (movingType === 'bottom') {
+        index += 1;
+      }
 
-        return index;
+      return index;
     },
 
     /**
@@ -463,25 +459,25 @@ var Draggable = snippet.defineClass(/** @lends Draggable.prototype */{
      * @private
      */
     _applyMoveAction: function(nodeId, mousePos) {
-        var currentElement = document.getElementById(nodeId);
-        var targetPos = currentElement.getBoundingClientRect();
-        var hasClass = util.hasClass(currentElement, this.hoverClassName);
-        var isContain = this._isContain(targetPos, mousePos);
-        var boundaryType;
+      var currentElement = document.getElementById(nodeId);
+      var targetPos = currentElement.getBoundingClientRect();
+      var isHover = hasClass(currentElement, this.hoverClassName);
+      var isContain = this._isContain(targetPos, mousePos);
+      var boundaryType;
 
-        if (!this.hoveredElement && isContain) {
-            this.hoveredElement = currentElement;
-            this._hover(nodeId);
-        } else if (!hasClass) {
-            this._unhover();
-        } else if (!isContain) {
-            this._unhover();
-        }
+      if (!this.hoveredElement && isContain) {
+        this.hoveredElement = currentElement;
+        this._hover(nodeId);
+      } else if (!isHover) {
+        this._unhover();
+      } else if (!isContain) {
+        this._unhover();
+      }
 
-        if (this.isSortable) {
-            boundaryType = this._getBoundaryType(targetPos, mousePos);
-            this._drawBoundaryLine(targetPos, boundaryType);
-        }
+      if (this.isSortable) {
+        boundaryType = this._getBoundaryType(targetPos, mousePos);
+        this._drawBoundaryLine(targetPos, boundaryType);
+      }
     },
 
     /**
@@ -490,17 +486,17 @@ var Draggable = snippet.defineClass(/** @lends Draggable.prototype */{
      * @private
      */
     _hover: function(nodeId) {
-        var tree = this.tree;
+      var tree = this.tree;
 
-        util.addClass(this.hoveredElement, this.hoverClassName);
+      addClass(this.hoveredElement, this.hoverClassName);
 
-        if (tree.isLeaf(nodeId)) {
-            return;
-        }
+      if (tree.isLeaf(nodeId)) {
+        return;
+      }
 
-        this.timer = setTimeout(function() {
-            tree.open(nodeId);
-        }, this.autoOpenDelay);
+      this.timer = setTimeout(function() {
+        tree.open(nodeId);
+      }, this.autoOpenDelay);
     },
 
     /**
@@ -508,12 +504,14 @@ var Draggable = snippet.defineClass(/** @lends Draggable.prototype */{
      * @private
      */
     _unhover: function() {
-        clearTimeout(this.timer);
+      clearTimeout(this.timer);
 
-        util.removeClass(this.hoveredElement, this.hoverClassName);
+      if (this.hoveredElement) {
+        removeClass(this.hoveredElement, this.hoverClassName);
+      }
 
-        this.hoveredElement = null;
-        this.timer = null;
+      this.hoveredElement = null;
+      this.timer = null;
     },
 
     /**
@@ -524,21 +522,24 @@ var Draggable = snippet.defineClass(/** @lends Draggable.prototype */{
      * @private
      */
     _isContain: function(targetPos, mousePos) {
-        var top = targetPos.top;
-        var bottom = targetPos.bottom;
+      var top = targetPos.top;
+      var bottom = targetPos.bottom;
 
-        if (this.isSortable) {
-            top += this.lineBoundary.top;
-            bottom -= this.lineBoundary.bottom;
-        }
+      if (this.isSortable) {
+        top += this.lineBoundary.top;
+        bottom -= this.lineBoundary.bottom;
+      }
 
-        if (targetPos.left < mousePos.x &&
-            targetPos.right > mousePos.x &&
-            top < mousePos.y && bottom > mousePos.y) {
-            return true;
-        }
+      if (
+        targetPos.left < mousePos.x &&
+        targetPos.right > mousePos.x &&
+        top < mousePos.y &&
+        bottom > mousePos.y
+      ) {
+        return true;
+      }
 
-        return false;
+      return false;
     },
 
     /**
@@ -549,15 +550,15 @@ var Draggable = snippet.defineClass(/** @lends Draggable.prototype */{
      * @private
      */
     _getBoundaryType: function(targetPos, mousePos) {
-        var type;
+      var type;
 
-        if (mousePos.y < targetPos.top + this.lineBoundary.top) {
-            type = 'top';
-        } else if (mousePos.y > targetPos.bottom - this.lineBoundary.bottom) {
-            type = 'bottom';
-        }
+      if (mousePos[1] < targetPos.top + this.lineBoundary.top) {
+        type = 'top';
+      } else if (mousePos[1] > targetPos.bottom - this.lineBoundary.bottom) {
+        type = 'bottom';
+      }
 
-        return type;
+      return type;
     },
 
     /**
@@ -567,18 +568,18 @@ var Draggable = snippet.defineClass(/** @lends Draggable.prototype */{
      * @private
      */
     _drawBoundaryLine: function(targetPos, boundaryType) {
-        var style = this.lineElement.style;
-        var scrollTop;
+      var style = this.lineElement.style;
+      var scrollTop;
 
-        if (boundaryType) {
-            scrollTop = util.getElementTop(this.tree.rootElement.parentNode);
-            style.top = targetPos[boundaryType] - scrollTop + 'px';
-            style.display = 'block';
-            this.movingLineType = boundaryType;
-        } else {
-            style.display = 'none';
-            this.movingLineType = null;
-        }
+      if (boundaryType) {
+        scrollTop = this.tree.rootElement.parentNode.getBoundingClientRect().top;
+        style.top = targetPos[boundaryType] - scrollTop + 'px';
+        style.display = 'block';
+        this.movingLineType = boundaryType;
+      } else {
+        style.display = 'none';
+        this.movingLineType = null;
+      }
     },
 
     /**
@@ -586,24 +587,24 @@ var Draggable = snippet.defineClass(/** @lends Draggable.prototype */{
      * @private
      */
     _reset: function() {
-        if (this.isSortable) {
-            this.lineElement.style.display = 'none';
-        }
+      if (this.isSortable) {
+        this.lineElement.style.display = 'none';
+      }
 
-        if (this.hoveredElement) {
-            util.removeClass(this.hoveredElement, this.hoverClassName);
-            this.hoveredElement = null;
-        }
+      if (this.hoveredElement) {
+        removeClass(this.hoveredElement, this.hoverClassName);
+        this.hoveredElement = null;
+      }
 
-        this._setClassNameOnDragItem('remove');
+      this._setClassNameOnDragItem('remove');
 
-        this.helperElement.style.display = 'none';
+      this.helperElement.style.display = 'none';
 
-        this.currentNodeId = null;
-        this.movingLineType = null;
+      this.currentNodeId = null;
+      this.movingLineType = null;
 
-        this.tree.off(this, 'mousemove');
-        this.tree.off(this, 'mouseup');
+      this.tree.off(this, 'mousemove');
+      this.tree.off(this, 'mouseup');
     },
 
     /**
@@ -611,15 +612,18 @@ var Draggable = snippet.defineClass(/** @lends Draggable.prototype */{
      * @param {string} type - Set type ('add' or 'remove')
      */
     _setClassNameOnDragItem: function(type) {
-        var dragItemElement = document.getElementById(this.currentNodeId);
-        var dragItemClassName = defaultOptions.dragItemClassName;
+      var dragItemElement = document.getElementById(this.currentNodeId);
+      var dragItemClassName = defaultOptions.dragItemClassName;
 
+      if (dragItemElement) {
         if (type === 'add') {
-            util.addClass(dragItemElement, dragItemClassName);
+          addClass(dragItemElement, dragItemClassName);
         } else {
-            util.removeClass(dragItemElement, dragItemClassName);
+          removeClass(dragItemElement, dragItemClassName);
         }
+      }
     }
-});
+  }
+);
 
 module.exports = Draggable;

@@ -1,20 +1,26 @@
 /**
  * @fileoverview Feature that each tree node is possible to edit as double click
- * @author NHN Ent. FE dev Lab <dl_javascript@nhnent.com>
+ * @author NHN. FE dev Lab <dl_javascript@nhn.com>
  */
+
+var forEachArray = require('tui-code-snippet/collection/forEachArray');
+var defineClass = require('tui-code-snippet/defineClass/defineClass');
+var getTarget = require('tui-code-snippet/domEvent/getTarget');
+var off = require('tui-code-snippet/domEvent/off');
+var on = require('tui-code-snippet/domEvent/on');
+var addClass = require('tui-code-snippet/domUtil/addClass');
+var hasClass = require('tui-code-snippet/domUtil/hasClass');
+var removeElement = require('tui-code-snippet/domUtil/removeElement');
+var extend = require('tui-code-snippet/object/extend');
+
 var util = require('./../util');
 var ajaxCommand = require('./../consts/ajaxCommand');
 var states = require('./../consts/states');
-var snippet = require('tui-code-snippet');
 
-var API_LIST = [
-    'createChildNode',
-    'editNode',
-    'finishEditing'
-];
+var API_LIST = ['createChildNode', 'editNode', 'finishEditing'];
 var EDIT_TYPE = {
-    CREATE: 'create',
-    UPDATE: 'update'
+  CREATE: 'create',
+  UPDATE: 'update'
 };
 var WRAPPER_CLASSNAME = 'tui-input-wrap';
 var INPUT_CLASSNAME = 'tui-tree-input';
@@ -30,90 +36,91 @@ var INPUT_CLASSNAME = 'tui-tree-input';
  *  @param {string} [options.inputClassName] - Classname of input element
  * @ignore
  */
-var Editable = snippet.defineClass(/** @lends Editable.prototype */{
+var Editable = defineClass(
+  /** @lends Editable.prototype */ {
     static: {
-        /**
-         * @static
-         * @memberof Selectable
-         * @returns {Array.<string>} API list of Editable
-         */
-        getAPIList: function() {
-            return API_LIST.slice();
-        }
+      /**
+       * @static
+       * @memberof Selectable
+       * @returns {Array.<string>} API list of Editable
+       */
+      getAPIList: function() {
+        return API_LIST.slice();
+      }
     },
     init: function(tree, options) {
-        options = snippet.extend({}, options);
+      options = extend({}, options);
 
-        /**
-         * Tree
-         * @type {Tree}
-         */
-        this.tree = tree;
+      /**
+       * Tree
+       * @type {Tree}
+       */
+      this.tree = tree;
 
-        /**
-         * Classname of editable element
-         * @type {string}
-         */
-        this.editableClassName = options.editableClassName || tree.classNames.textClass;
+      /**
+       * Classname of editable element
+       * @type {string}
+       */
+      this.editableClassName = options.editableClassName || tree.classNames.textClass;
 
-        /**
-         * Key of node data to set value
-         * @type {string}
-         */
-        this.dataKey = options.dataKey;
+      /**
+       * Key of node data to set value
+       * @type {string}
+       */
+      this.dataKey = options.dataKey;
 
-        /**
-         * Default value for creating node
-         * @type {string}
-         */
-        this.defaultValue = options.defaultValue || '';
+      /**
+       * Default value for creating node
+       * @type {string}
+       */
+      this.defaultValue = options.defaultValue || '';
 
-        /**
-         * Input element for create or edit
-         * @type {HTMLElement}
-         */
-        this.inputElement = null;
+      /**
+       * Input element for create or edit
+       * @type {HTMLElement}
+       */
+      this.inputElement = null;
 
-        /**
-         * Action mode - create or edit
-         * @type {string}
-         */
-        this.mode = null;
+      /**
+       * Action mode - create or edit
+       * @type {string}
+       */
+      this.mode = null;
 
-        /**
-         * For block blur when unintentional blur event occur when alert popup
-         * @type {Boolean}
-         */
-        this._blockBlur = false;
+      /**
+       * For block blur when unintentional blur event occur when alert popup
+       * @type {Boolean}
+       */
+      this._blockBlur = false;
 
-        /**
-         * Keyup event handler
-         * @type {Function}
-         */
-        this.boundOnKeyup = snippet.bind(this._onKeyup, this);
+      /**
+       * Keyup event handler
+       * @type {Function}
+       */
+      this.boundOnKeyup = util.bind(this._onKeyup, this);
 
-        /**
-         * Blur event handler
-         * @type {Function}
-         */
-        this.boundOnBlur = snippet.bind(this._onBlur, this);
+      /**
+       * Blur event handler
+       * @type {Function}
+       */
+      this.boundOnBlur = util.bind(this._onBlur, this);
 
-        tree.on('doubleClick', this._onDoubleClick, this);
+      tree.on('doubleClick', this._onDoubleClick, this);
 
-        this._setAPIs();
+      this._setAPIs();
     },
 
     /**
      * Disable this module
      */
     destroy: function() {
-        var tree = this.tree;
+      var tree = this.tree;
 
-        this._detachInputElement();
-        tree.off(this);
-        snippet.forEach(API_LIST, function(apiName) {
-            delete tree[apiName];
-        });
+      this._detachInputElement();
+      tree.off(this);
+      forEachArray(API_LIST, function(apiName) {
+        delete tree[apiName];
+      });
     },
 
     /**
@@ -125,23 +132,22 @@ var Editable = snippet.defineClass(/** @lends Editable.prototype */{
      * tree.createChildNode('tui-tree-node-1');
      */
     createChildNode: function(parentId) {
-        var tree = this.tree;
-        var useAjax = tree.enabledFeatures.Ajax;
-        var nodeId;
+      var tree = this.tree;
+      var useAjax = tree.enabledFeatures.Ajax;
+      var nodeId;
 
-        this.mode = EDIT_TYPE.CREATE;
+      this.mode = EDIT_TYPE.CREATE;
 
-        if (useAjax) {
-            tree.on('successAjaxResponse', this._onSuccessResponse, this);
-        }
+      if (useAjax) {
+        tree.on('successAjaxResponse', this._onSuccessResponse, this);
+      }
 
-        if (!tree.isLeaf(parentId) &&
-            tree.getState(parentId) === states.node.CLOSED) {
-            tree.open(parentId);
-        } else {
-            nodeId = tree._add({}, parentId)[0];
-            this._attachInputElement(nodeId);
-        }
+      if (!tree.isLeaf(parentId) && tree.getState(parentId) === states.node.CLOSED) {
+        tree.open(parentId);
+      } else {
+        nodeId = tree._add({}, parentId)[0];
+        this._attachInputElement(nodeId);
+      }
     },
 
     /**
@@ -153,8 +159,8 @@ var Editable = snippet.defineClass(/** @lends Editable.prototype */{
      * tree.editNode('tui-tree-node-1');
      */
     editNode: function(nodeId) {
-        this.mode = EDIT_TYPE.UPDATE;
-        this._attachInputElement(nodeId);
+      this.mode = EDIT_TYPE.UPDATE;
+      this._attachInputElement(nodeId);
     },
 
     /**
@@ -165,9 +171,9 @@ var Editable = snippet.defineClass(/** @lends Editable.prototype */{
      * tree.finishEditing();
      */
     finishEditing: function() {
-        if (this.inputElement) {
-            this._detachInputElement();
-        }
+      if (this.inputElement) {
+        this._detachInputElement();
+      }
     },
 
     /**
@@ -177,14 +183,14 @@ var Editable = snippet.defineClass(/** @lends Editable.prototype */{
      * @private
      */
     _onSuccessResponse: function(type, nodeIds) {
-        var tree = this.tree;
-        var parentId, nodeId;
+      var tree = this.tree;
+      var parentId, nodeId;
 
-        if (type === ajaxCommand.READ && nodeIds) {
-            parentId = tree.getParentId(nodeIds[0]);
-            nodeId = tree._add({}, parentId)[0];
-            this._attachInputElement(nodeId);
-        }
+      if (type === ajaxCommand.READ && nodeIds) {
+        parentId = tree.getParentId(nodeIds[0]);
+        nodeId = tree._add({}, parentId)[0];
+        this._attachInputElement(nodeId);
+      }
     },
 
     /**
@@ -193,13 +199,13 @@ var Editable = snippet.defineClass(/** @lends Editable.prototype */{
      * @private
      */
     _onDoubleClick: function(event) {
-        var target = util.getTarget(event);
-        var nodeId;
+      var target = getTarget(event);
+      var nodeId;
 
-        if (util.hasClass(target, this.editableClassName)) {
-            nodeId = this.tree.getNodeIdFromElement(target);
-            this.editNode(nodeId);
-        }
+      if (hasClass(target, this.editableClassName)) {
+        nodeId = this.tree.getNodeIdFromElement(target);
+        this.editNode(nodeId);
+      }
     },
 
     /**
@@ -207,9 +213,9 @@ var Editable = snippet.defineClass(/** @lends Editable.prototype */{
      * @private
      */
     _keepEdit: function() {
-        if (this.inputElement) {
-            this.inputElement.focus();
-        }
+      if (this.inputElement) {
+        this.inputElement.focus();
+      }
     },
 
     /**
@@ -219,24 +225,24 @@ var Editable = snippet.defineClass(/** @lends Editable.prototype */{
      * @private
      */
     _invokeBeforeCreateChildNode: function(event) {
-        /**
-         * @event Tree#beforeCreateChildNode
-         * @param {{value: string}} evt - Event data
-         *     @param {string} evt.value - Return value of creating input element
-         *     @param {string} evt.nodeId - Return id of creating node
-         *     @param {string} evt.cause - Return 'blur' or 'enter' according cause of the event
-         * @example
-         * tree
-         *  .enableFeature('Editable')
-         *  .on('beforeCreateChildNode', function(evt) {
-         *      console.log(evt.value);
-         *      console.log(evt.nodeId);
-         *      console.log(evt.cause);
-         *      return false; // It cancels
-         *      // return true; // It execute next
-         *  });
-         */
-        return this.tree.invoke('beforeCreateChildNode', event);
+      /**
+       * @event Tree#beforeCreateChildNode
+       * @type {object} evt - Event data
+       * @property {string} value - Return value of creating input element
+       * @property {string} nodeId - Return id of creating node
+       * @property {string} cause - Return 'blur' or 'enter' according cause of the event
+       * @example
+       * tree
+       *  .enableFeature('Editable')
+       *  .on('beforeCreateChildNode', function(evt) {
+       *      console.log(evt.value);
+       *      console.log(evt.nodeId);
+       *      console.log(evt.cause);
+       *      return false; // It cancels
+       *      // return true; // It execute next
+       *  });
+       */
+      return this.tree.invoke('beforeCreateChildNode', event);
     },
 
     /**
@@ -246,24 +252,24 @@ var Editable = snippet.defineClass(/** @lends Editable.prototype */{
      * @private
      */
     _invokeBeforeEditNode: function(event) {
-        /**
-         * @event Tree#beforeEditNode
-         * @param {{value: string}} evt - Event data
-         *     @param {string} evt.value - Return value of creating input element
-         *     @param {string} evt.nodeId - Return id of editing node
-         *     @param {string} evt.cause - Return 'blur' or 'enter' according cause of the event
-         * @example
-         * tree
-         *  .enableFeature('Editable')
-         *  .on('beforeEditNode', function(evt) {
-         *      console.log(evt.value);
-         *      console.log(evt.nodeId);
-         *      console.log(evt.cause);
-         *      return false; // It cancels
-         *      // return true; // It execute next
-         *  });
-         */
-        return this.tree.invoke('beforeEditNode', event);
+      /**
+       * @event Tree#beforeEditNode
+       * @type {object} evt - Event data
+       * @property {string} value - Return value of creating input element
+       * @property {string} nodeId - Return id of editing node
+       * @property {string} cause - Return 'blur' or 'enter' according cause of the event
+       * @example
+       * tree
+       *  .enableFeature('Editable')
+       *  .on('beforeEditNode', function(evt) {
+       *      console.log(evt.value);
+       *      console.log(evt.nodeId);
+       *      console.log(evt.cause);
+       *      return false; // It cancels
+       *      // return true; // It execute next
+       *  });
+       */
+      return this.tree.invoke('beforeEditNode', event);
     },
 
     /**
@@ -273,33 +279,33 @@ var Editable = snippet.defineClass(/** @lends Editable.prototype */{
      * @private
      */
     _submitInputResult: function(cause) {
-        var tree = this.tree;
-        var nodeId = tree.getNodeIdFromElement(this.inputElement);
-        var value = this.inputElement.value;
-        var event = {
-            value: value,
-            nodeId: nodeId,
-            cause: cause
-        };
+      var tree = this.tree;
+      var nodeId = tree.getNodeIdFromElement(this.inputElement);
+      var value = this.inputElement.value;
+      var event = {
+        value: value,
+        nodeId: nodeId,
+        cause: cause
+      };
 
-        if (this.mode === EDIT_TYPE.CREATE) {
-            if (!this._invokeBeforeCreateChildNode(event)) {
-                this._keepEdit();
+      if (this.mode === EDIT_TYPE.CREATE) {
+        if (!this._invokeBeforeCreateChildNode(event)) {
+          this._keepEdit();
 
-                return false;
-            }
-            this._addData(nodeId, value);
-        } else {
-            if (!this._invokeBeforeEditNode(event)) {
-                this._keepEdit();
-
-                return false;
-            }
-            this._setData(nodeId, value);
+          return false;
         }
-        this._detachInputElement();
+        this._addData(nodeId, value);
+      } else {
+        if (!this._invokeBeforeEditNode(event)) {
+          this._keepEdit();
 
-        return true;
+          return false;
+        }
+        this._setData(nodeId, value);
+      }
+      this._detachInputElement();
+
+      return true;
     },
 
     /**
@@ -308,10 +314,10 @@ var Editable = snippet.defineClass(/** @lends Editable.prototype */{
      * @private
      */
     _onKeyup: function(event) {
-        if (util.getKeyCode(event) === 13) {
-            this._blockBlur = true;
-            this._submitInputResult('enter');
-        }
+      if (util.getKeyCode(event) === 13) {
+        this._blockBlur = true;
+        this._submitInputResult('enter');
+      }
     },
 
     /**
@@ -319,11 +325,11 @@ var Editable = snippet.defineClass(/** @lends Editable.prototype */{
      * @private
      */
     _onBlur: function() {
-        if (this._blockBlur) {
-            this._blockBlur = false;
-        } else {
-            this._blockBlur = !this._submitInputResult('blur');
-        }
+      if (this._blockBlur) {
+        this._blockBlur = false;
+      } else {
+        this._blockBlur = !this._submitInputResult('blur');
+      }
     },
 
     /**
@@ -332,11 +338,11 @@ var Editable = snippet.defineClass(/** @lends Editable.prototype */{
      * @private
      */
     _createInputElement: function() {
-        var element = document.createElement('INPUT');
-        element.setAttribute('type', 'text');
-        util.addClass(element, INPUT_CLASSNAME);
+      var element = document.createElement('INPUT');
+      element.setAttribute('type', 'text');
+      addClass(element, INPUT_CLASSNAME);
 
-        return element;
+      return element;
     },
 
     /**
@@ -345,40 +351,42 @@ var Editable = snippet.defineClass(/** @lends Editable.prototype */{
      * @private
      */
     _attachInputElement: function(nodeId) {
-        var tree = this.tree;
-        var target = document.getElementById(nodeId);
-        var wrapperElement = document.createElement('DIV');
-        var inputElement = this._createInputElement();
+      var tree = this.tree;
+      var target = document.getElementById(nodeId);
+      var wrapperElement = document.createElement('DIV');
+      var inputElement = this._createInputElement();
 
-        if (!target) {
-            return;
+      if (!target) {
+        return;
+      }
+
+      wrapperElement = target.querySelector('.' + WRAPPER_CLASSNAME);
+
+      if (!wrapperElement) {
+        wrapperElement = document.createElement('DIV');
+        inputElement = this._createInputElement();
+
+        addClass(wrapperElement, WRAPPER_CLASSNAME);
+        wrapperElement.style.paddingLeft = tree.getIndentWidth(nodeId) + 'px';
+
+        inputElement.value = tree.getNodeData(nodeId)[this.dataKey] || '';
+
+        wrapperElement.appendChild(inputElement);
+        target.appendChild(wrapperElement);
+
+        on(inputElement, {
+          keyup: this.boundOnKeyup,
+          blur: this.boundOnBlur
+        });
+
+        if (this.inputElement) {
+          this.inputElement.blur();
         }
+        this.inputElement = inputElement;
+      }
 
-        wrapperElement = util.getChildElementByClassName(target, WRAPPER_CLASSNAME);
-
-        if (!wrapperElement) {
-            wrapperElement = document.createElement('DIV');
-            inputElement = this._createInputElement();
-
-            util.addClass(wrapperElement, WRAPPER_CLASSNAME);
-            wrapperElement.style.paddingLeft = tree.getIndentWidth(nodeId) + 'px';
-
-            inputElement.value = tree.getNodeData(nodeId)[this.dataKey] || '';
-
-            wrapperElement.appendChild(inputElement);
-            target.appendChild(wrapperElement);
-
-            util.addEventListener(inputElement, 'keyup', this.boundOnKeyup);
-            util.addEventListener(inputElement, 'blur', this.boundOnBlur);
-
-            if (this.inputElement) {
-                this.inputElement.blur();
-            }
-            this.inputElement = inputElement;
-        }
-
-        this._blockBlur = false;
-        this.inputElement.focus();
+      this._blockBlur = false;
+      this.inputElement.focus();
     },
 
     /**
@@ -386,20 +394,22 @@ var Editable = snippet.defineClass(/** @lends Editable.prototype */{
      * @private
      */
     _detachInputElement: function() {
-        var tree = this.tree;
-        var inputElement = this.inputElement;
-        var wrapperElement = this.inputElement.parentNode;
+      var tree = this.tree;
+      var inputElement = this.inputElement;
+      var wrapperElement = this.inputElement.parentNode;
 
-        util.removeEventListener(inputElement, 'keyup', this.boundOnKeyup);
-        util.removeEventListener(inputElement, 'blur', this.boundOnBlur);
+      off(inputElement, {
+        keyup: this.boundOnKeyup,
+        blur: this.boundOnBlur
+      });
 
-        util.removeElement(wrapperElement);
+      removeElement(wrapperElement);
 
-        if (tree.enabledFeatures.Ajax) {
-            tree.off(this, 'successAjaxResponse');
-        }
+      if (tree.enabledFeatures.Ajax) {
+        tree.off(this, 'successAjaxResponse');
+      }
 
-        this.inputElement = null;
+      this.inputElement = null;
     },
 
     /**
@@ -409,15 +419,15 @@ var Editable = snippet.defineClass(/** @lends Editable.prototype */{
      * @private
      */
     _addData: function(nodeId, value) {
-        var tree = this.tree;
-        var parentId = tree.getParentId(nodeId);
-        var data = {};
+      var tree = this.tree;
+      var parentId = tree.getParentId(nodeId);
+      var data = {};
 
-        if (nodeId) {
-            data[this.dataKey] = value || this.defaultValue;
-            tree._remove(nodeId);
-            tree.add(data, parentId);
-        }
+      if (nodeId) {
+        data[this.dataKey] = value || this.defaultValue;
+        tree._remove(nodeId);
+        tree.add(data, parentId);
+      }
     },
 
     /**
@@ -427,13 +437,13 @@ var Editable = snippet.defineClass(/** @lends Editable.prototype */{
      * @private
      */
     _setData: function(nodeId, value) {
-        var tree = this.tree;
-        var data = {};
+      var tree = this.tree;
+      var data = {};
 
-        if (nodeId) {
-            data[this.dataKey] = value;
-            tree.setNodeData(nodeId, data);
-        }
+      if (nodeId) {
+        data[this.dataKey] = value;
+        tree.setNodeData(nodeId, data);
+      }
     },
 
     /**
@@ -441,13 +451,17 @@ var Editable = snippet.defineClass(/** @lends Editable.prototype */{
      * @private
      */
     _setAPIs: function() {
-        var tree = this.tree;
-        var bind = snippet.bind;
+      var tree = this.tree;
 
-        snippet.forEach(API_LIST, function(apiName) {
-            tree[apiName] = bind(this[apiName], this);
-        }, this);
+      forEachArray(
+        API_LIST,
+        function(apiName) {
+          tree[apiName] = util.bind(this[apiName], this);
+        },
+        this
+      );
     }
-});
+  }
+);
 
 module.exports = Editable;

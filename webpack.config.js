@@ -1,75 +1,95 @@
 /**
  * Configs file for bundling
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN. FE Development Lab <dl_javascript@nhn.com>
  */
+
+var path = require('path');
 var pkg = require('./package.json');
 var webpack = require('webpack');
+var MiniCssExtractPlugin = require('mini-css-extract-plugin');
+var TerserPlugin = require('terser-webpack-plugin');
+var OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
-var ExtractTextPlugin = require('extract-text-webpack-plugin');
-var SafeUmdPlugin = require('safe-umd-webpack-plugin');
+function getOptimization(isMinified) {
+  if (isMinified) {
+    return {
+      minimizer: [
+        new TerserPlugin({
+          cache: true,
+          parallel: true,
+          sourceMap: false,
+          extractComments: false
+        }),
+        new OptimizeCSSAssetsPlugin()
+      ]
+    };
+  }
 
-var isProduction = process.argv.indexOf('-p') > -1;
+  return {
+    minimize: false
+  };
+}
 
-var FILENAME = pkg.name + (isProduction ? '.min.js' : '.js');
-var BANNER = [
-    FILENAME,
+module.exports = function(env, argv) {
+  var isProduction = argv.mode === 'production';
+  var isMinified = !!argv.minify;
+  var FILENAME = pkg.name + (isMinified ? '.min' : '');
+  var BANNER = [
+    'TOAST UI Tree',
     '@version ' + pkg.version,
     '@author ' + pkg.author,
     '@license ' + pkg.license
-].join('\n');
+  ].join('\n');
 
-module.exports = {
-    eslint: {
-        failOnError: isProduction
-    },
+  return {
+    mode: 'development',
     entry: './src/js/index.js',
     output: {
-        library: ['tui', 'Tree'],
-        libraryTarget: 'umd',
-        path: 'dist',
-        publicPath: 'dist/',
-        filename: FILENAME
+      library: ['tui', 'Tree'],
+      libraryTarget: 'umd',
+      path: path.resolve(__dirname, 'dist'),
+      publicPath: 'dist/',
+      filename: FILENAME + '.js'
     },
     externals: {
-        'tui-code-snippet': {
-            'commonjs': 'tui-code-snippet',
-            'commonjs2': 'tui-code-snippet',
-            'amd': 'tui-code-snippet',
-            'root': ['tui', 'util']
-        },
-        'tui-context-menu': {
-            'commonjs': 'tui-context-menu',
-            'commonjs2': 'tui-context-menu',
-            'amd': 'tui-context-menu',
-            'root': ['tui', 'ContextMenu']
-        }
+      'tui-context-menu': {
+        commonjs: 'tui-context-menu',
+        commonjs2: 'tui-context-menu',
+        amd: 'tui-context-menu',
+        root: ['tui', 'ContextMenu']
+      }
     },
     module: {
-        preLoaders: [
-            {
-                test: /\.js$/,
-                exclude: /(dist|node_modules|bower_components)/,
-                loader: 'eslint-loader'
-            },
-            {
-                test: /\.css$/,
-                loader: ExtractTextPlugin.extract('style-loader', 'css-loader')
-            },
-            {
-                test: /[.png|.gif]$/,
-                loader: 'url-loader'
-            }
-        ]
+      rules: [
+        {
+          test: /\.js$/,
+          exclude: /(dist|node_modules|bower_components)/,
+          loader: 'eslint-loader',
+          enforce: 'pre',
+          options: {
+            failOnError: isProduction
+          }
+        },
+        {
+          test: /\.css$/,
+          use: [MiniCssExtractPlugin.loader, 'css-loader']
+        },
+        {
+          test: /[.png|.gif]$/,
+          loader: 'url-loader'
+        }
+      ]
     },
     plugins: [
-        new SafeUmdPlugin(),
-        new ExtractTextPlugin(pkg.name + '.css'),
-        new webpack.BannerPlugin(BANNER)
+      new MiniCssExtractPlugin({ filename: FILENAME + '.css' }),
+      new webpack.BannerPlugin(BANNER)
     ],
+    optimization: getOptimization(isMinified),
     devServer: {
-        historyApiFallback: false,
-        progress: true,
-        host: '0.0.0.0',
-        disableHostCheck: true
+      historyApiFallback: false,
+      progress: true,
+      host: '0.0.0.0',
+      disableHostCheck: true
     }
+  };
 };

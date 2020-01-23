@@ -1,0 +1,43 @@
+{
+  "header": {
+    "logo": {
+      "src": "https://uicdn.toast.com/toastui/img/tui-component-bi-white.png"
+    },
+    "title": {
+      "text": "Tree",
+      "linkUrl": "https://github.com/nhn/tui.tree"
+    }
+  },
+  "footer": [
+    {
+      "title": "NHN",
+      "linkUrl": "https://github.com/nhn"
+    },
+    {
+      "title": "FE Development Lab",
+      "linkUrl": "https://github.com/nhn/fe.javascript"
+    }
+  ],
+  "main": {
+    "filePath": "README.md"
+  },
+  "api": {
+    "filePath": "src/js/**",
+    "permalink": true
+  },
+  "examples": {
+    "filePath": "examples",
+    "titles": {
+      "example01-basic": "1. Basic",
+      "example02-template": "2. Using template",
+      "example03-selectable": "3. Selectable feature",
+      "example04-draggable": "4. Draggable feature",
+      "example05-editable": "5. Editable feature",
+      "example06-contextmenu": "6. ContextMenu feature",
+      "example07-checkbox": "7. Checkbox feature",
+      "example08-ajax": "8. Ajax feature",
+      "example09-customizing": "9. Customizing - Make depth label"
+    }
+  },
+  "pathPrefix": "tui.tree"
+}

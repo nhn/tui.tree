@@ -3,9 +3,10 @@
     <head lang="en">
         <meta charset="UTF-8">
         <title>Tree with "ContextMenu" feature</title>
-        <link rel="stylesheet" href="css/docs.css" />
-        <link rel="stylesheet" href="../dist/tui-tree.css" />
-         <link rel="stylesheet" href="https://rawgit.com/nhnent/tui.context-menu/v2.0.0/dist/tui-context-menu.css" /> 
+        <link rel="stylesheet" type="text/css" href="./css/tui-example-style.css" />
+        <link rel="stylesheet" type="text/css" href="css/docs.css" />
+        <link rel="stylesheet" type="text/css" href="../dist/tui-tree.css" />
+        <link rel="stylesheet" type="text/css" href="https://uicdn.toast.com/tui.context-menu/v2.1.6/tui-context-menu.css" />
     </head>
 
     <body>
@@ -13,13 +14,11 @@
             <div id="tree" class="tui-tree-wrap"></div>
         </div>
         <div class="explain">
-            <p>Right-click on each node</p>
-            <textarea id="selectedMenuValue"></textarea>
+            <h3>Right-click on each node</h3>
+            <p>ContextMenu feature does not support IE8.</p>
+            <textarea id="selectedMenuValue" readonly></textarea>
         </div>
-
-        <script src="https://uicdn.toast.com/tui.code-snippet/v1.3.0/tui-code-snippet.min.js"></script>
-        <script src="https://cdn.rawgit.com/nhnent/tui.dom/v3.0.0/dist/tui-dom.min.js"></script>
-        <script src="https://rawgit.com/nhnent/tui.context-menu/v2.0.0/dist/tui-context-menu.min.js"></script>
+        <script src="https://uicdn.toast.com/tui.context-menu/v2.1.6/tui-context-menu.min.js"></script>
         <script src="../dist/tui-tree.js"></script>
         <script class="code-js">
 
@@ -88,7 +87,8 @@
         });
 
         tree.on('selectContextMenu', function(eventData) {
-            var message = '"' + eventData.cmd + '" is selected on "' + eventData.nodeId + '" node';
+            var treeNodeData = tree.getNodeData(eventData.nodeId);
+            var message = '"' + eventData.cmd + '" is selected on "' + treeNodeData.text + '" node';
 
             selectedMenuValue.value = message;
         });
