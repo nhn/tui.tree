@@ -3,6 +3,7 @@
  * @author NHN. FE dev Lab <dl_javascript@nhn.com>
  */
 
+var ajax = require('tui-code-snippet/ajax/index.js');
 var defineClass = require('tui-code-snippet/defineClass/defineClass');
 var extend = require('tui-code-snippet/object/extend');
 var isFunction = require('tui-code-snippet/type/isFunction');
@@ -145,14 +146,14 @@ var Ajax = defineClass(
       this._showLoader();
 
       options.success = bind(function(response) {
-        this._responseSuccess(command, callback, response);
+        this._responseSuccess(command, callback, response.data);
       }, this);
 
-      options.error = bind(function() {
-        this._responseError(command);
+      options.error = bind(function(error) {
+        this._responseError(command, error);
       }, this);
 
-      $.ajax(options);
+      ajax(options);
     },
 
     /**
@@ -217,7 +218,7 @@ var Ajax = defineClass(
      * @param {string} command - Command type
      * @private
      */
-    _responseError: function(command) {
+    _responseError: function(command, error) {
       this._hideLoader();
 
       /**
@@ -225,6 +226,8 @@ var Ajax = defineClass(
        * @type {object} evt - Event data
        * @property {string} command - Command type
        * @property {string} type - Command type. It will be deprecated since version 4.0
+       * @property {number} status - Error status code
+       * @property {string} statusText - Error status text
        * @example
        * tree.on('errorAjaxResponse', function(evt) {
        *     console.log(evt.command + ' response is error!');
@@ -232,32 +235,34 @@ var Ajax = defineClass(
        */
       this.tree.fire('errorAjaxResponse', {
         type: command, // TODO: deprecate in v4.0
-        command: command
+        command: command,
+        status: error.status,
+        statusText: error.statusText
       });
     },
 
     /**
      * Get default request options
      * @param {string} type - Command type
-     * @param {Object} [params] - Value of request option "data"
+     * @param {Object} [data] - Value of request option "data"
      * @returns {Object} Default options to request
      * @private
      */
-    _getDefaultRequestOptions: function(type, params) {
+    _getDefaultRequestOptions: function(type, data) {
       var options = extend({}, this.command[type]);
 
       if (isFunction(options.url)) {
         // for restful API url
-        options.url = options.url(params);
+        options.url = options.url(data);
       }
 
-      if (isFunction(options.data)) {
+      if (isFunction(options.params)) {
         // for custom request data
-        options.data = options.data(params);
+        options.params = options.params(data);
       }
 
-      options.type = options.type ? options.type.toLowerCase() : 'get';
-      options.dataType = options.dataType || 'json';
+      options.method = options.method ? options.method.toUpperCase() : 'GET';
+      options.contentType = options.contentType || 'application/json';
 
       return options;
     },
