@@ -1575,7 +1575,7 @@ var Tree = defineClass(
     /**
      * Enable facility of tree
      * @param {string} featureName - 'Selectable', 'Draggable', 'Editable', 'ContextMenu'
-     * @param {object} [options] - Feature options // TODO: define Feature options
+     * @param {object} [options] - Feature options
      * @returns {Tree} this
      * @example
      * tree
@@ -1583,7 +1583,7 @@ var Tree = defineClass(
      *      selectedClassName: 'tui-tree-selected'
      *  })
      *  .enableFeature('Editable', {
-     *      enableClassName: tree.classNames.textClass,
+     *      editableClassName: tree.classNames.textClass,
      *      dataKey: 'text',
      *      defaultValue: 'new node',
      *      inputClassName: 'myInput'

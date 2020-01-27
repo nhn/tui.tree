@@ -160,21 +160,21 @@ var Ajax = defineClass(
      * Processing when response is success
      * @param {string} command - Command type
      * @param {Function} callback - Executed function after response
-     * @param {Object|boolean} [response] - Response data from server or return value of "parseData"
+     * @param {Object|boolean} [responseData] - Response data from server or return value of "parseData"
      * @private
      */
-    _responseSuccess: function(command, callback, response) {
+    _responseSuccess: function(command, callback, responseData) {
       var tree = this.tree;
       var data;
 
       this._hideLoader();
 
       if (this.parseData) {
-        response = this.parseData(command, response);
+        responseData = this.parseData(command, responseData);
       }
 
-      if (response) {
-        data = callback(response);
+      if (responseData) {
+        data = callback(responseData);
 
         /**
          * @event Tree#successAjaxResponse
