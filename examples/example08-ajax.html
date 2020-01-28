@@ -20,12 +20,11 @@
             <textarea id="success-ajax-response" readonly></textarea>
         </div>
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
         <script src="https://uicdn.toast.com/tui.context-menu/v2.1.6/tui-context-menu.min.js"></script>
         <script src="../dist/tui-tree.js"></script>
         <script class="code-js">
         // Create Tree component
-        var tree = new tui.Tree('tree', {
+        var tree = new tui.Tree('#tree', {
             nodeDefaultState: 'opened',
             template: {
                 internalNode: // Change to Mustache's format

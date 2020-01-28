@@ -8,7 +8,7 @@ describe('Ajax feature', function() {
 
     jasmine.Ajax.install();
 
-    tree = new Tree('tree', {
+    tree = new Tree('#tree', {
       rootElement: 'treeRoot'
     });
   });

@@ -52,7 +52,7 @@ var MOUSE_RIGHT_BUTTON = 2;
 /**
  * Create tree model and inject data to model
  * @class Tree
- * @param {string|HTMLElement|jQueryObject} container - Tree container element or id string value
+ * @param {string|HTMLElement} container - Container element or selector
  * @param {Object} options The options
  *     @param {Object} [options.data] A data to be used on tree
  *     @param {string} [options.nodeIdPrefix] A default prefix of a node
@@ -282,16 +282,14 @@ var Tree = defineClass(
 
     /**
      * Set root element of tree
-     * @param {string|HTMLElement|jQueryObject} container - Container element or id selector
+     * @param {string|HTMLElement} container - Container element or selector
      * @private
      */
     _setRoot: function(container) {
       var rootElement = outerTemplate.ROOT;
 
       if (isString(container)) {
-        container = document.getElementById(container);
-      } else if (container.jquery) {
-        container = container[0];
+        container = document.querySelector(container);
       }
 
       if (!isHTMLNode(container)) {

@@ -34,7 +34,7 @@ describe('Tree', function() {
     beforeEach(function() {
       loadFixtures('basicFixture.html');
 
-      container = 'tree';
+      container = '#tree';
 
       tree = new Tree(container, {
         rootElement: 'treeRoot',
@@ -54,7 +54,7 @@ describe('Tree', function() {
 
     it('should throw an error if has invalid root element', function() {
       expect(function() {
-        return new Tree('tree2');
+        return new Tree('#tree2');
       }).toThrowError(messages.INVALID_CONTAINER_ELEMENT);
     });
 
@@ -120,7 +120,7 @@ describe('Tree', function() {
 
     it('"open(), close()" should change button label', function() {
       var firstChildElement = document.getElementById(firstChildId);
-      var btnElement = $(firstChildElement).find('.' + tree.classNames.toggleBtnClass)[0];
+      var btnElement = firstChildElement.querySelector('.' + tree.classNames.toggleBtnClass);
       var textNode = util.getFirstTextNode(btnElement);
 
       tree.close(firstChildId);
@@ -322,7 +322,7 @@ describe('Tree', function() {
     beforeEach(function() {
       spyOn(util, 'sendHostName');
       loadFixtures('basicFixture.html');
-      container = 'tree';
+      container = '#tree';
     });
 
     it('should send hostname by default', function() {

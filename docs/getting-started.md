@@ -28,10 +28,10 @@ It can also be used by namespace or CommonJS module. Please refer to the [🔨 U
 
 ### Create an instance
 
-* Create with the id selector of the container element
+* Create with the selector of the container element
 
 ```js
-const tree = new Tree('tree', options);
+const tree = new Tree('#tree', options);
 ```
 
 * Create with a container element
@@ -76,7 +76,7 @@ const options = {
   renderTemplate: (tmpl, props) => Mustache.render(tmpl, props) // Mustache template engine
 };
 
-const tree = new Tree('tree', options);
+const tree = new Tree('#tree', options);
 ```
 
 ## Options

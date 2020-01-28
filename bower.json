@@ -23,7 +23,6 @@
         "webpack.config.js"
     ],
     "dependencies": {
-        "tui-context-menu": "^2.1.6",
-        "jquery": "^1.11.0"
+        "tui-context-menu": "^2.1.6"
     }
 }
