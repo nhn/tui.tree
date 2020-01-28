@@ -59,7 +59,7 @@
     "webpack-dev-server": "^3.8.0"
   },
   "dependencies": {
-    "tui-code-snippet": "^2.2.0",
+    "tui-code-snippet": "^2.3.0",
     "tui-context-menu": "^2.1.6"
   }
 }

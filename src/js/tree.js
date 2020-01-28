@@ -1572,7 +1572,8 @@ var Tree = defineClass(
 
     /**
      * Enable facility of tree
-     * @param {string} featureName - 'Selectable', 'Draggable', 'Editable', 'ContextMenu'
+     * Ajax feature options: https://github.com/nhn/tui.tree/blob/master/docs/ajax-feature.md
+     * @param {string} featureName - 'Selectable', 'Editable', 'Draggable', 'Checkbox', 'ContextMenu', 'Ajax'
      * @param {object} [options] - Feature options
      * @returns {Tree} this
      * @example
@@ -1621,50 +1622,50 @@ var Tree = defineClass(
      *      command: {
      *          read: {
      *              url: 'api/read',
-     *              dataType: 'json',
-     *              type: 'get'
+     *              contentType: 'application/json',
+     *              method: 'GET'
      *          },
      *          create: {
      *              url: 'api/create',
-     *              dataType: 'json',
-     *              type: 'post'
+     *              contentType: 'application/json',
+     *              method: 'POST'
      *          },
      *          update: {
      *              url: 'api/update',
-     *              dataType: 'json',
-     *              type: 'post',
-     *              data: {
+     *              contentType: 'application/json',
+     *              method: 'POST',
+     *              params: {
      *                  paramA: 'a',
      *                  paramB: 'b'
      *              }
      *          },
      *          remove: {
      *              url: 'api/remove',
-     *              dataType: 'json',
-     *              type: 'post',
-     *              data: function(params) {
+     *              contentType: 'application/json',
+     *              method: 'POST',
+     *              params: function(evt) {
      *                  return {
-     *                      paramA: params.a,
-     *                      paramB: params.b
+     *                      paramA: evt.a,
+     *                      paramB: evt.b
      *                  };
      *              }
      *          },
      *          removeAllChildren: {
-     *              url: function(params) {
-     *                  return 'api/remove_all/' + params.nodeId,
+     *              url: function(evt) {
+     *                  return 'api/remove_all/' + evt.nodeId,
      *              },
-     *              dataType: 'json',
-     *              type: 'post'
+     *              contentType: 'application/json',
+     *              method: 'POST'
      *          },
      *          move: {
      *              url: 'api/move',
-     *              dataType: 'json',
-     *              type: 'post'
+     *              contentType: 'application/json',
+     *              method: 'POST'
      *          }
      *      },
-     *      parseData: function(command, response) {
-     *          if (command === 'read' && response.code === '200') {
-     *              return response;
+     *      parseData: function(command, responseData) {
+     *          if (responseData) {
+     *              return responseData;
      *          } else {
      *              return false;
      *          }

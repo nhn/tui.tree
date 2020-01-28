@@ -106,7 +106,6 @@
             document.getElementById(textareaId).value = message
         }
 
-
         // Add features
         tree.enableFeature('Selectable')
             .enableFeature('Editable', {
@@ -124,49 +123,49 @@
                 read: {
                     url: 'data/tree.json',
                     contentType: 'application/json',
-                    params: function(data) {
+                    params: function(evt) {
                         return {
-                            productId: tree.getNodeData(data.nodeId).pid
+                            productId: tree.getNodeData(evt.nodeId).pid
                         };
                     }
                 },
                 create: {
                     url: 'data/response.json',
                     contentType: 'application/json',
-                    params: function(data) {
+                    params: function(evt) {
                         return {
-                            targetId: tree.getNodeData(data.parentId).pid,
-                            productName: data.data.text
+                            targetId: tree.getNodeData(evt.parentId).pid,
+                            productName: evt.data.text
                         };
                     }
                 },
                 update: {
                     url: 'data/response.json',
                     contentType: 'application/json',
-                    params: function(data) {
+                    params: function(evt) {
                         return {
-                            productId: tree.getNodeData(data.nodeId).pid,
-                            productName: data.data.text
+                            productId: tree.getNodeData(evt.nodeId).pid,
+                            productName: evt.data.text
                         };
                     }
                 },
                 remove: {
                     url: 'data/response.json',
                     contentType: 'application/json',
-                    params: function(data) {
+                    params: function(evt) {
                         return {
-                            productId: tree.getNodeData(data.nodeId).pid
+                            productId: tree.getNodeData(evt.nodeId).pid
                         };
                     }
                 },
                 move: {
                     url: 'data/response.json',
                     contentType: 'application/json',
-                    params: function(data) {
+                    params: function(evt) {
                         return {
-                            productId: tree.getNodeData(data.nodeId).pid,
-                            targetId: tree.getNodeData(data.newParentId).pid,
-                            moveIdx: data.index
+                            productId: tree.getNodeData(evt.nodeId).pid,
+                            targetId: tree.getNodeData(evt.newParentId).pid,
+                            moveIdx: evt.index
                         };
                     }
                 }

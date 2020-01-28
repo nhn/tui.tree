@@ -15,7 +15,7 @@ body {
 .explain textarea {
     float: left;
     width: 300px;
-    height: 250px;
+    height: 500px;
     resize: none;
     line-height: 2em;
     border: none;

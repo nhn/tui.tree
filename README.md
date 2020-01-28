@@ -3,8 +3,8 @@
 
 [![GitHub release](https://img.shields.io/github/release/nhn/tui.tree.svg)](https://github.com/nhn/tui.tree/releases/latest)
 [![npm](https://img.shields.io/npm/v/tui-tree.svg)](https://www.npmjs.com/package/tui-tree)
-[![GitHub license](https://img.shields.io/github/license/nhn/tui.tree.svg)](https://github.com/nhn/tui.tree/blob/production/LICENSE)
-[![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhn/tui.project-name/labels/help%20wanted)
+[![GitHub license](https://img.shields.io/github/license/nhn/tui.tree.svg)](https://github.com/nhn/tui.tree/blob/master/LICENSE)
+[![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhn/tui.tree/labels/Help%20Wanted%20🤝)
 [![code with hearth by NHN](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN-ff1414.svg)](https://github.com/nhn)
 
 
@@ -47,9 +47,10 @@ tui.usageStatistics = false;
 
 
 ## 📙 Documents
-* [Getting Started](https://github.com/nhn/tui.tree/blob/production/docs/getting-started.md)
-* [How to use Ajax feature](https://github.com/nhn/tui.tree/blob/production/docs/ajax-feature.md)
+* [Getting Started](https://github.com/nhn/tui.tree/blob/master/docs/getting-started.md)
+* [How to use Ajax feature](https://github.com/nhn/tui.tree/blob/master/docs/ajax-feature.md)
 * [APIs](https://nhn.github.io/tui.tree/latest)
+* [v4.0.0 Migration Guide](https://github.com/nhn/tui.tree/blob/master/docs/v4.0.0-migration-guide.md)
 
 You can also see the older versions of API page on the [releases page](https://github.com/nhn/tui.tree/releases).
 
@@ -58,12 +59,12 @@ You can also see the older versions of API page on the [releases page](https://g
 * Creates each node hierarchically by data.
 * Folds or unfolds the children of each node.
 * Supports optional features.
-    * `Selectable` : Each node can be selected.
-    * `Draggable` : Each node can be moved.
-    * `Editable` : Each node can be edited.
-    * `ContextMenu` : A context menu can be created for each node. (*Not supporting IE8*)
-    * `Checkbox` : A checkbox can be added to each node and a 3-state checkbox is used.
-    * `Ajax` : Requests server and handles the `CRUD` for each node.
+  * `Selectable` : Each node can be selected.
+  * `Draggable` : Each node can be moved.
+  * `Editable` : Each node can be edited.
+  * `ContextMenu` : A context menu can be created for each node. (*Not supporting IE8*)
+  * `Checkbox` : A checkbox can be added to each node and a 3-state checkbox is used.
+  * `Ajax` : Requests server and handles the `CRUD` for each node.
 * Supports templates.
 * Supports custom events.
 * Provides the file of default css style.
@@ -231,10 +232,10 @@ For more information on PR's step, please see links of Contributing section.
 
 
 ## 💬 Contributing
-* [Code of Conduct](https://github.com/nhn/tui.tree/blob/production/CODE_OF_CONDUCT.md)
-* [Contributing guideline](https://github.com/nhn/tui.tree/blob/production/CONTRIBUTING.md)
-* [Issue guideline](https://github.com/nhn/tui.tree/blob/production/docs/ISSUE_TEMPLATE.md)
-* [Commit convention](https://github.com/nhn/tui.tree/blob/production/docs/COMMIT_MESSAGE_CONVENTION.md)
+* [Code of Conduct](https://github.com/nhn/tui.tree/blob/master/CODE_OF_CONDUCT.md)
+* [Contributing guideline](https://github.com/nhn/tui.tree/blob/master/CONTRIBUTING.md)
+* [Issue guideline](https://github.com/nhn/tui.tree/blob/master/docs/ISSUE_TEMPLATE.md)
+* [Commit convention](https://github.com/nhn/tui.tree/blob/master/docs/COMMIT_MESSAGE_CONVENTION.md)
 
 
 ## 🍞 TOAST UI Family
@@ -249,4 +250,4 @@ For more information on PR's step, please see links of Contributing section.
 
 ## 📜 License
 
-This software is licensed under the [MIT](https://github.com/nhn/tui.tree/blob/production/LICENSE) © [NHN](https://github.com/nhn).
+This software is licensed under the [MIT](https://github.com/nhn/tui.tree/blob/master/LICENSE) © [NHN](https://github.com/nhn).
