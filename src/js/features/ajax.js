@@ -261,7 +261,7 @@ var Ajax = defineClass(
         options.params = options.params(data);
       }
 
-      options.method = options.method ? options.method.toUpperCase() : 'GET';
+      options.method = options.method || 'GET';
       options.contentType = options.contentType || 'application/json';
 
       return options;

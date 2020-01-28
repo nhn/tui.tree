@@ -77,7 +77,7 @@ describe('Ajax feature', function() {
       expect(treeAjax._getDefaultRequestOptions('read', { path: '/tree' }).url).toBe('api/id/tree');
     });
 
-    it('"data" should be the return value when "data" property of the default command option is function', function() {
+    it('"params" should be the return value when "params" property of the default command option is function', function() {
       expect(treeAjax._getDefaultRequestOptions('read').params).toEqual({
         someId: 1
       });
