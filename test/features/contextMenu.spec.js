@@ -90,7 +90,6 @@ describe('contextMenu feature', function() {
   it('custom event as "selectContextMenu" should be fired when the context menu is selected', function() {
     var spyListener = jasmine.createSpy();
     var mock = {
-      cmd: 'test', // TODO: deprecate in v4.0
       command: 'test',
       nodeId: null
     };
