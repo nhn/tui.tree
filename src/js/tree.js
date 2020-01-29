@@ -52,7 +52,7 @@ var MOUSE_RIGHT_BUTTON = 2;
 /**
  * Create tree model and inject data to model
  * @class Tree
- * @param {string|HTMLElement|jQueryObject} container - Tree container element or id string value
+ * @param {string|HTMLElement} container - Container element or selector
  * @param {Object} options The options
  *     @param {Object} [options.data] A data to be used on tree
  *     @param {string} [options.nodeIdPrefix] A default prefix of a node
@@ -282,16 +282,14 @@ var Tree = defineClass(
 
     /**
      * Set root element of tree
-     * @param {string|HTMLElement|jQueryObject} container - Container element or id selector
+     * @param {string|HTMLElement} container - Container element or selector
      * @private
      */
     _setRoot: function(container) {
       var rootElement = outerTemplate.ROOT;
 
       if (isString(container)) {
-        container = document.getElementById(container);
-      } else if (container.jquery) {
-        container = container[0];
+        container = document.querySelector(container);
       }
 
       if (!isHTMLNode(container)) {
@@ -1574,8 +1572,9 @@ var Tree = defineClass(
 
     /**
      * Enable facility of tree
-     * @param {string} featureName - 'Selectable', 'Draggable', 'Editable', 'ContextMenu'
-     * @param {object} [options] - Feature options // TODO: define Feature options
+     * Ajax feature options: https://github.com/nhn/tui.tree/blob/master/docs/ajax-feature.md
+     * @param {string} featureName - 'Selectable', 'Editable', 'Draggable', 'Checkbox', 'ContextMenu', 'Ajax'
+     * @param {object} [options] - Feature options
      * @returns {Tree} this
      * @example
      * tree
@@ -1583,7 +1582,7 @@ var Tree = defineClass(
      *      selectedClassName: 'tui-tree-selected'
      *  })
      *  .enableFeature('Editable', {
-     *      enableClassName: tree.classNames.textClass,
+     *      editableClassName: tree.classNames.textClass,
      *      dataKey: 'text',
      *      defaultValue: 'new node',
      *      inputClassName: 'myInput'
@@ -1623,50 +1622,50 @@ var Tree = defineClass(
      *      command: {
      *          read: {
      *              url: 'api/read',
-     *              dataType: 'json',
-     *              type: 'get'
+     *              contentType: 'application/json',
+     *              method: 'GET'
      *          },
      *          create: {
      *              url: 'api/create',
-     *              dataType: 'json',
-     *              type: 'post'
+     *              contentType: 'application/json',
+     *              method: 'POST'
      *          },
      *          update: {
      *              url: 'api/update',
-     *              dataType: 'json',
-     *              type: 'post',
-     *              data: {
+     *              contentType: 'application/json',
+     *              method: 'POST',
+     *              params: {
      *                  paramA: 'a',
      *                  paramB: 'b'
      *              }
      *          },
      *          remove: {
      *              url: 'api/remove',
-     *              dataType: 'json',
-     *              type: 'post',
-     *              data: function(params) {
+     *              contentType: 'application/json',
+     *              method: 'POST',
+     *              params: function(evt) {
      *                  return {
-     *                      paramA: params.a,
-     *                      paramB: params.b
+     *                      paramA: evt.a,
+     *                      paramB: evt.b
      *                  };
      *              }
      *          },
      *          removeAllChildren: {
-     *              url: function(params) {
-     *                  return 'api/remove_all/' + params.nodeId,
+     *              url: function(evt) {
+     *                  return 'api/remove_all/' + evt.nodeId,
      *              },
-     *              dataType: 'json',
-     *              type: 'post'
+     *              contentType: 'application/json',
+     *              method: 'POST'
      *          },
      *          move: {
      *              url: 'api/move',
-     *              dataType: 'json',
-     *              type: 'post'
+     *              contentType: 'application/json',
+     *              method: 'POST'
      *          }
      *      },
-     *      parseData: function(command, response) {
-     *          if (command === 'read' && response.code === '200') {
-     *              return response;
+     *      parseData: function(command, responseData) {
+     *          if (responseData) {
+     *              return responseData;
      *          } else {
      *              return false;
      *          }

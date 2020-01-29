@@ -8,14 +8,9 @@ module.exports = {
     commonjs: true,
     jasmine: true,
     amd: true,
-    node: true,
-    jquery: true
+    node: true
   },
   globals: {
     loadFixtures: true
-  },
-  rules: {
-    'lines-around-directive': 0,
-    'object-property-newline': ['error', { allowMultiplePropertiesPerLine: true }]
   }
 };

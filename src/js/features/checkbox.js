@@ -547,16 +547,15 @@ var Checkbox = defineClass(
      * @param {string} [parentId] - Node id (default: rootNode id)
      * @returns {Array.<string>} Checked node ids
      * @example
-     * //
-     * // node1(v)
-     * //   node2(v)
-     * //   node3(v)
-     * // node4
-     * //   node5(v)
-     * // node6
-     * //   node7(v)
-     * //     node8(v)
-     * //   node9
+     * // ├─ node1 (v)
+     * // │  ├─ node2 (v)
+     * // │  └─ node3 (v)
+     * // ├─ node4 ( )
+     * // │  └─ node5 (v)
+     * // └─ node6 ( )
+     * //    ├─ node7 (v)
+     * //    │  └─ node8 (v)
+     * //    └─ node9 ( )
      *
      * var allCheckedList = tree.getCheckedList(); // ['node1', 'node2', 'node3' ,....]
      * var descendantsCheckedList = tree.getCheekedList('node6'); // ['node7', 'node8']
@@ -580,16 +579,15 @@ var Checkbox = defineClass(
      * @param {string} [parentId] - Node id (default: rootNode id)
      * @returns {Array.<string>} Checked node ids
      * @example
-     * //
-     * // node1(v)
-     * //   node2(v)
-     * //   node3(v)
-     * // node4
-     * //   node5(v)
-     * // node6
-     * //   node7(v)
-     * //     node8(v)
-     * //   node9
+     * // ├─ node1 (v)
+     * // │  ├─ node2 (v)
+     * // │  └─ node3 (v)
+     * // ├─ node4 ( )
+     * // │  └─ node5 (v)
+     * // └─ node6 ( )
+     * //    ├─ node7 (v)
+     * //    │  └─ node8 (v)
+     * //    └─ node9 ( )
      *
      * var allTopCheckedList = tree.getTopCheckedList(); // ['node1', 'node5', 'node7']
      * var descendantsTopCheckedList = tree.getTopCheekedList('node6'); // ['node7']

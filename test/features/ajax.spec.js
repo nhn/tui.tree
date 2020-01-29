@@ -8,7 +8,7 @@ describe('Ajax feature', function() {
 
     jasmine.Ajax.install();
 
-    tree = new Tree('tree', {
+    tree = new Tree('#tree', {
       rootElement: 'treeRoot'
     });
   });
@@ -38,7 +38,7 @@ describe('Ajax feature', function() {
 
     expect(document.querySelectorAll('.' + className).length).toBe(0);
   });
-  
+
   describe('Options', function() {
     var treeAjax;
 
@@ -46,15 +46,15 @@ describe('Ajax feature', function() {
       tree.enableFeature('Ajax', {
         command: {
           read: {
-            url: function(params) {
-              var path = params && params.path ? params.path : '';
+            url: function(data) {
+              var path = data && data.path ? data.path : '';
 
               return 'api/id' + path;
             },
-            data: function(params) {
-              params = params || { id: 1 };
+            params: function(data) {
+              data = data || { id: 1 };
 
-              return { someId: params.id };
+              return { someId: data.id };
             }
           }
         },
@@ -64,12 +64,12 @@ describe('Ajax feature', function() {
       treeAjax = tree.enabledFeatures.Ajax;
     });
 
-    it('"type" should be "get" when default command option does not have it', function() {
-      expect(treeAjax._getDefaultRequestOptions('read').type).toBe('get');
+    it('"method" should be "GET" when default command option does not have it', function() {
+      expect(treeAjax._getDefaultRequestOptions('read').method).toBe('GET');
     });
 
-    it('"dataType" should be "json" when default command option does not have it', function() {
-      expect(treeAjax._getDefaultRequestOptions('read').dataType).toBe('json');
+    it('"contentType" should be "application/json" when default command option does not have it', function() {
+      expect(treeAjax._getDefaultRequestOptions('read').contentType).toBe('application/json');
     });
 
     it('"url" should be the return value when "url" property of the default command option is function', function() {
@@ -77,11 +77,11 @@ describe('Ajax feature', function() {
       expect(treeAjax._getDefaultRequestOptions('read', { path: '/tree' }).url).toBe('api/id/tree');
     });
 
-    it('"data" should be the return value when "data" property of the default command option is function', function() {
-      expect(treeAjax._getDefaultRequestOptions('read').data).toEqual({
+    it('"params" should be the return value when "params" property of the default command option is function', function() {
+      expect(treeAjax._getDefaultRequestOptions('read').params).toEqual({
         someId: 1
       });
-      expect(treeAjax._getDefaultRequestOptions('read', { id: 5 }).data).toEqual({
+      expect(treeAjax._getDefaultRequestOptions('read', { id: 5 }).params).toEqual({
         someId: 5
       });
     });
@@ -132,9 +132,9 @@ describe('Ajax feature', function() {
 
       spyOn(treeAjax, '_getDefaultRequestOptions').and.returnValue({
         url: 'api/test',
-        type: 'get',
-        dataType: 'json',
-        data: {
+        method: 'GET',
+        contentType: 'application/json',
+        params: {
           param1: 'a',
           param2: 'b'
         }
@@ -150,9 +150,9 @@ describe('Ajax feature', function() {
     it('request property should not be null when request is "POST" with parameters', function() {
       spyOn(treeAjax, '_getDefaultRequestOptions').and.returnValue({
         url: 'api/test',
-        type: 'post',
-        dataType: 'json',
-        data: {
+        method: 'POST',
+        contentType: 'application/json',
+        params: {
           param1: 'a',
           param2: 'b'
         }
@@ -183,66 +183,55 @@ describe('Ajax feature', function() {
     });
 
     it('callback function should be executed when response is success', function() {
-      spyOn($, 'ajax').and.callFake(function(e) {
-        e.success({});
-      });
-
       treeAjax.loadData('read', callback);
+      jasmine.Ajax.requests.mostRecent().respondWith({
+        status: 200,
+        responseText: '{}'
+      });
 
       expect(callback).toHaveBeenCalled();
     });
 
     it('the loader should be hidden when response is success', function() {
       var className = treeAjax.loaderClassName;
-
-      spyOn($, 'ajax').and.callFake(function(e) {
-        e.success({});
-      });
-
       treeAjax._showLoader();
       treeAjax.loadData('read', callback);
+      jasmine.Ajax.requests.mostRecent().respondWith({
+        status: 200,
+        responseText: '{}'
+      });
 
       expect(document.querySelector('.' + className).style.display).toBe('none');
     });
 
     it('the Ajax loader should be hidden when response is failed', function() {
       var className = treeAjax.loaderClassName;
-
-      spyOn($, 'ajax').and.callFake(function(e) {
-        e.error({});
-      });
-
       treeAjax._showLoader();
       treeAjax.loadData('read', callback);
+      jasmine.Ajax.requests.mostRecent().respondWith({
+        status: 404
+      });
 
       expect(document.querySelector('.' + className).style.display).toBe('none');
     });
 
     it('the "errorAjaxResponse" custom event should be fired when response is failed', function() {
       var handler = jasmine.createSpy('error event handler');
-
-      spyOn($, 'ajax').and.callFake(function(e) {
-        e.error({});
-      });
-
       tree.on('errorAjaxResponse', handler);
-
       treeAjax.loadData('read', callback);
+      jasmine.Ajax.requests.mostRecent().respondWith({
+        status: 404
+      });
 
       expect(handler).toHaveBeenCalled();
     });
   });
 
   describe('READ command - ', function() {
-    var response, rootNodeId, newChildIds;
+    var rootNodeId, newChildIds;
 
     beforeEach(function() {
       rootNodeId = tree.getRootNodeId();
-      response = [{ text: 'A', state: 'opened', hasChild: true }, { text: 'B' }];
-
-      spyOn($, 'ajax').and.callFake(function(e) {
-        e.success(response);
-      });
 
       tree.enableFeature('Ajax', {
         command: {
@@ -255,6 +244,14 @@ describe('Ajax feature', function() {
       tree.on('successAjaxResponse', function(evt) {
         newChildIds = evt.data;
       });
+
+      jasmine.Ajax.requests.mostRecent().respondWith({
+        status: 200,
+        responseText: '[{"text":"A","state":"opened","hasChild":true},{"text":"B"}]',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
     });
 
     it('1 depth nodes should be added when Ajax feature is enabled', function() {
@@ -266,6 +263,13 @@ describe('Ajax feature', function() {
 
       tree.close(nodeId);
       tree.toggle(nodeId);
+      jasmine.Ajax.requests.mostRecent().respondWith({
+        status: 200,
+        responseText: '[{"text":"A","state":"opened","hasChild":true},{"text":"B"}]',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
 
       expect(tree.getChildIds(nodeId)).toEqual(newChildIds);
     });
@@ -287,25 +291,33 @@ describe('Ajax feature', function() {
     });
 
     it('new node should be created when response data is success', function() {
-      spyOn($, 'ajax').and.callFake(function(e) {
-        e.success(true);
-      });
-
       tree.on('successAjaxResponse', function(evt) {
         newChildIds = evt.data;
       });
 
       tree.add({ text: 'C' }, parentId);
 
+      jasmine.Ajax.requests.mostRecent().respondWith({
+        status: 200,
+        responseText: 'true',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
       expect(tree.getChildIds(parentId)).toEqual(newChildIds);
     });
 
     it('new node should not be created when response data is error', function() {
-      spyOn($, 'ajax').and.callFake(function(e) {
-        e.success(false);
-      });
-
       tree.add({ text: 'C' }, parentId);
+
+      jasmine.Ajax.requests.mostRecent().respondWith({
+        status: 200,
+        responseText: 'false',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
 
       expect(tree.getChildIds(parentId).length).toBe(0);
     });
@@ -331,21 +343,29 @@ describe('Ajax feature', function() {
     });
 
     it('selected node should be removed when response data is success', function() {
-      spyOn($, 'ajax').and.callFake(function(e) {
-        e.success(true);
-      });
-
       tree.remove(nodeId);
+
+      jasmine.Ajax.requests.mostRecent().respondWith({
+        status: 200,
+        responseText: 'true',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
 
       expect(tree.getChildIds(parentId).length).toBe(children.length - 1);
     });
 
     it('selected node should not be removed when response data is error', function() {
-      spyOn($, 'ajax').and.callFake(function(e) {
-        e.success(false);
-      });
-
       tree.remove(nodeId);
+
+      jasmine.Ajax.requests.mostRecent().respondWith({
+        status: 200,
+        responseText: 'false',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
 
       expect(tree.getChildIds(parentId).length).toBe(children.length);
     });
@@ -371,41 +391,57 @@ describe('Ajax feature', function() {
     });
 
     it('selected node data should be updated when response data is success', function() {
-      spyOn($, 'ajax').and.callFake(function(e) {
-        e.success(true);
-      });
-
       tree.setNodeData(nodeId, changedData);
+
+      jasmine.Ajax.requests.mostRecent().respondWith({
+        status: 200,
+        responseText: 'true',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
 
       expect(tree.getNodeData(nodeId).text).toBe(changedData.text);
     });
 
     it('selected node data should not be updated when response data is error', function() {
-      spyOn($, 'ajax').and.callFake(function(e) {
-        e.success(false);
-      });
-
       tree.setNodeData(nodeId, changedData);
+
+      jasmine.Ajax.requests.mostRecent().respondWith({
+        status: 200,
+        responseText: 'false',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
 
       expect(tree.getNodeData(nodeId).text).not.toBe(changedData.text);
     });
 
     it('deleted node data should be updated when response data is success', function() {
-      spyOn($, 'ajax').and.callFake(function(e) {
-        e.success(true);
-      });
-
       tree.removeNodeData(nodeId, 'propA');
+
+      jasmine.Ajax.requests.mostRecent().respondWith({
+        status: 200,
+        responseText: 'true',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
 
       expect(tree.getNodeData(nodeId).propA).toBeUndefined();
     });
 
     it('deleted node data should not be updated when response data is error', function() {
-      spyOn($, 'ajax').and.callFake(function(e) {
-        e.success(false);
-      });
-
       tree.removeNodeData(nodeId, 'propA');
+
+      jasmine.Ajax.requests.mostRecent().respondWith({
+        status: 200,
+        responseText: 'false',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
 
       expect(tree.getNodeData(nodeId).propA).toBe('aa');
     });
@@ -430,21 +466,29 @@ describe('Ajax feature', function() {
     });
 
     it('all children nodes should be removed when response data is success', function() {
-      spyOn($, 'ajax').and.callFake(function(e) {
-        e.success(true);
-      });
-
       tree.removeAllChildren(nodeId);
+
+      jasmine.Ajax.requests.mostRecent().respondWith({
+        status: 200,
+        responseText: 'true',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
 
       expect(tree.getChildIds(nodeId).length).toBe(0);
     });
 
     it('all children nodes should not be removed when response data is faild', function() {
-      spyOn($, 'ajax').and.callFake(function(e) {
-        e.success(false);
-      });
-
       tree.removeAllChildren(nodeId);
+
+      jasmine.Ajax.requests.mostRecent().respondWith({
+        status: 200,
+        responseText: 'false',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
 
       expect(tree.getChildIds(nodeId).length).toBe(children.length);
     });
@@ -475,21 +519,29 @@ describe('Ajax feature', function() {
     });
 
     it('node should be moved when response data is success', function() {
-      spyOn($, 'ajax').and.callFake(function(e) {
-        e.success(true);
-      });
-
       tree.move(nodeId, newParentId);
+
+      jasmine.Ajax.requests.mostRecent().respondWith({
+        status: 200,
+        responseText: 'true',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
 
       expect(tree.getParentId(nodeId)).toBe(newParentId);
     });
 
     it('node should not be moved when response data is error', function() {
-      spyOn($, 'ajax').and.callFake(function(e) {
-        e.success(false);
-      });
-
       tree.move(nodeId, newParentId);
+
+      jasmine.Ajax.requests.mostRecent().respondWith({
+        status: 200,
+        responseText: 'false',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
 
       expect(tree.getParentId(nodeId)).toBe(rootNodeId);
     });

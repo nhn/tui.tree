@@ -36,7 +36,7 @@ describe('draggable feature', function() {
   beforeEach(function() {
     loadFixtures('basicFixture.html');
 
-    tree = new Tree('tree', {
+    tree = new Tree('#tree', {
       rootElement: 'treeRoot',
       data: data
     });
