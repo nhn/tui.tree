@@ -211,10 +211,10 @@ var ContextMenu = defineClass(
        * @property {string} nodeId - Node id
        * @example
        * tree.on('selectContextMenu', function(evt) {
-       *     var cmd = treeEvent.cmd; // key of context menu's data
+       *     var command = treeEvent.command; // key of context menu's data
        *     var nodeId = treeEvent.nodeId;
        *
-       *     console.log(evt.cmd, evt.nodeId);
+       *     console.log(evt.command, evt.nodeId);
        * });
        */
       this.tree.fire('selectContextMenu', {
