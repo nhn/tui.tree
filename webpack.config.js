@@ -63,7 +63,7 @@ module.exports = function(env, argv) {
       rules: [
         {
           test: /\.js$/,
-          exclude: /(dist|node_modules|bower_components)/,
+          exclude: /(dist|node_modules)/,
           loader: 'eslint-loader',
           enforce: 'pre',
           options: {

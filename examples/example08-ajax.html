@@ -53,10 +53,10 @@
 
         // Bind custom event
         tree.on('selectContextMenu', function(e) {
-            var cmd = e.cmd;
+            var command = e.command;
             var nodeId = e.nodeId;
 
-            switch (cmd) {
+            switch (command) {
                 case 'create':
                     tree.createChildNode(nodeId);
                     break;

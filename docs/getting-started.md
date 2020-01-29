@@ -5,7 +5,7 @@ $ npm install --save tui-tree # Latest version
 $ npm install --save tui-tree@<version> # Specific version
 ```
 
-It can also be installed by using bower or downloaded by CDN. Please refer to the [💾 Install](https://github.com/nhn/tui.tree#-install).
+It can also be downloaded by CDN. Please refer to the [💾 Install](https://github.com/nhn/tui.tree#-install).
 
 ## Usage
 

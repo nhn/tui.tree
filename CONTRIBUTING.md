@@ -48,7 +48,7 @@ Unsure where to begin contributing to TOAST UI? You can start by looking through
 ### Development environment
 - Prepare your machine node and it's packages installed.
 - Checkout our repository
-- Install dependencies by `npm install && bower install`
+- Install dependencies by `npm install`
 - Start webpack-dev-server by `npm run serve`
 
 ### Make changes

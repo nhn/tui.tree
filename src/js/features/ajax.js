@@ -122,9 +122,7 @@ var Ajax = defineClass(
        * @event Tree#beforeAjaxRequest
        * @type {object} evt - Event data
        * @property {string} command - Command type
-       * @property {string} type - Command type. It will be deprecated since version 4.0
        * @property {object} [data] - Request data
-       * @property {object} [params] - Request data. It will be deprecated since version 4.0
        * @example
        * tree.on('beforeAjaxRequest', function(evt) {
        *     console.log('before ' + evt.command + ' request!');
@@ -134,8 +132,6 @@ var Ajax = defineClass(
        */
       if (
         !this.tree.invoke('beforeAjaxRequest', {
-          type: command, // TODO: deprecate in v4.0
-          params: data, // TODO: deprecate in v4.0
           command: command,
           data: data
         })
@@ -180,7 +176,6 @@ var Ajax = defineClass(
          * @event Tree#successAjaxResponse
          * @type {object} evt - Event data
          * @property {string} command - Command type
-         * @property {string} type - Command type. It will be deprecated since version 4.0
          * @property {object} [data] - Return value of executed command callback
          * @example
          * tree.on('successAjaxResponse', function(evt) {
@@ -191,7 +186,6 @@ var Ajax = defineClass(
          * });
          */
         tree.fire('successAjaxResponse', {
-          type: command, // TODO: deprecate in v4.0
           command: command,
           data: data
         });
@@ -200,14 +194,12 @@ var Ajax = defineClass(
          * @event Tree#failAjaxResponse
          * @type {object} evt - Event data
          * @property {string} command - Command type
-         * @property {string} type - Command type. It will be deprecated since version 4.0
          * @example
          * tree.on('failAjaxResponse', function(evt) {
          *     console.log(evt.command + ' response is fail!');
          * });
          */
         tree.fire('failAjaxResponse', {
-          type: command, // TODO: deprecate in v4.0
           command: command
         });
       }
@@ -225,7 +217,6 @@ var Ajax = defineClass(
        * @event Tree#errorAjaxResponse
        * @type {object} evt - Event data
        * @property {string} command - Command type
-       * @property {string} type - Command type. It will be deprecated since version 4.0
        * @property {number} status - Error status code
        * @property {string} statusText - Error status text
        * @example
@@ -234,7 +225,6 @@ var Ajax = defineClass(
        * });
        */
       this.tree.fire('errorAjaxResponse', {
-        type: command, // TODO: deprecate in v4.0
         command: command,
         status: error.status,
         statusText: error.statusText

@@ -85,7 +85,7 @@ However, we highly recommend using the package manager.
 
 ### Via Package Manager
 
-TOAST UI products are registered in two package managers, [npm](https://www.npmjs.com/) and [bower](https://bower.io/).
+TOAST UI products are registered in the package manager, [npm](https://www.npmjs.com/).
 You can conveniently install it using the commands provided by each package manager.
 When using npm, be sure to use it in the environment [Node.js](https://nodejs.org/ko/) is installed.
 
@@ -94,13 +94,6 @@ When using npm, be sure to use it in the environment [Node.js](https://nodejs.or
 ``` sh
 $ npm install --save tui-tree # Latest version
 $ npm install --save tui-tree@<version> # Specific version
-```
-
-#### bower
-
-``` sh
-$ bower install tui-tree # Latest version
-$ bower install tui-tree#<tag> # Specific version
 ```
 
 ### Via Contents Delivery Network (CDN)
@@ -129,8 +122,7 @@ tui-tree/
 ```
 
 ### Download Source Files
-* [Download bundle files](https://github.com/nhn/tui.tree/tree/production/dist)
-* [Download all sources for each version](https://github.com/nhn/tui.tree/releases)
+* [Download bundle files and all sources for each version](https://github.com/nhn/tui.tree/releases)
 
 
 ## 🔨 Usage
