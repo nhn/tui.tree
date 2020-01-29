@@ -123,49 +123,49 @@
                 read: {
                     url: 'data/tree.json',
                     contentType: 'application/json',
-                    params: function(evt) {
+                    params: function(treeData) {
                         return {
-                            productId: tree.getNodeData(evt.nodeId).pid
+                            productId: tree.getNodeData(treeData.nodeId).pid
                         };
                     }
                 },
                 create: {
                     url: 'data/response.json',
                     contentType: 'application/json',
-                    params: function(evt) {
+                    params: function(treeData) {
                         return {
-                            targetId: tree.getNodeData(evt.parentId).pid,
-                            productName: evt.data.text
+                            targetId: tree.getNodeData(treeData.parentId).pid,
+                            productName: treeData.data.text
                         };
                     }
                 },
                 update: {
                     url: 'data/response.json',
                     contentType: 'application/json',
-                    params: function(evt) {
+                    params: function(treeData) {
                         return {
-                            productId: tree.getNodeData(evt.nodeId).pid,
-                            productName: evt.data.text
+                            productId: tree.getNodeData(treeData.nodeId).pid,
+                            productName: treeData.data.text
                         };
                     }
                 },
                 remove: {
                     url: 'data/response.json',
                     contentType: 'application/json',
-                    params: function(evt) {
+                    params: function(treeData) {
                         return {
-                            productId: tree.getNodeData(evt.nodeId).pid
+                            productId: tree.getNodeData(treeData.nodeId).pid
                         };
                     }
                 },
                 move: {
                     url: 'data/response.json',
                     contentType: 'application/json',
-                    params: function(evt) {
+                    params: function(treeData) {
                         return {
-                            productId: tree.getNodeData(evt.nodeId).pid,
-                            targetId: tree.getNodeData(evt.newParentId).pid,
-                            moveIdx: evt.index
+                            productId: tree.getNodeData(treeData.nodeId).pid,
+                            targetId: tree.getNodeData(treeData.newParentId).pid,
+                            moveIdx: treeData.index
                         };
                     }
                 }

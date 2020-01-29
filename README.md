@@ -175,7 +175,6 @@ For more information about the API, please see [here](https://nhn.github.io/tui.
 
 
 ## 🔩 Dependency
-* [tui-code-snippet](https://github.com/nhn/tui.code-snippet) >=2.3.0
 * [tui-context-menu](https://github.com/nhn/tui.context-menu) >=2.1.6 (Optional, needs forusing `ContextMenu` feature, *not supporting IE8*)
 
 
