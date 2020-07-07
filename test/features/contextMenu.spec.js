@@ -57,7 +57,11 @@ describe('contextMenu feature', function() {
   });
 
   describe('When _generateContextMenu() is called,', function() {
-    it('new floating layer should be generarated', function() {
+    it('should not generate a new floating layer at first time', function() {
+      expect(contextMenu.flElement).toEqual(document.getElementById('tree-fl'));
+    });
+
+    it('new floating layer should be generated', function() {
       contextMenu.flElement = null;
 
       spyOn(contextMenu, '_createFloatingLayer');

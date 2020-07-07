@@ -34,6 +34,7 @@ var ContextMenu = defineClass(
         return API_LIST.slice();
       }
     },
+
     init: function(tree, options) {
       var containerId = tree.rootElement.parentNode.id;
 
