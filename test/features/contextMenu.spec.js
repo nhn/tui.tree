@@ -1,6 +1,18 @@
 var Tree = require('../../src/js/tree');
 var TuiContextMenu = require('tui-context-menu');
 
+function clearBody() {
+  var flElement = document.getElementById('tree-fl');
+  var treeElement = document.getElementById('tree');
+
+  if (flElement && flElement.parentNode) {
+    flElement.parentNode.removeChild(flElement);
+  }
+  if (treeElement && treeElement.parentNode) {
+    treeElement.parentNode.removeChild(treeElement);
+  }
+}
+
 describe('contextMenu feature', function() {
   var rootElement, tree, contextMenu, menuData;
   var data = [
@@ -56,13 +68,28 @@ describe('contextMenu feature', function() {
     contextMenu = tree.enabledFeatures.ContextMenu;
   });
 
+  afterEach(function() {
+    clearBody();
+  });
+
   describe('When _generateContextMenu() is called,', function() {
-    it('should not generate new floating layer at first time', function() {
-      spyOn(contextMenu, '_createFloatingLayer');
+    it('should not generate new floating layer, if flElement exist', function() {
+      var flElement = document.createElement('div');
+      flElement.id = 'tree-fl';
 
-      contextMenu._generateContextMenu();
+      clearBody();
+      loadFixtures('basicFixture.html');
+      document.body.appendChild(flElement);
 
-      expect(contextMenu._createFloatingLayer).not.toHaveBeenCalled();
+      tree = new Tree('#tree', {
+        rootElement: 'treeRoot',
+        data: data
+      });
+      tree.enableFeature('ContextMenu', {
+        menuData: menuData
+      });
+
+      expect(tree.enabledFeatures.ContextMenu.flElement).toEqual(flElement);
     });
 
     it('new floating layer should be generated', function() {
