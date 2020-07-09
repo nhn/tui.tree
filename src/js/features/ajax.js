@@ -2,7 +2,14 @@
  * @fileoverview Feature that tree action is enable to communicate server
  * @author NHN. FE dev Lab <dl_javascript@nhn.com>
  */
-var snippet = require('tui-code-snippet');
+
+var ajax = require('tui-code-snippet/ajax/index.js');
+var defineClass = require('tui-code-snippet/defineClass/defineClass');
+var extend = require('tui-code-snippet/object/extend');
+var isFunction = require('tui-code-snippet/type/isFunction');
+var isUndefined = require('tui-code-snippet/type/isUndefined');
+var bind = require('../util').bind;
+
 var API_LIST = [];
 var LOADER_CLASSNAME = 'tui-tree-loader';
 
@@ -17,7 +24,7 @@ var LOADER_CLASSNAME = 'tui-tree-loader';
  *  @param {boolean} [options.isLoadRoot] - Whether load data from root node or not
  * @ignore
  */
-var Ajax = snippet.defineClass(
+var Ajax = defineClass(
   /** @lends Ajax.prototype */ {
     static: {
       /**
@@ -30,7 +37,7 @@ var Ajax = snippet.defineClass(
       }
     },
     init: function(tree, options) {
-      options = snippet.extend({}, options);
+      options = extend({}, options);
 
       /**
        * Tree
@@ -60,7 +67,7 @@ var Ajax = snippet.defineClass(
        * State of loading root data or not
        * @type {boolean}
        */
-      this.isLoadRoot = !snippet.isUndefined(options.isLoadRoot) ? options.isLoadRoot : true;
+      this.isLoadRoot = !isUndefined(options.isLoadRoot) ? options.isLoadRoot : true;
 
       /**
        * Loader element
@@ -70,7 +77,7 @@ var Ajax = snippet.defineClass(
 
       this._createLoader();
 
-      tree.on('initFeature', snippet.bind(this._onInitFeature, this));
+      tree.on('initFeature', bind(this._onInitFeature, this));
     },
 
     /**
@@ -98,19 +105,18 @@ var Ajax = snippet.defineClass(
 
     /**
      * Load data to request server
-     * @param {string} type - Command type
+     * @param {string} command - Command type
      * @param {Function} callback - Executed function after response
-     * @param {Object} [params] - Values to make "data" property using request
+     * @param {Object} [data] - Values to make "data" property using request
      */
-    loadData: function(type, callback, params) {
-      var self = this;
+    loadData: function(command, callback, data) {
       var options;
 
-      if (!this.command || !this.command[type] || !this.command[type].url) {
+      if (!this.command || !this.command[command] || !this.command[command].url) {
         return;
       }
 
-      options = this._getDefaultRequestOptions(type, params);
+      options = this._getDefaultRequestOptions(command, data);
 
       /**
        * @event Tree#beforeAjaxRequest
@@ -126,8 +132,8 @@ var Ajax = snippet.defineClass(
        */
       if (
         !this.tree.invoke('beforeAjaxRequest', {
-          type: type,
-          params: params
+          command: command,
+          data: data
         })
       ) {
         return;
@@ -135,36 +141,36 @@ var Ajax = snippet.defineClass(
 
       this._showLoader();
 
-      options.success = function(response) {
-        self._responseSuccess(type, callback, response);
-      };
+      options.success = bind(function(response) {
+        this._responseSuccess(command, callback, response.data);
+      }, this);
 
-      options.error = function() {
-        self._responseError(type);
-      };
+      options.error = bind(function(error) {
+        this._responseError(command, error);
+      }, this);
 
-      $.ajax(options);
+      ajax(options);
     },
 
     /**
      * Processing when response is success
-     * @param {string} type - Command type
+     * @param {string} command - Command type
      * @param {Function} callback - Executed function after response
-     * @param {Object|boolean} [response] - Response data from server or return value of "parseData"
+     * @param {Object|boolean} [responseData] - Response data from server or return value of "parseData"
      * @private
      */
-    _responseSuccess: function(type, callback, response) {
+    _responseSuccess: function(command, callback, responseData) {
       var tree = this.tree;
       var data;
 
       this._hideLoader();
 
       if (this.parseData) {
-        response = this.parseData(type, response);
+        responseData = this.parseData(command, responseData);
       }
 
-      if (response) {
-        data = callback(response);
+      if (responseData) {
+        data = callback(responseData);
 
         /**
          * @event Tree#successAjaxResponse
@@ -180,7 +186,7 @@ var Ajax = snippet.defineClass(
          * });
          */
         tree.fire('successAjaxResponse', {
-          type: type,
+          command: command,
           data: data
         });
       } else {
@@ -193,52 +199,60 @@ var Ajax = snippet.defineClass(
          *     console.log(evt.command + ' response is fail!');
          * });
          */
-        tree.fire('failAjaxResponse', {type: type});
+        tree.fire('failAjaxResponse', {
+          command: command
+        });
       }
     },
 
     /**
      * Processing when response is error
-     * @param {string} type - Command type
+     * @param {string} command - Command type
      * @private
      */
-    _responseError: function(type) {
+    _responseError: function(command, error) {
       this._hideLoader();
 
       /**
        * @event Tree#errorAjaxResponse
        * @type {object} evt - Event data
        * @property {string} command - Command type
+       * @property {number} status - Error status code
+       * @property {string} statusText - Error status text
        * @example
        * tree.on('errorAjaxResponse', function(evt) {
        *     console.log(evt.command + ' response is error!');
        * });
        */
-      this.tree.fire('errorAjaxResponse', {type: type});
+      this.tree.fire('errorAjaxResponse', {
+        command: command,
+        status: error.status,
+        statusText: error.statusText
+      });
     },
 
     /**
      * Get default request options
      * @param {string} type - Command type
-     * @param {Object} [params] - Value of request option "data"
+     * @param {Object} [data] - Value of request option "data"
      * @returns {Object} Default options to request
      * @private
      */
-    _getDefaultRequestOptions: function(type, params) {
-      var options = this.command[type];
+    _getDefaultRequestOptions: function(type, data) {
+      var options = extend({}, this.command[type]);
 
-      if (snippet.isFunction(options.url)) {
+      if (isFunction(options.url)) {
         // for restful API url
-        options.url = options.url(params);
+        options.url = options.url(data);
       }
 
-      if (snippet.isFunction(options.data)) {
+      if (isFunction(options.params)) {
         // for custom request data
-        options.data = options.data(params);
+        options.params = options.params(data);
       }
 
-      options.type = options.type ? options.type.toLowerCase() : 'get';
-      options.dataType = options.dataType || 'json';
+      options.method = options.method || 'GET';
+      options.contentType = options.contentType || 'application/json';
 
       return options;
     },

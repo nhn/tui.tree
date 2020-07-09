@@ -16,10 +16,8 @@
             <button id="selectedBtn">select</button>
             <button id="deselectedBtn">deselect</button>
             <br>
-            <textarea id="selectedValue"></textarea>
+            <textarea id="selectedValue" readonly></textarea>
         </div>
-
-        <script src="https://uicdn.toast.com/tui.code-snippet/v1.5.0/tui-code-snippet.min.js"></script>
         <script src="../dist/tui-tree.js"></script>
         <script class="code-js">
 
@@ -63,7 +61,7 @@
             ]}
         ];
 
-        var tree = new tui.Tree('tree', {
+        var tree = new tui.Tree('#tree', {
             data: data,
             nodeDefaultState: 'opened'
         }).enableFeature('Selectable', {

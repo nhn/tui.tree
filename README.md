@@ -1,81 +1,82 @@
 # TOAST UI Component : Tree
+
 > Component that displays data hierarchically.
 
 [![GitHub release](https://img.shields.io/github/release/nhn/tui.tree.svg)](https://github.com/nhn/tui.tree/releases/latest)
 [![npm](https://img.shields.io/npm/v/tui-tree.svg)](https://www.npmjs.com/package/tui-tree)
-[![GitHub license](https://img.shields.io/github/license/nhn/tui.tree.svg)](https://github.com/nhn/tui.tree/blob/production/LICENSE)
-[![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhn/tui.project-name/labels/help%20wanted)
+[![GitHub license](https://img.shields.io/github/license/nhn/tui.tree.svg)](https://github.com/nhn/tui.tree/blob/master/LICENSE)
+[![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhn/tui.tree/labels/Help%20Wanted%20🤝)
 [![code with hearth by NHN](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN-ff1414.svg)](https://github.com/nhn)
-
 
 <p><a href="https://nhn.github.io/tui.tree/latest/"><img src="https://user-images.githubusercontent.com/8615506/64508620-d784ef00-d318-11e9-82b1-9cb93a2955c5.gif" /></a></p>
 
-
 ## 🚩 Table of Contents
-* [Collect statistics on the use of open source](#Collect-statistics-on-the-use-of-open-source)
-* [Documents](#-documents)
-* [Features](#-features)
-* [Examples](#-examples)
-* [Install](#-install)
-* [Usage](#-usage)
-* [Dependency](#-dependency)
-* [Browser Support](#-browser-support)
-* [Pull Request Steps](#-pull-request-steps)
-* [Contributing](#-contributing)
-* [TOAST UI Family](#-toast-ui-family)
-* [License](#-license)
 
+- [Collect statistics on the use of open source](#Collect-statistics-on-the-use-of-open-source)
+- [Documents](#-documents)
+- [Features](#-features)
+- [Examples](#-examples)
+- [Install](#-install)
+- [Usage](#-usage)
+- [Dependency](#-dependency)
+- [Browser Support](#-browser-support)
+- [Pull Request Steps](#-pull-request-steps)
+- [Contributing](#-contributing)
+- [TOAST UI Family](#-toast-ui-family)
+- [License](#-license)
 
 ## Collect statistics on the use of open source
- TOAST UI Tree applies Google Analytics (GA) to collect statistics on the use of open source, in order to identify how widely TOAST UI Tree is used throughout the world.
+
+TOAST UI Tree applies Google Analytics (GA) to collect statistics on the use of open source, in order to identify how widely TOAST UI Tree is used throughout the world.
 It also serves as important index to determine the future course of projects.
 `location.hostname` (e.g. > “ui.toast.com") is to be collected and the sole purpose is nothing but to measure statistics on the usage.
- To disable GA, use the following `usageStatistics` option when creating the instance.
- ```js
-var options = {
-    ...
-    usageStatistics: false
+To disable GA, use the following `usageStatistics` option when creating the instance.
+
+```js
+const options = {
+ ...
+ usageStatistics: false
 }
-var instance = new Tree(container, options);
+const instance = new Tree(container, options);
 ```
 
-Or, include [`tui-code-snippet`](https://github.com/nhn/tui.code-snippet)(**v1.5.0** or **later**) and then immediately write the options as follows:
+Or, include [`tui-code-snippet`](https://github.com/nhn/tui.code-snippet)(**v2.3.0** or **later**) and then immediately write the options as follows:
 
 ```js
 tui.usageStatistics = false;
 ```
 
-
 ## 📙 Documents
-* [Getting Started](https://github.com/nhn/tui.tree/blob/production/docs/getting-started.md)
-* [Tutorials](https://github.com/nhn/tui.tree/tree/production/docs)
-* [APIs](https://nhn.github.io/tui.tree/latest)
+
+- [Getting Started](https://github.com/nhn/tui.tree/blob/master/docs/getting-started.md)
+- [How to use Ajax feature](https://github.com/nhn/tui.tree/blob/master/docs/ajax-feature.md)
+- [APIs](https://nhn.github.io/tui.tree/latest)
+- [v4.0.0 Migration Guide](https://github.com/nhn/tui.tree/blob/master/docs/v4.0.0-migration-guide.md)
 
 You can also see the older versions of API page on the [releases page](https://github.com/nhn/tui.tree/releases).
 
-
 ## 🎨 Features
-* Creates each node hierarchically by data.
-* Folds or unfolds the children of each node.
-* Supports optional features.
-    * `Selectable` : Each node can be selected.
-    * `Draggable` : Each node can be moved.
-    * `Editable` : Each node can be edited.
-    * `ContextMenu` : A context menu can be created for each node.
-    * `Checkbox` : A checkbox can be added to each node and a 3-state checkbox is used.
-    * `Ajax` : Requests server and handles the `CRUD` for each node.
-* Supports templates.
-* Supports custom events.
-* Provides the file of default css style.
 
+- Creates each node hierarchically by data.
+- Folds or unfolds the children of each node.
+- Supports optional features.
+  - `Selectable` : Each node can be selected.
+  - `Draggable` : Each node can be moved.
+  - `Editable` : Each node can be edited.
+  - `ContextMenu` : A context menu can be created for each node. (_Not supporting IE8_)
+  - `Checkbox` : A checkbox can be added to each node and a 3-state checkbox is used.
+  - `Ajax` : Requests server and handles the `CRUD` for each node.
+- Supports templates.
+- Supports custom events.
+- Provides the file of default css style.
 
 ## 🐾 Examples
-* [Basic](https://nhn.github.io/tui.tree/latest/tutorial-example01-basic) : Example of using default options.
-* [Using checkbox](https://nhn.github.io/tui.tree/latest/tutorial-example07-checkbox) : Example of adding checkbox on each node and handling.
-* [Using Ajax](https://nhn.github.io/tui.tree/latest/tutorial-example08-ajax) : Example of using server request, `Selectable`, `Draggable`, `Editable`, `ContextMenu` features.
+
+- [Basic](https://nhn.github.io/tui.tree/latest/tutorial-example01-basic) : Example of using default options.
+- [Using checkbox](https://nhn.github.io/tui.tree/latest/tutorial-example07-checkbox) : Example of adding checkbox on each node and handling.
+- [Using Ajax](https://nhn.github.io/tui.tree/latest/tutorial-example08-ajax) : Example of using server request, `Selectable`, `Draggable`, `Editable`, `ContextMenu` features.
 
 More examples can be found on the left sidebar of each example page, and have fun with it.
-
 
 ## 💾 Install
 
@@ -84,32 +85,30 @@ However, we highly recommend using the package manager.
 
 ### Via Package Manager
 
-TOAST UI products are registered in two package managers, [npm](https://www.npmjs.com/) and [bower](https://bower.io/).
+TOAST UI products are registered in the package manager, [npm](https://www.npmjs.com/).
 You can conveniently install it using the commands provided by each package manager.
 When using npm, be sure to use it in the environment [Node.js](https://nodejs.org/ko/) is installed.
 
 #### npm
 
-``` sh
+```sh
 $ npm install --save tui-tree # Latest version
 $ npm install --save tui-tree@<version> # Specific version
 ```
 
-#### bower
-
-``` sh
-$ bower install tui-tree # Latest version
-$ bower install tui-tree#<tag> # Specific version
-```
-
 ### Via Contents Delivery Network (CDN)
+
 TOAST UI products are available over the CDN powered by [TOAST Cloud](https://www.toast.com).
 
 You can use the CDN as below.
 
 ```html
 <script src="https://uicdn.toast.com/tui-tree/latest/tui-tree.js"></script>
-<link rel="stylesheet" type="text/css" href="https://uicdn.toast.com/tui-tree/latest/tui-tree.css">
+<link
+  rel="stylesheet"
+  type="text/css"
+  href="https://uicdn.toast.com/tui-tree/latest/tui-tree.css"
+/>
 ```
 
 If you want to use a specific version, use the tag name instead of `latest` in the url's path.
@@ -119,26 +118,26 @@ The CDN directory has the following structure.
 ```
 tui-tree/
 ├─ latest/
+│  ├─ tui-tree.css
 │  ├─ tui-tree.js
-│  ├─ tui-tree.min.js
-│  └─ tui-tree.css
+│  ├─ tui-tree.min.css
+│  └─ tui-tree.min.js
 ├─ v3.3.0/
 │  ├─ ...
 ```
 
 ### Download Source Files
-* [Download bundle files](https://github.com/nhn/tui.tree/tree/production/dist)
-* [Download all sources for each version](https://github.com/nhn/tui.tree/releases)
 
+- [Download bundle files and all sources for each version](https://github.com/nhn/tui.tree/releases)
 
 ## 🔨 Usage
 
 ### HTML
 
-Add the container element to create the component.
+Add the container element to create the component. A wrapper element should have `tui-tree-wrap` as a class name to apply tui-tree's style.
 
-``` html
-<div id="tui-tree-container" class="tui-tree-wrap"></div>
+```html
+<div id="tree" class="tui-tree-wrap"></div>
 ```
 
 ### JavaScript
@@ -147,42 +146,43 @@ This can be used by creating an instance with the constructor function.
 To get the constructor function, you should import the module using one of the following ways depending on your environment.
 
 #### Using namespace in browser environment
-``` javascript
-var Tree = tui.Tree;
+
+```javascript
+const Tree = tui.Tree;
 ```
 
 #### Using module format in node environment
-``` javascript
-var Tree = require('tui-tree'); /* CommonJS */
+
+```javascript
+const Tree = require('tui-tree'); /* CommonJS */
 ```
 
-``` javascript
-import {Tree} from 'tui-tree'; /* ES6 */
+```javascript
+import Tree from 'tui-tree'; /* ES6 */
 ```
 
 You can create an instance with [options](https://nhn.github.io/tui.tree/latest/Tree) and call various APIs after creating an instance.
 
-``` javascript
-var container = document.getElementById('tui-tree-container');
-var instance = new Tree(container, { ... });
+```javascript
+const container = document.getElementById('tree');
+const instance = new Tree(container, { ... });
 
 instance.add( ... );
 ```
 
 For more information about the API, please see [here](https://nhn.github.io/tui.tree/latest/Tree).
 
-
 ## 🔩 Dependency
-* [tui-code-snippet](https://github.com/nhn/tui.code-snippet) >=1.5.0
-* [tui-context-menu](https://github.com/nhn/tui.context-menu) >=2.1.1 (Optional, needs forusing `ContextMenu` feature)
-* [jQuery](https://github.com/jquery/jquery/tree/1.12-stable) >=1.11.0 (Optional, needs for using `Ajax` feature)
 
+- [tui-context-menu](https://github.com/nhn/tui.context-menu) >=2.1.6 (Optional, needs forusing `ContextMenu` feature, _not supporting IE8_)
 
 ## 🌏 Browser Support
-| <img src="https://user-images.githubusercontent.com/1215767/34348387-a2e64588-ea4d-11e7-8267-a43365103afe.png" alt="Chrome" width="16px" height="16px" /> Chrome | <img src="https://user-images.githubusercontent.com/1215767/34348590-250b3ca2-ea4f-11e7-9efb-da953359321f.png" alt="IE" width="16px" height="16px" /> Internet Explorer | <img src="https://user-images.githubusercontent.com/1215767/34348380-93e77ae8-ea4d-11e7-8696-9a989ddbbbf5.png" alt="Edge" width="16px" height="16px" /> Edge | <img src="https://user-images.githubusercontent.com/1215767/34348394-a981f892-ea4d-11e7-9156-d128d58386b9.png" alt="Safari" width="16px" height="16px" /> Safari | <img src="https://user-images.githubusercontent.com/1215767/34348383-9e7ed492-ea4d-11e7-910c-03b39d52f496.png" alt="Firefox" width="16px" height="16px" /> Firefox |
-| :---------: | :---------: | :---------: | :---------: | :---------: |
-| Yes | 8+ | Yes | Yes | Yes |
 
+| <img src="https://user-images.githubusercontent.com/1215767/34348387-a2e64588-ea4d-11e7-8267-a43365103afe.png" alt="Chrome" width="16px" height="16px" /> Chrome | <img src="https://user-images.githubusercontent.com/1215767/34348590-250b3ca2-ea4f-11e7-9efb-da953359321f.png" alt="IE" width="16px" height="16px" /> Internet Explorer | <img src="https://user-images.githubusercontent.com/1215767/34348380-93e77ae8-ea4d-11e7-8696-9a989ddbbbf5.png" alt="Edge" width="16px" height="16px" /> Edge | <img src="https://user-images.githubusercontent.com/1215767/34348394-a981f892-ea4d-11e7-9156-d128d58386b9.png" alt="Safari" width="16px" height="16px" /> Safari | <img src="https://user-images.githubusercontent.com/1215767/34348383-9e7ed492-ea4d-11e7-910c-03b39d52f496.png" alt="Firefox" width="16px" height="16px" /> Firefox |
+| :--------------------------------------------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+|                                                                               Yes                                                                                |                                                                                   8+                                                                                    |                                                                             Yes                                                                              |                                                                               Yes                                                                                |                                                                                Yes                                                                                 |
+
+- ContextMenu feature does not support IE8.
 
 ## 🔧 Pull Request Steps
 
@@ -195,7 +195,7 @@ Fork `develop` branch into your personal repository.
 Clone it to local computer. Install node modules.
 Before starting development, you should check to haveany errors.
 
-``` sh
+```sh
 $ git clone https://github.com/{your-personal-repo}/tui.tree.git
 $ cd tui.tree
 $ npm install
@@ -210,14 +210,14 @@ Don't miss adding test cases and then make green rights.
 
 #### Run webpack-dev-server
 
-``` sh
+```sh
 $ npm run serve
 $ npm run serve:ie8 # Run on Internet Explorer 8
 ```
 
 #### Run karma test
 
-``` sh
+```sh
 $ npm run test
 ```
 
@@ -228,24 +228,22 @@ If it has no error, commit and then push it!
 
 For more information on PR's step, please see links of Contributing section.
 
-
 ## 💬 Contributing
-* [Code of Conduct](https://github.com/nhn/tui.tree/blob/production/CODE_OF_CONDUCT.md)
-* [Contributing guideline](https://github.com/nhn/tui.tree/blob/production/CONTRIBUTING.md)
-* [Issue guideline](https://github.com/nhn/tui.tree/blob/production/docs/ISSUE_TEMPLATE.md)
-* [Commit convention](https://github.com/nhn/tui.tree/blob/production/docs/COMMIT_MESSAGE_CONVENTION.md)
 
+- [Code of Conduct](https://github.com/nhn/tui.tree/blob/master/CODE_OF_CONDUCT.md)
+- [Contributing guideline](https://github.com/nhn/tui.tree/blob/master/CONTRIBUTING.md)
+- [Issue guideline](https://github.com/nhn/tui.tree/blob/master/docs/ISSUE_TEMPLATE.md)
+- [Commit convention](https://github.com/nhn/tui.tree/blob/master/docs/COMMIT_MESSAGE_CONVENTION.md)
 
 ## 🍞 TOAST UI Family
 
-* [TOAST UI Editor](https://github.com/nhn/tui.editor)
-* [TOAST UI Calendar](https://github.com/nhn/tui.calendar)
-* [TOAST UI Chart](https://github.com/nhn/tui.chart)
-* [TOAST UI Image-Editor](https://github.com/nhn/tui.image-editor)
-* [TOAST UI Grid](https://github.com/nhn/tui.grid)
-* [TOAST UI Components](https://github.com/nhn)
-
+- [TOAST UI Editor](https://github.com/nhn/tui.editor)
+- [TOAST UI Calendar](https://github.com/nhn/tui.calendar)
+- [TOAST UI Chart](https://github.com/nhn/tui.chart)
+- [TOAST UI Image-Editor](https://github.com/nhn/tui.image-editor)
+- [TOAST UI Grid](https://github.com/nhn/tui.grid)
+- [TOAST UI Components](https://github.com/nhn)
 
 ## 📜 License
 
-This software is licensed under the [MIT](https://github.com/nhn/tui.tree/blob/production/LICENSE) © [NHN](https://github.com/nhn).
+This software is licensed under the [MIT](https://github.com/nhn/tui.tree/blob/master/LICENSE) © [NHN](https://github.com/nhn).

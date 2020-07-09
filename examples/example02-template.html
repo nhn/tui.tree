@@ -19,7 +19,6 @@
         </div>
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/2.3.0/mustache.min.js"></script>
-        <script src="https://uicdn.toast.com/tui.code-snippet/v1.5.0/tui-code-snippet.min.js"></script>
         <script src="../dist/tui-tree.js"></script>
         <script class="code-js">
 
@@ -89,7 +88,7 @@
                 '</span>' +
             '</div>';
 
-        var tree = new tui.Tree('tree', {
+        var tree = new tui.Tree('#tree', {
             data: data,
             nodeDefaultState: 'opened',
             template: {

@@ -6,7 +6,7 @@
         <link rel="stylesheet" type="text/css" href="./css/tui-example-style.css" />
         <link rel="stylesheet" type="text/css" href="./css/docs.css" />
         <link rel="stylesheet" type="text/css" href="../dist/tui-tree.css" />
-        <link rel="stylesheet" type="text/css" href="https://uicdn.toast.com/tui.context-menu/v2.1.1/tui-context-menu.css" />
+        <link rel="stylesheet" type="text/css" href="https://uicdn.toast.com/tui.context-menu/v2.1.6/tui-context-menu.css" />
     </head>
 
     <body>
@@ -14,20 +14,17 @@
             <div id="tree" class="tui-tree-wrap"></div>
         </div>
         <div class="explain">
-            <textarea id="infoArea"></textarea>
+            <h3>To create / update / remove a tree node, please right-click.</h3>
+            <p>ContextMenu feature does not support IE8.</p>
+            <textarea id="before-ajax-request" readonly></textarea>
+            <textarea id="success-ajax-response" readonly></textarea>
         </div>
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-        <script src="https://uicdn.toast.com/tui.code-snippet/v1.5.0/tui-code-snippet.min.js"></script>
-        <script src="https://uicdn.toast.com/tui.dom/v3.0.0/tui-dom.min.js"></script>
-        <script src="https://uicdn.toast.com/tui.context-menu/v2.1.1/tui-context-menu.min.js"></script>
+        <script src="https://uicdn.toast.com/tui.context-menu/v2.1.6/tui-context-menu.min.js"></script>
         <script src="../dist/tui-tree.js"></script>
         <script class="code-js">
-
-        var infoArea = document.getElementById('infoArea');
-
         // Create Tree component
-        var tree = new tui.Tree('tree', {
+        var tree = new tui.Tree('#tree', {
             nodeDefaultState: 'opened',
             template: {
                 internalNode: // Change to Mustache's format
@@ -54,90 +51,12 @@
             }
         });
 
-        // Add features
-        tree.enableFeature('Selectable')
-            .enableFeature('Editable', {
-            dataKey: 'text'
-        }).enableFeature('Draggable', {
-            isSortable: true
-        }).enableFeature('ContextMenu', {
-            menuData: [
-                {title: 'create', command: 'create'},
-                {title: 'update', command: 'update'},
-                {title: 'remove', command: 'remove'}
-            ]
-        }).enableFeature('Ajax', {
-            command: {
-                read: {
-                    url: 'data/tree.js',
-                    dataType: 'jsonp',
-                    jsonpCallback: 'dataCallback',
-                    data: function(params) {
-                        return {
-                            productId: tree.getNodeData(params.nodeId).pid
-                        };
-                    }
-                },
-                create: {
-                    url: 'data/response.js',
-                    dataType: 'jsonp',
-                    jsonpCallback: 'dataCallback',
-                    data: function(params) {
-                        return {
-                            targetId: tree.getNodeData(params.parentId).pid,
-                            productName: params.data.text
-                        };
-                    }
-                },
-                update: {
-                    url: 'data/response.js',
-                    dataType: 'jsonp',
-                    jsonpCallback: 'dataCallback',
-                    data: function(params) {
-                        return {
-                            productId: tree.getNodeData(params.nodeId).pid,
-                            productName: params.data.text
-                        };
-                    }
-                },
-                remove: {
-                    url: 'data/response.js',
-                    dataType: 'jsonp',
-                    jsonpCallback: 'dataCallback',
-                    data: function(params) {
-                        return {
-                            productId: tree.getNodeData(params.nodeId).pid
-                        };
-                    }
-                },
-                move: {
-                    url: 'data/response.js',
-                    dataType: 'jsonp',
-                    jsonpCallback: 'dataCallback',
-                    data: function(params) {
-                        return {
-                            productId: tree.getNodeData(params.nodeId).pid,
-                            targetId: tree.getNodeData(params.newParentId).pid,
-                            moveIdx: params.index
-                        };
-                    }
-                }
-            },
-            parseData: function(command, response) {
-                if (command === 'read') {
-                    return response.code === '200' ? response.tree : false;
-                } else {
-                    return response.code === '200';
-                }
-            }
-        });
-
         // Bind custom event
         tree.on('selectContextMenu', function(e) {
-            var cmd = e.cmd;
+            var command = e.command;
             var nodeId = e.nodeId;
 
-            switch (cmd) {
+            switch (command) {
                 case 'create':
                     tree.createChildNode(nodeId);
                     break;
@@ -156,7 +75,7 @@
                 tree.remove(event.nodeId);
                 return false;
             }
-            return confirm('create?');
+            return confirm('Are you sure you want to create?');
         });
 
         tree.on('beforeEditNode', function(event) {
@@ -164,23 +83,101 @@
                 tree.finishEditing();
                 return false;
             }
-            return confirm('edit?');
-        });
-
-        tree.on('successAjaxResponse', function(command, data) {
-            var message;
-
-            message = 'Command : ' + command  + '\n';
-            message += 'jQuery request options : \n';
-            message += JSON.stringify(tree.enabledFeatures.Ajax.command[command], null, 8);
-
-            infoArea.value = message;
+            return confirm('Are you sure you want to edit?');
         });
 
         tree.on('beforeMove', function() {
             console.log('before move');
         });
 
+        tree.on('beforeAjaxRequest', function(eventData) {
+            print('beforeAjaxRequest', eventData);
+        })
+
+        tree.on('successAjaxResponse', function(eventData) {
+            print('successAjaxResponse', eventData);
+        });
+
+        function print(title, jsonData) {
+            var textareaId = title.replace(/([A-Z])/g, '-$1').toLowerCase();
+            var message = title + ' : \n';
+            message += JSON.stringify(jsonData, null, 8);
+
+            document.getElementById(textareaId).value = message
+        }
+
+        // Add features
+        tree.enableFeature('Selectable')
+            .enableFeature('Editable', {
+            dataKey: 'text'
+        }).enableFeature('Draggable', {
+            isSortable: true
+        }).enableFeature('ContextMenu', {
+            menuData: [
+                {title: 'create', command: 'create'},
+                {title: 'update', command: 'update'},
+                {title: 'remove', command: 'remove'}
+            ]
+        }).enableFeature('Ajax', {
+            command: {
+                read: {
+                    url: 'data/tree.json',
+                    contentType: 'application/json',
+                    params: function(treeData) {
+                        return {
+                            productId: tree.getNodeData(treeData.nodeId).pid
+                        };
+                    }
+                },
+                create: {
+                    url: 'data/response.json',
+                    contentType: 'application/json',
+                    params: function(treeData) {
+                        return {
+                            targetId: tree.getNodeData(treeData.parentId).pid,
+                            productName: treeData.data.text
+                        };
+                    }
+                },
+                update: {
+                    url: 'data/response.json',
+                    contentType: 'application/json',
+                    params: function(treeData) {
+                        return {
+                            productId: tree.getNodeData(treeData.nodeId).pid,
+                            productName: treeData.data.text
+                        };
+                    }
+                },
+                remove: {
+                    url: 'data/response.json',
+                    contentType: 'application/json',
+                    params: function(treeData) {
+                        return {
+                            productId: tree.getNodeData(treeData.nodeId).pid
+                        };
+                    }
+                },
+                move: {
+                    url: 'data/response.json',
+                    contentType: 'application/json',
+                    params: function(treeData) {
+                        return {
+                            productId: tree.getNodeData(treeData.nodeId).pid,
+                            targetId: tree.getNodeData(treeData.newParentId).pid,
+                            moveIdx: treeData.index
+                        };
+                    }
+                }
+            },
+            parseData: function(command, responseData) {
+                if (command === 'read') {
+                    return responseData.tree;
+                } else {
+                    return true;
+                }
+            }
+        });
         </script>
     </body>
 </html>

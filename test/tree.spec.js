@@ -1,39 +1,40 @@
-var snippet = require('tui-code-snippet');
-var Tree = require('../src/js/tree'),
-  util = require('../src/js/util'),
-  messages = require('../src/js/consts/messages');
+var template = require('tui-code-snippet/domUtil/template');
+
+var Tree = require('../src/js/tree');
+var util = require('../src/js/util');
+var messages = require('../src/js/consts/messages');
 
 describe('Tree', function() {
   var data = [
     {
       text: 'A',
       children: [
-        {text: '1'},
-        {text: '2'},
-        {text: '3'},
-        {text: '4'},
-        {text: '5', children: [{text: '가', children: [{text: '*'}]}, {text: '나'}]},
-        {text: '6'},
-        {text: '7'},
-        {text: '8'},
-        {text: '9', children: [{text: '가'}, {text: '나'}]},
-        {text: '10'},
-        {text: '11'},
-        {text: '12'}
+        { text: '1' },
+        { text: '2' },
+        { text: '3' },
+        { text: '4' },
+        { text: '5', children: [{ text: '가', children: [{ text: '*' }] }, { text: '나' }] },
+        { text: '6' },
+        { text: '7' },
+        { text: '8' },
+        { text: '9', children: [{ text: '가' }, { text: '나' }] },
+        { text: '10' },
+        { text: '11' },
+        { text: '12' }
       ]
     },
     {
       text: 'B',
-      children: [{text: '1'}, {text: '2'}, {text: '3'}, {text: '4'}, {text: '5'}]
+      children: [{ text: '1' }, { text: '2' }, { text: '3' }, { text: '4' }, { text: '5' }]
     }
   ];
-  var $rootElement, tree, firstChildId, lastChildId, grandChildId, firstChild, container;
+  var rootElement, tree, firstChildId, lastChildId, grandChildId, firstChild, container;
 
   describe('function', function() {
     beforeEach(function() {
       loadFixtures('basicFixture.html');
 
-      container = 'tree';
+      container = '#tree';
 
       tree = new Tree(container, {
         rootElement: 'treeRoot',
@@ -44,7 +45,7 @@ describe('Tree', function() {
             '<span class="{{textClass}}">{{text}}</span>'
         }
       });
-      $rootElement = $(tree.rootElement);
+      rootElement = tree.rootElement;
       firstChildId = tree.model.rootNode.getChildIds()[0];
       firstChild = tree.model.getNode(firstChildId);
       lastChildId = tree.model.rootNode.getChildIds().slice(-1)[0]; // slice(-1) returns a value of last index
@@ -53,7 +54,7 @@ describe('Tree', function() {
 
     it('should throw an error if has invalid root element', function() {
       expect(function() {
-        return new Tree('tree2');
+        return new Tree('#tree2');
       }).toThrowError(messages.INVALID_CONTAINER_ELEMENT);
     });
 
@@ -66,17 +67,17 @@ describe('Tree', function() {
     });
 
     it('should make correct DOM', function() {
-      var textElement = $rootElement.find('.tui-tree-node .tui-tree-text')[0];
+      var textElement = rootElement.querySelector('.tui-tree-node .tui-tree-text');
       var textNode = util.getFirstTextNode(textElement);
 
       expect(textNode.nodeValue).toEqual('A');
     });
 
     it('should make DOM from optional-template', function() {
-      var $leafNodes = $rootElement.find('.tui-tree-leaf'),
-        $leafLabels = $leafNodes.find('.tui-tree-leaf-label');
+      var leafNodes = rootElement.querySelectorAll('.tui-tree-leaf');
+      var leafLabels = rootElement.querySelectorAll('.tui-tree-leaf .tui-tree-leaf-label');
 
-      expect($leafLabels.length).toEqual($leafNodes.length);
+      expect(leafLabels.length).toEqual(leafNodes.length);
     });
 
     it('"open()" should change state of a node to "opened"', function() {
@@ -99,10 +100,10 @@ describe('Tree', function() {
     });
 
     it('should fire singleClick event', function() {
-      var handler = jasmine.createSpy('singleClick handler'),
-        eventMock = {
-          target: document.createElement('DIV')
-        };
+      var handler = jasmine.createSpy('singleClick handler');
+      var eventMock = {
+        target: document.createElement('DIV')
+      };
 
       jasmine.clock().uninstall();
       jasmine.clock().install();
@@ -118,9 +119,9 @@ describe('Tree', function() {
     });
 
     it('"open(), close()" should change button label', function() {
-      var firstChildElement = document.getElementById(firstChildId),
-        btnElement = $(firstChildElement).find('.' + tree.classNames.toggleBtnClass)[0],
-        textNode = util.getFirstTextNode(btnElement);
+      var firstChildElement = document.getElementById(firstChildId);
+      var btnElement = firstChildElement.querySelector('.' + tree.classNames.toggleBtnClass);
+      var textNode = util.getFirstTextNode(btnElement);
 
       tree.close(firstChildId);
       expect(textNode.nodeValue).toEqual(tree.stateLabels.closed);
@@ -146,7 +147,7 @@ describe('Tree', function() {
         lastDepthNode = tree.model.getNode(lastDepthId);
       });
 
-      it('"open()" use recursive option should change the state of all parent nodes to "open"', function() {
+      it('"open()" using recursive option should change the state of all parent nodes to "open"', function() {
         tree.open(lastDepthId, true);
 
         expect(oneDepthNode.getState()).toBe('opened');
@@ -154,7 +155,7 @@ describe('Tree', function() {
         expect(lastDepthNode.getState()).toBe('opened');
       });
 
-      it('"close()" use recursive option should change the state of all children nodes to "close"', function() {
+      it('"close()" using recursive option should change the state of all children nodes to "close"', function() {
         tree.open(tree.model.rootNode.getChildIds()[0]);
         tree.open(oneDepthNode.getChildIds()[4]);
         tree.open(twoDepthNode.getChildIds()[0]);
@@ -168,10 +169,10 @@ describe('Tree', function() {
     });
 
     it('should fire doubleClick event', function() {
-      var handler = jasmine.createSpy('doubleClick handler'),
-        eventMock = {
-          target: document.createElement('DIV')
-        };
+      var handler = jasmine.createSpy('doubleClick handler');
+      var eventMock = {
+        target: document.createElement('DIV')
+      };
 
       tree.on('doubleClick', handler);
       tree._onDoubleClick(eventMock);
@@ -182,7 +183,7 @@ describe('Tree', function() {
     it('"add() with no "isSilent" flag" should redraw nodes', function() {
       var childCount = firstChild.getChildIds().length;
       var subtreeElement;
-      var testData = [{text: 'hello world'}, {text: 'new world'}];
+      var testData = [{ text: 'hello world' }, { text: 'new world' }];
 
       spyOn(tree, '_draw').and.callThrough();
 
@@ -195,8 +196,8 @@ describe('Tree', function() {
 
     it('"add()" should return node ids of new added nodes', function() {
       var testData = [
-        {text: 'hello world', children: [{text: 'foo'}, {text: 'bar'}]},
-        {text: 'new world'}
+        { text: 'hello world', children: [{ text: 'foo' }, { text: 'bar' }] },
+        { text: 'new world' }
       ];
       var ids = tree.add(testData, firstChildId, false, false);
 
@@ -205,9 +206,9 @@ describe('Tree', function() {
     });
 
     it('"remove()" should redraw nodes without removed node(s)', function() {
-      var childCount = firstChild.getChildIds().length,
-        idForRemoving = firstChild.getChildIds()[0],
-        subtreeElement;
+      var childCount = firstChild.getChildIds().length;
+      var idForRemoving = firstChild.getChildIds()[0];
+      var subtreeElement;
 
       tree.remove(idForRemoving);
       subtreeElement = document.getElementById(firstChildId).lastChild;
@@ -262,7 +263,7 @@ describe('Tree', function() {
 
     it('option:"renderTemplate" should override template renderer', function() {
       var templateRenderer = jasmine.createSpy().and.callFake(function(source, props) {
-        return util.renderTemplate(source, props);
+        return template(source, props);
       });
 
       tree = new Tree(container, {
@@ -290,91 +291,57 @@ describe('Tree', function() {
     });
 
     it('"resetAllData()" should reset all nodes from new data', function() {
-      var testData = [{text: 'hello'}, {text: 'wolrd'}];
+      var testData = [{ text: 'hello' }, { text: 'wolrd' }];
       var newChildIds = tree.resetAllData(testData);
       var rootNodeId = tree.getRootNodeId();
 
       expect(newChildIds.length).toBe(2);
       expect(tree.getChildIds(rootNodeId)).toEqual(newChildIds);
-      expect($rootElement.children().length).toBe(2);
+      expect(rootElement.children.length).toBe(2);
     });
 
     it('"getNodeIndex()" should return index number of selected node in children list', function() {
-      var testData = [{text: 'child1'}, {text: 'child2'}];
+      var testData = [{ text: 'child1' }, { text: 'child2' }];
       var newChildIds = tree.resetAllData(testData);
       var prevNodeIdx = tree.getNodeIndex(newChildIds[1]);
 
       expect(prevNodeIdx).toEqual(1);
     });
 
-    it('When "resetAllData()" have nodeId parameter, it should reset children data of nodeId', function() {
-      var testData = [{text: 'A'}, {text: 'B'}];
+    it('it should reset children data of nodeId when "resetAllData()" have nodeId parameter', function() {
+      var testData = [{ text: 'A' }, { text: 'B' }];
       var nodeId = tree.getChildIds(tree.getRootNodeId())[0];
       var newChildIds = tree.resetAllData(testData, nodeId);
 
-      expect(tree.getNodeData(newChildIds[0])).toEqual({text: 'A'});
-      expect(tree.getNodeData(newChildIds[1])).toEqual({text: 'B'});
-    });
-
-    it('"getIndentWidth()" should return padding left by element\'s depth', function() {
-      var treeData = [
-        {
-          text: 'A',
-          children: [
-            {
-              text: '1',
-              children: [
-                {
-                  text: '가',
-                  children: [{text: '*'}, {text: '#', children: [{text: 'a'}]}, {text: '@'}]
-                }
-              ]
-            }
-          ]
-        }
-      ];
-      var treeNodes;
-      tree.resetAllData([]);
-      tree = new Tree(container, {
-        rootElement: 'treeRoot',
-        data: treeData
-      });
-
-      treeNodes = $(tree.rootElement).find('.tui-tree-node');
-
-      snippet.forEach(function(treeNode) {
-        var id = treeNode.id;
-        expect(treeNode.childNodes[0].style.paddingLeft).toBe(tree.getIndentWidth(id) + 'px');
-      }, treeNodes);
+      expect(tree.getNodeData(newChildIds[0])).toEqual({ text: 'A' });
+      expect(tree.getNodeData(newChildIds[1])).toEqual({ text: 'B' });
     });
   });
 
   describe('option', function() {
-    // hostnameSent module scope variable can not be reset.
-    // maintain cases with xit as it always fail, if you want to test these cases, change xit to fit one by one
     beforeEach(function() {
-      spyOn(snippet, 'sendHostname');
+      spyOn(util, 'sendHostName');
       loadFixtures('basicFixture.html');
-      container = 'tree';
+      container = '#tree';
     });
 
-    xit('should send hostname by default', function() {
+    it('should send hostname by default', function() {
       tree = new Tree(container, {
         rootElement: 'treeRoot',
         data: data
       });
 
-      expect(snippet.sendHostname).toHaveBeenCalled();
+      expect(util.sendHostName).toHaveBeenCalled();
     });
 
-    xit('should not send hostname on usageStatistics option false', function() {
+    it('should not send hostname on usageStatistics option false', function() {
       tree = new Tree(container, {
         rootElement: 'treeRoot',
         data: data,
         usageStatistics: false
       });
 
-      expect(snippet.sendHostname).not.toHaveBeenCalled();
+      expect(util.sendHostName).not.toHaveBeenCalled();
     });
   });
 });

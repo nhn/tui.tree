@@ -1,3 +1,5 @@
+var path = require('path');
+
 var webdriverConfig = {
   hostname: 'fe.nhnent.com',
   port: 4444,
@@ -130,16 +132,21 @@ module.exports = function(config) {
         rules: [
           {
             test: /\.js$/,
-            exclude: /(test|bower_components|node_modules)/,
+            exclude: /(test|node_modules)/,
             loader: 'istanbul-instrumenter-loader'
           },
           {
             test: /\.js$/,
-            exclude: /(dist|bower_components|node_modules)/,
+            exclude: /(dist|node_modules)/,
             loader: 'eslint-loader',
             enforce: 'pre'
           }
         ]
+      },
+      resolve: {
+        alias: {
+          '@': path.resolve(__dirname, './src/js')
+        }
       }
     },
     port: 9876,
