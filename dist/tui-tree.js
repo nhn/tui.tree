@@ -1,19 +1,19 @@
 /*!
  * TOAST UI Tree
- * @version 3.5.6
+ * @version 4.0.1
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("tui-code-snippet"), require("tui-context-menu"));
+		module.exports = factory(require("tui-context-menu"));
 	else if(typeof define === 'function' && define.amd)
-		define(["tui-code-snippet", "tui-context-menu"], factory);
+		define(["tui-context-menu"], factory);
 	else if(typeof exports === 'object')
-		exports["Tree"] = factory(require("tui-code-snippet"), require("tui-context-menu"));
+		exports["Tree"] = factory(require("tui-context-menu"));
 	else
-		root["tui"] = root["tui"] || {}, root["tui"]["Tree"] = factory(root["tui"]["util"], root["tui"]["ContextMenu"]);
-})(window, function(__WEBPACK_EXTERNAL_MODULE_tui_code_snippet__, __WEBPACK_EXTERNAL_MODULE_tui_context_menu__) {
+		root["tui"] = root["tui"] || {}, root["tui"]["Tree"] = factory(root["tui"]["ContextMenu"]);
+})(window, function(__WEBPACK_EXTERNAL_MODULE__60__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -97,219 +97,8889 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = "./src/js/index.js");
+/******/ 	return __webpack_require__(__webpack_require__.s = 33);
 /******/ })
 /************************************************************************/
-/******/ ({
-
-/***/ "./src/css/tree.css":
-/*!**************************!*\
-  !*** ./src/css/tree.css ***!
-  \**************************/
-/*! no static exports found */
+/******/ ([
+/* 0 */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("// extracted by mini-css-extract-plugin\n\n//# sourceURL=webpack://tui.Tree/./src/css/tree.css?");
+"use strict";
+/**
+ * @fileoverview Execute the provided callback once for each element present in the array(or Array-like object) in ascending order.
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+/**
+ * Execute the provided callback once for each element present
+ * in the array(or Array-like object) in ascending order.
+ * If the callback function returns false, the loop will be stopped.
+ * Callback function(iteratee) is invoked with three arguments:
+ *  1) The value of the element
+ *  2) The index of the element
+ *  3) The array(or Array-like object) being traversed
+ * @param {Array|Arguments|NodeList} arr The array(or Array-like object) that will be traversed
+ * @param {function} iteratee Callback function
+ * @param {Object} [context] Context(this) of callback function
+ * @memberof module:collection
+ * @example
+ * var forEachArray = require('tui-code-snippet/collection/forEachArray'); // node, commonjs
+ *
+ * var sum = 0;
+ *
+ * forEachArray([1,2,3], function(value){
+ *     sum += value;
+ * });
+ * alert(sum); // 6
+ */
+function forEachArray(arr, iteratee, context) {
+  var index = 0;
+  var len = arr.length;
+
+  context = context || null;
+
+  for (; index < len; index += 1) {
+    if (iteratee.call(context, arr[index], index, arr) === false) {
+      break;
+    }
+  }
+}
+
+module.exports = forEachArray;
+
 
 /***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
 
-/***/ "./src/js/consts/ajaxCommand.js":
-/*!**************************************!*\
-  !*** ./src/js/consts/ajaxCommand.js ***!
-  \**************************************/
-/*! no static exports found */
+"use strict";
+/**
+ * @fileoverview Extend the target object from other objects.
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+/**
+ * @module object
+ */
+
+/**
+ * Extend the target object from other objects.
+ * @param {object} target - Object that will be extended
+ * @param {...object} objects - Objects as sources
+ * @returns {object} Extended object
+ * @memberof module:object
+ */
+function extend(target, objects) { // eslint-disable-line no-unused-vars
+  var hasOwnProp = Object.prototype.hasOwnProperty;
+  var source, prop, i, len;
+
+  for (i = 1, len = arguments.length; i < len; i += 1) {
+    source = arguments[i];
+    for (prop in source) {
+      if (hasOwnProp.call(source, prop)) {
+        target[prop] = source[prop];
+      }
+    }
+  }
+
+  return target;
+}
+
+module.exports = extend;
+
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * @fileoverview Check whether the given variable is an instance of Array or not.
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+/**
+ * Check whether the given variable is an instance of Array or not.
+ * If the given variable is an instance of Array, return true.
+ * @param {*} obj - Target for checking
+ * @returns {boolean} Is array instance?
+ * @memberof module:type
+ */
+function isArray(obj) {
+  return obj instanceof Array;
+}
+
+module.exports = isArray;
+
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * @fileoverview
+ * This module provides a function to make a constructor
+ * that can inherit from the other constructors like the CLASS easily.
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+var inherit = __webpack_require__(36);
+var extend = __webpack_require__(1);
+
+/**
+ * @module defineClass
+ */
+
+/**
+ * Help a constructor to be defined and to inherit from the other constructors
+ * @param {*} [parent] Parent constructor
+ * @param {Object} props Members of constructor
+ *  @param {Function} props.init Initialization method
+ *  @param {Object} [props.static] Static members of constructor
+ * @returns {*} Constructor
+ * @memberof module:defineClass
+ * @example
+ * var defineClass = require('tui-code-snippet/defineClass/defineClass'); // node, commonjs
+ *
+ * //-- #2. Use property --//
+ * var Parent = defineClass({
+ *     init: function() { // constuructor
+ *         this.name = 'made by def';
+ *     },
+ *     method: function() {
+ *         // ...
+ *     },
+ *     static: {
+ *         staticMethod: function() {
+ *              // ...
+ *         }
+ *     }
+ * });
+ *
+ * var Child = defineClass(Parent, {
+ *     childMethod: function() {}
+ * });
+ *
+ * Parent.staticMethod();
+ *
+ * var parentInstance = new Parent();
+ * console.log(parentInstance.name); //made by def
+ * parentInstance.staticMethod(); // Error
+ *
+ * var childInstance = new Child();
+ * childInstance.method();
+ * childInstance.childMethod();
+ */
+function defineClass(parent, props) {
+  var obj;
+
+  if (!props) {
+    props = parent;
+    parent = null;
+  }
+
+  obj = props.init || function() {};
+
+  if (parent) {
+    inherit(obj, parent);
+  }
+
+  if (props.hasOwnProperty('static')) {
+    extend(obj, props['static']);
+    delete props['static'];
+  }
+
+  extend(obj.prototype, props);
+
+  return obj;
+}
+
+module.exports = defineClass;
+
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* eslint-disable complexity */
+/**
+ * @fileoverview Returns the first index at which a given element can be found in the array.
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+var isArray = __webpack_require__(2);
+
+/**
+ * @module array
+ */
+
+/**
+ * Returns the first index at which a given element can be found in the array
+ * from start index(default 0), or -1 if it is not present.
+ * It compares searchElement to elements of the Array using strict equality
+ * (the same method used by the ===, or triple-equals, operator).
+ * @param {*} searchElement Element to locate in the array
+ * @param {Array} array Array that will be traversed.
+ * @param {number} startIndex Start index in array for searching (default 0)
+ * @returns {number} the First index at which a given element, or -1 if it is not present
+ * @memberof module:array
+ * @example
+ * var inArray = require('tui-code-snippet/array/inArray'); // node, commonjs
+ *
+ * var arr = ['one', 'two', 'three', 'four'];
+ * var idx1 = inArray('one', arr, 3); // -1
+ * var idx2 = inArray('one', arr); // 0
+ */
+function inArray(searchElement, array, startIndex) {
+  var i;
+  var length;
+  startIndex = startIndex || 0;
+
+  if (!isArray(array)) {
+    return -1;
+  }
+
+  if (Array.prototype.indexOf) {
+    return Array.prototype.indexOf.call(array, searchElement, startIndex);
+  }
+
+  length = array.length;
+  for (i = startIndex; startIndex >= 0 && i < length; i += 1) {
+    if (array[i] === searchElement) {
+      return i;
+    }
+  }
+
+  return -1;
+}
+
+module.exports = inArray;
+
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/**
+ * @fileoverview Helper object to make easy tree elements
+ * @author NHN. FE dev Lab <dl_javascript@nhn.com>
+ */
+
+var inArray = __webpack_require__(4);
+var forEach = __webpack_require__(9);
+var forEachArray = __webpack_require__(0);
+var sendHostname = __webpack_require__(41);
+
+/**
+ * @ignore
+ */
+var util = {
+  /**
+   * Remove first specified item from array, if it exists
+   * @param {*} item Item to look for
+   * @param {Array} arr Array to query
+   */
+  removeItemFromArray: function(item, arr) {
+    var index = inArray(item, arr);
+
+    if (index > -1) {
+      arr.splice(index, 1);
+    }
+  },
+
+  /**
+   * Get key code from event object
+   * @param {Event} e Event object
+   * @returns {Number} KeyCode
+   */
+  getKeyCode: function(e) {
+    e = e || window.event;
+
+    return e.which || e.keyCode;
+  },
+
+  /**
+   * Get first text node in target element
+   * @param {HTMLElement} element - Target element to find
+   * @returns {HTMLElement} Text node
+   */
+  getFirstTextNode: function(element) {
+    var firstTextNode = '';
+
+    forEachArray(element.childNodes, function(childElement) {
+      if (childElement.nodeName === '#text') {
+        firstTextNode = childElement;
+
+        return false;
+      }
+
+      return true;
+    });
+
+    return firstTextNode;
+  },
+
+  /**
+   * Create a new function that, when called, has its this keyword set to the provided value.
+   * @param {function} fn A original function before binding
+   * @param {Object} obj context of function in arguments[0]
+   * @returns {function} A new bound function with context that is in arguments[1]
+   */
+  bind: function(fn, context) {
+    var slice = Array.prototype.slice;
+    var args;
+
+    if (fn.bind) {
+      return fn.bind.apply(fn, slice.call(arguments, 1));
+    }
+
+    args = slice.call(arguments, 2);
+
+    return function() {
+      return fn.apply(context, args.length ? args.concat(slice.call(arguments)) : arguments);
+    };
+  },
+
+  /**
+   * Construct a new array with elements that pass the test by the provided callback function.
+   * @param {Array|NodeList|Arguments} arr - array to be traversed
+   * @param {function} iteratee - callback function
+   * @param {Object} context - context of callback function
+   * @returns {Array}
+   */
+  filter: function(arr, iteratee, context) {
+    var result = [];
+
+    forEachArray(arr, function(elem) {
+      if (iteratee.apply(context || null, arguments)) {
+        result.push(elem);
+      }
+    });
+
+    return result;
+  },
+
+  /**
+   * Constructs a new array by executing the provided callback function.
+   * @param {Object|Array} obj - object or array to be traversed
+   * @param {function} iteratee - callback function
+   * @param {Object} context - context of callback function
+   * @returns {Array}
+   */
+  map: function(obj, iteratee, context) {
+    var result = [];
+
+    forEach(obj, function() {
+      result.push(iteratee.apply(context || null, arguments));
+    });
+
+    return result;
+  },
+
+  /**
+   * send host name
+   * @ignore
+   */
+  sendHostName: function() {
+    sendHostname('tree', 'UA-129987462-1');
+  }
+};
+
+module.exports = util;
+
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * @fileoverview Execute the provided callback once for each property of object which actually exist.
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+/**
+ * Execute the provided callback once for each property of object which actually exist.
+ * If the callback function returns false, the loop will be stopped.
+ * Callback function(iteratee) is invoked with three arguments:
+ *  1) The value of the property
+ *  2) The name of the property
+ *  3) The object being traversed
+ * @param {Object} obj The object that will be traversed
+ * @param {function} iteratee  Callback function
+ * @param {Object} [context] Context(this) of callback function
+ * @memberof module:collection
+ * @example
+ * var forEachOwnProperties = require('tui-code-snippet/collection/forEachOwnProperties'); // node, commonjs
+ *
+ * var sum = 0;
+ *
+ * forEachOwnProperties({a:1,b:2,c:3}, function(value){
+ *     sum += value;
+ * });
+ * alert(sum); // 6
+ */
+function forEachOwnProperties(obj, iteratee, context) {
+  var key;
+
+  context = context || null;
+
+  for (key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      if (iteratee.call(context, obj[key], key, obj) === false) {
+        break;
+      }
+    }
+  }
+}
+
+module.exports = forEachOwnProperties;
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * @fileoverview Check whether the given variable is undefined or not.
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+/**
+ * Check whether the given variable is undefined or not.
+ * If the given variable is undefined, returns true.
+ * @param {*} obj - Target for checking
+ * @returns {boolean} Is undefined?
+ * @memberof module:type
+ */
+function isUndefined(obj) {
+  return obj === undefined; // eslint-disable-line no-undefined
+}
+
+module.exports = isUndefined;
+
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * @fileoverview Check whether the given variable is a string or not.
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+/**
+ * Check whether the given variable is a string or not.
+ * If the given variable is a string, return true.
+ * @param {*} obj - Target for checking
+ * @returns {boolean} Is string?
+ * @memberof module:type
+ */
+function isString(obj) {
+  return typeof obj === 'string' || obj instanceof String;
+}
+
+module.exports = isString;
+
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * @fileoverview Execute the provided callback once for each property of object(or element of array) which actually exist.
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+var isArray = __webpack_require__(2);
+var forEachArray = __webpack_require__(0);
+var forEachOwnProperties = __webpack_require__(6);
+
+/**
+ * @module collection
+ */
+
+/**
+ * Execute the provided callback once for each property of object(or element of array) which actually exist.
+ * If the object is Array-like object(ex-arguments object), It needs to transform to Array.(see 'ex2' of example).
+ * If the callback function returns false, the loop will be stopped.
+ * Callback function(iteratee) is invoked with three arguments:
+ *  1) The value of the property(or The value of the element)
+ *  2) The name of the property(or The index of the element)
+ *  3) The object being traversed
+ * @param {Object} obj The object that will be traversed
+ * @param {function} iteratee Callback function
+ * @param {Object} [context] Context(this) of callback function
+ * @memberof module:collection
+ * @example
+ * var forEach = require('tui-code-snippet/collection/forEach'); // node, commonjs
+ *
+ * var sum = 0;
+ *
+ * forEach([1,2,3], function(value){
+ *     sum += value;
+ * });
+ * alert(sum); // 6
+ *
+ * // In case of Array-like object
+ * var array = Array.prototype.slice.call(arrayLike); // change to array
+ * forEach(array, function(value){
+ *     sum += value;
+ * });
+ */
+function forEach(obj, iteratee, context) {
+  if (isArray(obj)) {
+    forEachArray(obj, iteratee, context);
+  } else {
+    forEachOwnProperties(obj, iteratee, context);
+  }
+}
+
+module.exports = forEach;
+
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * @fileoverview Get a target element from an event object.
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+/**
+ * Get a target element from an event object.
+ * @param {Event} e - event object
+ * @returns {HTMLElement} - target element
+ * @memberof module:domEvent
+ */
+function getTarget(e) {
+  return e.target || e.srcElement;
+}
+
+module.exports = getTarget;
+
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * @fileoverview Check whether the given variable is an object or not.
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+/**
+ * Check whether the given variable is an object or not.
+ * If the given variable is an object, return true.
+ * @param {*} obj - Target for checking
+ * @returns {boolean} Is object?
+ * @memberof module:type
+ */
+function isObject(obj) {
+  return obj === Object(obj);
+}
+
+module.exports = isObject;
+
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * @fileoverview Check whether the given variable is a function or not.
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+/**
+ * Check whether the given variable is a function or not.
+ * If the given variable is a function, return true.
+ * @param {*} obj - Target for checking
+ * @returns {boolean} Is function?
+ * @memberof module:type
+ */
+function isFunction(obj) {
+  return obj instanceof Function;
+}
+
+module.exports = isFunction;
+
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * @fileoverview Unbind DOM events
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+var isString = __webpack_require__(8);
+var forEach = __webpack_require__(9);
+
+var safeEvent = __webpack_require__(25);
+
+/**
+ * Unbind DOM events
+ * If a handler function is not passed, remove all events of that type.
+ * @param {HTMLElement} element - element to unbind events
+ * @param {(string|object)} types - Space splitted events names or eventName:handler object
+ * @param {function} [handler] - handler function
+ * @memberof module:domEvent
+ * @example
+ * // Following the example of domEvent#on
+ * 
+ * // Unbind one event from an element.
+ * off(div, 'click', toggle);
+ * 
+ * // Unbind multiple events with a same handler from multiple elements at once.
+ * // Use event names splitted by a space.
+ * off(element, 'mouseenter mouseleave', changeColor);
+ * 
+ * // Unbind multiple events with different handlers from an element at once.
+ * // Use an object which of key is an event name and value is a handler function.
+ * off(div, {
+ *   keydown: highlight,
+ *   keyup: dehighlight
+ * });
+ * 
+ * // Unbind events without handlers.
+ * off(div, 'drag');
+ */
+function off(element, types, handler) {
+  if (isString(types)) {
+    forEach(types.split(/\s+/g), function(type) {
+      unbindEvent(element, type, handler);
+    });
+
+    return;
+  }
+
+  forEach(types, function(func, type) {
+    unbindEvent(element, type, func);
+  });
+}
+
+/**
+ * Unbind DOM events
+ * If a handler function is not passed, remove all events of that type.
+ * @param {HTMLElement} element - element to unbind events
+ * @param {string} type - events name
+ * @param {function} [handler] - handler function
+ * @private
+ */
+function unbindEvent(element, type, handler) {
+  var events = safeEvent(element, type);
+  var index;
+
+  if (!handler) {
+    forEach(events, function(item) {
+      removeHandler(element, type, item.wrappedHandler);
+    });
+    events.splice(0, events.length);
+  } else {
+    forEach(events, function(item, idx) {
+      if (handler === item.handler) {
+        removeHandler(element, type, item.wrappedHandler);
+        index = idx;
+
+        return false;
+      }
+
+      return true;
+    });
+    events.splice(index, 1);
+  }
+}
+
+/**
+ * Remove an event handler
+ * @param {HTMLElement} element - An element to remove an event
+ * @param {string} type - event type
+ * @param {function} handler - event handler
+ * @private
+ */
+function removeHandler(element, type, handler) {
+  if ('removeEventListener' in element) {
+    element.removeEventListener(type, handler);
+  } else if ('detachEvent' in element) {
+    element.detachEvent('on' + type, handler);
+  }
+}
+
+module.exports = off;
+
+
+/***/ }),
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * @fileoverview Bind DOM events
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+var isString = __webpack_require__(8);
+var forEach = __webpack_require__(9);
+
+var safeEvent = __webpack_require__(25);
+
+/**
+ * Bind DOM events.
+ * @param {HTMLElement} element - element to bind events
+ * @param {(string|object)} types - Space splitted events names or eventName:handler object
+ * @param {(function|object)} handler - handler function or context for handler method
+ * @param {object} [context] context - context for handler method.
+ * @memberof module:domEvent
+ * @example
+ * var div = document.querySelector('div');
+ * 
+ * // Bind one event to an element.
+ * on(div, 'click', toggle);
+ * 
+ * // Bind multiple events with a same handler to multiple elements at once.
+ * // Use event names splitted by a space.
+ * on(div, 'mouseenter mouseleave', changeColor);
+ * 
+ * // Bind multiple events with different handlers to an element at once.
+ * // Use an object which of key is an event name and value is a handler function.
+ * on(div, {
+ *   keydown: highlight,
+ *   keyup: dehighlight
+ * });
+ * 
+ * // Set a context for handler method.
+ * var name = 'global';
+ * var repository = {name: 'CodeSnippet'};
+ * on(div, 'drag', function() {
+ *  console.log(this.name);
+ * }, repository);
+ * // Result when you drag a div: "CodeSnippet"
+ */
+function on(element, types, handler, context) {
+  if (isString(types)) {
+    forEach(types.split(/\s+/g), function(type) {
+      bindEvent(element, type, handler, context);
+    });
+
+    return;
+  }
+
+  forEach(types, function(func, type) {
+    bindEvent(element, type, func, handler);
+  });
+}
+
+/**
+ * Bind DOM events
+ * @param {HTMLElement} element - element to bind events
+ * @param {string} type - events name
+ * @param {function} handler - handler function or context for handler method
+ * @param {object} [context] context - context for handler method.
+ * @private
+ */
+function bindEvent(element, type, handler, context) {
+  /**
+     * Event handler
+     * @param {Event} e - event object
+     */
+  function eventHandler(e) {
+    handler.call(context || element, e || window.event);
+  }
+
+  if ('addEventListener' in element) {
+    element.addEventListener(type, eventHandler);
+  } else if ('attachEvent' in element) {
+    element.attachEvent('on' + type, eventHandler);
+  }
+  memorizeHandler(element, type, handler, eventHandler);
+}
+
+/**
+ * Memorize DOM event handler for unbinding.
+ * @param {HTMLElement} element - element to bind events
+ * @param {string} type - events name
+ * @param {function} handler - handler function that user passed at on() use
+ * @param {function} wrappedHandler - handler function that wrapped by domevent for implementing some features
+ * @private
+ */
+function memorizeHandler(element, type, handler, wrappedHandler) {
+  var events = safeEvent(element, type);
+  var existInEvents = false;
+
+  forEach(events, function(obj) {
+    if (obj.handler === handler) {
+      existInEvents = true;
+
+      return false;
+    }
+
+    return true;
+  });
+
+  if (!existInEvents) {
+    events.push({
+      handler: handler,
+      wrappedHandler: wrappedHandler
+    });
+  }
+}
+
+module.exports = on;
+
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * @fileoverview Add css class to element
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+var forEach = __webpack_require__(9);
+var inArray = __webpack_require__(4);
+var getClass = __webpack_require__(19);
+var setClassName = __webpack_require__(26);
+
+/**
+ * domUtil module
+ * @module domUtil
+ */
+
+/**
+ * Add css class to element
+ * @param {(HTMLElement|SVGElement)} element - target element
+ * @param {...string} cssClass - css classes to add
+ * @memberof module:domUtil
+ */
+function addClass(element) {
+  var cssClass = Array.prototype.slice.call(arguments, 1);
+  var classList = element.classList;
+  var newClass = [];
+  var origin;
+
+  if (classList) {
+    forEach(cssClass, function(name) {
+      element.classList.add(name);
+    });
+
+    return;
+  }
+
+  origin = getClass(element);
+
+  if (origin) {
+    cssClass = [].concat(origin.split(/\s+/), cssClass);
+  }
+
+  forEach(cssClass, function(cls) {
+    if (inArray(cls, newClass) < 0) {
+      newClass.push(cls);
+    }
+  });
+
+  setClassName(element, newClass);
+}
+
+module.exports = addClass;
+
+
+/***/ }),
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * @fileoverview Check whether the given variable is existing or not.
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+var isUndefined = __webpack_require__(7);
+var isNull = __webpack_require__(23);
+
+/**
+ * Check whether the given variable is existing or not.
+ * If the given variable is not null and not undefined, returns true.
+ * @param {*} param - Target for checking
+ * @returns {boolean} Is existy?
+ * @memberof module:type
+ * @example
+ * var isExisty = require('tui-code-snippet/type/isExisty'); // node, commonjs
+ *
+ * isExisty(''); //true
+ * isExisty(0); //true
+ * isExisty([]); //true
+ * isExisty({}); //true
+ * isExisty(null); //false
+ * isExisty(undefined); //false
+*/
+function isExisty(param) {
+  return !isUndefined(param) && !isNull(param);
+}
+
+module.exports = isExisty;
+
+
+/***/ }),
+/* 17 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * @fileoverview Remove css class from element
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+var forEachArray = __webpack_require__(0);
+var inArray = __webpack_require__(4);
+var getClass = __webpack_require__(19);
+var setClassName = __webpack_require__(26);
+
+/**
+ * Remove css class from element
+ * @param {(HTMLElement|SVGElement)} element - target element
+ * @param {...string} cssClass - css classes to remove
+ * @memberof module:domUtil
+ */
+function removeClass(element) {
+  var cssClass = Array.prototype.slice.call(arguments, 1);
+  var classList = element.classList;
+  var origin, newClass;
+
+  if (classList) {
+    forEachArray(cssClass, function(name) {
+      classList.remove(name);
+    });
+
+    return;
+  }
+
+  origin = getClass(element).split(/\s+/);
+  newClass = [];
+  forEachArray(origin, function(name) {
+    if (inArray(name, cssClass) < 0) {
+      newClass.push(name);
+    }
+  });
+
+  setClassName(element, newClass);
+}
+
+module.exports = removeClass;
+
+
+/***/ }),
+/* 18 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * @fileoverview This module provides some functions for custom events. And it is implemented in the observer design pattern.
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+var extend = __webpack_require__(1);
+var isExisty = __webpack_require__(16);
+var isString = __webpack_require__(8);
+var isObject = __webpack_require__(11);
+var isArray = __webpack_require__(2);
+var isFunction = __webpack_require__(12);
+var forEach = __webpack_require__(9);
+
+var R_EVENTNAME_SPLIT = /\s+/g;
+
+/**
+ * @class
+ * @example
+ * // node, commonjs
+ * var CustomEvents = require('tui-code-snippet/customEvents/customEvents');
+ */
+function CustomEvents() {
+  /**
+     * @type {HandlerItem[]}
+     */
+  this.events = null;
+
+  /**
+     * only for checking specific context event was binded
+     * @type {object[]}
+     */
+  this.contexts = null;
+}
+
+/**
+ * Mixin custom events feature to specific constructor
+ * @param {function} func - constructor
+ * @example
+ * var CustomEvents = require('tui-code-snippet/customEvents/customEvents'); // node, commonjs
+ *
+ * var model;
+ * function Model() {
+ *     this.name = '';
+ * }
+ * CustomEvents.mixin(Model);
+ *
+ * model = new Model();
+ * model.on('change', function() { this.name = 'model'; }, this);
+ * model.fire('change');
+ * alert(model.name); // 'model';
+ */
+CustomEvents.mixin = function(func) {
+  extend(func.prototype, CustomEvents.prototype);
+};
+
+/**
+ * Get HandlerItem object
+ * @param {function} handler - handler function
+ * @param {object} [context] - context for handler
+ * @returns {HandlerItem} HandlerItem object
+ * @private
+ */
+CustomEvents.prototype._getHandlerItem = function(handler, context) {
+  var item = {handler: handler};
+
+  if (context) {
+    item.context = context;
+  }
+
+  return item;
+};
+
+/**
+ * Get event object safely
+ * @param {string} [eventName] - create sub event map if not exist.
+ * @returns {(object|array)} event object. if you supplied `eventName`
+ *  parameter then make new array and return it
+ * @private
+ */
+CustomEvents.prototype._safeEvent = function(eventName) {
+  var events = this.events;
+  var byName;
+
+  if (!events) {
+    events = this.events = {};
+  }
+
+  if (eventName) {
+    byName = events[eventName];
+
+    if (!byName) {
+      byName = [];
+      events[eventName] = byName;
+    }
+
+    events = byName;
+  }
+
+  return events;
+};
+
+/**
+ * Get context array safely
+ * @returns {array} context array
+ * @private
+ */
+CustomEvents.prototype._safeContext = function() {
+  var context = this.contexts;
+
+  if (!context) {
+    context = this.contexts = [];
+  }
+
+  return context;
+};
+
+/**
+ * Get index of context
+ * @param {object} ctx - context that used for bind custom event
+ * @returns {number} index of context
+ * @private
+ */
+CustomEvents.prototype._indexOfContext = function(ctx) {
+  var context = this._safeContext();
+  var index = 0;
+
+  while (context[index]) {
+    if (ctx === context[index][0]) {
+      return index;
+    }
+
+    index += 1;
+  }
+
+  return -1;
+};
+
+/**
+ * Memorize supplied context for recognize supplied object is context or
+ *  name: handler pair object when off()
+ * @param {object} ctx - context object to memorize
+ * @private
+ */
+CustomEvents.prototype._memorizeContext = function(ctx) {
+  var context, index;
+
+  if (!isExisty(ctx)) {
+    return;
+  }
+
+  context = this._safeContext();
+  index = this._indexOfContext(ctx);
+
+  if (index > -1) {
+    context[index][1] += 1;
+  } else {
+    context.push([ctx, 1]);
+  }
+};
+
+/**
+ * Forget supplied context object
+ * @param {object} ctx - context object to forget
+ * @private
+ */
+CustomEvents.prototype._forgetContext = function(ctx) {
+  var context, contextIndex;
+
+  if (!isExisty(ctx)) {
+    return;
+  }
+
+  context = this._safeContext();
+  contextIndex = this._indexOfContext(ctx);
+
+  if (contextIndex > -1) {
+    context[contextIndex][1] -= 1;
+
+    if (context[contextIndex][1] <= 0) {
+      context.splice(contextIndex, 1);
+    }
+  }
+};
+
+/**
+ * Bind event handler
+ * @param {(string|{name:string, handler:function})} eventName - custom
+ *  event name or an object {eventName: handler}
+ * @param {(function|object)} [handler] - handler function or context
+ * @param {object} [context] - context for binding
+ * @private
+ */
+CustomEvents.prototype._bindEvent = function(eventName, handler, context) {
+  var events = this._safeEvent(eventName);
+  this._memorizeContext(context);
+  events.push(this._getHandlerItem(handler, context));
+};
+
+/**
+ * Bind event handlers
+ * @param {(string|{name:string, handler:function})} eventName - custom
+ *  event name or an object {eventName: handler}
+ * @param {(function|object)} [handler] - handler function or context
+ * @param {object} [context] - context for binding
+ * //-- #1. Get Module --//
+ * var CustomEvents = require('tui-code-snippet/customEvents/customEvents'); // node, commonjs
+ *
+ * //-- #2. Use method --//
+ * // # 2.1 Basic Usage
+ * CustomEvents.on('onload', handler);
+ *
+ * // # 2.2 With context
+ * CustomEvents.on('onload', handler, myObj);
+ *
+ * // # 2.3 Bind by object that name, handler pairs
+ * CustomEvents.on({
+ *     'play': handler,
+ *     'pause': handler2
+ * });
+ *
+ * // # 2.4 Bind by object that name, handler pairs with context object
+ * CustomEvents.on({
+ *     'play': handler
+ * }, myObj);
+ */
+CustomEvents.prototype.on = function(eventName, handler, context) {
+  var self = this;
+
+  if (isString(eventName)) {
+    // [syntax 1, 2]
+    eventName = eventName.split(R_EVENTNAME_SPLIT);
+    forEach(eventName, function(name) {
+      self._bindEvent(name, handler, context);
+    });
+  } else if (isObject(eventName)) {
+    // [syntax 3, 4]
+    context = handler;
+    forEach(eventName, function(func, name) {
+      self.on(name, func, context);
+    });
+  }
+};
+
+/**
+ * Bind one-shot event handlers
+ * @param {(string|{name:string,handler:function})} eventName - custom
+ *  event name or an object {eventName: handler}
+ * @param {function|object} [handler] - handler function or context
+ * @param {object} [context] - context for binding
+ */
+CustomEvents.prototype.once = function(eventName, handler, context) {
+  var self = this;
+
+  if (isObject(eventName)) {
+    context = handler;
+    forEach(eventName, function(func, name) {
+      self.once(name, func, context);
+    });
+
+    return;
+  }
+
+  function onceHandler() { // eslint-disable-line require-jsdoc
+    handler.apply(context, arguments);
+    self.off(eventName, onceHandler, context);
+  }
+
+  this.on(eventName, onceHandler, context);
+};
+
+/**
+ * Splice supplied array by callback result
+ * @param {array} arr - array to splice
+ * @param {function} predicate - function return boolean
+ * @private
+ */
+CustomEvents.prototype._spliceMatches = function(arr, predicate) {
+  var i = 0;
+  var len;
+
+  if (!isArray(arr)) {
+    return;
+  }
+
+  for (len = arr.length; i < len; i += 1) {
+    if (predicate(arr[i]) === true) {
+      arr.splice(i, 1);
+      len -= 1;
+      i -= 1;
+    }
+  }
+};
+
+/**
+ * Get matcher for unbind specific handler events
+ * @param {function} handler - handler function
+ * @returns {function} handler matcher
+ * @private
+ */
+CustomEvents.prototype._matchHandler = function(handler) {
+  var self = this;
+
+  return function(item) {
+    var needRemove = handler === item.handler;
+
+    if (needRemove) {
+      self._forgetContext(item.context);
+    }
+
+    return needRemove;
+  };
+};
+
+/**
+ * Get matcher for unbind specific context events
+ * @param {object} context - context
+ * @returns {function} object matcher
+ * @private
+ */
+CustomEvents.prototype._matchContext = function(context) {
+  var self = this;
+
+  return function(item) {
+    var needRemove = context === item.context;
+
+    if (needRemove) {
+      self._forgetContext(item.context);
+    }
+
+    return needRemove;
+  };
+};
+
+/**
+ * Get matcher for unbind specific hander, context pair events
+ * @param {function} handler - handler function
+ * @param {object} context - context
+ * @returns {function} handler, context matcher
+ * @private
+ */
+CustomEvents.prototype._matchHandlerAndContext = function(handler, context) {
+  var self = this;
+
+  return function(item) {
+    var matchHandler = (handler === item.handler);
+    var matchContext = (context === item.context);
+    var needRemove = (matchHandler && matchContext);
+
+    if (needRemove) {
+      self._forgetContext(item.context);
+    }
+
+    return needRemove;
+  };
+};
+
+/**
+ * Unbind event by event name
+ * @param {string} eventName - custom event name to unbind
+ * @param {function} [handler] - handler function
+ * @private
+ */
+CustomEvents.prototype._offByEventName = function(eventName, handler) {
+  var self = this;
+  var andByHandler = isFunction(handler);
+  var matchHandler = self._matchHandler(handler);
+
+  eventName = eventName.split(R_EVENTNAME_SPLIT);
+
+  forEach(eventName, function(name) {
+    var handlerItems = self._safeEvent(name);
+
+    if (andByHandler) {
+      self._spliceMatches(handlerItems, matchHandler);
+    } else {
+      forEach(handlerItems, function(item) {
+        self._forgetContext(item.context);
+      });
+
+      self.events[name] = [];
+    }
+  });
+};
+
+/**
+ * Unbind event by handler function
+ * @param {function} handler - handler function
+ * @private
+ */
+CustomEvents.prototype._offByHandler = function(handler) {
+  var self = this;
+  var matchHandler = this._matchHandler(handler);
+
+  forEach(this._safeEvent(), function(handlerItems) {
+    self._spliceMatches(handlerItems, matchHandler);
+  });
+};
+
+/**
+ * Unbind event by object(name: handler pair object or context object)
+ * @param {object} obj - context or {name: handler} pair object
+ * @param {function} handler - handler function
+ * @private
+ */
+CustomEvents.prototype._offByObject = function(obj, handler) {
+  var self = this;
+  var matchFunc;
+
+  if (this._indexOfContext(obj) < 0) {
+    forEach(obj, function(func, name) {
+      self.off(name, func);
+    });
+  } else if (isString(handler)) {
+    matchFunc = this._matchContext(obj);
+
+    self._spliceMatches(this._safeEvent(handler), matchFunc);
+  } else if (isFunction(handler)) {
+    matchFunc = this._matchHandlerAndContext(handler, obj);
+
+    forEach(this._safeEvent(), function(handlerItems) {
+      self._spliceMatches(handlerItems, matchFunc);
+    });
+  } else {
+    matchFunc = this._matchContext(obj);
+
+    forEach(this._safeEvent(), function(handlerItems) {
+      self._spliceMatches(handlerItems, matchFunc);
+    });
+  }
+};
+
+/**
+ * Unbind custom events
+ * @param {(string|object|function)} eventName - event name or context or
+ *  {name: handler} pair object or handler function
+ * @param {(function)} handler - handler function
+ * @example
+ * //-- #1. Get Module --//
+ * var CustomEvents = require('tui-code-snippet/customEvents/customEvents'); // node, commonjs
+ *
+ * //-- #2. Use method --//
+ * // # 2.1 off by event name
+ * CustomEvents.off('onload');
+ *
+ * // # 2.2 off by event name and handler
+ * CustomEvents.off('play', handler);
+ *
+ * // # 2.3 off by handler
+ * CustomEvents.off(handler);
+ *
+ * // # 2.4 off by context
+ * CustomEvents.off(myObj);
+ *
+ * // # 2.5 off by context and handler
+ * CustomEvents.off(myObj, handler);
+ *
+ * // # 2.6 off by context and event name
+ * CustomEvents.off(myObj, 'onload');
+ *
+ * // # 2.7 off by an Object.<string, function> that is {eventName: handler}
+ * CustomEvents.off({
+ *   'play': handler,
+ *   'pause': handler2
+ * });
+ *
+ * // # 2.8 off the all events
+ * CustomEvents.off();
+ */
+CustomEvents.prototype.off = function(eventName, handler) {
+  if (isString(eventName)) {
+    // [syntax 1, 2]
+    this._offByEventName(eventName, handler);
+  } else if (!arguments.length) {
+    // [syntax 8]
+    this.events = {};
+    this.contexts = [];
+  } else if (isFunction(eventName)) {
+    // [syntax 3]
+    this._offByHandler(eventName);
+  } else if (isObject(eventName)) {
+    // [syntax 4, 5, 6]
+    this._offByObject(eventName, handler);
+  }
+};
+
+/**
+ * Fire custom event
+ * @param {string} eventName - name of custom event
+ */
+CustomEvents.prototype.fire = function(eventName) {  // eslint-disable-line
+  this.invoke.apply(this, arguments);
+};
+
+/**
+ * Fire a event and returns the result of operation 'boolean AND' with all
+ *  listener's results.
+ *
+ * So, It is different from {@link CustomEvents#fire}.
+ *
+ * In service code, use this as a before event in component level usually
+ *  for notifying that the event is cancelable.
+ * @param {string} eventName - Custom event name
+ * @param {...*} data - Data for event
+ * @returns {boolean} The result of operation 'boolean AND'
+ * @example
+ * var map = new Map();
+ * map.on({
+ *     'beforeZoom': function() {
+ *         // It should cancel the 'zoom' event by some conditions.
+ *         if (that.disabled && this.getState()) {
+ *             return false;
+ *         }
+ *         return true;
+ *     }
+ * });
+ *
+ * if (this.invoke('beforeZoom')) {    // check the result of 'beforeZoom'
+ *     // if true,
+ *     // doSomething
+ * }
+ */
+CustomEvents.prototype.invoke = function(eventName) {
+  var events, args, index, item;
+
+  if (!this.hasListener(eventName)) {
+    return true;
+  }
+
+  events = this._safeEvent(eventName);
+  args = Array.prototype.slice.call(arguments, 1);
+  index = 0;
+
+  while (events[index]) {
+    item = events[index];
+
+    if (item.handler.apply(item.context, args) === false) {
+      return false;
+    }
+
+    index += 1;
+  }
+
+  return true;
+};
+
+/**
+ * Return whether at least one of the handlers is registered in the given
+ *  event name.
+ * @param {string} eventName - Custom event name
+ * @returns {boolean} Is there at least one handler in event name?
+ */
+CustomEvents.prototype.hasListener = function(eventName) {
+  return this.getListenerLength(eventName) > 0;
+};
+
+/**
+ * Return a count of events registered.
+ * @param {string} eventName - Custom event name
+ * @returns {number} number of event
+ */
+CustomEvents.prototype.getListenerLength = function(eventName) {
+  var events = this._safeEvent(eventName);
+
+  return events.length;
+};
+
+module.exports = CustomEvents;
+
+
+/***/ }),
+/* 19 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * @fileoverview Get HTML element's design classes.
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+var isUndefined = __webpack_require__(7);
+
+/**
+ * Get HTML element's design classes.
+ * @param {(HTMLElement|SVGElement)} element target element
+ * @returns {string} element css class name
+ * @memberof module:domUtil
+ */
+function getClass(element) {
+  if (!element || !element.className) {
+    return '';
+  }
+
+  if (isUndefined(element.className.baseVal)) {
+    return element.className;
+  }
+
+  return element.className.baseVal;
+}
+
+module.exports = getClass;
+
+
+/***/ }),
+/* 20 */
 /***/ (function(module, exports) {
 
-eval("/**\n * @fileoverview Set each command name using in Ajax feature\n * @author NHN. FE dev Lab <dl_javascript@nhn.com>\n */\n\n/**\n * Ajax comman in tree\n * @type {Object.<string, string>}\n */\nmodule.exports = {\n  READ: 'read',\n  CREATE: 'create',\n  UPDATE: 'update',\n  DELETE: 'remove',\n  DELETE_ALL_CHILDREN: 'removeAllChildren',\n  MOVE: 'move'\n};\n\n\n//# sourceURL=webpack://tui.Tree/./src/js/consts/ajaxCommand.js?");
+/**
+ * @fileoverview Set default value of toggle button
+ * @author NHN. FE dev Lab <dl_javascript@nhn.com>
+ */
+
+/**
+ * States in tree
+ * @type {Object.<string, string>}
+ */
+module.exports = {
+  /**
+   * States of node
+   * @type {{OPENED: string, CLOSED: string}}
+   */
+  node: {
+    OPENED: 'opened',
+    CLOSED: 'closed'
+  }
+};
+
 
 /***/ }),
+/* 21 */
+/***/ (function(module, exports, __webpack_require__) {
 
-/***/ "./src/js/consts/defaultOption.js":
-/*!****************************************!*\
-  !*** ./src/js/consts/defaultOption.js ***!
-  \****************************************/
-/*! no static exports found */
+"use strict";
+/**
+ * @fileoverview Prevent default action
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+/**
+ * Prevent default action
+ * @param {Event} e - event object
+ * @memberof module:domEvent
+ */
+function preventDefault(e) {
+  if (e.preventDefault) {
+    e.preventDefault();
+
+    return;
+  }
+
+  e.returnValue = false;
+}
+
+module.exports = preventDefault;
+
+
+/***/ }),
+/* 22 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * @fileoverview Convert kebab-case
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+/**
+ * Convert kebab-case
+ * @param {string} key - string to be converted to Kebab-case
+ * @private
+ */
+function convertToKebabCase(key) {
+  return key.replace(/([A-Z])/g, function(match) {
+    return '-' + match.toLowerCase();
+  });
+}
+
+module.exports = convertToKebabCase;
+
+
+/***/ }),
+/* 23 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * @fileoverview Check whether the given variable is null or not.
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+/**
+ * Check whether the given variable is null or not.
+ * If the given variable(arguments[0]) is null, returns true.
+ * @param {*} obj - Target for checking
+ * @returns {boolean} Is null?
+ * @memberof module:type
+ */
+function isNull(obj) {
+  return obj === null;
+}
+
+module.exports = isNull;
+
+
+/***/ }),
+/* 24 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * @fileoverview Normalize mouse event's button attributes.
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+var browser = __webpack_require__(38);
+var inArray = __webpack_require__(4);
+
+var primaryButton = ['0', '1', '3', '5', '7'];
+var secondaryButton = ['2', '6'];
+var wheelButton = ['4'];
+
+/**
+ * @module domEvent
+ */
+
+/**
+ * Normalize mouse event's button attributes.
+ *
+ * Can detect which button is clicked by this method.
+ *
+ * Meaning of return numbers
+ *
+ * - 0: primary mouse button
+ * - 1: wheel button or center button
+ * - 2: secondary mouse button
+ * @param {MouseEvent} mouseEvent - The mouse event object want to know.
+ * @returns {number} - The value of meaning which button is clicked?
+ * @memberof module:domEvent
+ */
+function getMouseButton(mouseEvent) {
+  if (browser.msie && browser.version <= 8) {
+    return getMouseButtonIE8AndEarlier(mouseEvent);
+  }
+
+  return mouseEvent.button;
+}
+
+/**
+ * Normalize return value of mouseEvent.button
+ * Make same to standard MouseEvent's button value
+ * @param {DispCEventObj} mouseEvent - mouse event object
+ * @returns {number|null} - id indicating which mouse button is clicked
+ * @private
+ */
+function getMouseButtonIE8AndEarlier(mouseEvent) {
+  var button = String(mouseEvent.button);
+
+  if (inArray(button, primaryButton) > -1) {
+    return 0;
+  }
+
+  if (inArray(button, secondaryButton) > -1) {
+    return 2;
+  }
+
+  if (inArray(button, wheelButton) > -1) {
+    return 1;
+  }
+
+  return null;
+}
+
+module.exports = getMouseButton;
+
+
+/***/ }),
+/* 25 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * @fileoverview Get event collection for specific HTML element
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+var EVENT_KEY = '_feEventKey';
+
+/**
+ * Get event collection for specific HTML element
+ * @param {HTMLElement} element - HTML element
+ * @param {string} type - event type
+ * @returns {array}
+ * @private
+ */
+function safeEvent(element, type) {
+  var events = element[EVENT_KEY];
+  var handlers;
+
+  if (!events) {
+    events = element[EVENT_KEY] = {};
+  }
+
+  handlers = events[type];
+  if (!handlers) {
+    handlers = events[type] = [];
+  }
+
+  return handlers;
+}
+
+module.exports = safeEvent;
+
+
+/***/ }),
+/* 26 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * @fileoverview Set className value
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+var isArray = __webpack_require__(2);
+var isUndefined = __webpack_require__(7);
+
+/**
+ * Set className value
+ * @param {(HTMLElement|SVGElement)} element - target element
+ * @param {(string|string[])} cssClass - class names
+ * @private
+ */
+function setClassName(element, cssClass) {
+  cssClass = isArray(cssClass) ? cssClass.join(' ') : cssClass;
+
+  cssClass = cssClass.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, '');
+
+  if (isUndefined(element.className.baseVal)) {
+    element.className = cssClass;
+
+    return;
+  }
+
+  element.className.baseVal = cssClass;
+}
+
+module.exports = setClassName;
+
+
+/***/ }),
+/* 27 */
 /***/ (function(module, exports) {
 
-eval("/**\n * @fileoverview Set default value of options\n * @author NHN. FE dev Lab <dl_javascript@nhn.com>\n */\n\n/**\n * A default values for tree\n * @const\n * @type {Object}\n * @property {array} data - A data to be used on tree\n * @property {string} nodeDefaultState - Node state\n * @property {string} nodeIdPrefix - Node id prefix\n * @property {object} stateLabel - State label in node\n *  @property {string} stateLabel.opened - '-'\n *  @property {string} stateLabel.closed - '+'\n * @property {object} template - Template html for the nodes.\n *  @property {string} template.internalNode - Template html for internal node.\n *  @property {string} template.leafNode - Template html for leaf node.\n * @property {object} classNames - Class names of elements in tree\n *  @property {string} openedClass - Class name for opened node\n *  @property {string} closedClass - Class name for closed node\n *  @property {string} nodeClass - Class name for node\n *  @property {string} leafClass - Class name for leaf node\n *  @property {string} subtreeClass  - Class name for subtree in internal node\n *  @property {string} toggleBtnClass - Class name for toggle button in internal node\n *  @property {string} textClass - Class name for text element in a node\n */\nmodule.exports = {\n  data: [],\n  nodeDefaultState: 'closed',\n  stateLabels: {\n    opened: '-',\n    closed: '+'\n  },\n  nodeIdPrefix: 'tui-tree-node-',\n  classNames: {\n    nodeClass: 'tui-tree-node',\n    leafClass: 'tui-tree-leaf',\n    openedClass: 'tui-tree-opened',\n    closedClass: 'tui-tree-closed',\n    subtreeClass: 'tui-js-tree-subtree',\n    toggleBtnClass: 'tui-js-tree-toggle-btn',\n    textClass: 'tui-js-tree-text',\n    btnClass: 'tui-tree-content-wrapper'\n  },\n  template: {\n    internalNode:\n      '<div class=\"tui-tree-content-wrapper\">' +\n      '<button type=\"button\" class=\"tui-tree-toggle-btn {{toggleBtnClass}}\">' +\n      '<span class=\"tui-ico-tree\"></span>' +\n      '{{stateLabel}}' +\n      '</button>' +\n      '<span class=\"tui-tree-text {{textClass}}\">' +\n      '<span class=\"tui-tree-ico tui-ico-folder\"></span>' +\n      '{{text}}' +\n      '</span>' +\n      '</div>' +\n      '<ul class=\"tui-tree-subtree {{subtreeClass}}\">{{children}}</ul>',\n    leafNode:\n      '<div class=\"tui-tree-content-wrapper\">' +\n      '<span class=\"tui-tree-text {{textClass}}\">' +\n      '<span class=\"tui-tree-ico tui-ico-file\"></span>' +\n      '{{text}}' +\n      '</span>' +\n      '</div>'\n  },\n  indent: 23, // value of default css,\n  usageStatistics: true\n};\n\n\n//# sourceURL=webpack://tui.Tree/./src/js/consts/defaultOption.js?");
+/**
+ * @fileoverview Set each command name using in Ajax feature
+ * @author NHN. FE dev Lab <dl_javascript@nhn.com>
+ */
+
+/**
+ * Ajax comman in tree
+ * @type {Object.<string, string>}
+ */
+module.exports = {
+  READ: 'read',
+  CREATE: 'create',
+  UPDATE: 'update',
+  DELETE: 'remove',
+  DELETE_ALL_CHILDREN: 'removeAllChildren',
+  MOVE: 'move'
+};
+
 
 /***/ }),
+/* 28 */
+/***/ (function(module, exports, __webpack_require__) {
 
-/***/ "./src/js/consts/messages.js":
-/*!***********************************!*\
-  !*** ./src/js/consts/messages.js ***!
-  \***********************************/
-/*! no static exports found */
+"use strict";
+/**
+ * @fileoverview Disable browser's text selection behaviors.
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+var on = __webpack_require__(14);
+var preventDefault = __webpack_require__(21);
+var setData = __webpack_require__(53);
+var testCSSProp = __webpack_require__(29);
+
+var SUPPORT_SELECTSTART = 'onselectstart' in document;
+var KEY_PREVIOUS_USER_SELECT = 'prevUserSelect';
+var userSelectProperty = testCSSProp([
+  'userSelect',
+  'WebkitUserSelect',
+  'OUserSelect',
+  'MozUserSelect',
+  'msUserSelect'
+]);
+
+/**
+ * Disable browser's text selection behaviors.
+ * @param {HTMLElement} [el] - target element. if not supplied, use `document`
+ * @memberof module:domUtil
+ */
+function disableTextSelection(el) {
+  if (!el) {
+    el = document;
+  }
+
+  if (SUPPORT_SELECTSTART) {
+    on(el, 'selectstart', preventDefault);
+  } else {
+    el = (el === document) ? document.documentElement : el;
+    setData(el, KEY_PREVIOUS_USER_SELECT, el.style[userSelectProperty]);
+    el.style[userSelectProperty] = 'none';
+  }
+}
+
+module.exports = disableTextSelection;
+
+
+/***/ }),
+/* 29 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * @fileoverview Check specific CSS style is available.
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+/**
+ * Check specific CSS style is available.
+ * @param {array} props property name to testing
+ * @returns {(string|boolean)} return true when property is available
+ * @private
+ */
+function testCSSProp(props) {
+  var style = document.documentElement.style;
+  var i, len;
+
+  for (i = 0, len = props.length; i < len; i += 1) {
+    if (props[i] in style) {
+      return props[i];
+    }
+  }
+
+  return false;
+}
+
+module.exports = testCSSProp;
+
+
+/***/ }),
+/* 30 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * @fileoverview Transform the Array-like object to Array.
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+var off = __webpack_require__(13);
+var preventDefault = __webpack_require__(21);
+var getData = __webpack_require__(54);
+var removeData = __webpack_require__(55);
+var testCSSProp = __webpack_require__(29);
+
+var SUPPORT_SELECTSTART = 'onselectstart' in document;
+var KEY_PREVIOUS_USER_SELECT = 'prevUserSelect';
+var userSelectProperty = testCSSProp([
+  'userSelect',
+  'WebkitUserSelect',
+  'OUserSelect',
+  'MozUserSelect',
+  'msUserSelect'
+]);
+
+/**
+ * Enable browser's text selection behaviors.
+ * @param {HTMLElement} [el] - target element. if not supplied, use `document`
+ * @memberof module:domUtil
+ */
+function enableTextSelection(el) {
+  if (!el) {
+    el = document;
+  }
+
+  if (SUPPORT_SELECTSTART) {
+    off(el, 'selectstart', preventDefault);
+  } else {
+    el = (el === document) ? document.documentElement : el;
+    el.style[userSelectProperty] = getData(el, KEY_PREVIOUS_USER_SELECT) || 'auto';
+    removeData(el, KEY_PREVIOUS_USER_SELECT);
+  }
+}
+
+module.exports = enableTextSelection;
+
+
+/***/ }),
+/* 31 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * @fileoverview Check element has specific css class
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+var inArray = __webpack_require__(4);
+var getClass = __webpack_require__(19);
+
+/**
+ * Check element has specific css class
+ * @param {(HTMLElement|SVGElement)} element - target element
+ * @param {string} cssClass - css class
+ * @returns {boolean}
+ * @memberof module:domUtil
+ */
+function hasClass(element, cssClass) {
+  var origin;
+
+  if (element.classList) {
+    return element.classList.contains(cssClass);
+  }
+
+  origin = getClass(element).split(/\s+/);
+
+  return inArray(cssClass, origin) > -1;
+}
+
+module.exports = hasClass;
+
+
+/***/ }),
+/* 32 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * @fileoverview Remove element from parent node.
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+/**
+ * Remove element from parent node.
+ * @param {HTMLElement} element - element to remove.
+ * @memberof module:domUtil
+ */
+function removeElement(element) {
+  if (element && element.parentNode) {
+    element.parentNode.removeChild(element);
+  }
+}
+
+module.exports = removeElement;
+
+
+/***/ }),
+/* 33 */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(34);
+
+module.exports = __webpack_require__(35);
+
+
+/***/ }),
+/* 34 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// extracted by mini-css-extract-plugin
+
+/***/ }),
+/* 35 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/**
+ * @fileoverview Render tree and update tree
+ * @author NHN. FE dev Lab <dl_javascript@nhn.com>
+ */
+
+var forEachArray = __webpack_require__(0);
+var forEachOwnProperties = __webpack_require__(6);
+var CustomEvents = __webpack_require__(18);
+var defineClass = __webpack_require__(3);
+var getTarget = __webpack_require__(10);
+var getMouseButton = __webpack_require__(24);
+var off = __webpack_require__(13);
+var on = __webpack_require__(14);
+var addClass = __webpack_require__(15);
+var removeClass = __webpack_require__(17);
+var template = __webpack_require__(39);
+var extend = __webpack_require__(1);
+var isFunction = __webpack_require__(12);
+var isHTMLNode = __webpack_require__(40);
+var isObject = __webpack_require__(11);
+var isString = __webpack_require__(8);
+var isUndefined = __webpack_require__(7);
+var util = __webpack_require__(5);
+
+var defaultOption = __webpack_require__(43);
+var states = __webpack_require__(20);
+var messages = __webpack_require__(44);
+var outerTemplate = __webpack_require__(45);
+var ajaxCommand = __webpack_require__(27);
+var TreeModel = __webpack_require__(46);
+var Selectable = __webpack_require__(50);
+var Draggable = __webpack_require__(51);
+var Editable = __webpack_require__(56);
+var Checkbox = __webpack_require__(57);
+var ContextMenu = __webpack_require__(59);
+var Ajax = __webpack_require__(61);
+
+var nodeStates = states.node;
+var features = {
+  Selectable: Selectable,
+  Draggable: Draggable,
+  Editable: Editable,
+  Checkbox: Checkbox,
+  ContextMenu: ContextMenu,
+  Ajax: Ajax
+};
+
+var TIMEOUT_TO_DIFFERENTIATE_CLICK_AND_DBLCLICK = 200;
+var MOUSE_MOVING_THRESHOLD = 5;
+var MOUSE_RIGHT_BUTTON = 2;
+
+/**
+ * Create tree model and inject data to model
+ * @class Tree
+ * @param {string|HTMLElement} container - Container element or selector
+ * @param {Object} options The options
+ *     @param {Object} [options.data] A data to be used on tree
+ *     @param {string} [options.nodeIdPrefix] A default prefix of a node
+ *     @param {Object} [options.nodeDefaultState] A default state of a node
+ *     @param {Object} [options.stateLabels] Toggle button state label
+ *         @param {string} [options.stateLabels.opened] State-OPENED label
+ *         @param {string} [options.stateLabels.closed] State-CLOSED label
+ *     @param {Object} [options.template] A markup set to make element
+ *         @param {string} [options.template.internalNode] HTML template
+ *         @param {string} [options.template.leafNode] HTML template
+ *     @param {Function} [options.renderTemplate] Function for rendering template. Default is {@link https://nhn.github.io/tui.code-snippet/2.2.0/domUtil#template template in the tui-code-snippet}.
+ *     @param {boolean} [options.usageStatistics=true] - Let us know the hostname. If you don't want to send the hostname, please set to false.
+ * @example <caption>Get `Tree` module</caption>
+ * // * node, commonjs
+ * // * Get Tree module from `node_modules/tui-tree`
+ * var Tree = require('tui-tree');
+ * var instance = new Tree(...);
+ * // * distribution file, script
+ * // * there is `tui.Tree` as a global variable
+ * var Tree = tui.Tree;
+ * var instance = new Tree(...);
+ * @example <caption>Initialize Tree</caption>
+ * // Default options:
+ * // {
+ * //     data: [],
+ * //     nodeIdPrefix: 'tui-tree-node-',
+ * //     nodeDefaultState: 'closed',
+ * //     stateLabels: {
+ * //         opened: '-',
+ * //         closed: '+'
+ * //     },
+ * //     template: {
+ * //         internalNode:
+ * //             '<div class="tui-tree-content-wrapper">' +
+ * //                 '<button type="button" class="tui-tree-toggle-btn tui-js-tree-toggle-btn">' +
+ * //                     '<span class="tui-ico-tree"></span>' +
+ * //                     '{{stateLabel}}' +
+ * //                 '</button>' +
+ * //                 '<span class="tui-tree-text tui-js-tree-text">' +
+ * //                     '<span class="tui-tree-ico tui-ico-folder"></span>' +
+ * //                     '{{text}}' +
+ * //                 '</span>' +
+ * //             '</div>' +
+ * //             '<ul class="tui-tree-subtree tui-js-tree-subtree">' +
+ * //                 '{{children}}' +
+ * //             '</ul>',
+ * //         leafNode:
+ * //             '<div class="tui-tree-content-wrapper">' +
+ * //                 '<span class="tui-tree-text tui-js-tree-text">' +
+ * //                     '<span class="tui-tree-ico tui-ico-file"></span>' +
+ * //                     '{{text}}' +
+ * //                 '</span>' +
+ * //             '</div>'
+ * //     }
+ * // }
+ * var container = document.getElementById('tree');
+ * var data = [
+ *     {text: 'rootA', children: [
+ *         {text: 'root-1A'},
+ *         {text: 'root-1B'},
+ *         {text: 'root-1C'},
+ *         {text: 'root-1D'},
+ *         {text: 'root-2A', children: [
+ *             {text: 'sub_1A', children:[
+ *                 {text: 'sub_sub_1A'}
+ *             ]},
+ *             {text: 'sub_2A'}
+ *         ]},
+ *         {text: 'root-2B'},
+ *         {text: 'root-2C'},
+ *         {text: 'root-2D'},
+ *         {text: 'root-3A', children: [
+ *             {text: 'sub3_a'},
+ *             {text: 'sub3_b'}
+ *         ]},
+ *         {text: 'root-3B'},
+ *         {text: 'root-3C'},
+ *         {text: 'root-3D'}
+ *     ]},
+ *     {text: 'rootB', children: [
+ *         {text: 'B_sub1'},
+ *         {text: 'B_sub2'},
+ *         {text: 'b'}
+ *     ]}
+ * ];
+ * var tree = new Tree(container, {
+ *     data: data,
+ *     nodeDefaultState: 'opened',
+ *
+ *     // ========= Option: Override template renderer ===========
+ *
+ *     template: { // template for Mustache engine
+ *         internalNode:
+ *             '<div class="tui-tree-content-wrapper">' +
+ *                 '<button type="button" class="tui-tree-toggle-btn tui-js-tree-toggle-btn">' +
+ *                     '<span class="tui-ico-tree"></span>' +
+ *                     '{{stateLabel}}' +
+ *                 '</button>' +
+ *                 '<span class="tui-tree-text tui-js-tree-text">' +
+ *                     '<span class="tui-tree-ico tui-ico-folder"></span>' +
+ *                     '{{text}}' +
+ *                 '</span>' +
+ *             '</div>' +
+ *             '<ul class="tui-tree-subtree tui-js-tree-subtree">' +
+ *                  '{{{children}}}' +
+ *             '</ul>',
+ *         leafNode:
+ *             '<div class="tui-tree-content-wrapper">' +
+ *                 '<span class="tui-tree-text tui-js-tree-text">' +
+ *                     '<span class="tui-tree-ico tui-ico-file"></span>' +
+ *                     '{{text}}' +
+ *                 '</span>' +
+ *             '</div>'
+ *     },
+ *     renderTemplate: function(tmpl, props) {
+ *         // Mustache template engine
+ *         return Mustache.render(tmpl, props);
+ *     }
+ * });
+ */
+var Tree = defineClass(
+  /** @lends Tree.prototype */ {
+    init: function(container, options) {
+      options = extend({}, defaultOption, options);
+
+      /**
+       * Default class names
+       * @type {object.<string, string>}
+       */
+      this.classNames = extend({}, defaultOption.classNames, options.classNames);
+
+      /**
+       * Default template
+       * @type {{internalNode: string, leafNode: string}}
+       */
+      this.template = extend({}, defaultOption.template, options.template);
+
+      /**
+       * Root element
+       * @type {HTMLElement}
+       */
+      this.rootElement = null;
+
+      /**
+       * Toggle button state label
+       * @type {{opened: string, closed: string}}
+       */
+      this.stateLabels = options.stateLabels;
+
+      /**
+       * Make tree model
+       * @type {TreeModel}
+       * @private
+       */
+      this.model = new TreeModel(options);
+
+      /**
+       * Enabled features
+       * @type {Object.<string, object>}
+       * @private
+       */
+      this.enabledFeatures = {};
+
+      /**
+       * Click timer to prevent click-duplication with double click
+       * @type {number}
+       * @private
+       */
+      this.clickTimer = null;
+
+      /**
+       * To prevent click event if mouse moved before mouseup.
+       * @type {number}
+       * @private
+       */
+      this._mouseMovingFlag = false;
+
+      /**
+       * Render template
+       * It can be overrode by user's template engine.
+       * Default: tui-code-snippet/domUtil/template {@link https://nhn.github.io/tui.code-snippet/2.2.0/domUtil#template}
+       * @type {Function}
+       * @private
+       */
+      this._renderTemplate = options.renderTemplate || template;
+
+      /**
+       * Send the hostname to google analytics.
+       * If you do not want to send the hostname, this option set to false.
+       * @type {boolean}
+       * @private
+       */
+      this.usageStatistics = options.usageStatistics;
+
+      /**
+       * True when a node is moving
+       * @type {boolean}
+       * @example
+       * tree.on({
+       *     beforeDraw: function(nodeId) {
+       *         if (tree.isMovingNode) {
+       *             return;
+       *         }
+       *         //..
+       *     },
+       *     //....
+       * });
+       * tree.move('tui-tree-node-1', 'tui-tree-node-2');
+       */
+      this.isMovingNode = false;
+
+      /**
+       * Indentation value
+       * @type {number}
+       * @private
+       */
+      this._indent = options.indent;
+
+      this._setRoot(container);
+      this._draw(this.getRootNodeId());
+      this._setEvents();
+
+      if (this.usageStatistics) {
+        util.sendHostName();
+      }
+    },
+
+    /**
+     * Set root element of tree
+     * @param {string|HTMLElement} container - Container element or selector
+     * @private
+     */
+    _setRoot: function(container) {
+      var rootElement = outerTemplate.ROOT;
+
+      if (isString(container)) {
+        container = document.querySelector(container);
+      }
+
+      if (!isHTMLNode(container)) {
+        throw new Error(messages.INVALID_CONTAINER_ELEMENT);
+      }
+
+      container.innerHTML = rootElement;
+      this.rootElement = container.firstChild;
+    },
+
+    /**
+     * Move event handler
+     * @param {string} nodeId - Node id
+     * @param {string} originalParentId - Original parent node id
+     * @param {string} newParentId - New parent node id
+     * @param {number} [index] - Start index number for inserting
+     * @private
+     */
+    _onMove: function(nodeId, originalParentId, newParentId, index) {
+      this._draw(originalParentId);
+      this._draw(newParentId);
+
+      /**
+       * @event Tree#move
+       * @type {object} evt - Event data
+       * @property {string} nodeId - Current node id to move
+       * @property {string} originalParentId - Original parent node id of moved node
+       * @property {string} newParentId - New parent node id of moved node
+       * @property {number} index - Moved index number
+       * @example
+       * tree.on('move', function(evt) {
+       *     var nodeId = evt.nodeId;
+       *     var originalParentId = evt.originalParentId;
+       *     var newParentId = evt.newParentId;
+       *     var index = evt.index;
+       *
+       *     console.log(nodeId, originalParentId, newParentId, index);
+       * });
+       */
+      this.fire('move', {
+        nodeId: nodeId,
+        originalParentId: originalParentId,
+        newParentId: newParentId,
+        index: index
+      });
+    },
+
+    /**
+     * Set event handlers
+     * @private
+     */
+    _setEvents: function() {
+      this.model.on(
+        {
+          update: this._draw,
+          move: this._onMove
+        },
+        this
+      );
+
+      on(
+        this.rootElement,
+        {
+          click: this._onClick,
+          mousedown: this._onMousedown,
+          dblclick: this._onDoubleClick,
+          contextmenu: this._onContextMenu
+        },
+        this
+      );
+    },
+
+    /**
+     * Event handler - contextmenu
+     * @param {MouseEvent} mouseEvent - Contextmenu event
+     * @private
+     */
+    _onContextMenu: function(mouseEvent) {
+      this.fire('contextmenu', mouseEvent);
+    },
+
+    /**
+     * Event handler - mousedown
+     * @param {MouseEvent} downEvent - Mouse event
+     * @private
+     */
+    _onMousedown: function(downEvent) {
+      var clientX = downEvent.clientX;
+      var clientY = downEvent.clientY;
+      var abs = Math.abs;
+
+      var onMouseMove = util.bind(function onMouseMove(moveEvent) {
+        var newClientX = moveEvent.clientX;
+        var newClientY = moveEvent.clientY;
+
+        if (abs(newClientX - clientX) + abs(newClientY - clientY) > MOUSE_MOVING_THRESHOLD) {
+          this.fire('mousemove', moveEvent);
+          this._mouseMovingFlag = true;
+        }
+      }, this);
+
+      var onMouseOut = util.bind(function onMouseOut(event) {
+        if (event.toElement === null) {
+          this.fire('mouseup', event);
+        }
+      }, this);
+
+      var onMouseUp = util.bind(function onMouseUp(upEvent) {
+        this.fire('mouseup', upEvent);
+        off(document, {
+          mousemove: onMouseMove,
+          mouseup: onMouseUp,
+          mouseout: onMouseOut
+        });
+      }, this);
+
+      this._mouseMovingFlag = false;
+      this.fire('mousedown', downEvent);
+      on(document, {
+        mousemove: onMouseMove,
+        mouseup: onMouseUp,
+        mouseout: onMouseOut
+      });
+    },
+
+    /**
+     * Event handler - click
+     * @param {MouseEvent} ev - Click event
+     * @private
+     */
+    _onClick: function(ev) {
+      var target = getTarget(ev);
+      var isRightButton = getMouseButton(ev) === MOUSE_RIGHT_BUTTON;
+      var nodeId;
+
+      if (isRightButton) {
+        this.clickTimer = null;
+
+        return;
+      }
+
+      if (this._isClickedToggleButton(target)) {
+        nodeId = this.getNodeIdFromElement(target);
+
+        this.toggle(nodeId);
+
+        /**
+         * @event Tree#clickToggleBtn
+         * @type {object} evt - Event data
+         * @property {string} nodeId - Node id
+         * @property {HTMLElement} target - Element of toggle button
+         * @example
+         * tree.on('clickToggleBtn', function(evt) {
+         *     console.log(evt.target);
+         * });
+         */
+        this.fire('clickToggleBtn', {
+          nodeId: nodeId,
+          target: target
+        });
+
+        return;
+      }
+
+      if (!this.clickTimer && !this._mouseMovingFlag) {
+        this.fire('singleClick', ev);
+        this.clickTimer = setTimeout(
+          util.bind(function() {
+            this.resetClickTimer();
+          }, this),
+          TIMEOUT_TO_DIFFERENTIATE_CLICK_AND_DBLCLICK
+        );
+      }
+    },
+
+    /**
+     * Event handler - double click (dblclick)
+     * @param {MouseEvent} event - Double click event
+     * @private
+     */
+    _onDoubleClick: function(event) {
+      this.fire('doubleClick', event);
+      this.resetClickTimer();
+    },
+
+    /**
+     * Whether target element is toggle button or not
+     * @param {HTMLElement} target - Tree node element
+     * @returns {boolean} State
+     * @private
+     */
+    _isClickedToggleButton: function(target) {
+      var nodeId = this.getNodeIdFromElement(target);
+      var nodeElement;
+
+      if (!nodeId) {
+        return false;
+      }
+
+      nodeElement = document.querySelector('#' + nodeId + ' .' + this.classNames.toggleBtnClass);
+
+      return nodeElement && nodeElement.contains(target);
+    },
+
+    /**
+     * Set node state - opened or closed
+     * @param {string} nodeId - Node id
+     * @param {string} state - Node state
+     * @private
+     */
+    _setDisplayFromNodeState: function(nodeId, state) {
+      var subtreeElement = this._getSubtreeElement(nodeId);
+      var label, btnElement, nodeElement, firstTextNode;
+
+      if (!subtreeElement || subtreeElement === this.rootElement) {
+        return;
+      }
+      label = this.stateLabels[state];
+      nodeElement = document.getElementById(nodeId);
+
+      btnElement = nodeElement.querySelector('.' + this.classNames.toggleBtnClass);
+
+      if (state === nodeStates.OPENED) {
+        subtreeElement.style.display = '';
+      } else {
+        subtreeElement.style.display = 'none';
+      }
+      this._setNodeClassNameFromState(nodeElement, state);
+
+      if (btnElement) {
+        firstTextNode = util.getFirstTextNode(btnElement);
+        firstTextNode.nodeValue = label;
+      }
+    },
+
+    /**
+     * Set node class name from provided state
+     * @param {HTMLElement} nodeElement - TreeNode element
+     * @param {string} state - New changed state
+     * @private
+     */
+    _setNodeClassNameFromState: function(nodeElement, state) {
+      var classNames = this.classNames;
+      var openedClassName = classNames[nodeStates.OPENED + 'Class'];
+      var closedClassName = classNames[nodeStates.CLOSED + 'Class'];
+
+      removeClass(nodeElement, openedClassName);
+      removeClass(nodeElement, closedClassName);
+      addClass(nodeElement, classNames[state + 'Class']);
+    },
+
+    /**
+     * Make html
+     * @param {Array.<string>} nodeIds - Node id list
+     * @returns {string} HTML
+     * @private
+     * @see https://nhn.github.io/tui.code-snippet/2.2.0/domUtil#template
+     */
+    _makeHtml: function(nodeIds) {
+      var model = this.model;
+      var html = '';
+
+      forEachArray(
+        nodeIds,
+        function(nodeId) {
+          var node = model.getNode(nodeId);
+          var sources, props;
+
+          if (!node) {
+            return;
+          }
+
+          sources = this._getTemplate(node);
+          props = this._makeTemplateProps(node);
+          props.innerTemplate = this._makeInnerHTML(node, {
+            source: sources.inner,
+            props: props
+          });
+          html += template(sources.outer, props);
+        },
+        this
+      );
+
+      return html;
+    },
+
+    /**
+     * Make inner html of node
+     * @param {TreeNode} node - Node
+     * @param {{source: string, props: Object}} [cached] - Cashed data to make html
+     * @returns {string} Inner html of node
+     * @private
+     * @see innerTemplate uses "this._renderTemplate"
+     */
+    _makeInnerHTML: function(node, cached) {
+      var source, props;
+
+      cached = cached || {};
+      source = cached.source || this._getTemplate(node).inner;
+      props = cached.props || this._makeTemplateProps(node);
+
+      return this._renderTemplate(source, props);
+    },
+
+    /**
+     * Get template sources
+     * @param {TreeNode} node - Node
+     * @returns {{inner: string, outer: string}} Template sources
+     * @private
+     */
+    _getTemplate: function(node) {
+      var source;
+
+      if (node.isLeaf()) {
+        source = {
+          inner: this.template.leafNode,
+          outer: outerTemplate.LEAF_NODE
+        };
+      } else {
+        source = {
+          inner: this.template.internalNode,
+          outer: outerTemplate.INTERNAL_NODE
+        };
+      }
+
+      return source;
+    },
+
+    /**
+     * Make template properties
+     * @param {TreeNode} node - Node
+     * @returns {Object} Template properties
+     * @private
+     */
+    _makeTemplateProps: function(node) {
+      var classNames = this.classNames;
+      var id = node.getId();
+      var props = {
+        id: id,
+        indent: this.getIndentWidth(id)
+      };
+      var state;
+
+      if (node.isLeaf()) {
+        extend(props, {
+          isLeaf: true // for custom template method
+        });
+      } else {
+        state = node.getState();
+        extend(props, {
+          stateClass: classNames[state + 'Class'],
+          stateLabel: this.stateLabels[state],
+          children: this._makeHtml(node.getChildIds())
+        });
+      }
+
+      return extend(props, classNames, node.getAllData());
+    },
+
+    /**
+     * calculate tree node's padding left
+     * @param {string} nodeId - Node id
+     * @returns {number} - padding left of tree node division
+     */
+    getIndentWidth: function(nodeId) {
+      return this.getDepth(nodeId) * this._indent;
+    },
+
+    /**
+     * Draw element of node
+     * @param {string} nodeId - Node id
+     * @private
+     */
+    _draw: function(nodeId) {
+      var node = this.model.getNode(nodeId);
+      var element, html;
+
+      if (!node) {
+        return;
+      }
+
+      /**
+       * @event Tree#beforeDraw
+       * @type {object} evt - Event data
+       * @property {string} nodeId - Node id
+       * @example
+       * tree.on('beforeDraw', function(evt) {
+       *     if (tree.isMovingNode) {
+       *         console.log('isMovingNode');
+       *     }
+       *     console.log('beforeDraw: ' + evt.nodeId);
+       * });
+       */
+      this.fire('beforeDraw', { nodeId: nodeId });
+
+      if (node.isRoot()) {
+        html = this._makeHtml(node.getChildIds());
+        element = this.rootElement;
+      } else {
+        html = this._makeInnerHTML(node);
+        element = document.getElementById(nodeId);
+      }
+      element.innerHTML = html;
+      this._setClassNameAndVisibilityByFeature(node);
+
+      /**
+       * @event Tree#afterDraw
+       * @type {object} evt - Event data
+       * @property {string} nodeId - Node id
+       * @example
+       * tree.on('afterDraw', function(evt) {
+       *     if (tree.isMovingNode) {
+       *         console.log('isMovingNode');
+       *     }
+       *     console.log('afterDraw: ' + evt.nodeId);
+       * });
+       */
+      this.fire('afterDraw', { nodeId: nodeId });
+    },
+
+    /**
+     * Update class name by features on below<br>
+     * - leaf node: has classNames.leafClass<br>
+     * - internal node + opened: has classNames.openedClass, child is visible<br>
+     * - internal node + closed: has classNames.closedClass, child is not visible<br>
+     * @param {TreeNode} node - (re)drawing starts from this node
+     * @private
+     */
+    _setClassNameAndVisibilityByFeature: function(node) {
+      var nodeId = node.getId();
+      var element = document.getElementById(nodeId);
+      var classNames = this.classNames;
+      var isLeaf = node.isLeaf();
+
+      if (element) {
+        if (isLeaf) {
+          removeClass(element, classNames.openedClass);
+          removeClass(element, classNames.closedClass);
+          addClass(element, classNames.leafClass);
+        } else {
+          removeClass(element, classNames.leafClass);
+        }
+      }
+
+      if (!isLeaf) {
+        this._setDisplayFromNodeState(nodeId, node.getState());
+        this.each(
+          function(child) {
+            this._setClassNameAndVisibilityByFeature(child);
+          },
+          nodeId,
+          this
+        );
+      }
+    },
+
+    /**
+     * Get subtree element
+     * @param {string} nodeId - TreeNode id
+     * @returns {HTMLElement} Subtree element
+     * @private
+     */
+    _getSubtreeElement: function(nodeId) {
+      var node = this.model.getNode(nodeId);
+      var subtreeElement;
+
+      if (!node || node.isLeaf()) {
+        subtreeElement = null;
+      } else if (node.isRoot()) {
+        subtreeElement = this.rootElement;
+      } else {
+        subtreeElement = document.querySelector('#' + nodeId + ' .' + this.classNames.subtreeClass);
+      }
+
+      return subtreeElement;
+    },
+
+    /**
+     * Return the depth of node
+     * @param {string} nodeId - Node id
+     * @returns {number|undefined} Depth
+     */
+    getDepth: function(nodeId) {
+      return this.model.getDepth(nodeId);
+    },
+
+    /**
+     * Return the last depth of tree
+     * @returns {number} Last depth
+     */
+    getLastDepth: function() {
+      return this.model.getLastDepth();
+    },
+
+    /**
+     * Return root node id
+     * @returns {string} Root node id
+     */
+    getRootNodeId: function() {
+      return this.model.rootNode.getId();
+    },
+
+    /**
+     * Return child ids
+     * @param {string} nodeId - Node id
+     * @returns {Array.<string>|undefined} Child ids
+     */
+    getChildIds: function(nodeId) {
+      return this.model.getChildIds(nodeId);
+    },
+
+    /**
+     * Return parent id of node
+     * @param {string} nodeId - Node id
+     * @returns {string|undefined} Parent id
+     */
+    getParentId: function(nodeId) {
+      return this.model.getParentId(nodeId);
+    },
+
+    /**
+     * Reset click timer
+     */
+    resetClickTimer: function() {
+      window.clearTimeout(this.clickTimer);
+      this.clickTimer = null;
+    },
+
+    /**
+     * Get node id from element
+     * @param {HTMLElement} element - Element
+     * @returns {string} Node id
+     * @example
+     * tree.getNodeIdFromElement(elementInNode); // 'tui-tree-node-3'
+     */
+    getNodeIdFromElement: function(element) {
+      var idPrefix = this.getNodeIdPrefix();
+
+      while (element && element.id.indexOf(idPrefix) === -1) {
+        element = element.parentElement;
+      }
+
+      return element ? element.id : '';
+    },
+
+    /**
+     * Get prefix of node id
+     * @returns {string} Prefix of node id
+     * @example
+     * tree.getNodeIdPrefix(); // 'tui-tree-node-'
+     */
+    getNodeIdPrefix: function() {
+      return this.model.getNodeIdPrefix();
+    },
+
+    /**
+     * Get node data
+     * @param {string} nodeId - Node id
+     * @returns {object|undefined} Node data
+     */
+    getNodeData: function(nodeId) {
+      return this.model.getNodeData(nodeId);
+    },
+
+    /**
+     * Set data properties of a node
+     * @param {string} nodeId - Node id
+     * @param {object} data - Properties
+     * @param {object} [options] - Options
+     *     @param {boolean} [options.isSilent] - If true, it doesn't trigger the 'update' event
+     *     @param {boolean} [options.useAjax] - State of using Ajax
+     * @exmaple
+     * tree.setNodeData(nodeId, {foo: 'bar'}); // auto refresh
+     * tree.setNodeData(nodeId, {foo: 'bar'}, true); // not refresh
+     */
+    setNodeData: function(nodeId, data, options) {
+      var treeAjax = this.enabledFeatures.Ajax;
+      var useAjax = options ? options.useAjax : !!treeAjax;
+      var isSilent = options ? options.isSilent : false;
+
+      if (useAjax) {
+        treeAjax.loadData(
+          ajaxCommand.UPDATE,
+          util.bind(function() {
+            this._setNodeData(nodeId, data);
+          }, this),
+          {
+            nodeId: nodeId,
+            data: data,
+            type: 'set'
+          }
+        );
+      } else {
+        this._setNodeData(nodeId, data, isSilent);
+      }
+    },
+
+    /**
+     * Set data properties of a node (Core method)
+     * @param {string} nodeId - Node id
+     * @param {object} data - Properties
+     * @param {boolean} [isSilent] - If true, it doesn't trigger the 'update' event
+     * @private
+     */
+    _setNodeData: function(nodeId, data, isSilent) {
+      this.model.setNodeData(nodeId, data, isSilent);
+    },
+
+    /**
+     * Remove node data
+     * @param {string} nodeId - Node id
+     * @param {string|Array} names - Names of properties
+     * @param {object} [options] - Options
+     *     @param {boolean} [options.isSilent] - If true, it doesn't trigger the 'update' event
+     *     @param {boolean} [options.useAjax] - State of using Ajax
+     * @example
+     * tree.setNodeData(nodeId, 'foo'); // auto refresh
+     * tree.setNodeData(nodeId, 'foo', true); // not refresh
+     */
+    removeNodeData: function(nodeId, names, options) {
+      var treeAjax = this.enabledFeatures.Ajax;
+      var useAjax = options ? options.useAjax : !!treeAjax;
+      var isSilent = options ? options.isSilent : false;
+
+      if (useAjax) {
+        treeAjax.loadData(
+          ajaxCommand.UPDATE,
+          util.bind(function() {
+            this._removeNodeData(nodeId, names);
+          }, this),
+          {
+            nodeId: nodeId,
+            names: names,
+            type: 'remove'
+          }
+        );
+      } else {
+        this._removeNodeData(nodeId, names, isSilent);
+      }
+    },
+
+    /**
+     * Remove node data (Core method)
+     * @param {string} nodeId - Node id
+     * @param {string|Array} names - Names of properties
+     * @param {boolean} [isSilent] - If true, it doesn't trigger the 'update' event
+     * @private
+     */
+    _removeNodeData: function(nodeId, names, isSilent) {
+      this.model.removeNodeData(nodeId, names, isSilent);
+    },
+
+    /**
+     * Get node state.
+     * @param {string} nodeId - Node id
+     * @returns {string|null} Node state(('opened', 'closed', null)
+     * @example
+     * tree.getState(nodeId); // 'opened', 'closed',
+     *                        // undefined if the node is nonexistent
+     */
+    getState: function(nodeId) {
+      var node = this.model.getNode(nodeId);
+
+      if (!node) {
+        return null;
+      }
+
+      return node.getState();
+    },
+    /**
+     * Open node
+     * @param {string} nodeId - Node id
+     * @param {boolean} recursive - If true, it open all parent (default: false)
+     * @example
+     * tree.open(nodeId ,true);
+     */
+    open: function(nodeId, recursive) {
+      if (recursive) {
+        this._openRecursiveNode(nodeId);
+      } else {
+        this._openNode(nodeId);
+      }
+    },
+    /**
+     * Open all parent node
+     * @param {string} nodeId - Node id
+     * @private
+     */
+    _openRecursiveNode: function(nodeId) {
+      var parentIds = this.model.getParentIds(nodeId);
+      parentIds.push(nodeId);
+      forEachArray(
+        parentIds,
+        function(parentId) {
+          this._openNode(parentId);
+        },
+        this
+      );
+    },
+    /**
+     * Open one target node
+     * @param {string} nodeId - Node id
+     * @private
+     */
+    _openNode: function(nodeId) {
+      var node = this.model.getNode(nodeId);
+      var state = nodeStates.OPENED;
+      var isAllowStateChange = node && !node.isRoot() && node.getState() === nodeStates.CLOSED;
+
+      if (isAllowStateChange) {
+        node.setState(state);
+        this._setDisplayFromNodeState(nodeId, state);
+      }
+
+      if (this.enabledFeatures.Ajax) {
+        this._reload(nodeId);
+      }
+    },
+
+    /**
+     * Close node
+     * @param {string} nodeId - Node id
+     * @param {boolean} recursive - If true, it close all child node (default: false)
+     * @example
+     * tree.close(nodeId, true);
+     */
+    close: function(nodeId, recursive) {
+      if (recursive) {
+        this._closeRecursiveNode(nodeId);
+      } else {
+        this._closeNode(nodeId);
+      }
+    },
+
+    /**
+     * Close all child node
+     * @param {string} nodeId - Node id
+     * @private
+     */
+    _closeRecursiveNode: function(nodeId) {
+      this._closeNode(nodeId);
+      this.model.each(
+        function(searchNode, searchNodeId) {
+          if (!searchNode.isLeaf()) {
+            this._closeNode(searchNodeId);
+          }
+        },
+        nodeId,
+        this
+      );
+    },
+
+    /**
+     * Close one target node
+     * @param {string} nodeId - Node id
+     * @private
+     */
+    _closeNode: function(nodeId) {
+      var node = this.model.getNode(nodeId);
+      var state = nodeStates.CLOSED;
+      var isAllowStateChange = node && !node.isRoot() && node.getState() === nodeStates.OPENED;
+      if (isAllowStateChange) {
+        node.setState(state);
+        this._setDisplayFromNodeState(nodeId, state);
+      }
+    },
+
+    /**
+     * Toggle node
+     * @param {string} nodeId - Node id
+     */
+    toggle: function(nodeId) {
+      var node = this.model.getNode(nodeId);
+      var state;
+
+      if (!node || node.isRoot()) {
+        return;
+      }
+
+      node.toggleState();
+      state = node.getState();
+      this._setDisplayFromNodeState(nodeId, state);
+
+      if (this.enabledFeatures.Ajax) {
+        this._reload(nodeId);
+      }
+    },
+
+    /**
+     * Reload children nodes while "stateLable" is clicked
+     * @param {string} nodeId - Node id
+     * @private
+     */
+    _reload: function(nodeId) {
+      var node = this.model.getNode(nodeId);
+      var state = node.getState();
+      var isReload = isUndefined(node.getData('reload')) || node.getData('reload');
+
+      if (state === nodeStates.CLOSED) {
+        // open -> close action
+        this._setNodeData(
+          nodeId,
+          {
+            reload: false
+          },
+          true
+        );
+      }
+
+      if (state === nodeStates.OPENED && isReload) {
+        // close -> open action
+        this.resetAllData(null, {
+          nodeId: nodeId,
+          useAjax: true
+        });
+      }
+    },
+
+    /**
+     * Sort all nodes
+     * @param {Function} comparator - Comparator for sorting
+     * @param {boolean} [isSilent] - If true, it doesn't redraw tree
+     * @param {string} [parentId] - Id of a node to sort partially
+     * @example
+     * var comparator = function(nodeA, nodeB) {
+     *     var aValue = nodeA.getData('text'),
+     *         bValue = nodeB.getData('text');
+     *
+     *     if (!bValue || !bValue.localeCompare) {
+     *         return 0;
+     *     }
+     *     return bValue.localeCompare(aValue);
+     * };
+     *
+     * // Sort with redrawing tree
+     * tree.sort(comparator);
+     *
+     * // Sort, but not redraw tree
+     * tree.sort(comparator, true);
+     *
+     * // Sort partially
+     * tree.sort(comparator, false, parentId)
+     */
+    sort: function(comparator, isSilent, parentId) {
+      this.model.sort(comparator, parentId);
+
+      if (!isSilent) {
+        this.refresh(parentId);
+      }
+    },
+
+    /**
+     * Refresh tree or node's children
+     * @param {string} [nodeId] - TreeNode id to refresh
+     */
+    refresh: function(nodeId) {
+      nodeId = nodeId || this.getRootNodeId();
+      this._draw(nodeId);
+    },
+
+    /**
+     * Traverse this tree iterating over all nodes.
+     * @param {Function} iteratee - Iteratee function
+     * @param {object} [context] - Context of iteratee
+     * @example
+     * tree.eachAll(function(node, nodeId) {
+     *     console.log(node.getId() === nodeId); // true
+     * });
+     */
+    eachAll: function(iteratee, context) {
+      this.model.eachAll(iteratee, context);
+    },
+
+    /**
+     * Traverse this tree iterating over all descendants of a node.
+     * @param {Function} iteratee - Iteratee function
+     * @param {string} parentId - Parent node id
+     * @param {object} [context] - Context of iteratee
+     * @example
+     * tree.each(function(node, nodeId) {
+     *     console.log(node.getId() === nodeId); // true
+     * }, parentId);
+     *
+     */
+    each: function(iteratee, parentId, context) {
+      this.model.each(iteratee, parentId, context);
+    },
+
+    /**
+     * Add node(s).
+     * - If the parentId is falsy, the node will be appended to rootNode.
+     * - If 'isSilent' is not true, it redraws the tree
+     * @param {Array|object} data - Raw-data
+     * @param {*} [parentId] - Parent id
+     * @param {object} [options] - Options
+     *     @param {boolean} [options.isSilent] - If true, it doesn't redraw children
+     *     @param {boolean} [options.useAjax] - State of using Ajax
+     * @returns {?Array.<string>} Added node ids
+     * @example
+     * // add node with redrawing
+     * var firstAddedIds = tree.add({text:'FE development team1'}, parentId);
+     * console.log(firstAddedIds); // ["tui-tree-node-10"]
+     *
+     * // add node without redrawing
+     * var secondAddedIds = tree.add([
+     *    {text: 'FE development team2'},
+     *    {text: 'FE development team3'}
+     * ], parentId, true);
+     * console.log(secondAddedIds); // ["tui-tree-node-11", "tui-tree-node-12"]
+     */
+    add: function(data, parentId, options) {
+      var treeAjax = this.enabledFeatures.Ajax;
+      var useAjax = options ? options.useAjax : !!treeAjax;
+      var isSilent = options ? options.isSilent : false;
+      var newChildIds;
+
+      if (useAjax) {
+        treeAjax.loadData(
+          ajaxCommand.CREATE,
+          util.bind(function() {
+            return this._add(data, parentId);
+          }, this),
+          {
+            parentId: parentId,
+            data: data
+          }
+        );
+      } else {
+        newChildIds = this._add(data, parentId, isSilent);
+      }
+
+      return newChildIds;
+    },
+
+    /**
+     * Add node(s). (Core method)
+     * - If the parentId is falsy, the node will be appended to rootNode.
+     * - If 'isSilent' is not true, it redraws the tree
+     * @param {Array|object} data - Raw-data
+     * @param {*} [parentId] - Parent id
+     * @param {boolean} [isSilent] - If true, it doesn't redraw children
+     * @returns {Array.<string>} Added node ids
+     * @private
+     */
+    _add: function(data, parentId, isSilent) {
+      return this.model.add(data, parentId, isSilent);
+    },
+
+    /**
+     * Reset all data
+     * @param {Array|object} data - Raw data for all nodes
+     * @param {object} [options] - Options
+     *     @param {string} [options.nodeId] - Parent node id to reset all child data
+     *     @param {boolean} [options.useAjax] - State of using Ajax
+     * @returns {?Array.<string>} Added node ids
+     * @example
+     * tree.resetAllData([
+     *  {text: 'hello', children: [
+     *      {text: 'foo'},
+     *      {text: 'bar'}
+     *  ]},
+     *  {text: 'world'}
+     * ]);
+     * tree.resetAllData([
+     *  {text: 'hello world'}
+     * ], {
+     *  nodeId: 'tui-tree-node-5',
+     *  useAjax: true
+     * });
+     */
+    resetAllData: function(data, options) {
+      var treeAjax = this.enabledFeatures.Ajax;
+      var nodeId = options ? options.nodeId : this.getRootNodeId();
+      var useAjax = options ? options.useAjax : !!treeAjax;
+      var newChildIds;
+
+      if (useAjax) {
+        treeAjax.loadData(
+          ajaxCommand.READ,
+          util.bind(function(response) {
+            return this._resetAllData(response, nodeId);
+          }, this),
+          {
+            nodeId: nodeId
+          }
+        );
+      } else {
+        newChildIds = this._resetAllData(data, nodeId);
+      }
+
+      return newChildIds;
+    },
+
+    /**
+     * Reset all data (Core method)
+     * @param {Array|object} data - Raw data for all nodes
+     * @param {string} nodeId - Node id to reset data
+     * @returns {Array.<string>} Added node ids
+     * @private
+     */
+    _resetAllData: function(data, nodeId) {
+      this._removeAllChildren(nodeId, {
+        isSilent: true
+      });
+
+      return this._add(data, nodeId);
+    },
+
+    /**
+     * Remove all children
+     * @param {string} nodeId - Parent node id
+     * @param {object} [options] - Options
+     *     @param {boolean} [options.isSilent] - If true, it doesn't redraw the node
+     *     @param {boolean} [options.useAjax] - State of using Ajax
+     * @example
+     * tree.removeAllChildren(nodeId); // Redraws the node
+     * tree.removeAllChildren(nodId, true); // Doesn't redraw the node
+     */
+    removeAllChildren: function(nodeId, options) {
+      var treeAjax = this.enabledFeatures.Ajax;
+      var useAjax = options ? options.useAjax : !!treeAjax;
+      var isSilent = options ? options.isSilent : false;
+
+      if (useAjax) {
+        treeAjax.loadData(
+          ajaxCommand.DELETE_ALL_CHILDREN,
+          util.bind(function() {
+            this._removeAllChildren(nodeId);
+          }, this),
+          {
+            parentId: nodeId
+          }
+        );
+      } else {
+        this._removeAllChildren(nodeId, isSilent);
+      }
+    },
+
+    /**
+     * Remove all children (Core method)
+     * @param {string} nodeId - Parent node id
+     * @param {boolean} [isSilent] - If true, it doesn't redraw the node
+     * @private
+     */
+    _removeAllChildren: function(nodeId, isSilent) {
+      var children = this.getChildIds(nodeId);
+
+      forEachArray(
+        children || [],
+        function(childId) {
+          this._remove(childId, true);
+        },
+        this
+      );
+
+      if (!isSilent) {
+        this._draw(nodeId);
+      }
+    },
+
+    /**
+     * Remove a node with children.
+     * - If 'isSilent' is not true, it redraws the tree
+     * @param {string} nodeId - Node id to remove
+     * @param {object} [options] - Options
+     *     @param {boolean} [options.isSilent] - If true, it doesn't redraw children
+     *     @param {boolean} [options.useAjax] - State of using Ajax
+     * @example
+     * tree.remove(myNodeId); // remove node with redrawing
+     * tree.remove(myNodeId, true); // remove node without redrawing
+     */
+    remove: function(nodeId, options) {
+      var treeAjax = this.enabledFeatures.Ajax;
+      var useAjax = options ? options.useAjax : !!treeAjax;
+      var isSilent = options ? options.isSilent : false;
+
+      if (useAjax) {
+        treeAjax.loadData(
+          ajaxCommand.DELETE,
+          util.bind(function() {
+            this._remove(nodeId);
+          }, this),
+          {
+            nodeId: nodeId
+          }
+        );
+      } else {
+        this._remove(nodeId, isSilent);
+      }
+    },
+
+    /**
+     * Remove a node with children. (Core method)
+     * - If 'isSilent' is not true, it redraws the tree
+     * @param {string} nodeId - Node id to remove
+     * @param {boolean} [isSilent] - If true, it doesn't redraw children
+     * @private
+     */
+    _remove: function(nodeId, isSilent) {
+      this.model.remove(nodeId, isSilent);
+    },
+
+    /**
+     * Move a node to new parent
+     * - If 'isSilent' is not true, it redraws the tree
+     * @param {string} nodeId - Node id
+     * @param {string} newParentId - New parent id
+     * @param {number} index - Index number of selected node
+     * @param {object} [options] - Options
+     *     @param {boolean} [options.isSilent] - If true, it doesn't trigger the 'update' event
+     *     @param {boolean} [options.useAjax] - State of using Ajax
+     * @example
+     * tree.move(myNodeId, newParentId); // mode node with redrawing
+     * tree.move(myNodeId, newParentId, true); // move node without redrawing
+     */
+    move: function(nodeId, newParentId, index, options) {
+      var treeAjax = this.enabledFeatures.Ajax;
+      var useAjax = options ? options.useAjax : !!treeAjax;
+      var isSilent = options ? options.isSilent : false;
+
+      if (useAjax) {
+        treeAjax.loadData(
+          ajaxCommand.MOVE,
+          util.bind(function() {
+            if (this.getParentId(nodeId) !== newParentId) {
+              // just move, not sort!
+              this.setNodeData(
+                newParentId,
+                {
+                  reload: true
+                },
+                true
+              );
+            }
+            this._move(nodeId, newParentId, index);
+          }, this),
+          {
+            nodeId: nodeId,
+            newParentId: newParentId,
+            index: index
+          }
+        );
+      } else {
+        this._move(nodeId, newParentId, index, isSilent);
+      }
+    },
+
+    /**
+     * Move a node to new parent (Core method)
+     * - If 'isSilent' is not true, it redraws the tree
+     * @param {string} nodeId - Node id
+     * @param {string} newParentId - New parent id
+     * @param {number} index - Index number of selected node
+     * @param {boolean} [isSilent] - If true, it doesn't redraw children
+     * @private
+     */
+    _move: function(nodeId, newParentId, index, isSilent) {
+      /**
+       * @event Tree#beforeMove
+       * @type {object} evt - Event data
+       * @property {string} nodeId - Current dragging node id
+       * @property {string} newParentId - New parent id
+       * @example
+       * tree.on('beforeMove', function(evt) {
+       *      console.log('dragging node: ' + evt.nodeId);
+       *      console.log('new parent node: ' + evt.newParentId);
+       *      console.log('original parent node: ' + tree.getParentId(evt.nodeId));
+       *
+       *      return false; // Cancel "move" event
+       *      // return true; // Fire "move" event
+       * });
+       */
+      if (
+        !this.invoke('beforeMove', {
+          nodeId: nodeId,
+          newParentId: newParentId
+        })
+      ) {
+        return;
+      }
+
+      this.isMovingNode = true;
+      this.model.move(nodeId, newParentId, index, isSilent);
+      this.isMovingNode = false;
+    },
+
+    /**
+     * Search node ids by passing the predicate check or matching data
+     * @param {Function|Object} predicate - Predicate or data
+     * @param {Object} [context] - Context of predicate
+     * @returns {Array.<string>} Node ids
+     * @example
+     * // search from predicate
+     * var leafNodeIds = tree.search(function(node, nodeId) {
+     *     return node.isLeaf();
+     * });
+     * console.log(leafNodeIds); // ['tui-tree-node-3', 'tui-tree-node-5']
+     *
+     * // search from data
+     * var specialNodeIds = tree.search({
+     *     isSpecial: true,
+     *     foo: 'bar'
+     * });
+     * console.log(specialNodeIds); // ['tui-tree-node-5', 'tui-tree-node-10']
+     * console.log(tree.getNodeData('tui-tree-node-5').isSpecial); // true
+     * console.log(tree.getNodeData('tui-tree-node-5').foo); // 'bar'
+     */
+    search: function(predicate, context) {
+      if (!isObject(predicate)) {
+        return [];
+      }
+
+      if (isFunction(predicate)) {
+        return this._filter(predicate, context);
+      }
+
+      return this._where(predicate);
+    },
+
+    /**
+     * Search node ids by matching data
+     * @param {Object} props - Data
+     * @returns {Array.<string>} Node ids
+     * @private
+     */
+    _where: function(props) {
+      return this._filter(function(node) {
+        var result = true;
+        var data = node.getAllData();
+
+        forEachOwnProperties(props, function(value, key) {
+          result = key in data && data[key] === value;
+
+          return result;
+        });
+
+        return result;
+      });
+    },
+
+    /**
+     * Search node ids by passing the predicate check
+     * @param {Function} predicate - Predicate
+     * @param {Object} [context] - Context of predicate
+     * @returns {Array.<string>} Node ids
+     * @private
+     */
+    _filter: function(predicate, context) {
+      var filtered = [];
+
+      this.eachAll(function(node, nodeId) {
+        if (predicate(node, nodeId)) {
+          filtered.push(nodeId);
+        }
+      }, context);
+
+      return filtered;
+    },
+
+    /**
+     * Whether the node is leaf
+     * @param {string} nodeId - Node id
+     * @returns {boolean} True if the node is leaf.
+     */
+    isLeaf: function(nodeId) {
+      var node = this.model.getNode(nodeId);
+
+      return node && node.isLeaf();
+    },
+
+    /**
+     * Whether a node is a ancestor of another node.
+     * @param {string} containerNodeId - Id of a node that may contain the other node
+     * @param {string} containedNodeId - Id of a node that may be contained by the other node
+     * @returns {boolean} Whether a node contains another node
+     */
+    contains: function(containerNodeId, containedNodeId) {
+      return this.model.contains(containerNodeId, containedNodeId);
+    },
+
+    /**
+     * Enable facility of tree
+     * Ajax feature options: https://github.com/nhn/tui.tree/blob/master/docs/ajax-feature.md
+     * @param {string} featureName - 'Selectable', 'Editable', 'Draggable', 'Checkbox', 'ContextMenu', 'Ajax'
+     * @param {object} [options] - Feature options
+     * @returns {Tree} this
+     * @example
+     * tree
+     *  .enableFeature('Selectable', {
+     *      selectedClassName: 'tui-tree-selected'
+     *  })
+     *  .enableFeature('Editable', {
+     *      editableClassName: tree.classNames.textClass,
+     *      dataKey: 'text',
+     *      defaultValue: 'new node',
+     *      inputClassName: 'myInput'
+     *  })
+     *  .enableFeature('Draggable', {
+     *      useHelper: true,
+     *      helperPos: {x: 5, y: 2},
+     *      rejectedTagNames: ['UL', 'INPUT', 'BUTTON'],
+     *      rejectedClassNames: ['notDraggable', 'notDraggable-2'],
+     *      autoOpenDelay: 1500,
+     *      isSortable: true,
+     *      hoverClassName: 'tui-tree-hover'
+     *      lineClassName: 'tui-tree-line',
+     *      lineBoundary: {
+     *          top: 10,
+     *          bottom: 10
+     *      }
+     *  })
+     *  .enableFeature('Checkbox', {
+     *      checkboxClassName: 'tui-tree-checkbox'
+     *  })
+     *  .enableFeature('ContextMenu', {
+     *      menuData: [
+     *          {title: 'menu1', command: 'copy'},
+     *          {title: 'menu2', command: 'paste'},
+     *          {separator: true},
+     *          {
+     *              title: 'menu3',
+     *              menu: [
+     *                  {title: 'submenu1'},
+     *                  {title: 'submenu2'}
+     *              ]
+     *          }
+     *      }
+     *  })
+     *  .enableFeature('Ajax', {
+     *      command: {
+     *          read: {
+     *              url: 'api/read',
+     *              contentType: 'application/json',
+     *              method: 'GET'
+     *          },
+     *          create: {
+     *              url: 'api/create',
+     *              contentType: 'application/json',
+     *              method: 'POST'
+     *          },
+     *          update: {
+     *              url: 'api/update',
+     *              contentType: 'application/json',
+     *              method: 'POST',
+     *              params: {
+     *                  paramA: 'a',
+     *                  paramB: 'b'
+     *              }
+     *          },
+     *          remove: {
+     *              url: 'api/remove',
+     *              contentType: 'application/json',
+     *              method: 'POST',
+     *              params: function(evt) {
+     *                  return {
+     *                      paramA: evt.a,
+     *                      paramB: evt.b
+     *                  };
+     *              }
+     *          },
+     *          removeAllChildren: {
+     *              url: function(evt) {
+     *                  return 'api/remove_all/' + evt.nodeId,
+     *              },
+     *              contentType: 'application/json',
+     *              method: 'POST'
+     *          },
+     *          move: {
+     *              url: 'api/move',
+     *              contentType: 'application/json',
+     *              method: 'POST'
+     *          }
+     *      },
+     *      parseData: function(command, responseData) {
+     *          if (responseData) {
+     *              return responseData;
+     *          } else {
+     *              return false;
+     *          }
+     *      }
+     *  });
+     */
+    enableFeature: function(featureName, options) {
+      var Feature = features[featureName];
+
+      if (!Feature) {
+        return this;
+      }
+
+      this.disableFeature(featureName);
+
+      if (isObject(options)) {
+        options.usageStatistics = this.usageStatistics;
+      } else {
+        options = {
+          usageStatistics: this.usageStatistics
+        };
+      }
+
+      this.enabledFeatures[featureName] = new Feature(this, options);
+      this.fire('initFeature');
+
+      return this;
+    },
+
+    /**
+     * Disable facility of tree
+     * @param {string} featureName - 'Selectable', 'Draggable', 'Editable'
+     * @returns {Tree} this
+     * @example
+     * tree
+     *  .disableFeature('Selectable')
+     *  .disableFeature('Draggable')
+     *  .disableFeature('Editable')
+     *  .disableFeature('Checkbox')
+     *  .disableFeature('ContextMenu')
+     *  .disableFeature('Ajax');
+     */
+    disableFeature: function(featureName) {
+      var feature = this.enabledFeatures[featureName];
+
+      if (feature) {
+        feature.destroy();
+        delete this.enabledFeatures[featureName];
+      }
+
+      return this;
+    },
+
+    /**
+     * Get index number of selected node
+     * @param {string} nodeId - Id of selected node
+     * @returns {number} Index number of attached node
+     */
+    getNodeIndex: function(nodeId) {
+      var parentId = this.model.getParentId(nodeId);
+
+      return this.model.getNode(parentId).getChildIndex(nodeId);
+    }
+  }
+);
+
+/**
+ * Set abstract apis to tree prototype
+ * @param {string} featureName - Feature name
+ * @param {object} feature - Feature
+ * @ignore
+ */
+function setAbstractAPIs(featureName, feature) {
+  var messageName = 'INVALID_API_' + featureName.toUpperCase();
+  var apiList = feature.getAPIList ? feature.getAPIList() : [];
+
+  forEachArray(apiList, function(api) {
+    Tree.prototype[api] = function() {
+      throw new Error(messages[messageName] || messages.INVALID_API);
+    };
+  });
+}
+forEachOwnProperties(features, function(Feature, name) {
+  setAbstractAPIs(name, Feature);
+});
+CustomEvents.mixin(Tree);
+
+module.exports = Tree;
+
+
+/***/ }),
+/* 36 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * @fileoverview Provide a simple inheritance in prototype-oriented.
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+var createObject = __webpack_require__(37);
+
+/**
+ * Provide a simple inheritance in prototype-oriented.
+ * Caution :
+ *  Don't overwrite the prototype of child constructor.
+ *
+ * @param {function} subType Child constructor
+ * @param {function} superType Parent constructor
+ * @memberof module:inheritance
+ * @example
+ * var inherit = require('tui-code-snippet/inheritance/inherit'); // node, commonjs
+ *
+ * // Parent constructor
+ * function Animal(leg) {
+ *     this.leg = leg;
+ * }
+ * Animal.prototype.growl = function() {
+ *     // ...
+ * };
+ *
+ * // Child constructor
+ * function Person(name) {
+ *     this.name = name;
+ * }
+ *
+ * // Inheritance
+ * inherit(Person, Animal);
+ *
+ * // After this inheritance, please use only the extending of property.
+ * // Do not overwrite prototype.
+ * Person.prototype.walk = function(direction) {
+ *     // ...
+ * };
+ */
+function inherit(subType, superType) {
+  var prototype = createObject(superType.prototype);
+  prototype.constructor = subType;
+  subType.prototype = prototype;
+}
+
+module.exports = inherit;
+
+
+/***/ }),
+/* 37 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * @fileoverview Create a new object with the specified prototype object and properties.
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+/**
+ * @module inheritance
+ */
+
+/**
+ * Create a new object with the specified prototype object and properties.
+ * @param {Object} obj This object will be a prototype of the newly-created object.
+ * @returns {Object}
+ * @memberof module:inheritance
+ */
+function createObject(obj) {
+  function F() {} // eslint-disable-line require-jsdoc
+  F.prototype = obj;
+
+  return new F();
+}
+
+module.exports = createObject;
+
+
+/***/ }),
+/* 38 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * @fileoverview This module detects the kind of well-known browser and version.
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+/**
+ * Browser module
+ * @module browser
+ */
+
+/**
+ * This object has an information that indicate the kind of browser.
+ * The list below is a detectable browser list.
+ *  - ie8 ~ ie11
+ *  - chrome
+ *  - firefox
+ *  - safari
+ *  - edge
+ * @memberof module:browser
+ * @example
+ * var browser = require('tui-code-snippet/browser/browser'); // node, commonjs
+ *
+ * browser.chrome === true; // chrome
+ * browser.firefox === true; // firefox
+ * browser.safari === true; // safari
+ * browser.msie === true; // IE
+ * browser.edge === true; // edge
+ * browser.others === true; // other browser
+ * browser.version; // browser version
+ */
+var browser = {
+  chrome: false,
+  firefox: false,
+  safari: false,
+  msie: false,
+  edge: false,
+  others: false,
+  version: 0
+};
+
+if (window && window.navigator) {
+  detectBrowser();
+}
+
+/**
+ * Detect the browser.
+ * @private
+ */
+function detectBrowser() {
+  var nav = window.navigator;
+  var appName = nav.appName.replace(/\s/g, '_');
+  var userAgent = nav.userAgent;
+
+  var rIE = /MSIE\s([0-9]+[.0-9]*)/;
+  var rIE11 = /Trident.*rv:11\./;
+  var rEdge = /Edge\/(\d+)\./;
+  var versionRegex = {
+    firefox: /Firefox\/(\d+)\./,
+    chrome: /Chrome\/(\d+)\./,
+    safari: /Version\/([\d.]+).*Safari\/(\d+)/
+  };
+
+  var key, tmp;
+
+  var detector = {
+    Microsoft_Internet_Explorer: function() { // eslint-disable-line camelcase
+      var detectedVersion = userAgent.match(rIE);
+
+      if (detectedVersion) { // ie8 ~ ie10
+        browser.msie = true;
+        browser.version = parseFloat(detectedVersion[1]);
+      } else { // no version information
+        browser.others = true;
+      }
+    },
+    Netscape: function() { // eslint-disable-line complexity
+      var detected = false;
+
+      if (rIE11.exec(userAgent)) {
+        browser.msie = true;
+        browser.version = 11;
+        detected = true;
+      } else if (rEdge.exec(userAgent)) {
+        browser.edge = true;
+        browser.version = userAgent.match(rEdge)[1];
+        detected = true;
+      } else {
+        for (key in versionRegex) {
+          if (versionRegex.hasOwnProperty(key)) {
+            tmp = userAgent.match(versionRegex[key]);
+            if (tmp && tmp.length > 1) { // eslint-disable-line max-depth
+              browser[key] = detected = true;
+              browser.version = parseFloat(tmp[1] || 0);
+              break;
+            }
+          }
+        }
+      }
+      if (!detected) {
+        browser.others = true;
+      }
+    }
+  };
+
+  var fn = detector[appName];
+
+  if (fn) {
+    detector[appName]();
+  }
+}
+
+module.exports = browser;
+
+
+/***/ }),
+/* 39 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * @fileoverview Convert text by binding expressions with context.
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+var inArray = __webpack_require__(4);
+var forEach = __webpack_require__(9);
+var isArray = __webpack_require__(2);
+var isString = __webpack_require__(8);
+var extend = __webpack_require__(1);
+
+// IE8 does not support capture groups.
+var EXPRESSION_REGEXP = /{{\s?|\s?}}/g;
+var BRACKET_NOTATION_REGEXP = /^[a-zA-Z0-9_@]+\[[a-zA-Z0-9_@"']+\]$/;
+var BRACKET_REGEXP = /\[\s?|\s?\]/;
+var DOT_NOTATION_REGEXP = /^[a-zA-Z_]+\.[a-zA-Z_]+$/;
+var DOT_REGEXP = /\./;
+var STRING_NOTATION_REGEXP = /^["']\w+["']$/;
+var STRING_REGEXP = /"|'/g;
+var NUMBER_REGEXP = /^-?\d+\.?\d*$/;
+
+var EXPRESSION_INTERVAL = 2;
+
+var BLOCK_HELPERS = {
+  'if': handleIf,
+  'each': handleEach,
+  'with': handleWith
+};
+
+var isValidSplit = 'a'.split(/a/).length === 3;
+
+/**
+ * Split by RegExp. (Polyfill for IE8)
+ * @param {string} text - text to be splitted\
+ * @param {RegExp} regexp - regular expression
+ * @returns {Array.<string>}
+ */
+var splitByRegExp = (function() {
+  if (isValidSplit) {
+    return function(text, regexp) {
+      return text.split(regexp);
+    };
+  }
+
+  return function(text, regexp) {
+    var result = [];
+    var prevIndex = 0;
+    var match, index;
+
+    if (!regexp.global) {
+      regexp = new RegExp(regexp, 'g');
+    }
+
+    match = regexp.exec(text);
+    while (match !== null) {
+      index = match.index;
+      result.push(text.slice(prevIndex, index));
+
+      prevIndex = index + match[0].length;
+      match = regexp.exec(text);
+    }
+    result.push(text.slice(prevIndex));
+
+    return result;
+  };
+})();
+
+/**
+ * Find value in the context by an expression.
+ * @param {string} exp - an expression
+ * @param {object} context - context
+ * @returns {*}
+ * @private
+ */
+// eslint-disable-next-line complexity
+function getValueFromContext(exp, context) {
+  var splitedExps;
+  var value = context[exp];
+
+  if (exp === 'true') {
+    value = true;
+  } else if (exp === 'false') {
+    value = false;
+  } else if (STRING_NOTATION_REGEXP.test(exp)) {
+    value = exp.replace(STRING_REGEXP, '');
+  } else if (BRACKET_NOTATION_REGEXP.test(exp)) {
+    splitedExps = exp.split(BRACKET_REGEXP);
+    value = getValueFromContext(splitedExps[0], context)[getValueFromContext(splitedExps[1], context)];
+  } else if (DOT_NOTATION_REGEXP.test(exp)) {
+    splitedExps = exp.split(DOT_REGEXP);
+    value = getValueFromContext(splitedExps[0], context)[splitedExps[1]];
+  } else if (NUMBER_REGEXP.test(exp)) {
+    value = parseFloat(exp);
+  }
+
+  return value;
+}
+
+/**
+ * Extract elseif and else expressions.
+ * @param {Array.<string>} ifExps - args of if expression
+ * @param {Array.<string>} sourcesInsideBlock - sources inside if block
+ * @returns {object} - exps: expressions of if, elseif, and else / sourcesInsideIf: sources inside if, elseif, and else block.
+ * @private
+ */
+function extractElseif(ifExps, sourcesInsideBlock) {
+  var exps = [ifExps];
+  var sourcesInsideIf = [];
+  var otherIfCount = 0;
+  var start = 0;
+
+  // eslint-disable-next-line complexity
+  forEach(sourcesInsideBlock, function(source, index) {
+    if (source.indexOf('if') === 0) {
+      otherIfCount += 1;
+    } else if (source === '/if') {
+      otherIfCount -= 1;
+    } else if (!otherIfCount && (source.indexOf('elseif') === 0 || source === 'else')) {
+      exps.push(source === 'else' ? ['true'] : source.split(' ').slice(1));
+      sourcesInsideIf.push(sourcesInsideBlock.slice(start, index));
+      start = index + 1;
+    }
+  });
+
+  sourcesInsideIf.push(sourcesInsideBlock.slice(start));
+
+  return {
+    exps: exps,
+    sourcesInsideIf: sourcesInsideIf
+  };
+}
+
+/**
+ * Helper function for "if". 
+ * @param {Array.<string>} exps - array of expressions split by spaces
+ * @param {Array.<string>} sourcesInsideBlock - array of sources inside the if block
+ * @param {object} context - context
+ * @returns {string}
+ * @private
+ */
+function handleIf(exps, sourcesInsideBlock, context) {
+  var analyzed = extractElseif(exps, sourcesInsideBlock);
+  var result = false;
+  var compiledSource = '';
+
+  forEach(analyzed.exps, function(exp, index) {
+    result = handleExpression(exp, context);
+    if (result) {
+      compiledSource = compile(analyzed.sourcesInsideIf[index], context);
+    }
+
+    return !result;
+  });
+
+  return compiledSource;
+}
+
+/**
+ * Helper function for "each".
+ * @param {Array.<string>} exps - array of expressions split by spaces
+ * @param {Array.<string>} sourcesInsideBlock - array of sources inside the each block
+ * @param {object} context - context
+ * @returns {string}
+ * @private
+ */
+function handleEach(exps, sourcesInsideBlock, context) {
+  var collection = handleExpression(exps, context);
+  var additionalKey = isArray(collection) ? '@index' : '@key';
+  var additionalContext = {};
+  var result = '';
+
+  forEach(collection, function(item, key) {
+    additionalContext[additionalKey] = key;
+    additionalContext['@this'] = item;
+    extend(context, additionalContext);
+
+    result += compile(sourcesInsideBlock.slice(), context);
+  });
+
+  return result;
+}
+
+/**
+ * Helper function for "with ... as"
+ * @param {Array.<string>} exps - array of expressions split by spaces
+ * @param {Array.<string>} sourcesInsideBlock - array of sources inside the with block
+ * @param {object} context - context
+ * @returns {string}
+ * @private
+ */
+function handleWith(exps, sourcesInsideBlock, context) {
+  var asIndex = inArray('as', exps);
+  var alias = exps[asIndex + 1];
+  var result = handleExpression(exps.slice(0, asIndex), context);
+
+  var additionalContext = {};
+  additionalContext[alias] = result;
+
+  return compile(sourcesInsideBlock, extend(context, additionalContext)) || '';
+}
+
+/**
+ * Extract sources inside block in place.
+ * @param {Array.<string>} sources - array of sources
+ * @param {number} start - index of start block
+ * @param {number} end - index of end block
+ * @returns {Array.<string>}
+ * @private
+ */
+function extractSourcesInsideBlock(sources, start, end) {
+  var sourcesInsideBlock = sources.splice(start + 1, end - start);
+  sourcesInsideBlock.pop();
+
+  return sourcesInsideBlock;
+}
+
+/**
+ * Handle block helper function
+ * @param {string} helperKeyword - helper keyword (ex. if, each, with)
+ * @param {Array.<string>} sourcesToEnd - array of sources after the starting block
+ * @param {object} context - context
+ * @returns {Array.<string>}
+ * @private
+ */
+function handleBlockHelper(helperKeyword, sourcesToEnd, context) {
+  var executeBlockHelper = BLOCK_HELPERS[helperKeyword];
+  var helperCount = 1;
+  var startBlockIndex = 0;
+  var endBlockIndex;
+  var index = startBlockIndex + EXPRESSION_INTERVAL;
+  var expression = sourcesToEnd[index];
+
+  while (helperCount && isString(expression)) {
+    if (expression.indexOf(helperKeyword) === 0) {
+      helperCount += 1;
+    } else if (expression.indexOf('/' + helperKeyword) === 0) {
+      helperCount -= 1;
+      endBlockIndex = index;
+    }
+
+    index += EXPRESSION_INTERVAL;
+    expression = sourcesToEnd[index];
+  }
+
+  if (helperCount) {
+    throw Error(helperKeyword + ' needs {{/' + helperKeyword + '}} expression.');
+  }
+
+  sourcesToEnd[startBlockIndex] = executeBlockHelper(
+    sourcesToEnd[startBlockIndex].split(' ').slice(1),
+    extractSourcesInsideBlock(sourcesToEnd, startBlockIndex, endBlockIndex),
+    context
+  );
+
+  return sourcesToEnd;
+}
+
+/**
+ * Helper function for "custom helper".
+ * If helper is not a function, return helper itself.
+ * @param {Array.<string>} exps - array of expressions split by spaces (first element: helper)
+ * @param {object} context - context
+ * @returns {string}
+ * @private
+ */
+function handleExpression(exps, context) {
+  var result = getValueFromContext(exps[0], context);
+
+  if (result instanceof Function) {
+    return executeFunction(result, exps.slice(1), context);
+  }
+
+  return result;
+}
+
+/**
+ * Execute a helper function.
+ * @param {Function} helper - helper function
+ * @param {Array.<string>} argExps - expressions of arguments
+ * @param {object} context - context
+ * @returns {string} - result of executing the function with arguments
+ * @private
+ */
+function executeFunction(helper, argExps, context) {
+  var args = [];
+  forEach(argExps, function(exp) {
+    args.push(getValueFromContext(exp, context));
+  });
+
+  return helper.apply(null, args);
+}
+
+/**
+ * Get a result of compiling an expression with the context.
+ * @param {Array.<string>} sources - array of sources split by regexp of expression.
+ * @param {object} context - context
+ * @returns {Array.<string>} - array of sources that bind with its context
+ * @private
+ */
+function compile(sources, context) {
+  var index = 1;
+  var expression = sources[index];
+  var exps, firstExp, result;
+
+  while (isString(expression)) {
+    exps = expression.split(' ');
+    firstExp = exps[0];
+
+    if (BLOCK_HELPERS[firstExp]) {
+      result = handleBlockHelper(firstExp, sources.splice(index, sources.length - index), context);
+      sources = sources.concat(result);
+    } else {
+      sources[index] = handleExpression(exps, context);
+    }
+
+    index += EXPRESSION_INTERVAL;
+    expression = sources[index];
+  }
+
+  return sources.join('');
+}
+
+/**
+ * Convert text by binding expressions with context.
+ * <br>
+ * If expression exists in the context, it will be replaced.
+ * ex) '{{title}}' with context {title: 'Hello!'} is converted to 'Hello!'.
+ * An array or object can be accessed using bracket and dot notation.
+ * ex) '{{odds\[2\]}}' with context {odds: \[1, 3, 5\]} is converted to '5'.
+ * ex) '{{evens\[first\]}}' with context {evens: \[2, 4\], first: 0} is converted to '2'.
+ * ex) '{{project\["name"\]}}' and '{{project.name}}' with context {project: {name: 'CodeSnippet'}} is converted to 'CodeSnippet'.
+ * <br>
+ * If replaced expression is a function, next expressions will be arguments of the function.
+ * ex) '{{add 1 2}}' with context {add: function(a, b) {return a + b;}} is converted to '3'.
+ * <br>
+ * It has 3 predefined block helpers '{{helper ...}} ... {{/helper}}': 'if', 'each', 'with ... as ...'.
+ * 1) 'if' evaluates conditional statements. It can use with 'elseif' and 'else'.
+ * 2) 'each' iterates an array or object. It provides '@index'(array), '@key'(object), and '@this'(current element).
+ * 3) 'with ... as ...' provides an alias.
+ * @param {string} text - text with expressions
+ * @param {object} context - context
+ * @returns {string} - text that bind with its context
+ * @memberof module:domUtil
+ * @example
+ * var template = require('tui-code-snippet/domUtil/template');
+ * 
+ * var source = 
+ *     '<h1>'
+ *   +   '{{if isValidNumber title}}'
+ *   +     '{{title}}th'
+ *   +   '{{elseif isValidDate title}}'
+ *   +     'Date: {{title}}'
+ *   +   '{{/if}}'
+ *   + '</h1>'
+ *   + '{{each list}}'
+ *   +   '{{with addOne @index as idx}}'
+ *   +     '<p>{{idx}}: {{@this}}</p>'
+ *   +   '{{/with}}'
+ *   + '{{/each}}';
+ * 
+ * var context = {
+ *   isValidDate: function(text) {
+ *     return /^\d{4}-(0|1)\d-(0|1|2|3)\d$/.test(text);
+ *   },
+ *   isValidNumber: function(text) {
+ *     return /^\d+$/.test(text);
+ *   }
+ *   title: '2019-11-25',
+ *   list: ['Clean the room', 'Wash the dishes'],
+ *   addOne: function(num) {
+ *     return num + 1;
+ *   }
+ * };
+ * 
+ * var result = template(source, context);
+ * console.log(result); // <h1>Date: 2019-11-25</h1><p>1: Clean the room</p><p>2: Wash the dishes</p>
+ */
+function template(text, context) {
+  return compile(splitByRegExp(text, EXPRESSION_REGEXP), context);
+}
+
+module.exports = template;
+
+
+/***/ }),
+/* 40 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * @fileoverview Check whether the given variable is a instance of HTMLNode or not.
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+/**
+ * Check whether the given variable is a instance of HTMLNode or not.
+ * If the given variables is a instance of HTMLNode, return true.
+ * @param {*} html - Target for checking
+ * @returns {boolean} Is HTMLNode ?
+ * @memberof module:type
+ */
+function isHTMLNode(html) {
+  if (typeof HTMLElement === 'object') {
+    return (html && (html instanceof HTMLElement || !!html.nodeType));
+  }
+
+  return !!(html && html.nodeType);
+}
+
+module.exports = isHTMLNode;
+
+
+/***/ }),
+/* 41 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * @fileoverview Send hostname on DOMContentLoaded.
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+var isUndefined = __webpack_require__(7);
+var imagePing = __webpack_require__(42);
+
+var ms7days = 7 * 24 * 60 * 60 * 1000;
+
+/**
+ * Check if the date has passed 7 days
+ * @param {number} date - milliseconds
+ * @returns {boolean}
+ * @private
+ */
+function isExpired(date) {
+  var now = new Date().getTime();
+
+  return now - date > ms7days;
+}
+
+/**
+ * Send hostname on DOMContentLoaded.
+ * To prevent hostname set tui.usageStatistics to false.
+ * @param {string} appName - application name
+ * @param {string} trackingId - GA tracking ID
+ * @ignore
+ */
+function sendHostname(appName, trackingId) {
+  var url = 'https://www.google-analytics.com/collect';
+  var hostname = location.hostname;
+  var hitType = 'event';
+  var eventCategory = 'use';
+  var applicationKeyForStorage = 'TOAST UI ' + appName + ' for ' + hostname + ': Statistics';
+  var date = window.localStorage.getItem(applicationKeyForStorage);
+
+  // skip if the flag is defined and is set to false explicitly
+  if (!isUndefined(window.tui) && window.tui.usageStatistics === false) {
+    return;
+  }
+
+  // skip if not pass seven days old
+  if (date && !isExpired(date)) {
+    return;
+  }
+
+  window.localStorage.setItem(applicationKeyForStorage, new Date().getTime());
+
+  setTimeout(function() {
+    if (document.readyState === 'interactive' || document.readyState === 'complete') {
+      imagePing(url, {
+        v: 1,
+        t: hitType,
+        tid: trackingId,
+        cid: hostname,
+        dp: hostname,
+        dh: appName,
+        el: appName,
+        ec: eventCategory
+      });
+    }
+  }, 1000);
+}
+
+module.exports = sendHostname;
+
+
+/***/ }),
+/* 42 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * @fileoverview Request image ping.
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+var forEachOwnProperties = __webpack_require__(6);
+
+/**
+ * @module request
+ */
+
+/**
+ * Request image ping.
+ * @param {String} url url for ping request
+ * @param {Object} trackingInfo infos for make query string
+ * @returns {HTMLElement}
+ * @memberof module:request
+ * @example
+ * var imagePing = require('tui-code-snippet/request/imagePing'); // node, commonjs
+ *
+ * imagePing('https://www.google-analytics.com/collect', {
+ *     v: 1,
+ *     t: 'event',
+ *     tid: 'trackingid',
+ *     cid: 'cid',
+ *     dp: 'dp',
+ *     dh: 'dh'
+ * });
+ */
+function imagePing(url, trackingInfo) {
+  var trackingElement = document.createElement('img');
+  var queryString = '';
+  forEachOwnProperties(trackingInfo, function(value, key) {
+    queryString += '&' + key + '=' + value;
+  });
+  queryString = queryString.substring(1);
+
+  trackingElement.src = url + '?' + queryString;
+
+  trackingElement.style.display = 'none';
+  document.body.appendChild(trackingElement);
+  document.body.removeChild(trackingElement);
+
+  return trackingElement;
+}
+
+module.exports = imagePing;
+
+
+/***/ }),
+/* 43 */
 /***/ (function(module, exports) {
 
-eval("/**\n * @fileoverview Set error messages\n * @author NHN. FE dev Lab <dl_javascript@nhn.com>\n */\n\n/**\n * Messages for tree\n * @type {Object.<string, string>}\n */\nmodule.exports = {\n  INVALID_CONTAINER_ELEMENT: '\"tui-tree\": The container element is invalid.',\n  INVALID_API: '\"tui-tree\": INVALID_API',\n  INVALID_API_SELECTABLE: '\"tui-tree\": The feature-\"Selectable\" is not enabled.',\n  INVALID_API_EDITABLE: '\"tui-tree\": The feature-\"Editable\" is not enabled.',\n  INVALID_API_DRAGGABLE: '\"tui-tree\": The feature-\"Draggable\" is not enabled.',\n  INVALID_API_CHECKBOX: '\"tui-tree\": The feature-\"Checkbox\" is not enabled.'\n};\n\n\n//# sourceURL=webpack://tui.Tree/./src/js/consts/messages.js?");
+/**
+ * @fileoverview Set default value of options
+ * @author NHN. FE dev Lab <dl_javascript@nhn.com>
+ */
+
+/**
+ * A default values for tree
+ * @const
+ * @type {Object}
+ * @property {array} data - A data to be used on tree
+ * @property {string} nodeDefaultState - Node state
+ * @property {string} nodeIdPrefix - Node id prefix
+ * @property {object} stateLabel - State label in node
+ *  @property {string} stateLabel.opened - '-'
+ *  @property {string} stateLabel.closed - '+'
+ * @property {object} template - Template html for the nodes.
+ *  @property {string} template.internalNode - Template html for internal node.
+ *  @property {string} template.leafNode - Template html for leaf node.
+ * @property {object} classNames - Class names of elements in tree
+ *  @property {string} openedClass - Class name for opened node
+ *  @property {string} closedClass - Class name for closed node
+ *  @property {string} nodeClass - Class name for node
+ *  @property {string} leafClass - Class name for leaf node
+ *  @property {string} subtreeClass  - Class name for subtree in internal node
+ *  @property {string} toggleBtnClass - Class name for toggle button in internal node
+ *  @property {string} textClass - Class name for text element in a node
+ */
+module.exports = {
+  data: [],
+  nodeDefaultState: 'closed',
+  stateLabels: {
+    opened: '-',
+    closed: '+'
+  },
+  nodeIdPrefix: 'tui-tree-node-',
+  classNames: {
+    nodeClass: 'tui-tree-node',
+    leafClass: 'tui-tree-leaf',
+    openedClass: 'tui-tree-opened',
+    closedClass: 'tui-tree-closed',
+    subtreeClass: 'tui-js-tree-subtree',
+    toggleBtnClass: 'tui-js-tree-toggle-btn',
+    textClass: 'tui-js-tree-text',
+    btnClass: 'tui-tree-content-wrapper'
+  },
+  template: {
+    internalNode:
+      '<div class="tui-tree-content-wrapper">' +
+      '<button type="button" class="tui-tree-toggle-btn {{toggleBtnClass}}">' +
+      '<span class="tui-ico-tree"></span>' +
+      '{{stateLabel}}' +
+      '</button>' +
+      '<span class="tui-tree-text {{textClass}}">' +
+      '<span class="tui-tree-ico tui-ico-folder"></span>' +
+      '{{text}}' +
+      '</span>' +
+      '</div>' +
+      '<ul class="tui-tree-subtree {{subtreeClass}}">{{children}}</ul>',
+    leafNode:
+      '<div class="tui-tree-content-wrapper">' +
+      '<span class="tui-tree-text {{textClass}}">' +
+      '<span class="tui-tree-ico tui-ico-file"></span>' +
+      '{{text}}' +
+      '</span>' +
+      '</div>'
+  },
+  indent: 23, // value of default css,
+  usageStatistics: true
+};
+
 
 /***/ }),
-
-/***/ "./src/js/consts/outerTemplate.js":
-/*!****************************************!*\
-  !*** ./src/js/consts/outerTemplate.js ***!
-  \****************************************/
-/*! no static exports found */
+/* 44 */
 /***/ (function(module, exports) {
 
-eval("/* eslint-disable no-useless-concat */\n/**\n * @fileoverview Set outer template\n * @author NHN. FE dev Lab <dl_javascript@nhn.com>\n */\n\n/**\n * Outer template\n * @type {{internalNode: string, leafNode: string}}\n */\nmodule.exports = {\n  ROOT: '<ul class=\"tui-tree tui-tree-root\"></ul>',\n  INTERNAL_NODE: '<li id=\"{{id}}\" class=\"{{nodeClass}} {{stateClass}}\">' + '{{innerTemplate}}' + '</li>',\n  LEAF_NODE: '<li id=\"{{id}}\" class=\"{{nodeClass}} {{leafClass}}\">' + '{{innerTemplate}}' + '</li>'\n};\n\n\n//# sourceURL=webpack://tui.Tree/./src/js/consts/outerTemplate.js?");
+/**
+ * @fileoverview Set error messages
+ * @author NHN. FE dev Lab <dl_javascript@nhn.com>
+ */
+
+/**
+ * Messages for tree
+ * @type {Object.<string, string>}
+ */
+module.exports = {
+  INVALID_CONTAINER_ELEMENT: '"tui-tree": The container element is invalid.',
+  INVALID_API: '"tui-tree": INVALID_API',
+  INVALID_API_SELECTABLE: '"tui-tree": The feature-"Selectable" is not enabled.',
+  INVALID_API_EDITABLE: '"tui-tree": The feature-"Editable" is not enabled.',
+  INVALID_API_DRAGGABLE: '"tui-tree": The feature-"Draggable" is not enabled.',
+  INVALID_API_CHECKBOX: '"tui-tree": The feature-"Checkbox" is not enabled.'
+};
+
 
 /***/ }),
-
-/***/ "./src/js/consts/states.js":
-/*!*********************************!*\
-  !*** ./src/js/consts/states.js ***!
-  \*********************************/
-/*! no static exports found */
+/* 45 */
 /***/ (function(module, exports) {
 
-eval("/**\n * @fileoverview Set default value of toggle button\n * @author NHN. FE dev Lab <dl_javascript@nhn.com>\n */\n\n/**\n * States in tree\n * @type {Object.<string, string>}\n */\nmodule.exports = {\n  /**\n   * States of node\n   * @type {{OPENED: string, CLOSED: string}}\n   */\n  node: {\n    OPENED: 'opened',\n    CLOSED: 'closed'\n  }\n};\n\n\n//# sourceURL=webpack://tui.Tree/./src/js/consts/states.js?");
+/**
+ * @fileoverview Set outer template
+ * @author NHN. FE dev Lab <dl_javascript@nhn.com>
+ */
+
+/**
+ * Outer template
+ * @type {{internalNode: string, leafNode: string}}
+ */
+module.exports = {
+  ROOT: '<ul class="tui-tree tui-tree-root"></ul>',
+  INTERNAL_NODE: '<li id="{{id}}" class="{{nodeClass}} {{stateClass}}">{{innerTemplate}}</li>',
+  LEAF_NODE: '<li id="{{id}}" class="{{nodeClass}} {{leafClass}}">{{innerTemplate}}</li>'
+};
+
 
 /***/ }),
-
-/***/ "./src/js/features/ajax.js":
-/*!*********************************!*\
-  !*** ./src/js/features/ajax.js ***!
-  \*********************************/
-/*! no static exports found */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("/**\n * @fileoverview Feature that tree action is enable to communicate server\n * @author NHN. FE dev Lab <dl_javascript@nhn.com>\n */\nvar snippet = __webpack_require__(/*! tui-code-snippet */ \"tui-code-snippet\");\nvar API_LIST = [];\nvar LOADER_CLASSNAME = 'tui-tree-loader';\n\n/**\n * Set Ajax feature on tree\n * @class Ajax\n * @param {Tree} tree - Tree\n * @param {Object} options - Options\n *  @param {Object} options.command - Each Ajax request command options\n *  @param {Function} [options.parseData] - Function to parse and return the response data\n *  @param {string} [options.loaderClassName] - Classname of loader element\n *  @param {boolean} [options.isLoadRoot] - Whether load data from root node or not\n * @ignore\n */\nvar Ajax = snippet.defineClass(\n  /** @lends Ajax.prototype */ {\n    static: {\n      /**\n       * @static\n       * @memberof Ajax\n       * @returns {Array.<string>} API list of Ajax\n       */\n      getAPIList: function() {\n        return API_LIST.slice();\n      }\n    },\n    init: function(tree, options) {\n      options = snippet.extend({}, options);\n\n      /**\n       * Tree\n       * @type {Tree}\n       */\n      this.tree = tree;\n\n      /**\n       * Option for each request command\n       * @type {Object}\n       */\n      this.command = options.command;\n\n      /**\n       * Callback for parsing the response data\n       * @type {?Function}\n       */\n      this.parseData = options.parseData || null;\n\n      /**\n       * Classname of loader element\n       * @type {string}\n       */\n      this.loaderClassName = options.loaderClassName || LOADER_CLASSNAME;\n\n      /**\n       * State of loading root data or not\n       * @type {boolean}\n       */\n      this.isLoadRoot = !snippet.isUndefined(options.isLoadRoot) ? options.isLoadRoot : true;\n\n      /**\n       * Loader element\n       * @type {HTMLElement}\n       */\n      this.loader = null;\n\n      this._createLoader();\n\n      tree.on('initFeature', snippet.bind(this._onInitFeature, this));\n    },\n\n    /**\n     * Custom event handler \"initFeature\"\n     * @private\n     */\n    _onInitFeature: function() {\n      if (!this.isLoadRoot) {\n        return;\n      }\n\n      this.tree.resetAllData();\n    },\n\n    /**\n     * Disable this module\n     */\n    destroy: function() {\n      var tree = this.tree;\n\n      this._removeLoader();\n\n      tree.off(this);\n    },\n\n    /**\n     * Load data to request server\n     * @param {string} type - Command type\n     * @param {Function} callback - Executed function after response\n     * @param {Object} [params] - Values to make \"data\" property using request\n     */\n    loadData: function(type, callback, params) {\n      var self = this;\n      var options;\n\n      if (!this.command || !this.command[type] || !this.command[type].url) {\n        return;\n      }\n\n      options = this._getDefaultRequestOptions(type, params);\n\n      /**\n       * @event Tree#beforeAjaxRequest\n       * @type {object} evt - Event data\n       * @property {string} command - Command type\n       * @property {object} [data] - Request data\n       * @example\n       * tree.on('beforeAjaxRequest', function(evt) {\n       *     console.log('before ' + evt.command + ' request!');\n       *     return false; // It cancels request\n       *     // return true; // It fires request\n       * });\n       */\n      if (\n        !this.tree.invoke('beforeAjaxRequest', {\n          type: type,\n          params: params\n        })\n      ) {\n        return;\n      }\n\n      this._showLoader();\n\n      options.success = function(response) {\n        self._responseSuccess(type, callback, response);\n      };\n\n      options.error = function() {\n        self._responseError(type);\n      };\n\n      $.ajax(options);\n    },\n\n    /**\n     * Processing when response is success\n     * @param {string} type - Command type\n     * @param {Function} callback - Executed function after response\n     * @param {Object|boolean} [response] - Response data from server or return value of \"parseData\"\n     * @private\n     */\n    _responseSuccess: function(type, callback, response) {\n      var tree = this.tree;\n      var data;\n\n      this._hideLoader();\n\n      if (this.parseData) {\n        response = this.parseData(type, response);\n      }\n\n      if (response) {\n        data = callback(response);\n\n        /**\n         * @event Tree#successAjaxResponse\n         * @type {object} evt - Event data\n         * @property {string} command - Command type\n         * @property {object} [data] - Return value of executed command callback\n         * @example\n         * tree.on('successAjaxResponse', function(evt) {\n         *     console.log(evt.command + ' response is success!');\n         *     if (data) {\n         *           console.log('data:' + evt.data);\n         *     }\n         * });\n         */\n        tree.fire('successAjaxResponse', {\n          type: type,\n          data: data\n        });\n      } else {\n        /**\n         * @event Tree#failAjaxResponse\n         * @type {object} evt - Event data\n         * @property {string} command - Command type\n         * @example\n         * tree.on('failAjaxResponse', function(evt) {\n         *     console.log(evt.command + ' response is fail!');\n         * });\n         */\n        tree.fire('failAjaxResponse', {type: type});\n      }\n    },\n\n    /**\n     * Processing when response is error\n     * @param {string} type - Command type\n     * @private\n     */\n    _responseError: function(type) {\n      this._hideLoader();\n\n      /**\n       * @event Tree#errorAjaxResponse\n       * @type {object} evt - Event data\n       * @property {string} command - Command type\n       * @example\n       * tree.on('errorAjaxResponse', function(evt) {\n       *     console.log(evt.command + ' response is error!');\n       * });\n       */\n      this.tree.fire('errorAjaxResponse', {type: type});\n    },\n\n    /**\n     * Get default request options\n     * @param {string} type - Command type\n     * @param {Object} [params] - Value of request option \"data\"\n     * @returns {Object} Default options to request\n     * @private\n     */\n    _getDefaultRequestOptions: function(type, params) {\n      var options = this.command[type];\n\n      if (snippet.isFunction(options.url)) {\n        // for restful API url\n        options.url = options.url(params);\n      }\n\n      if (snippet.isFunction(options.data)) {\n        // for custom request data\n        options.data = options.data(params);\n      }\n\n      options.type = options.type ? options.type.toLowerCase() : 'get';\n      options.dataType = options.dataType || 'json';\n\n      return options;\n    },\n\n    /**\n     * Create loader element\n     * @private\n     */\n    _createLoader: function() {\n      var tree = this.tree;\n      var loader = document.createElement('span');\n\n      loader.className = this.loaderClassName;\n      loader.style.display = 'none';\n\n      tree.rootElement.parentNode.appendChild(loader);\n\n      this.loader = loader;\n    },\n\n    /**\n     * Remove loader element\n     * @private\n     */\n    _removeLoader: function() {\n      var tree = this.tree;\n      var loader = this.loader;\n\n      tree.rootElement.parentNode.removeChild(loader);\n\n      this.loader = null;\n    },\n\n    /**\n     * Show loader element on tree\n     * @private\n     */\n    _showLoader: function() {\n      this.loader.style.display = 'block';\n    },\n\n    /**\n     * Hide loader element on tree\n     * @private\n     */\n    _hideLoader: function() {\n      this.loader.style.display = 'none';\n    }\n  }\n);\n\nmodule.exports = Ajax;\n\n\n//# sourceURL=webpack://tui.Tree/./src/js/features/ajax.js?");
+/**
+ * @fileoverview Update view and control tree data
+ * @author NHN. FE dev Lab <dl_javascript@nhn.com>
+ */
+
+var forEachArray = __webpack_require__(0);
+var forEachOwnProperties = __webpack_require__(6);
+var CustomEvents = __webpack_require__(18);
+var defineClass = __webpack_require__(3);
+var extend = __webpack_require__(1);
+var isArray = __webpack_require__(2);
+var util = __webpack_require__(5);
+
+var TreeNode = __webpack_require__(47);
+
+/**
+ * Tree model
+ * @class TreeModel
+ * @param {Array} data - Data
+ * @param {Object} options - Options for defaultState and nodeIdPrefix
+ * @ignore
+ */
+var TreeModel = defineClass(
+  /** @lends TreeModel.prototype */ {
+    init: function(options) {
+      TreeNode.setIdPrefix(options.nodeIdPrefix);
+
+      /**
+       * Default state of node
+       * @type {String}
+       */
+      this.nodeDefaultState = options.nodeDefaultState;
+
+      /**
+       * Root node
+       * @type {TreeNode}
+       */
+      this.rootNode = new TreeNode(
+        {
+          state: 'opened'
+        },
+        null
+      );
+
+      /**
+       * Tree hash having all nodes
+       * @type {object.<string, TreeNode>}
+       */
+      this.treeHash = {};
+
+      this._setData(options.data);
+    },
+
+    /**
+     * Return prefix of node id
+     * @returns {string} Prefix
+     */
+    getNodeIdPrefix: function() {
+      return TreeNode.idPrefix;
+    },
+
+    /**
+     * Set model with tree data
+     * @param {Array} data - Tree data
+     */
+    _setData: function(data) {
+      var root = this.rootNode;
+      var rootId = root.getId();
+
+      this.treeHash[rootId] = root;
+      this._makeTreeHash(data, root);
+    },
+
+    /**
+     * Make tree hash from data and parentNode
+     * @param {Array} data - Tree data
+     * @param {TreeNode} parent - Parent node id
+     * @returns {Array.<string>} Added node ids
+     * @private
+     */
+    _makeTreeHash: function(data, parent) {
+      var parentId = parent.getId();
+      var ids = [];
+
+      forEachArray(
+        data || [],
+        function(datum) {
+          var childrenData = datum.children;
+          var node = this._createNode(datum, parentId);
+          var nodeId = node.getId();
+
+          ids.push(nodeId);
+          this.treeHash[nodeId] = node;
+          parent.addChildId(nodeId);
+          this._makeTreeHash(childrenData, node);
+        },
+        this
+      );
+
+      return ids;
+    },
+
+    /**
+     * Create node
+     * @param {object} nodeData - Datum of node
+     * @param {string} parentId - Parent id
+     * @returns {TreeNode} TreeNode
+     */
+    _createNode: function(nodeData, parentId) {
+      nodeData = extend(
+        {
+          state: this.nodeDefaultState
+        },
+        nodeData
+      );
+
+      return new TreeNode(nodeData, parentId);
+    },
+
+    /**
+     * Get children
+     * @param {string} nodeId - Node id
+     * @returns {?Array.<TreeNode>} children
+     */
+    getChildren: function(nodeId) {
+      var childIds = this.getChildIds(nodeId);
+
+      if (!childIds) {
+        return null;
+      }
+
+      return util.map(
+        childIds,
+        function(childId) {
+          return this.getNode(childId);
+        },
+        this
+      );
+    },
+
+    /**
+     * Get child ids
+     * @param {string} nodeId - Node id
+     * @returns {?Array.<string>} Child ids
+     */
+    getChildIds: function(nodeId) {
+      var node = this.getNode(nodeId);
+
+      if (!node) {
+        return null;
+      }
+
+      return node.getChildIds();
+    },
+
+    /**
+     * Get the number of nodes
+     * @returns {number} The number of nodes
+     */
+    getCount: function() {
+      var treeHash = this.treeHash;
+      var length = 0;
+
+      forEachOwnProperties(treeHash, function() {
+        length += 1;
+      });
+
+      return length;
+    },
+
+    /**
+     * Get last depth
+     * @returns {number} The last depth
+     */
+    getLastDepth: function() {
+      var depths = util.map(
+        this.treeHash,
+        function(node) {
+          return this.getDepth(node.getId());
+        },
+        this
+      );
+
+      return Math.max.apply(null, depths);
+    },
+
+    /**
+     * Find node
+     * @param {string} id - A node id to find
+     * @returns {?TreeNode} Node
+     */
+    getNode: function(id) {
+      return this.treeHash[id];
+    },
+
+    /**
+     * Get depth from node id
+     * @param {string} id - A node id to find
+     * @returns {?number} Depth
+     */
+    getDepth: function(id) {
+      var node = this.getNode(id);
+      var depth = 0;
+      var parent;
+
+      if (!node) {
+        return null;
+      }
+
+      parent = this.getNode(node.getParentId());
+      while (parent) {
+        depth += 1;
+        parent = this.getNode(parent.getParentId());
+      }
+
+      return depth;
+    },
+
+    /**
+     * Return parent id of node
+     * @param {string} id - Node id
+     * @returns {?string} Parent id
+     */
+    getParentId: function(id) {
+      var node = this.getNode(id);
+
+      if (!node) {
+        return null;
+      }
+
+      return node.getParentId();
+    },
+    /**
+     * Return parents ids of node
+     * @param {string} id - Node id
+     * @returns {Array.<string>} Parents node ids
+     */
+    getParentIds: function(id) {
+      var parentsNodeList = [];
+      var node = this.getNode(id);
+      var parentNodeId = node.getParentId();
+
+      while (parentNodeId) {
+        node = this.getNode(parentNodeId);
+        parentNodeId = node.getParentId();
+        parentsNodeList.push(node);
+      }
+
+      return util.map(parentsNodeList, function(parentsNode) {
+        return parentsNode.getId();
+      });
+    },
+    /**
+     * Remove a node with children.
+     * - The update event will be fired with parent node.
+     * @param {string} id - Node id to remove
+     * @param {boolean} [isSilent] - If true, it doesn't trigger the 'update' event
+     */
+    remove: function(id, isSilent) {
+      var node = this.getNode(id);
+      var parent;
+
+      if (!node) {
+        return;
+      }
+
+      parent = this.getNode(node.getParentId());
+
+      forEachArray(
+        node.getChildIds(),
+        function(childId) {
+          this.remove(childId, true);
+        },
+        this
+      );
+
+      parent.removeChildId(id);
+      delete this.treeHash[id];
+
+      if (!isSilent) {
+        this.fire('update', parent.getId());
+      }
+    },
+
+    /**
+     * Add node(s).
+     * - If the parentId is falsy, the node will be appended to rootNode.
+     * - The update event will be fired with parent node.
+     * @param {Array|object} data - Raw-data
+     * @param {string} parentId - Parent id
+     * @param {boolean} [isSilent] - If true, it doesn't trigger the 'update' event
+     * @returns {Array.<string>} New added node ids
+     */
+    add: function(data, parentId, isSilent) {
+      var parent = this.getNode(parentId) || this.rootNode;
+      var ids;
+
+      data = [].concat(data);
+      ids = this._makeTreeHash(data, parent);
+
+      if (!isSilent) {
+        this.fire('update', parent.getId());
+      }
+
+      return ids;
+    },
+
+    /**
+     * Set data properties of a node
+     * @param {string} id - Node id
+     * @param {object} props - Properties
+     * @param {boolean} [isSilent] - If true, it doesn't trigger the 'update' event
+     */
+    setNodeData: function(id, props, isSilent) {
+      var node = this.getNode(id);
+
+      if (!node || !props) {
+        return;
+      }
+
+      node.setData(props);
+
+      if (!isSilent) {
+        this.fire('update', id);
+      }
+    },
+
+    /**
+     * Remove node data
+     * @param {string} id - Node id
+     * @param {string|Array} names - Names of properties
+     * @param {boolean} [isSilent] - If true, it doesn't trigger the 'update' event
+     */
+    removeNodeData: function(id, names, isSilent) {
+      var node = this.getNode(id);
+
+      if (!node || !names) {
+        return;
+      }
+
+      if (isArray(names)) {
+        node.removeData.apply(node, names);
+      } else {
+        node.removeData(names);
+      }
+
+      if (!isSilent) {
+        this.fire('update', id);
+      }
+    },
+
+    /**
+     * Move a node to new parent's child
+     * @param {string} nodeId - Node id
+     * @param {string} newParentId - New parent id
+     * @param {number} [index] - Start index number for inserting
+     * @param {boolean} [isSilent] - If true, it doesn't trigger the 'update' event
+     */
+    /* eslint-disable complexity*/
+    move: function(nodeId, newParentId, index, isSilent) {
+      var node = this.getNode(nodeId);
+      var originalParentId, newParent, sameParent;
+
+      if (!node) {
+        return;
+      }
+
+      newParent = this.getNode(newParentId) || this.rootNode;
+      newParentId = newParent.getId();
+      originalParentId = node.getParentId();
+      sameParent = index === -1 && originalParentId === newParentId;
+
+      if (nodeId === newParentId || sameParent || this.contains(nodeId, newParentId)) {
+        return;
+      }
+
+      this._changeOrderOfIds(nodeId, newParentId, originalParentId, index);
+
+      if (!isSilent) {
+        this.fire('move', nodeId, originalParentId, newParentId, index);
+      }
+    } /* eslint-enable complexity*/,
+
+    /**
+     * Change order of ids
+     * @param {string} nodeId - Node id
+     * @param {string} newParentId - New parent id
+     * @param {string} originalParentId - Original parent id
+     * @param {number} index - Moving index (When child node is moved on parent node, the value is -1)
+     * @private
+     */
+    _changeOrderOfIds: function(nodeId, newParentId, originalParentId, index) {
+      var node = this.getNode(nodeId);
+      var newParent = this.getNode(newParentId) || this.rootNode;
+      var originalParent = this.getNode(originalParentId);
+      var isSameParentIds = newParentId === originalParentId;
+
+      if (index !== -1) {
+        if (isSameParentIds) {
+          newParent.moveChildId(nodeId, index);
+        } else {
+          newParent.insertChildId(nodeId, index);
+          originalParent.removeChildId(nodeId);
+        }
+      } else if (!isSameParentIds) {
+        newParent.addChildId(nodeId);
+        originalParent.removeChildId(nodeId);
+      }
+
+      node.setParentId(newParentId);
+    },
+
+    /**
+     * Whether a node is a ancestor of another node.
+     * @param {string} containerId - Id of a node that may contain the other node
+     * @param {string} containedId - Id of a node that may be contained by the other node
+     * @returns {boolean} Whether a node contains another node
+     */
+    contains: function(containerId, containedId) {
+      var parentId = this.getParentId(containedId);
+      var isContained = false;
+
+      while (!isContained && parentId) {
+        isContained = containerId === parentId;
+        parentId = this.getParentId(parentId);
+      }
+
+      return isContained;
+    },
+
+    /**
+     * Sort nodes
+     * @param {Function} comparator - Comparator function
+     * @param {string} [parentId] - Id of a node to sort partially
+     */
+    sort: function(comparator, parentId) {
+      var iteratee = function(node, nodeId) {
+        var children = this.getChildren(nodeId);
+        var childIds;
+
+        if (children.length > 1) {
+          children.sort(comparator);
+
+          childIds = util.map(children, function(child) {
+            return child.getId();
+          });
+          node.replaceChildIds(childIds);
+        }
+      };
+      var node;
+
+      if (parentId) {
+        node = this.getNode(parentId);
+        iteratee.call(this, node, parentId);
+      } else {
+        this.eachAll(iteratee, this);
+      }
+    },
+
+    /**
+     * Get node data (all)
+     * @param {string} nodeId - Node id
+     * @returns {?object} Node data
+     */
+    getNodeData: function(nodeId) {
+      var node = this.getNode(nodeId);
+
+      if (!node) {
+        return null;
+      }
+
+      return node.getAllData();
+    },
+
+    /**
+     * Traverse this tree iterating over all nodes.
+     * @param {Function} iteratee - Iteratee function
+     * @param {object} [context] - Context of iteratee
+     */
+    eachAll: function(iteratee, context) {
+      context = context || this;
+
+      forEachOwnProperties(this.treeHash, function() {
+        iteratee.apply(context, arguments);
+      });
+    },
+
+    /**
+     * Traverse this tree iterating over all descendants of a node.
+     * @param {Function} iteratee - Iteratee function
+     * @param {string} parentId - Parent node id
+     * @param {object} [context] - Context of iteratee
+     */
+    each: function(iteratee, parentId, context) {
+      // depth-first
+      var stack, nodeId, node;
+
+      node = this.getNode(parentId);
+      if (!node) {
+        return;
+      }
+      stack = node.getChildIds();
+
+      context = context || this;
+      while (stack.length) {
+        nodeId = stack.pop();
+        node = this.getNode(nodeId);
+        iteratee.call(context, node, nodeId);
+
+        stack = stack.concat(node.getChildIds());
+      }
+    }
+  }
+);
+
+CustomEvents.mixin(TreeModel);
+module.exports = TreeModel;
+
 
 /***/ }),
-
-/***/ "./src/js/features/checkbox.js":
-/*!*************************************!*\
-  !*** ./src/js/features/checkbox.js ***!
-  \*************************************/
-/*! no static exports found */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("/**\n * @fileoverview Feature that each tree node is possible to check and uncheck\n * @author NHN. FE dev Lab <dl_javascript@nhn.com>\n */\nvar util = __webpack_require__(/*! ../util.js */ \"./src/js/util.js\");\nvar snippet = __webpack_require__(/*! tui-code-snippet */ \"tui-code-snippet\");\n\nvar API_LIST = [\n  'check',\n  'uncheck',\n  'toggleCheck',\n  'isChecked',\n  'isIndeterminate',\n  'isUnchecked',\n  'getCheckedList',\n  'getTopCheckedList',\n  'getBottomCheckedList'\n];\n\n/* Checkbox tri-states */\nvar STATE_CHECKED = 1,\n  STATE_UNCHECKED = 2,\n  STATE_INDETERMINATE = 3,\n  DATA_KEY_FOR_CHECKBOX_STATE = '__CheckBoxState__',\n  DATA = {},\n  CHECKED_CLASSNAME = 'tui-is-checked',\n  INDETERMINATE_CLASSNAME = 'tui-checkbox-root';\n\n/* Checkbox cascade-states */\nvar CASCADE_UP = 'up',\n  CASCADE_DOWN = 'down',\n  CASCADE_BOTH = 'both',\n  CASCADE_NONE = false;\n\nvar filter = snippet.filter,\n  forEach = snippet.forEach,\n  inArray = snippet.inArray;\n/**\n * Set the checkbox-api\n * @class Checkbox\n * @param {Tree} tree - Tree\n * @param {Object} option - Option\n *  @param {string} option.checkboxClassName - Classname of checkbox element\n *  @param {string|boolean} [option.checkboxCascade='both'] - 'up', 'down', 'both', false\n * @ignore\n */\nvar Checkbox = snippet.defineClass(\n  /** @lends Checkbox.prototype */ {\n    static: {\n      /**\n       * @static\n       * @memberof Checkbox\n       * @returns {Array.<string>} API list of checkbox\n       */\n      getAPIList: function() {\n        return API_LIST.slice();\n      }\n    },\n    init: function(tree, option) {\n      option = snippet.extend({}, option);\n\n      this.tree = tree;\n      this.checkboxClassName = option.checkboxClassName;\n      this.checkboxCascade = this._initCascadeOption(option.checkboxCascade);\n      this.checkedList = [];\n      this.rootCheckbox = document.createElement('INPUT');\n      this.rootCheckbox.type = 'checkbox';\n\n      this._setAPIs();\n      this._attachEvents();\n    },\n\n    /**\n     * Disable this module\n     */\n    destroy: function() {\n      var tree = this.tree;\n\n      tree.off(this);\n      forEach(API_LIST, function(apiName) {\n        delete tree[apiName];\n      });\n    },\n\n    /**\n     * @param {string|boolean} cascadeOption - Cascade option\n     * @returns {string|boolean} Cascade option\n     * @private\n     */\n    _initCascadeOption: function(cascadeOption) {\n      var cascadeOptions = [CASCADE_UP, CASCADE_DOWN, CASCADE_BOTH, CASCADE_NONE];\n      if (inArray(cascadeOption, cascadeOptions) === -1) {\n        cascadeOption = CASCADE_BOTH;\n      }\n\n      return cascadeOption;\n    },\n\n    /**\n     * Set apis of checkbox tree\n     * @private\n     */\n    _setAPIs: function() {\n      var tree = this.tree,\n        bind = snippet.bind;\n\n      forEach(\n        API_LIST,\n        function(apiName) {\n          tree[apiName] = bind(this[apiName], this);\n        },\n        this\n      );\n    },\n\n    /**\n     * Attach event to tree instance\n     * @private\n     */\n    _attachEvents: function() {\n      this.tree.on(\n        {\n          singleClick: function(event) {\n            var target = util.getTarget(event);\n\n            if (util.getElementsByClassName(target, this.checkboxClassName)) {\n              this._changeCustomCheckbox(target);\n            }\n          },\n          afterDraw: function(ev) {\n            if (this.tree.isMovingNode) {\n              return;\n            }\n            this._reflectChanges(ev.nodeId);\n          },\n          move: function(data) {\n            // @TODO - Optimization\n            this._reflectChanges(data.originalParentId);\n            this._reflectChanges(data.newParentId);\n          }\n        },\n        this\n      );\n    },\n\n    /**\n     * Change custom checkbox\n     * @param {HTMLElement} target - Label element\n     */\n    _changeCustomCheckbox: function(target) {\n      var self = this;\n      var nodeId = this.tree.getNodeIdFromElement(target);\n      var inputElement = target.getElementsByTagName('input')[0];\n      var eventType = util.getChangeEventName();\n      var state;\n\n      /**\n       * Change event handler\n       */\n      function onChange() {\n        state = self._getStateFromCheckbox(inputElement);\n        util.removeEventListener(inputElement, eventType, onChange);\n        self._continuePostprocessing(nodeId, state);\n      }\n\n      util.addEventListener(inputElement, eventType, onChange);\n    },\n\n    /**\n     * Reflect the changes on node.\n     * @param {string} nodeId - Node id\n     * @private\n     */\n    _reflectChanges: function(nodeId) {\n      this.tree.each(\n        function(descendant, descendantId) {\n          this._setState(descendantId, this._getState(descendantId), true);\n        },\n        nodeId,\n        this\n      );\n      this._judgeOwnState(nodeId);\n      this._updateAllAncestorsState(nodeId);\n    },\n\n    /**\n     * Set checkbox attributes (checked, indeterminate)\n     * @param {Element} checkbox - Checkbox element\n     * @param {boolean} isChecked - \"checked\"\n     * @param {boolean} isIndeterminate - \"indeterminate\"\n     * @private\n     */\n    _setCheckboxAttr: function(checkbox, isChecked, isIndeterminate) {\n      checkbox.indeterminate = isIndeterminate;\n      checkbox.checked = isChecked;\n    },\n\n    /**\n     * Get checking state of node\n     * @param {string} nodeId - Node id\n     * @param {number} state - State for checkbox\n     * @param {boolean} [stopPropagation] - If true, stop changing state propagation\n     * @private\n     */\n    _setState: function(nodeId, state, stopPropagation) {\n      var checkbox = this._getCheckboxElement(nodeId);\n\n      if (!checkbox) {\n        return;\n      }\n\n      switch (state) {\n        case STATE_CHECKED:\n          this._setCheckboxAttr(checkbox, true, false);\n          break;\n        case STATE_UNCHECKED:\n          this._setCheckboxAttr(checkbox, false, false);\n          break;\n        case STATE_INDETERMINATE:\n          this._setCheckboxAttr(checkbox, false, true);\n          break;\n        default:\n          // no more process if the state is invalid\n          return;\n      }\n\n      this._continuePostprocessing(nodeId, state, stopPropagation);\n    },\n\n    /**\n     * Get checking state of node\n     * @param {string} nodeId - Node id\n     * @returns {number} Checking state\n     * @private\n     */\n    _getState: function(nodeId) {\n      var tree = this.tree,\n        state = tree.getNodeData(nodeId)[DATA_KEY_FOR_CHECKBOX_STATE],\n        checkbox;\n\n      if (!state) {\n        checkbox = this._getCheckboxElement(nodeId);\n        state = this._getStateFromCheckbox(checkbox);\n      }\n\n      return state;\n    },\n\n    /**\n     * Get checking state of node element\n     * @private\n     * @param {Element} checkbox - Checkbox element\n     * @returns {?number} Checking state\n     */\n    _getStateFromCheckbox: function(checkbox) {\n      var state;\n\n      if (!checkbox) {\n        return null;\n      }\n\n      if (checkbox.checked) {\n        state = STATE_CHECKED;\n      } else if (checkbox.indeterminate) {\n        state = STATE_INDETERMINATE;\n      } else {\n        state = STATE_UNCHECKED;\n      }\n\n      return state;\n    },\n\n    /**\n     * Continue post-processing from changing:checkbox-state\n     * @param {string} nodeId - Node id\n     * @param {number} state - Checkbox state\n     * @param {boolean} [stopPropagation] - If true, stop update-propagation\n     * @private\n     */\n    _continuePostprocessing: function(nodeId, state, stopPropagation) {\n      var tree = this.tree,\n        checkedList = this.checkedList,\n        eventName;\n\n      /* Prevent duplicated node id */\n      util.removeItemFromArray(nodeId, checkedList);\n\n      if (state === STATE_CHECKED) {\n        checkedList.push(nodeId);\n        /**\n         * @event Tree#check\n         * @type {object} evt - Event data\n         * @property {string} nodeId - Checked node id\n         * @example\n         * tree.on('check', function(evt) {\n         *     console.log('checked: ' + evt.nodeId);\n         * });\n         */\n        eventName = 'check';\n      } else if (state === STATE_UNCHECKED) {\n        /**\n         * @event Tree#uncheck\n         * @type {object} evt - Event data\n         * @property {string} nodeId - Unchecked node id\n         * @example\n         * tree.on('uncheck', function(evt) {\n         *     console.log('unchecked: ' + evt.nodeId);\n         * });\n         */\n        eventName = 'uncheck';\n      }\n      DATA[DATA_KEY_FOR_CHECKBOX_STATE] = state;\n\n      tree.setNodeData(nodeId, DATA, {\n        isSilent: true\n      });\n\n      this._setClassName(nodeId, state);\n\n      if (!stopPropagation) {\n        this._propagateState(nodeId, state);\n        tree.fire(eventName, {nodeId: nodeId});\n      }\n    },\n\n    /**\n     * Set class name on label element\n     * @param {string} nodeId - Node id for finding input element\n     * @param {number} state - Checked state number\n     */\n    _setClassName: function(nodeId, state) {\n      var parentElement = this._getCheckboxElement(nodeId).parentNode;\n      var labelElement;\n\n      if (parentElement && parentElement.parentNode) {\n        labelElement = parentElement.parentNode;\n\n        util.removeClass(labelElement, INDETERMINATE_CLASSNAME);\n        util.removeClass(labelElement, CHECKED_CLASSNAME);\n\n        if (state === 1) {\n          util.addClass(labelElement, CHECKED_CLASSNAME);\n        } else if (state === 3) {\n          util.addClass(labelElement, INDETERMINATE_CLASSNAME);\n          util.addClass(labelElement, CHECKED_CLASSNAME);\n        }\n      }\n    },\n\n    /**\n     * Propagate a node state to descendants and ancestors for updating their states\n     * @param {string} nodeId - Node id\n     * @param {number} state - Checkbox state\n     * @private\n     */\n    _propagateState: function(nodeId, state) {\n      if (state === STATE_INDETERMINATE) {\n        return;\n      }\n      if (inArray(this.checkboxCascade, [CASCADE_DOWN, CASCADE_BOTH]) > -1) {\n        this._updateAllDescendantsState(nodeId, state);\n      }\n      if (inArray(this.checkboxCascade, [CASCADE_UP, CASCADE_BOTH]) > -1) {\n        this._updateAllAncestorsState(nodeId);\n      }\n    },\n\n    /**\n     * Update all descendants state\n     * @param {string} nodeId - Node id\n     * @param {number} state - State for checkbox\n     * @private\n     */\n    _updateAllDescendantsState: function(nodeId, state) {\n      this.tree.each(\n        function(descendant, descendantId) {\n          this._setState(descendantId, state, true);\n        },\n        nodeId,\n        this\n      );\n    },\n\n    /**\n     * Update all ancestors state\n     * @param {string} nodeId - Node id\n     * @private\n     */\n    _updateAllAncestorsState: function(nodeId) {\n      var tree = this.tree,\n        parentId = tree.getParentId(nodeId);\n\n      while (parentId) {\n        this._judgeOwnState(parentId);\n        parentId = tree.getParentId(parentId);\n      }\n    },\n\n    /**\n     * Judge own state from child node is changed\n     * @param {string} nodeId - Node id\n     * @private\n     */\n    _judgeOwnState: function(nodeId) {\n      var tree = this.tree,\n        childIds = tree.getChildIds(nodeId),\n        checked = true,\n        unchecked = true;\n\n      if (!childIds.length) {\n        checked = this.isChecked(nodeId);\n      } else {\n        forEach(\n          childIds,\n          function(childId) {\n            var state = this._getState(childId);\n            checked = checked && state === STATE_CHECKED;\n            unchecked = unchecked && state === STATE_UNCHECKED;\n\n            return checked || unchecked;\n          },\n          this\n        );\n      }\n\n      if (checked) {\n        this._setState(nodeId, STATE_CHECKED, true);\n      } else if (unchecked) {\n        this._setState(nodeId, STATE_UNCHECKED, true);\n      } else {\n        this._setState(nodeId, STATE_INDETERMINATE, true);\n      }\n    },\n\n    /**\n     * Get checkbox element of node\n     * @param {string} nodeId - Node id\n     * @returns {?HTMLElement} Checkbox element\n     * @private\n     */\n    _getCheckboxElement: function(nodeId) {\n      var tree = this.tree,\n        el,\n        nodeEl;\n\n      if (nodeId === tree.getRootNodeId()) {\n        el = this.rootCheckbox;\n      } else {\n        nodeEl = document.getElementById(nodeId);\n        if (!nodeEl) {\n          return null;\n        }\n        el = util.getElementsByClassName(nodeEl, this.checkboxClassName)[0];\n      }\n\n      return el;\n    },\n\n    /**\n     * Check node\n     * @memberof Tree.prototype\n     * @param {string} nodeId - Node id\n     * @example\n     * var nodeId = 'tui-tree-node-3';\n     * tree.check(nodeId);\n     */\n    check: function(nodeId) {\n      if (!this.isChecked(nodeId)) {\n        this._setState(nodeId, STATE_CHECKED);\n      }\n    },\n\n    /**\n     * Uncheck node\n     * @memberof Tree.prototype\n     * @param {string} nodeId - Node id\n     * @example\n     * var nodeId = 'tui-tree-node-3';\n     * tree.uncheck(nodeId);\n     */\n    uncheck: function(nodeId) {\n      if (!this.isUnchecked(nodeId)) {\n        this._setState(nodeId, STATE_UNCHECKED);\n      }\n    },\n\n    /**\n     * Toggle node checking\n     * @memberof Tree.prototype\n     * @param {string} nodeId - Node id\n     * @example\n     * var nodeId = 'tui-tree-node-3';\n     * tree.toggleCheck(nodeId);\n     */\n    toggleCheck: function(nodeId) {\n      if (!this.isChecked(nodeId)) {\n        this.check(nodeId);\n      } else {\n        this.uncheck(nodeId);\n      }\n    },\n\n    /**\n     * Whether the node is checked\n     * @memberof Tree.prototype\n     * @param {string} nodeId - Node id\n     * @returns {boolean} True if node is indeterminate\n     * @example\n     * var nodeId = 'tui-tree-node-3';\n     * tree.check(nodeId);\n     * console.log(tree.isChecked(nodeId)); // true\n     */\n    isChecked: function(nodeId) {\n      return STATE_CHECKED === this._getState(nodeId);\n    },\n\n    /**\n     * Whether the node is indeterminate\n     * @memberof Tree.prototype\n     * @param {string} nodeId - Node id\n     * @returns {boolean} True if node is indeterminate\n     * @example\n     * var nodeId = 'tui-tree-node-3';\n     * tree.check(nodeId);\n     * console.log(tree.isIndeterminate(nodeId)); // false\n     */\n    isIndeterminate: function(nodeId) {\n      return STATE_INDETERMINATE === this._getState(nodeId);\n    },\n\n    /**\n     * Whether the node is unchecked or not\n     * @memberof Tree.prototype\n     * @param {string} nodeId - Node id\n     * @returns {boolean} True if node is unchecked.\n     * @example\n     * var nodeId = 'tui-tree-node-3';\n     * tree.uncheck(nodeId);\n     * console.log(tree.isUnchecked(nodeId)); // true\n     */\n    isUnchecked: function(nodeId) {\n      return STATE_UNCHECKED === this._getState(nodeId);\n    },\n\n    /**\n     * Get checked list\n     * @memberof Tree.prototype\n     * @param {string} [parentId] - Node id (default: rootNode id)\n     * @returns {Array.<string>} Checked node ids\n     * @example\n     * //\n     * // node1(v)\n     * //   node2(v)\n     * //   node3(v)\n     * // node4\n     * //   node5(v)\n     * // node6\n     * //   node7(v)\n     * //     node8(v)\n     * //   node9\n     *\n     * var allCheckedList = tree.getCheckedList(); // ['node1', 'node2', 'node3' ,....]\n     * var descendantsCheckedList = tree.getCheekedList('node6'); // ['node7', 'node8']\n     */\n    getCheckedList: function(parentId) {\n      var tree = this.tree,\n        checkedList = this.checkedList;\n\n      if (!parentId) {\n        return checkedList.slice();\n      }\n\n      return filter(checkedList, function(nodeId) {\n        return tree.contains(parentId, nodeId);\n      });\n    },\n\n    /**\n     * Get top checked list\n     * @memberof Tree.prototype\n     * @param {string} [parentId] - Node id (default: rootNode id)\n     * @returns {Array.<string>} Checked node ids\n     * @example\n     * //\n     * // node1(v)\n     * //   node2(v)\n     * //   node3(v)\n     * // node4\n     * //   node5(v)\n     * // node6\n     * //   node7(v)\n     * //     node8(v)\n     * //   node9\n     *\n     * var allTopCheckedList = tree.getTopCheckedList(); // ['node1', 'node5', 'node7']\n     * var descendantsTopCheckedList = tree.getTopCheekedList('node6'); // ['node7']\n     */\n    getTopCheckedList: function(parentId) {\n      var tree = this.tree,\n        checkedList = [],\n        state;\n\n      parentId = parentId || tree.getRootNodeId();\n      state = this._getState(parentId);\n      if (state === STATE_CHECKED) {\n        checkedList = tree.getChildIds(parentId);\n      } else if (state === STATE_INDETERMINATE) {\n        checkedList = this.getCheckedList(parentId);\n        checkedList = filter(\n          checkedList,\n          function(nodeId) {\n            return !this.isChecked(tree.getParentId(nodeId));\n          },\n          this\n        );\n      }\n\n      return checkedList;\n    },\n\n    /**\n     * Get bottom checked list\n     * @memberof Tree.prototype\n     * @param {string} [parentId] - Node id (default: rootNode id)\n     * @returns {Array.<string>} Checked node ids\n     * @example\n     * //\n     * // node1(v)\n     * //   node2(v)\n     * //   node3(v)\n     * // node4\n     * //   node5(v)\n     * // node6\n     * //   node7(v)\n     * //     node8(v)\n     * //   node9\n     *\n     * var allBottomCheckedList = tree.getBottomCheckedList(); // ['node2', 'node3', 'node5', 'node8']\n     * var descendantsBottomCheckedList = tree.getBottomCheekedList('node6'); // ['node8']\n     */\n    getBottomCheckedList: function(parentId) {\n      var tree = this.tree,\n        checkedList;\n\n      parentId = parentId || tree.getRootNodeId();\n      checkedList = this.getCheckedList(parentId);\n\n      return filter(checkedList, function(nodeId) {\n        return tree.isLeaf(nodeId);\n      });\n    }\n  }\n);\n\nsnippet.CustomEvents.mixin(Checkbox);\nmodule.exports = Checkbox;\n\n\n//# sourceURL=webpack://tui.Tree/./src/js/features/checkbox.js?");
+/**
+ * @fileoverview Control each tree node's data
+ * @author NHN. FE dev Lab <dl_javascript@nhn.com>
+ */
+
+var inArray = __webpack_require__(4);
+var forEachArray = __webpack_require__(0);
+var forEachOwnProperties = __webpack_require__(6);
+var defineClass = __webpack_require__(3);
+var extend = __webpack_require__(1);
+var isFalsy = __webpack_require__(48);
+
+var states = __webpack_require__(20).node;
+var util = __webpack_require__(5);
+
+var lastIndex = 0;
+var getNextIndex = function() {
+  var index = lastIndex;
+  lastIndex += 1;
+
+  return index;
+};
+var RESERVED_PROPERTIES = {
+  id: '',
+  state: 'setState',
+  children: ''
+};
+
+/**
+ * TreeNode
+ * @Class TreeNode
+ * @param {Object} nodeData - Node data
+ * @param {string} [parentId] - Parent node id
+ * @ignore
+ */
+var TreeNode = defineClass(
+  /** @lends TreeNode.prototype */ {
+    static: {
+      /**
+       * Set prefix of id
+       * @param {string} prefix - Prefix of id
+       */
+      setIdPrefix: function(prefix) {
+        this.idPrefix = prefix || this.idPrefix;
+      },
+
+      /**
+       * Prefix of id
+       * @type {string}
+       */
+      idPrefix: ''
+    },
+    init: function(nodeData, parentId) {
+      /**
+       * Node id
+       * @type {string}
+       * @private
+       */
+      this._id = this.constructor.idPrefix + getNextIndex();
+
+      /**
+       * Parent node id
+       * @type {string}
+       * @private
+       */
+      this._parentId = parentId;
+
+      /**
+       * Id list of children
+       * @type {Array.<number>}
+       * @private
+       */
+      this._childIds = [];
+
+      /**
+       * Node data
+       * @type {object}
+       * @private
+       */
+      this._data = {};
+
+      /**
+       * Node state
+       * @type {string}
+       * @private
+       */
+      this._state = states.CLOSED;
+
+      this.setData(nodeData);
+    },
+
+    /**
+     * Set reserved properties from data
+     * @param {object} data - Node data
+     * @returns {object} Node data
+     * @private
+     */
+    _setReservedProperties: function(data) {
+      forEachOwnProperties(
+        RESERVED_PROPERTIES,
+        function(setter, name) {
+          var value = data[name];
+
+          if (value && setter) {
+            this[setter](value);
+          }
+          delete data[name];
+        },
+        this
+      );
+
+      return data;
+    },
+
+    /**
+     * Toggle state
+     */
+    toggleState: function() {
+      if (this._state === states.CLOSED) {
+        this._state = states.OPENED;
+      } else {
+        this._state = states.CLOSED;
+      }
+    },
+
+    /**
+     * Set state
+     * @param {string} state - State of node ('closed', 'opened')
+     */
+    setState: function(state) {
+      state = String(state);
+      this._state = states[state.toUpperCase()] || this._state;
+    },
+
+    /**
+     * Get state
+     * @returns {string} state ('opened' or 'closed')
+     */
+    getState: function() {
+      return this._state;
+    },
+
+    /**
+     * Get id
+     * @returns {string} Node id
+     */
+    getId: function() {
+      return this._id;
+    },
+
+    /**
+     * Get parent id
+     * @returns {string} Parent node id
+     */
+    getParentId: function() {
+      return this._parentId;
+    },
+
+    /**
+     * Set parent id
+     * @param {string} parentId - Parent node id
+     */
+    setParentId: function(parentId) {
+      this._parentId = parentId;
+    },
+
+    /**
+     * Replace childIds
+     * @param {Array.<number>} childIds - Id list of children
+     */
+    replaceChildIds: function(childIds) {
+      this._childIds = childIds;
+    },
+
+    /**
+     * Get id list of children
+     * @returns {Array.<number>} Id list of children
+     */
+    getChildIds: function() {
+      return this._childIds.slice();
+    },
+
+    /**
+     * Add child id
+     * @param {string} id - Child node id
+     */
+    addChildId: function(id) {
+      var childIds = this._childIds;
+
+      if (inArray(childIds, id) === -1) {
+        childIds.push(id);
+      }
+    },
+
+    /**
+     * Remove child id
+     * @param {string} id - Child node id
+     */
+    removeChildId: function(id) {
+      util.removeItemFromArray(id, this._childIds);
+    },
+
+    /**
+     * Get data
+     * @param {string} name - Property name of data
+     * @returns {*} Data
+     */
+    getData: function(name) {
+      return this._data[name];
+    },
+
+    /**
+     * Get all data
+     * @returns {Object} Data
+     */
+    getAllData: function() {
+      return extend({}, this._data);
+    },
+
+    /**
+     * Set data
+     * @param {Object} data - Data for adding
+     */
+    setData: function(data) {
+      data = this._setReservedProperties(data);
+      extend(this._data, data);
+    },
+
+    /**
+     * Remove data
+     * @param {...string} names - Names of data
+     */
+    removeData: function() {
+      forEachArray(
+        arguments,
+        function(name) {
+          delete this._data[name];
+        },
+        this
+      );
+    },
+
+    /**
+     * Return true if this node has a provided child id.
+     * @param {string} id - Node id
+     * @returns {boolean} - Whether this node has a provided child id.
+     */
+    hasChild: function(id) {
+      return inArray(id, this._childIds) !== -1;
+    },
+
+    /**
+     * Return whether this node is leaf.
+     * @returns {boolean} Node is leaf or not.
+     */
+    isLeaf: function() {
+      return !this._childIds.length && !this.getData('hasChild');
+    },
+
+    /**
+     * Return whether this node is root.
+     * @returns {boolean} Node is root or not.
+     */
+    isRoot: function() {
+      return isFalsy(this._parentId);
+    },
+
+    /**
+     * Get index of child
+     * @param {string} id - Node id
+     * @returns {number} Index of child in children list
+     */
+    getChildIndex: function(id) {
+      return inArray(id, this._childIds);
+    },
+
+    /**
+     * Insert child id
+     * @param {string} id - Child node id
+     * @param {number} index - Index number of insert position
+     */
+    insertChildId: function(id, index) {
+      var childIds = this._childIds;
+
+      if (inArray(id, childIds) === -1) {
+        childIds.splice(index, 0, id);
+      }
+    },
+
+    /**
+     * Move child id
+     * @param {string} id - Child node id
+     * @param {number} index - Index number of insert position
+     */
+    moveChildId: function(id, index) {
+      var childIds = this._childIds;
+      var originIdx = this.getChildIndex(id);
+
+      if (inArray(id, childIds) !== -1) {
+        if (originIdx < index) {
+          index -= 1;
+        }
+
+        childIds.splice(index, 0, childIds.splice(originIdx, 1)[0]);
+      }
+    }
+  }
+);
+module.exports = TreeNode;
+
 
 /***/ }),
-
-/***/ "./src/js/features/contextMenu.js":
-/*!****************************************!*\
-  !*** ./src/js/features/contextMenu.js ***!
-  \****************************************/
-/*! no static exports found */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("/**\n * @fileoverview Feature that each tree node is possible to have context-menu\n * @author NHN. FE dev Lab <dl_javascript@nhn.com>\n */\nvar util = __webpack_require__(/*! ./../util */ \"./src/js/util.js\");\nvar snippet = __webpack_require__(/*! tui-code-snippet */ \"tui-code-snippet\");\nvar TuiContextMenu = __webpack_require__(/*! tui-context-menu */ \"tui-context-menu\");\nvar API_LIST = ['changeContextMenu'];\nvar styleKeys = ['userSelect', 'WebkitUserSelect', 'OUserSelect', 'MozUserSelect', 'msUserSelect'];\nvar enableProp = util.testProp(styleKeys);\nvar bind = snippet.bind;\n\n/**\n * Set ContextMenu feature on tree\n * @class ContextMenu\n * @param {Tree} tree - Tree\n * @param {Object} options - Options\n *     @param {Array.<Object>} options.menuData - Context menu data\n *     @param {boolean} options.usageStatistics - Whether to send the hostname to GA\n * @ignore\n */\nvar ContextMenu = snippet.defineClass(\n  /** @lends ContextMenu.prototype */ {\n    static: {\n      /**\n       * @static\n       * @memberof ContextMenu\n       * @returns {Array.<string>} API list of ContextMenu\n       */\n      getAPIList: function() {\n        return API_LIST.slice();\n      }\n    },\n    init: function(tree, options) {\n      var containerId = tree.rootElement.parentNode.id;\n\n      options = options || {};\n\n      /**\n       * Tree data\n       * @type {Tree}\n       */\n      this.tree = tree;\n\n      /**\n       * Tree selector for context menu\n       */\n      this.treeSelector = '#' + containerId;\n\n      /**\n       * Id of floating layer in tree\n       * @type {string}\n       */\n      this.flId = containerId + '-fl';\n\n      /**\n       * Info of context menu in tree\n       * @type {Object}\n       */\n      this.menu = this._generateContextMenu(options.usageStatistics);\n\n      /**\n       * Floating layer element\n       * @type {HTMLElement}\n       */\n      this.flElement = document.getElementById(this.flId);\n\n      /**\n       * Id of selected tree item\n       * @type {string}\n       */\n      this.selectedNodeId = null;\n\n      this.menu.register(this.treeSelector, bind(this._onSelect, this), options.menuData);\n\n      this.tree.on('contextmenu', this._onContextMenu, this);\n\n      this._preventTextSelection();\n\n      this._setAPIs();\n    },\n\n    /**\n     * Change current context-menu view\n     * @memberof Tree.prototype\n     * @requires ContextMenu\n     * @param {Array.<Object>} newMenuData - New context menu data\n     * @example\n     * tree.changeContextMenu([\n     *      {title: 'menu1'},\n     *      {title: 'menu2', disable: true},\n     *      {title: 'menu3', menu: [\n     *          {title: 'submenu1', disable: true},\n     *          {title: 'submenu2'}\n     *      ]}\n     * ]);\n     */\n    changeContextMenu: function(newMenuData) {\n      this.menu.unregister(this.treeSelector);\n      this.menu.register(this.treeSelector, bind(this._onSelect, this), newMenuData);\n    },\n\n    /**\n     * Disable ContextMenu feature\n     */\n    destroy: function() {\n      var tree = this.tree;\n\n      this.menu.destroy();\n\n      this._restoreTextSelection();\n      this._removeFloatingLayer();\n\n      tree.off(this);\n\n      snippet.forEach(API_LIST, function(apiName) {\n        delete tree[apiName];\n      });\n    },\n\n    /**\n     * Create floating layer for context menu\n     * @private\n     */\n    _createFloatingLayer: function() {\n      this.flElement = document.createElement('div');\n      this.flElement.id = this.flId;\n\n      document.body.appendChild(this.flElement);\n    },\n\n    /**\n     * Remove floating layer for context menu\n     * @private\n     */\n    _removeFloatingLayer: function() {\n      document.body.removeChild(this.flElement);\n      this.flElement = null;\n    },\n\n    /**\n     * Generate context menu in tree\n     * @returns {TuiContextMenu} Instance of TuiContextMenu\n     * @param {boolean} usageStatistics - Let us know the hostname.\n     * @private\n     */\n    _generateContextMenu: function(usageStatistics) {\n      if (!this.flElement) {\n        this._createFloatingLayer();\n      }\n\n      return new TuiContextMenu(this.flElement, {\n        usageStatistics: usageStatistics\n      });\n    },\n\n    /**\n     * Prevent text selection on selected tree item\n     * @private\n     */\n    _preventTextSelection: function() {\n      if (enableProp) {\n        this.tree.rootElement.style[enableProp] = 'none';\n      }\n    },\n\n    /**\n     * Restore text selection on selected tree item\n     * @private\n     */\n    _restoreTextSelection: function() {\n      if (enableProp) {\n        this.tree.rootElement.style[enableProp] = '';\n      }\n    },\n\n    /**\n     * Event handler on tree item\n     * @param {MouseEvent} e - Mouse event\n     * @private\n     */\n    _onContextMenu: function(e) {\n      var target = util.getTarget(e);\n\n      this.selectedNodeId = this.tree.getNodeIdFromElement(target);\n\n      /**\n       * @event Tree#beforeOpenContextMenu\n       * @type {object} evt - Event data\n       * @property {string} nodeId - Current selected node id\n       * @example\n       * tree.on('beforeOpenContextMenu', function(evt) {\n       *     console.log('nodeId: ' + evt.nodeId);\n       * });\n       */\n      this.tree.fire('beforeOpenContextMenu', {\n        nodeId: this.selectedNodeId\n      });\n    },\n\n    /**\n     * Event handler on context menu\n     * @param {MouseEvent} e - Mouse event\n     * @param {string} cmd - Options value of selected context menu (\"title\"|\"command\")\n     * @private\n     */\n    _onSelect: function(e, cmd) {\n      /**\n       * @event Tree#selectContextMenu\n       * @type {object} evt - Event data\n       * @property {string} cmd - Command type\n       * @property {string} nodeId - Node id\n       * @example\n       * tree.on('selectContextMenu', function(evt) {\n       *     var cmd = treeEvent.cmd; // key of context menu's data\n       *     var nodeId = treeEvent.nodeId;\n       *\n       *     console.log(evt.cmd, evt.nodeId);\n       * });\n       */\n      this.tree.fire('selectContextMenu', {\n        cmd: cmd,\n        nodeId: this.selectedNodeId\n      });\n    },\n\n    /**\n     * Set API of ContextMenu feature\n     * @private\n     */\n    _setAPIs: function() {\n      var tree = this.tree;\n\n      snippet.forEach(\n        API_LIST,\n        function(apiName) {\n          tree[apiName] = bind(this[apiName], this);\n        },\n        this\n      );\n    }\n  }\n);\n\nmodule.exports = ContextMenu;\n\n\n//# sourceURL=webpack://tui.Tree/./src/js/features/contextMenu.js?");
+"use strict";
+/**
+ * @fileoverview Check whether the given variable is falsy or not.
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+var isTruthy = __webpack_require__(49);
+
+/**
+ * Check whether the given variable is falsy or not.
+ * If the given variable is null or undefined or false, returns true.
+ * @param {*} obj - Target for checking
+ * @returns {boolean} Is falsy?
+ * @memberof module:type
+ */
+function isFalsy(obj) {
+  return !isTruthy(obj);
+}
+
+module.exports = isFalsy;
+
 
 /***/ }),
-
-/***/ "./src/js/features/draggable.js":
-/*!**************************************!*\
-  !*** ./src/js/features/draggable.js ***!
-  \**************************************/
-/*! no static exports found */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("/**\n * @fileoverview Feature that each tree node is possible to drag and drop\n * @author NHN. FE dev Lab <dl_javascript@nhn.com>\n */\nvar util = __webpack_require__(/*! ./../util */ \"./src/js/util.js\");\nvar snippet = __webpack_require__(/*! tui-code-snippet */ \"tui-code-snippet\");\n\nvar defaultOptions = {\n  useHelper: true,\n  helperPos: {\n    y: 2,\n    x: 5\n  },\n  helperClassName: 'tui-tree-drop',\n  dragItemClassName: 'tui-tree-drag',\n  hoverClassName: 'tui-tree-hover',\n  lineClassName: 'tui-tree-line',\n  lineBoundary: {\n    top: 4,\n    bottom: 4\n  },\n  autoOpenDelay: 1500,\n  isSortable: false\n};\nvar rejectedTagNames = ['INPUT', 'BUTTON', 'UL'];\nvar selectKey = util.testProp([\n  'userSelect',\n  'WebkitUserSelect',\n  'OUserSelect',\n  'MozUserSelect',\n  'msUserSelect'\n]);\nvar inArray = snippet.inArray;\nvar forEach = snippet.forEach;\nvar API_LIST = [];\n\n/**\n * Set the tree draggable\n * @class Draggable\n * @param {Tree} tree - Tree\n * @param {Object} options - Options\n *     @param {boolean} options.useHelper - Using helper flag\n *     @param {{x: number, y:number}} options.helperPos - Helper position (each minimum value is 4)\n *     @param {Array.<string>} options.rejectedTagNames - No draggable tag names\n *     @param {Array.<string>} options.rejectedClassNames - No draggable class names\n *     @param {number} options.autoOpenDelay - Delay time while dragging to be opened\n *     @param {boolean} options.isSortable - Flag of whether using sortable dragging\n *     @param {string} options.hoverClassName - Class name for hovered node\n *     @param {string} options.lineClassName - Class name for moving position line\n *     @param {string} options.helperClassName - Class name for helper's outer element\n *     @param {string} options.helperTemplate - Template string for helper's inner contents\n *     @param {{top: number, bottom: number}} options.lineBoundary - Boundary value for visible moving line\n * @ignore\n */\nvar Draggable = snippet.defineClass(\n  /** @lends Draggable.prototype */ {\n    static: {\n      /**\n       * @static\n       * @memberof Draggable\n       * @returns {Array.<string>} API list of Draggable\n       */\n      getAPIList: function() {\n        return API_LIST.slice();\n      }\n    },\n\n    init: function(tree, options) {\n      options = snippet.extend({}, defaultOptions, options);\n\n      /**\n       * Tree data\n       * @type {Tree}\n       */\n      this.tree = tree;\n\n      /**\n       * Drag helper element\n       * @type {HTMLElement}\n       */\n      this.helperElement = null;\n\n      /**\n       * Selectable element's property\n       * @type {string}\n       */\n      this.userSelectPropertyKey = null;\n\n      /**\n       * Selectable element's property value\n       * @type {string}\n       */\n      this.userSelectPropertyValue = null;\n\n      /**\n       * Dragging element's node id\n       * @type {string}\n       */\n      this.currentNodeId = null;\n\n      /**\n       * Current mouse overed element\n       * @type {HTMLElement}\n       */\n      this.hoveredElement = null;\n\n      /**\n       * Moving line type (\"top\" or \"bottom\")\n       * @type {string}\n       */\n      this.movingLineType = null;\n\n      /**\n       * Invoking time for setTimeout()\n       * @type {number}\n       */\n      this.timer = null;\n\n      /**\n       * Tag list for rejecting to drag\n       * @param {Array.<string>}\n       */\n      this.rejectedTagNames = rejectedTagNames.concat(options.rejectedTagNames);\n\n      /**\n       * Class name list for rejecting to drag\n       * @param {Array.<string>}\n       */\n      this.rejectedClassNames = [].concat(options.rejectedClassNames);\n\n      /**\n       * Using helper flag\n       * @type {boolean}\n       */\n      this.useHelper = options.useHelper;\n\n      /**\n       * Helper position\n       * @type {Object}\n       */\n      this.helperPos = options.helperPos;\n\n      /**\n       * Delay time while dragging to be opened\n       * @type {number}\n       */\n      this.autoOpenDelay = options.autoOpenDelay;\n\n      /**\n       * Flag of whether using sortable dragging\n       * @type {boolean}\n       */\n      this.isSortable = options.isSortable;\n\n      /**\n       * Class name for mouse overed node\n       * @type {string}\n       */\n      this.hoverClassName = options.hoverClassName;\n\n      /**\n       * Class name for moving position line\n       * @type {string}\n       */\n      this.lineClassName = options.lineClassName;\n\n      /**\n       * Boundary value for visible moving line\n       * @type {Object}\n       */\n      this.lineBoundary = options.lineBoundary;\n\n      /**\n       * Helper's outer element class name\n       * @type {string}\n       */\n      this.helperClassName = options.helperClassName;\n\n      this._initHelper();\n\n      if (this.isSortable) {\n        this._initMovingLine();\n      }\n\n      this._attachMousedown();\n    },\n\n    /**\n     * Disable this module (remove attached elements and unbind event)\n     */\n    destroy: function() {\n      util.removeElement(this.helperElement);\n      util.removeElement(this.lineElement);\n\n      this._restoreTextSelection();\n      this._detachMousedown();\n    },\n\n    /**\n     * Change helper element position\n     * @param {object} mousePos - Current mouse position\n     * @private\n     */\n    _changeHelperPosition: function(mousePos) {\n      var helperStyle = this.helperElement.style;\n      var pos = this.tree.rootElement.getBoundingClientRect();\n\n      helperStyle.top = mousePos.y - pos.top + this.helperPos.y + 'px';\n      helperStyle.left = mousePos.x - pos.left + this.helperPos.x + 'px';\n      helperStyle.display = '';\n    },\n\n    /**\n     * Init helper element\n     * @private\n     */\n    _initHelper: function() {\n      var helperElement = document.createElement('span');\n      var helperStyle = helperElement.style;\n\n      helperStyle.position = 'absolute';\n      helperStyle.display = 'none';\n\n      util.addClass(helperElement, this.helperClassName);\n\n      this.tree.rootElement.parentNode.appendChild(helperElement);\n\n      this.helperElement = helperElement;\n    },\n\n    /**\n     * Init moving line element\n     * @private\n     */\n    _initMovingLine: function() {\n      var lineElement = document.createElement('div');\n      var lineStyle = lineElement.style;\n\n      lineStyle.position = 'absolute';\n      lineStyle.display = 'none';\n\n      util.addClass(lineElement, this.lineClassName);\n\n      this.tree.rootElement.parentNode.appendChild(lineElement);\n\n      this.lineElement = lineElement;\n    },\n\n    /**\n     * Set helper contents\n     * @param {string} contents - Helper contents\n     * @private\n     */\n    _setHelper: function(contents) {\n      this.helperElement.innerHTML = contents;\n      util.removeElement(this.helperElement.getElementsByTagName('label')[0]);\n    },\n\n    /**\n     * Attach mouse down event\n     * @private\n     */\n    _attachMousedown: function() {\n      this._preventTextSelection();\n      this.tree.on('mousedown', this._onMousedown, this);\n    },\n\n    /**\n     * Detach mousedown event\n     * @private\n     */\n    _detachMousedown: function() {\n      this.tree.off(this);\n    },\n\n    /**\n     * Prevent text-selection\n     * @private\n     */\n    _preventTextSelection: function() {\n      var style = this.tree.rootElement.style;\n\n      util.addEventListener(this.tree.rootElement, 'selectstart', util.preventDefault);\n\n      this.userSelectPropertyKey = selectKey;\n      this.userSelectPropertyValue = style[selectKey];\n\n      style[selectKey] = 'none';\n    },\n\n    /**\n     * Restore text-selection\n     * @private\n     */\n    _restoreTextSelection: function() {\n      util.removeEventListener(this.tree.rootElement, 'selectstart', util.preventDefault);\n\n      if (this.userSelectPropertyKey) {\n        this.tree.rootElement.style[this.userSelectPropertyKey] = this.userSelectPropertyValue;\n      }\n    },\n\n    /**\n     * Return whether the target element is in rejectedTagNames or in rejectedClassNames\n     * @param {HTMLElement} target - Target element\n     * @returns {boolean} Whether the target is not draggable or draggable\n     * @private\n     */\n    _isNotDraggable: function(target) {\n      var tagName = target.tagName.toUpperCase();\n      var classNames = util.getClass(target).split(/\\s+/);\n      var result;\n\n      if (inArray(tagName, this.rejectedTagNames) !== -1) {\n        return true;\n      }\n\n      forEach(\n        classNames,\n        function(className) {\n          result = inArray(className, this.rejectedClassNames) !== -1;\n\n          return !result;\n        },\n        this\n      );\n\n      return result;\n    },\n\n    /**\n     * Event handler - mousedown\n     * @param {MouseEvent} event - Mouse event\n     * @private\n     */\n    _onMousedown: function(event) {\n      var tree = this.tree;\n      var target = util.getTarget(event);\n      var isEditing = tree.enabledFeatures.Editable && tree.enabledFeatures.Editable.inputElement;\n      var nodeElement;\n\n      if (util.isRightButton(event) || this._isNotDraggable(target) || isEditing) {\n        return;\n      }\n\n      util.preventDefault(event);\n\n      this.currentNodeId = tree.getNodeIdFromElement(target);\n\n      if (this.useHelper) {\n        nodeElement = util.getElementsByClassName(\n          document.getElementById(this.currentNodeId),\n          tree.classNames.textClass\n        )[0];\n        this._setHelper(nodeElement.innerHTML);\n      }\n\n      tree.on(\n        {\n          mousemove: this._onMousemove,\n          mouseup: this._onMouseup\n        },\n        this\n      );\n    },\n\n    /**\n     * Event handler - mousemove\n     * @param {MouseEvent} event - Mouse event\n     * @private\n     */\n    _onMousemove: function(event) {\n      var mousePos = util.getMousePos(event);\n      var target = util.getTarget(event);\n      var nodeId;\n\n      if (!this.useHelper) {\n        return;\n      }\n\n      this._setClassNameOnDragItem('add');\n      this._changeHelperPosition(mousePos);\n\n      nodeId = this.tree.getNodeIdFromElement(target);\n\n      if (nodeId) {\n        this._applyMoveAction(nodeId, mousePos);\n      }\n    },\n\n    /**\n     * Event handler - mouseup\n     * @param {MouseEvent} event - Mouse event\n     * @private\n     */\n    _onMouseup: function(event) {\n      var tree = this.tree;\n      var nodeId = this.currentNodeId;\n      var target = util.getTarget(event);\n      var targetId = this._getTargetNodeId(target);\n      var index = this._getIndexToInsert(targetId);\n      var newParentId;\n\n      if (index === -1) {\n        // When the node is created as a child after moving\n        newParentId = targetId;\n      } else {\n        newParentId = tree.getParentId(targetId);\n      }\n\n      if (nodeId !== newParentId) {\n        // Don't fire beforeMove event\n        tree.move(nodeId, newParentId, index);\n      }\n\n      this._reset();\n    },\n\n    /**\n     * Get id of the target element on which the moved item is placed\n     * @param {HTMLElement} target - Target element\n     * @returns {string} Id of target element\n     * @private\n     */\n    _getTargetNodeId: function(target) {\n      var tree = this.tree;\n      var movingType = this.movingLineType;\n      var nodeId = tree.getNodeIdFromElement(target);\n      var childIds;\n\n      if (nodeId) {\n        return nodeId;\n      }\n\n      childIds = tree.getChildIds(tree.getRootNodeId());\n\n      if (movingType === 'top') {\n        nodeId = childIds[0];\n      } else {\n        nodeId = childIds[childIds.length - 1];\n      }\n\n      return nodeId;\n    },\n\n    /**\n     * Get a index number to insert the moved item\n     * @param {number} nodeId - Id of moved item\n     * @returns {number} Index number\n     * @private\n     */\n    _getIndexToInsert: function(nodeId) {\n      var movingType = this.movingLineType;\n      var index;\n\n      if (!movingType) {\n        return -1;\n      }\n\n      index = this.tree.getNodeIndex(nodeId);\n\n      if (movingType === 'bottom') {\n        index += 1;\n      }\n\n      return index;\n    },\n\n    /**\n     * Apply move action that are delay effect and sortable moving node\n     * @param {strig} nodeId - Selected tree node id\n     * @param {object} mousePos - Current mouse position\n     * @private\n     */\n    _applyMoveAction: function(nodeId, mousePos) {\n      var currentElement = document.getElementById(nodeId);\n      var targetPos = currentElement.getBoundingClientRect();\n      var hasClass = util.hasClass(currentElement, this.hoverClassName);\n      var isContain = this._isContain(targetPos, mousePos);\n      var boundaryType;\n\n      if (!this.hoveredElement && isContain) {\n        this.hoveredElement = currentElement;\n        this._hover(nodeId);\n      } else if (!hasClass) {\n        this._unhover();\n      } else if (!isContain) {\n        this._unhover();\n      }\n\n      if (this.isSortable) {\n        boundaryType = this._getBoundaryType(targetPos, mousePos);\n        this._drawBoundaryLine(targetPos, boundaryType);\n      }\n    },\n\n    /**\n     * Act to hover on tree item\n     * @param {string} nodeId - Tree node id\n     * @private\n     */\n    _hover: function(nodeId) {\n      var tree = this.tree;\n\n      util.addClass(this.hoveredElement, this.hoverClassName);\n\n      if (tree.isLeaf(nodeId)) {\n        return;\n      }\n\n      this.timer = setTimeout(function() {\n        tree.open(nodeId);\n      }, this.autoOpenDelay);\n    },\n\n    /**\n     * Act to unhover on tree item\n     * @private\n     */\n    _unhover: function() {\n      clearTimeout(this.timer);\n\n      util.removeClass(this.hoveredElement, this.hoverClassName);\n\n      this.hoveredElement = null;\n      this.timer = null;\n    },\n\n    /**\n     * Check contained state of current target\n     * @param {object} targetPos - Position of tree item\n     * @param {object} mousePos - Position of moved mouse\n     * @returns {boolean} Contained state\n     * @private\n     */\n    _isContain: function(targetPos, mousePos) {\n      var top = targetPos.top;\n      var bottom = targetPos.bottom;\n\n      if (this.isSortable) {\n        top += this.lineBoundary.top;\n        bottom -= this.lineBoundary.bottom;\n      }\n\n      if (\n        targetPos.left < mousePos.x &&\n        targetPos.right > mousePos.x &&\n        top < mousePos.y &&\n        bottom > mousePos.y\n      ) {\n        return true;\n      }\n\n      return false;\n    },\n\n    /**\n     * Get boundary type by mouse position\n     * @param {object} targetPos - Position of tree item\n     * @param {object} mousePos - Position of moved mouse\n     * @returns {string} Position type in boundary\n     * @private\n     */\n    _getBoundaryType: function(targetPos, mousePos) {\n      var type;\n\n      if (mousePos.y < targetPos.top + this.lineBoundary.top) {\n        type = 'top';\n      } else if (mousePos.y > targetPos.bottom - this.lineBoundary.bottom) {\n        type = 'bottom';\n      }\n\n      return type;\n    },\n\n    /**\n     * Draw boundary line on tree\n     * @param {object} targetPos - Position of tree item\n     * @param {string} boundaryType - Position type in boundary\n     * @private\n     */\n    _drawBoundaryLine: function(targetPos, boundaryType) {\n      var style = this.lineElement.style;\n      var scrollTop;\n\n      if (boundaryType) {\n        scrollTop = util.getElementTop(this.tree.rootElement.parentNode);\n        style.top = targetPos[boundaryType] - scrollTop + 'px';\n        style.display = 'block';\n        this.movingLineType = boundaryType;\n      } else {\n        style.display = 'none';\n        this.movingLineType = null;\n      }\n    },\n\n    /**\n     * _reset properties and remove event\n     * @private\n     */\n    _reset: function() {\n      if (this.isSortable) {\n        this.lineElement.style.display = 'none';\n      }\n\n      if (this.hoveredElement) {\n        util.removeClass(this.hoveredElement, this.hoverClassName);\n        this.hoveredElement = null;\n      }\n\n      this._setClassNameOnDragItem('remove');\n\n      this.helperElement.style.display = 'none';\n\n      this.currentNodeId = null;\n      this.movingLineType = null;\n\n      this.tree.off(this, 'mousemove');\n      this.tree.off(this, 'mouseup');\n    },\n\n    /**\n     * Set class name on drag item's element\n     * @param {string} type - Set type ('add' or 'remove')\n     */\n    _setClassNameOnDragItem: function(type) {\n      var dragItemElement = document.getElementById(this.currentNodeId);\n      var dragItemClassName = defaultOptions.dragItemClassName;\n\n      if (type === 'add') {\n        util.addClass(dragItemElement, dragItemClassName);\n      } else {\n        util.removeClass(dragItemElement, dragItemClassName);\n      }\n    }\n  }\n);\n\nmodule.exports = Draggable;\n\n\n//# sourceURL=webpack://tui.Tree/./src/js/features/draggable.js?");
+"use strict";
+/**
+ * @fileoverview Check whether the given variable is truthy or not.
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+var isExisty = __webpack_require__(16);
+
+/**
+ * Check whether the given variable is truthy or not.
+ * If the given variable is not null or not undefined or not false, returns true.
+ * (It regards 0 as true)
+ * @param {*} obj - Target for checking
+ * @returns {boolean} Is truthy?
+ * @memberof module:type
+ */
+function isTruthy(obj) {
+  return isExisty(obj) && obj !== false;
+}
+
+module.exports = isTruthy;
+
 
 /***/ }),
-
-/***/ "./src/js/features/editable.js":
-/*!*************************************!*\
-  !*** ./src/js/features/editable.js ***!
-  \*************************************/
-/*! no static exports found */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("/**\n * @fileoverview Feature that each tree node is possible to edit as double click\n * @author NHN. FE dev Lab <dl_javascript@nhn.com>\n */\nvar util = __webpack_require__(/*! ./../util */ \"./src/js/util.js\");\nvar ajaxCommand = __webpack_require__(/*! ./../consts/ajaxCommand */ \"./src/js/consts/ajaxCommand.js\");\nvar states = __webpack_require__(/*! ./../consts/states */ \"./src/js/consts/states.js\");\nvar snippet = __webpack_require__(/*! tui-code-snippet */ \"tui-code-snippet\");\n\nvar API_LIST = ['createChildNode', 'editNode', 'finishEditing'];\nvar EDIT_TYPE = {\n  CREATE: 'create',\n  UPDATE: 'update'\n};\nvar WRAPPER_CLASSNAME = 'tui-input-wrap';\nvar INPUT_CLASSNAME = 'tui-tree-input';\n\n/**\n * Set the tree selectable\n * @class Editable\n * @param {Tree} tree - Tree\n * @param {Object} options - Options\n *  @param {string} options.editableClassName - Classname of editable element\n *  @param {string} options.dataKey - Key of node data to set value\n *  @param {string} [options.dataValue] - Value of node data to set value (Use \"createNode\" API)\n *  @param {string} [options.inputClassName] - Classname of input element\n * @ignore\n */\nvar Editable = snippet.defineClass(\n  /** @lends Editable.prototype */ {\n    static: {\n      /**\n       * @static\n       * @memberof Selectable\n       * @returns {Array.<string>} API list of Editable\n       */\n      getAPIList: function() {\n        return API_LIST.slice();\n      }\n    },\n    init: function(tree, options) {\n      options = snippet.extend({}, options);\n\n      /**\n       * Tree\n       * @type {Tree}\n       */\n      this.tree = tree;\n\n      /**\n       * Classname of editable element\n       * @type {string}\n       */\n      this.editableClassName = options.editableClassName || tree.classNames.textClass;\n\n      /**\n       * Key of node data to set value\n       * @type {string}\n       */\n      this.dataKey = options.dataKey;\n\n      /**\n       * Default value for creating node\n       * @type {string}\n       */\n      this.defaultValue = options.defaultValue || '';\n\n      /**\n       * Input element for create or edit\n       * @type {HTMLElement}\n       */\n      this.inputElement = null;\n\n      /**\n       * Action mode - create or edit\n       * @type {string}\n       */\n      this.mode = null;\n\n      /**\n       * For block blur when unintentional blur event occur when alert popup\n       * @type {Boolean}\n       */\n      this._blockBlur = false;\n\n      /**\n       * Keyup event handler\n       * @type {Function}\n       */\n      this.boundOnKeyup = snippet.bind(this._onKeyup, this);\n\n      /**\n       * Blur event handler\n       * @type {Function}\n       */\n      this.boundOnBlur = snippet.bind(this._onBlur, this);\n\n      tree.on('doubleClick', this._onDoubleClick, this);\n\n      this._setAPIs();\n    },\n\n    /**\n     * Disable this module\n     */\n    destroy: function() {\n      var tree = this.tree;\n\n      this._detachInputElement();\n      tree.off(this);\n      snippet.forEach(API_LIST, function(apiName) {\n        delete tree[apiName];\n      });\n    },\n\n    /**\n     * Create child node\n     * @memberof Tree.prototype\n     * @requires Editable\n     * @param {string} parentId - Parent node id to create new node\n     * @example\n     * tree.createChildNode('tui-tree-node-1');\n     */\n    createChildNode: function(parentId) {\n      var tree = this.tree;\n      var useAjax = tree.enabledFeatures.Ajax;\n      var nodeId;\n\n      this.mode = EDIT_TYPE.CREATE;\n\n      if (useAjax) {\n        tree.on('successAjaxResponse', this._onSuccessResponse, this);\n      }\n\n      if (!tree.isLeaf(parentId) && tree.getState(parentId) === states.node.CLOSED) {\n        tree.open(parentId);\n      } else {\n        nodeId = tree._add({}, parentId)[0];\n        this._attachInputElement(nodeId);\n      }\n    },\n\n    /**\n     * Edit node\n     * @memberof Tree.prototype\n     * @requires Editable\n     * @param {string} nodeId - Node id\n     * @example\n     * tree.editNode('tui-tree-node-1');\n     */\n    editNode: function(nodeId) {\n      this.mode = EDIT_TYPE.UPDATE;\n      this._attachInputElement(nodeId);\n    },\n\n    /**\n     * Exit edit though remove input tag\n     * @memberof Tree.prototype\n     * @requires Editable\n     * @example\n     * tree.finishEditing();\n     */\n    finishEditing: function() {\n      if (this.inputElement) {\n        this._detachInputElement();\n      }\n    },\n\n    /**\n     * Custom event handler \"successResponse\"\n     * @param {string} type - Ajax command type\n     * @param {Array.<string>} nodeIds - Added node ids on tree\n     * @private\n     */\n    _onSuccessResponse: function(type, nodeIds) {\n      var tree = this.tree;\n      var parentId, nodeId;\n\n      if (type === ajaxCommand.READ && nodeIds) {\n        parentId = tree.getParentId(nodeIds[0]);\n        nodeId = tree._add({}, parentId)[0];\n        this._attachInputElement(nodeId);\n      }\n    },\n\n    /**\n     * Custom event handler \"doubleClick\"\n     * @param {MouseEvent} event - Mouse event\n     * @private\n     */\n    _onDoubleClick: function(event) {\n      var target = util.getTarget(event);\n      var nodeId;\n\n      if (util.hasClass(target, this.editableClassName)) {\n        nodeId = this.tree.getNodeIdFromElement(target);\n        this.editNode(nodeId);\n      }\n    },\n\n    /**\n     * InputElement is keep going\n     * @private\n     */\n    _keepEdit: function() {\n      if (this.inputElement) {\n        this.inputElement.focus();\n      }\n    },\n\n    /**\n     * Invoke 'beforeCreateChildNode'\n     * @param {Object} event - Information of 'beforeCreateChildNode'\n     * @returns {boolean} Result of invoke event\n     * @private\n     */\n    _invokeBeforeCreateChildNode: function(event) {\n      /**\n       * @event Tree#beforeCreateChildNode\n       * @type {object} evt - Event data\n       * @property {string} value - Return value of creating input element\n       * @property {string} nodeId - Return id of creating node\n       * @property {string} cause - Return 'blur' or 'enter' according cause of the event\n       * @example\n       * tree\n       *  .enableFeature('Editable')\n       *  .on('beforeCreateChildNode', function(evt) {\n       *      console.log(evt.value);\n       *      console.log(evt.nodeId);\n       *      console.log(evt.cause);\n       *      return false; // It cancels\n       *      // return true; // It execute next\n       *  });\n       */\n      return this.tree.invoke('beforeCreateChildNode', event);\n    },\n\n    /**\n     * Invoke 'beforeEditNode'\n     * @param {Event} event - Information of 'beforeEditNode'\n     * @returns {boolean} Result of invoke event\n     * @private\n     */\n    _invokeBeforeEditNode: function(event) {\n      /**\n       * @event Tree#beforeEditNode\n       * @type {object} evt - Event data\n       * @property {string} value - Return value of creating input element\n       * @property {string} nodeId - Return id of editing node\n       * @property {string} cause - Return 'blur' or 'enter' according cause of the event\n       * @example\n       * tree\n       *  .enableFeature('Editable')\n       *  .on('beforeEditNode', function(evt) {\n       *      console.log(evt.value);\n       *      console.log(evt.nodeId);\n       *      console.log(evt.cause);\n       *      return false; // It cancels\n       *      // return true; // It execute next\n       *  });\n       */\n      return this.tree.invoke('beforeEditNode', event);\n    },\n\n    /**\n     * Reflect the value of inputElement to node for creating or editing\n     * @param {string} cause - how finish editing ('blur' or 'enter')\n     * @returns {boolean} Result of submit input result\n     * @private\n     */\n    _submitInputResult: function(cause) {\n      var tree = this.tree;\n      var nodeId = tree.getNodeIdFromElement(this.inputElement);\n      var value = this.inputElement.value;\n      var event = {\n        value: value,\n        nodeId: nodeId,\n        cause: cause\n      };\n\n      if (this.mode === EDIT_TYPE.CREATE) {\n        if (!this._invokeBeforeCreateChildNode(event)) {\n          this._keepEdit();\n\n          return false;\n        }\n        this._addData(nodeId, value);\n      } else {\n        if (!this._invokeBeforeEditNode(event)) {\n          this._keepEdit();\n\n          return false;\n        }\n        this._setData(nodeId, value);\n      }\n      this._detachInputElement();\n\n      return true;\n    },\n\n    /**\n     * Event handler: keyup - input element\n     * @param {Event} event - Key event\n     * @private\n     */\n    _onKeyup: function(event) {\n      if (util.getKeyCode(event) === 13) {\n        this._blockBlur = true;\n        this._submitInputResult('enter');\n      }\n    },\n\n    /**\n     * Event handler: blur - input element\n     * @private\n     */\n    _onBlur: function() {\n      if (this._blockBlur) {\n        this._blockBlur = false;\n      } else {\n        this._blockBlur = !this._submitInputResult('blur');\n      }\n    },\n\n    /**\n     * Create input element\n     * @returns {HTMLElement} Input element\n     * @private\n     */\n    _createInputElement: function() {\n      var element = document.createElement('INPUT');\n      element.setAttribute('type', 'text');\n      util.addClass(element, INPUT_CLASSNAME);\n\n      return element;\n    },\n\n    /**\n     * Attach input element on tree\n     * @param {string} nodeId - Node id\n     * @private\n     */\n    _attachInputElement: function(nodeId) {\n      var tree = this.tree;\n      var target = document.getElementById(nodeId);\n      var wrapperElement = document.createElement('DIV');\n      var inputElement = this._createInputElement();\n\n      if (!target) {\n        return;\n      }\n\n      wrapperElement = util.getChildElementByClassName(target, WRAPPER_CLASSNAME);\n\n      if (!wrapperElement) {\n        wrapperElement = document.createElement('DIV');\n        inputElement = this._createInputElement();\n\n        util.addClass(wrapperElement, WRAPPER_CLASSNAME);\n        wrapperElement.style.paddingLeft = tree.getIndentWidth(nodeId) + 'px';\n\n        inputElement.value = tree.getNodeData(nodeId)[this.dataKey] || '';\n\n        wrapperElement.appendChild(inputElement);\n        target.appendChild(wrapperElement);\n\n        util.addEventListener(inputElement, 'keyup', this.boundOnKeyup);\n        util.addEventListener(inputElement, 'blur', this.boundOnBlur);\n\n        if (this.inputElement) {\n          this.inputElement.blur();\n        }\n        this.inputElement = inputElement;\n      }\n\n      this._blockBlur = false;\n      this.inputElement.focus();\n    },\n\n    /**\n     * Detach input element on tree\n     * @private\n     */\n    _detachInputElement: function() {\n      var tree = this.tree;\n      var inputElement = this.inputElement;\n      var wrapperElement = this.inputElement.parentNode;\n\n      util.removeEventListener(inputElement, 'keyup', this.boundOnKeyup);\n      util.removeEventListener(inputElement, 'blur', this.boundOnBlur);\n\n      util.removeElement(wrapperElement);\n\n      if (tree.enabledFeatures.Ajax) {\n        tree.off(this, 'successAjaxResponse');\n      }\n\n      this.inputElement = null;\n    },\n\n    /**\n     * Add data of input element to node and detach input element on tree\n     * @param {string} nodeId - Node id to add\n     * @param {string} value - Content for that node\n     * @private\n     */\n    _addData: function(nodeId, value) {\n      var tree = this.tree;\n      var parentId = tree.getParentId(nodeId);\n      var data = {};\n\n      if (nodeId) {\n        data[this.dataKey] = value || this.defaultValue;\n        tree._remove(nodeId);\n        tree.add(data, parentId);\n      }\n    },\n\n    /**\n     * Set data of input element to node and detach input element on tree\n     * @param {string} nodeId - Node id to change\n     * @param {string} value - Content for that node\n     * @private\n     */\n    _setData: function(nodeId, value) {\n      var tree = this.tree;\n      var data = {};\n\n      if (nodeId) {\n        data[this.dataKey] = value;\n        tree.setNodeData(nodeId, data);\n      }\n    },\n\n    /**\n     * Set apis of selectable tree\n     * @private\n     */\n    _setAPIs: function() {\n      var tree = this.tree;\n      var bind = snippet.bind;\n\n      snippet.forEach(\n        API_LIST,\n        function(apiName) {\n          tree[apiName] = bind(this[apiName], this);\n        },\n        this\n      );\n    }\n  }\n);\n\nmodule.exports = Editable;\n\n\n//# sourceURL=webpack://tui.Tree/./src/js/features/editable.js?");
+/**
+ * @fileoverview Feature that each tree node is possible to select as click
+ * @author NHN. FE dev Lab <dl_javascript@nhn.com>
+ */
+
+var forEachArray = __webpack_require__(0);
+var defineClass = __webpack_require__(3);
+var getTarget = __webpack_require__(10);
+var addClass = __webpack_require__(15);
+var removeClass = __webpack_require__(17);
+var extend = __webpack_require__(1);
+var util = __webpack_require__(5);
+
+var API_LIST = ['select', 'getSelectedNodeId', 'deselect'];
+var defaults = {
+  selectedClassName: 'tui-tree-selected'
+};
+
+/**
+ * Set the tree selectable
+ * @class Selectable
+ * @param {Tree} tree - Tree
+ * @param {Object} options
+ *  @param {string} options.selectedClassName - Classname for selected node.
+ * @ignore
+ */
+var Selectable = defineClass(
+  /** @lends Selectable.prototype */ {
+    static: {
+      /**
+       * @static
+       * @memberof Selectable
+       * @returns {Array.<string>} API list of Selectable
+       */
+      getAPIList: function() {
+        return API_LIST.slice();
+      }
+    },
+    init: function(tree, options) {
+      options = extend({}, defaults, options);
+
+      this.tree = tree;
+      this.selectedClassName = options.selectedClassName;
+      this.selectedNodeId = null;
+
+      tree.on(
+        {
+          singleClick: this.onSingleClick,
+          afterDraw: this.onAfterDraw
+        },
+        this
+      );
+      this._setAPIs();
+    },
+
+    /**
+     * Set apis of selectable tree
+     * @private
+     */
+    _setAPIs: function() {
+      var tree = this.tree;
+
+      forEachArray(
+        API_LIST,
+        function(apiName) {
+          tree[apiName] = util.bind(this[apiName], this);
+        },
+        this
+      );
+    },
+
+    /**
+     * Disable this module
+     */
+    destroy: function() {
+      var tree = this.tree;
+      var nodeElement = this.getPrevElement();
+
+      if (nodeElement) {
+        removeClass(nodeElement, this.selectedClassName);
+      }
+      tree.off(this);
+      forEachArray(API_LIST, function(apiName) {
+        delete tree[apiName];
+      });
+    },
+
+    /**
+     * Custom event handler "singleClick"
+     * @param {MouseEvent} event - Mouse event
+     */
+    onSingleClick: function(event) {
+      var target = getTarget(event);
+      var nodeId = this.tree.getNodeIdFromElement(target);
+
+      this._select(nodeId, target);
+    },
+
+    /**
+     * Select node if the feature-"Selectable" is enabled.
+     * @memberof Tree.prototype
+     * @requires Selectable
+     * @param {string} nodeId - Node id
+     * @param {object} [target] - target
+     * @private
+     */
+    _select: function(nodeId, target) {
+      var tree, prevElement, nodeElement, selectedClassName, prevNodeId, invokeResult;
+
+      if (!nodeId) {
+        return;
+      }
+
+      tree = this.tree;
+      prevElement = this.getPrevElement();
+      nodeElement = document.getElementById(nodeId);
+      selectedClassName = this.selectedClassName;
+      prevNodeId = this.selectedNodeId;
+
+      /**
+       * @event Tree#beforeSelect
+       * @type {object} evt - Event data
+       * @property {string} nodeId - Selected node id
+       * @property {string} prevNodeId - Previous selected node id
+       * @property {HTMLElement|undefined} target - Target element
+       * @example
+       * tree
+       *  .enableFeature('Selectable')
+       *  .on('beforeSelect', function(evt) {
+       *      console.log('selected node: ' + evt.nodeId);
+       *      console.log('previous selected node: ' + evt.prevNodeId);
+       *      console.log('target element: ' + evt.target);
+       *      return false; // It cancels "select"
+       *      // return true; // It fires "select"
+       *  });
+       */
+      invokeResult = tree.invoke('beforeSelect', {
+        nodeId: nodeId,
+        prevNodeId: prevNodeId,
+        target: target
+      });
+
+      if (invokeResult) {
+        if (prevElement) {
+          removeClass(prevElement, selectedClassName);
+        }
+        addClass(nodeElement, selectedClassName);
+
+        /**
+         * @event Tree#select
+         * @type {object} evt - Event data
+         * @property {string} nodeId - Selected node id
+         * @property {string} prevNodeId - Previous selected node id
+         * @property {HTMLElement|undefined} target - Target element
+         * @example
+         * tree
+         *  .enableFeature('Selectable')
+         *  .on('select', function(evt) {
+         *      console.log('selected node: ' + evt.nodeId);
+         *      console.log('previous selected node: ' + evt.prevNodeId);
+         *      console.log('target element: ' + evt.target);
+         *  });
+         */
+        tree.fire('select', {
+          nodeId: nodeId,
+          prevNodeId: prevNodeId,
+          target: target
+        });
+        this.selectedNodeId = nodeId;
+      }
+    },
+
+    /**
+     * Select node if the feature-"Selectable" is enabled.
+     * @memberof Tree.prototype
+     * @requires Selectable
+     * @param {string} nodeId - Node id
+     * @example
+     * tree.select('tui-tree-node-3');
+     */
+    select: function(nodeId) {
+      this._select(nodeId);
+    },
+
+    /**
+     * Get previous selected node element
+     * @returns {HTMLElement} Node element
+     */
+    getPrevElement: function() {
+      return document.getElementById(this.selectedNodeId);
+    },
+
+    /**
+     * Get selected node id
+     * @memberof Tree.prototype
+     * @returns {string} selected node id
+     */
+    getSelectedNodeId: function() {
+      return this.selectedNodeId;
+    },
+
+    /**
+     * Deselect node by id
+     * @memberof Tree.prototype
+     * @requires Selectable
+     * @param {string} nodeId - Node id
+     * @example
+     * tree.deselect('tui-tree-node-3');
+     */
+    deselect: function() {
+      var nodeId = this.selectedNodeId;
+      var nodeElement = document.getElementById(nodeId);
+      var tree = this.tree;
+
+      if (!nodeElement) {
+        return;
+      }
+
+      removeClass(nodeElement, this.selectedClassName);
+      this.selectedNodeId = null;
+
+      /**
+       * @event Tree#deselect
+       * @type {object} evt - Event data
+       * @property {string} nodeId - Deselected node id
+       * @example
+       * tree
+       *  .enableFeature('Selectable')
+       *  .on('deselect', function(evt) {
+       *      console.log('deselected node: ' + evt.nodeId);
+       *  });
+       */
+      tree.fire('deselect', { nodeId: nodeId });
+    },
+
+    /**
+     * Custom event handler - "afterDraw"
+     */
+    onAfterDraw: function() {
+      var nodeElement = this.getPrevElement();
+
+      if (nodeElement) {
+        addClass(nodeElement, this.selectedClassName);
+      }
+    }
+  }
+);
+
+module.exports = Selectable;
+
 
 /***/ }),
-
-/***/ "./src/js/features/selectable.js":
-/*!***************************************!*\
-  !*** ./src/js/features/selectable.js ***!
-  \***************************************/
-/*! no static exports found */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("/**\n * @fileoverview Feature that each tree node is possible to select as click\n * @author NHN. FE dev Lab <dl_javascript@nhn.com>\n */\nvar util = __webpack_require__(/*! ./../util */ \"./src/js/util.js\");\nvar snippet = __webpack_require__(/*! tui-code-snippet */ \"tui-code-snippet\");\n\nvar API_LIST = ['select', 'getSelectedNodeId', 'deselect'],\n  defaults = {\n    selectedClassName: 'tui-tree-selected'\n  };\n\n/**\n * Set the tree selectable\n * @class Selectable\n * @param {Tree} tree - Tree\n * @param {Object} options\n *  @param {string} options.selectedClassName - Classname for selected node.\n * @ignore\n */\nvar Selectable = snippet.defineClass(\n  /** @lends Selectable.prototype */ {\n    static: {\n      /**\n       * @static\n       * @memberof Selectable\n       * @returns {Array.<string>} API list of Selectable\n       */\n      getAPIList: function() {\n        return API_LIST.slice();\n      }\n    },\n    init: function(tree, options) {\n      options = snippet.extend({}, defaults, options);\n\n      this.tree = tree;\n      this.selectedClassName = options.selectedClassName;\n      this.selectedNodeId = null;\n\n      tree.on(\n        {\n          singleClick: this.onSingleClick,\n          afterDraw: this.onAfterDraw\n        },\n        this\n      );\n      this._setAPIs();\n    },\n\n    /**\n     * Set apis of selectable tree\n     * @private\n     */\n    _setAPIs: function() {\n      var tree = this.tree,\n        bind = snippet.bind;\n\n      snippet.forEach(\n        API_LIST,\n        function(apiName) {\n          tree[apiName] = bind(this[apiName], this);\n        },\n        this\n      );\n    },\n\n    /**\n     * Disable this module\n     */\n    destroy: function() {\n      var tree = this.tree,\n        nodeElement = this.getPrevElement();\n\n      util.removeClass(nodeElement, this.selectedClassName);\n      tree.off(this);\n      snippet.forEach(API_LIST, function(apiName) {\n        delete tree[apiName];\n      });\n    },\n\n    /**\n     * Custom event handler \"singleClick\"\n     * @param {MouseEvent} event - Mouse event\n     */\n    onSingleClick: function(event) {\n      var target = util.getTarget(event),\n        nodeId = this.tree.getNodeIdFromElement(target);\n\n      this.select(nodeId, target);\n    },\n\n    /* eslint-disable valid-jsdoc */\n    /* Ignore \"target\" parameter annotation for API page\n       \"tree.select(nodeId)\"\n     */\n\n    /**\n     * Select node if the feature-\"Selectable\" is enabled.\n     * @memberof Tree.prototype\n     * @requires Selectable\n     * @param {string} nodeId - Node id\n     * @example\n     * tree.select('tui-tree-node-3');\n     */\n    select: function(nodeId, target) {\n      /* eslint-enable valid-jsdoc */\n      var tree, prevElement, nodeElement, selectedClassName, prevNodeId;\n\n      if (!nodeId) {\n        return;\n      }\n\n      tree = this.tree;\n      prevElement = this.getPrevElement();\n      nodeElement = document.getElementById(nodeId);\n      selectedClassName = this.selectedClassName;\n      prevNodeId = this.selectedNodeId;\n\n      /**\n       * @event Tree#beforeSelect\n       * @type {object} evt - Event data\n       * @property {string} nodeId - Selected node id\n       * @property {string} prevNodeId - Previous selected node id\n       * @property {HTMLElement|undefined} target - Target element\n       * @example\n       * tree\n       *  .enableFeature('Selectable')\n       *  .on('beforeSelect', function(evt) {\n       *      console.log('selected node: ' + evt.nodeId);\n       *      console.log('previous selected node: ' + evt.prevNodeId);\n       *      console.log('target element: ' + evt.target);\n       *      return false; // It cancels \"select\"\n       *      // return true; // It fires \"select\"\n       *  });\n       */\n      if (\n        tree.invoke('beforeSelect', {\n          nodeId: nodeId,\n          prevNodeId: prevNodeId,\n          target: target\n        })\n      ) {\n        util.removeClass(prevElement, selectedClassName);\n        util.addClass(nodeElement, selectedClassName);\n\n        /**\n         * @event Tree#select\n         * @type {object} evt - Event data\n         * @property {string} nodeId - Selected node id\n         * @property {string} prevNodeId - Previous selected node id\n         * @property {HTMLElement|undefined} target - Target element\n         * @example\n         * tree\n         *  .enableFeature('Selectable')\n         *  .on('select', function(evt) {\n         *      console.log('selected node: ' + evt.nodeId);\n         *      console.log('previous selected node: ' + evt.prevNodeId);\n         *      console.log('target element: ' + evt.target);\n         *  });\n         */\n        tree.fire('select', {\n          nodeId: nodeId,\n          prevNodeId: prevNodeId,\n          target: target\n        });\n        this.selectedNodeId = nodeId;\n      }\n    },\n\n    /**\n     * Get previous selected node element\n     * @returns {HTMLElement} Node element\n     */\n    getPrevElement: function() {\n      return document.getElementById(this.selectedNodeId);\n    },\n\n    /**\n     * Get selected node id\n     * @memberof Tree.prototype\n     * @returns {string} selected node id\n     */\n    getSelectedNodeId: function() {\n      return this.selectedNodeId;\n    },\n\n    /**\n     * Deselect node by id\n     * @memberof Tree.prototype\n     * @requires Selectable\n     * @param {string} nodeId - Node id\n     * @example\n     * tree.deselect('tui-tree-node-3');\n     */\n    deselect: function() {\n      var nodeId = this.selectedNodeId;\n      var nodeElement = document.getElementById(nodeId);\n      var tree = this.tree;\n\n      if (!nodeElement) {\n        return;\n      }\n\n      util.removeClass(nodeElement, this.selectedClassName);\n      this.selectedNodeId = null;\n\n      /**\n       * @event Tree#deselect\n       * @type {object} evt - Event data\n       * @property {string} nodeId - Deselected node id\n       * @example\n       * tree\n       *  .enableFeature('Selectable')\n       *  .on('deselect', function(evt) {\n       *      console.log('deselected node: ' + evt.nodeId);\n       *  });\n       */\n      tree.fire('deselect', {nodeId: nodeId});\n    },\n\n    /**\n     * Custom event handler - \"afterDraw\"\n     */\n    onAfterDraw: function() {\n      var nodeElement = this.getPrevElement();\n\n      if (nodeElement) {\n        util.addClass(nodeElement, this.selectedClassName);\n      }\n    }\n  }\n);\n\nmodule.exports = Selectable;\n\n\n//# sourceURL=webpack://tui.Tree/./src/js/features/selectable.js?");
+/**
+ * @fileoverview Feature that each tree node is possible to drag and drop
+ * @author NHN. FE dev Lab <dl_javascript@nhn.com>
+ */
+
+var inArray = __webpack_require__(4);
+var forEachArray = __webpack_require__(0);
+var defineClass = __webpack_require__(3);
+var getMouseButton = __webpack_require__(24);
+var getMousePosition = __webpack_require__(52);
+var getTarget = __webpack_require__(10);
+var off = __webpack_require__(13);
+var on = __webpack_require__(14);
+var preventDefault = __webpack_require__(21);
+var addClass = __webpack_require__(15);
+var disableTextSelection = __webpack_require__(28);
+var enableTextSelection = __webpack_require__(30);
+var hasClass = __webpack_require__(31);
+var removeClass = __webpack_require__(17);
+var removeElement = __webpack_require__(32);
+var extend = __webpack_require__(1);
+
+var defaultOptions = {
+  useHelper: true,
+  helperPos: {
+    y: 2,
+    x: 5
+  },
+  helperClassName: 'tui-tree-drop',
+  dragItemClassName: 'tui-tree-drag',
+  hoverClassName: 'tui-tree-hover',
+  lineClassName: 'tui-tree-line',
+  lineBoundary: {
+    top: 4,
+    bottom: 4
+  },
+  autoOpenDelay: 1500,
+  isSortable: false
+};
+var rejectedTagNames = ['INPUT', 'BUTTON', 'UL'];
+var API_LIST = [];
+
+/**
+ * Set the tree draggable
+ * @class Draggable
+ * @param {Tree} tree - Tree
+ * @param {Object} options - Options
+ *     @param {boolean} options.useHelper - Using helper flag
+ *     @param {{x: number, y:number}} options.helperPos - Helper position (each minimum value is 4)
+ *     @param {Array.<string>} options.rejectedTagNames - No draggable tag names
+ *     @param {Array.<string>} options.rejectedClassNames - No draggable class names
+ *     @param {number} options.autoOpenDelay - Delay time while dragging to be opened
+ *     @param {boolean} options.isSortable - Flag of whether using sortable dragging
+ *     @param {string} options.hoverClassName - Class name for hovered node
+ *     @param {string} options.lineClassName - Class name for moving position line
+ *     @param {string} options.helperClassName - Class name for helper's outer element
+ *     @param {string} options.helperTemplate - Template string for helper's inner contents
+ *     @param {{top: number, bottom: number}} options.lineBoundary - Boundary value for visible moving line
+ * @ignore
+ */
+var Draggable = defineClass(
+  /** @lends Draggable.prototype */ {
+    static: {
+      /**
+       * @static
+       * @memberof Draggable
+       * @returns {Array.<string>} API list of Draggable
+       */
+      getAPIList: function() {
+        return API_LIST.slice();
+      }
+    },
+
+    init: function(tree, options) {
+      options = extend({}, defaultOptions, options);
+
+      /**
+       * Tree data
+       * @type {Tree}
+       */
+      this.tree = tree;
+
+      /**
+       * Drag helper element
+       * @type {HTMLElement}
+       */
+      this.helperElement = null;
+
+      /**
+       * Dragging element's node id
+       * @type {string}
+       */
+      this.currentNodeId = null;
+
+      /**
+       * Current mouse overed element
+       * @type {HTMLElement}
+       */
+      this.hoveredElement = null;
+
+      /**
+       * Moving line type ("top" or "bottom")
+       * @type {string}
+       */
+      this.movingLineType = null;
+
+      /**
+       * Invoking time for setTimeout()
+       * @type {number}
+       */
+      this.timer = null;
+
+      /**
+       * Tag list for rejecting to drag
+       * @param {Array.<string>}
+       */
+      this.rejectedTagNames = rejectedTagNames.concat(options.rejectedTagNames);
+
+      /**
+       * Class name list for rejecting to drag
+       * @param {Array.<string>}
+       */
+      this.rejectedClassNames = [].concat(options.rejectedClassNames);
+
+      /**
+       * Using helper flag
+       * @type {boolean}
+       */
+      this.useHelper = options.useHelper;
+
+      /**
+       * Helper position
+       * @type {Object}
+       */
+      this.helperPos = options.helperPos;
+
+      /**
+       * Delay time while dragging to be opened
+       * @type {number}
+       */
+      this.autoOpenDelay = options.autoOpenDelay;
+
+      /**
+       * Flag of whether using sortable dragging
+       * @type {boolean}
+       */
+      this.isSortable = options.isSortable;
+
+      /**
+       * Class name for mouse overed node
+       * @type {string}
+       */
+      this.hoverClassName = options.hoverClassName;
+
+      /**
+       * Class name for moving position line
+       * @type {string}
+       */
+      this.lineClassName = options.lineClassName;
+
+      /**
+       * Boundary value for visible moving line
+       * @type {Object}
+       */
+      this.lineBoundary = options.lineBoundary;
+
+      /**
+       * Helper's outer element class name
+       * @type {string}
+       */
+      this.helperClassName = options.helperClassName;
+
+      this._initHelper();
+
+      if (this.isSortable) {
+        this._initMovingLine();
+      }
+
+      this._attachMousedown();
+    },
+
+    /**
+     * Disable this module (remove attached elements and unbind event)
+     */
+    destroy: function() {
+      removeElement(this.helperElement);
+      removeElement(this.lineElement);
+
+      this._restoreTextSelection();
+      this._detachMousedown();
+    },
+
+    /**
+     * Change helper element position
+     * @param {object} mousePos - Current mouse position
+     * @private
+     */
+    _changeHelperPosition: function(mousePos) {
+      var mousePosX = mousePos[0];
+      var mousePosY = mousePos[1];
+      var helperStyle = this.helperElement.style;
+      var pos = this.tree.rootElement.getBoundingClientRect();
+
+      helperStyle.top = mousePosY - pos.top + this.helperPos.y + 'px';
+      helperStyle.left = mousePosX - pos.left + this.helperPos.x + 'px';
+      helperStyle.display = '';
+    },
+
+    /**
+     * Init helper element
+     * @private
+     */
+    _initHelper: function() {
+      var helperElement = document.createElement('span');
+      var helperStyle = helperElement.style;
+
+      helperStyle.position = 'absolute';
+      helperStyle.display = 'none';
+
+      addClass(helperElement, this.helperClassName);
+
+      this.tree.rootElement.parentNode.appendChild(helperElement);
+
+      this.helperElement = helperElement;
+    },
+
+    /**
+     * Init moving line element
+     * @private
+     */
+    _initMovingLine: function() {
+      var lineElement = document.createElement('div');
+      var lineStyle = lineElement.style;
+
+      lineStyle.position = 'absolute';
+      lineStyle.display = 'none';
+
+      addClass(lineElement, this.lineClassName);
+
+      this.tree.rootElement.parentNode.appendChild(lineElement);
+
+      this.lineElement = lineElement;
+    },
+
+    /**
+     * Set helper contents
+     * @param {string} contents - Helper contents
+     * @private
+     */
+    _setHelper: function(contents) {
+      this.helperElement.innerHTML = contents;
+      removeElement(this.helperElement.getElementsByTagName('label')[0]);
+    },
+
+    /**
+     * Attach mouse down event
+     * @private
+     */
+    _attachMousedown: function() {
+      this._preventTextSelection();
+      this.tree.on('mousedown', this._onMousedown, this);
+    },
+
+    /**
+     * Detach mousedown event
+     * @private
+     */
+    _detachMousedown: function() {
+      this.tree.off(this);
+    },
+
+    /**
+     * Prevent text-selection
+     * @private
+     */
+    _preventTextSelection: function() {
+      on(this.tree.rootElement, 'selectstart', preventDefault);
+      disableTextSelection(this.tree.rootElement);
+    },
+
+    /**
+     * Restore text-selection
+     * @private
+     */
+    _restoreTextSelection: function() {
+      off(this.tree.rootElement, 'selectstart', preventDefault);
+      enableTextSelection(this.tree.rootElement);
+    },
+
+    /**
+     * Return whether the target element is in rejectedTagNames or in rejectedClassNames
+     * @param {HTMLElement} target - Target element
+     * @returns {boolean} Whether the target is not draggable or draggable
+     * @private
+     */
+    _isNotDraggable: function(target) {
+      var tagName = target.tagName.toUpperCase();
+      var classNames = target.className.split(/\s+/);
+      var result;
+
+      if (inArray(tagName, this.rejectedTagNames) !== -1) {
+        return true;
+      }
+
+      forEachArray(
+        classNames,
+        function(className) {
+          result = inArray(className, this.rejectedClassNames) !== -1;
+
+          return !result;
+        },
+        this
+      );
+
+      return result;
+    },
+
+    /**
+     * Event handler - mousedown
+     * @param {MouseEvent} event - Mouse event
+     * @private
+     */
+    _onMousedown: function(event) {
+      var tree = this.tree;
+      var target = getTarget(event);
+      var isRightButton = getMouseButton(event) === 2;
+      var isEditing = tree.enabledFeatures.Editable && tree.enabledFeatures.Editable.inputElement;
+      var nodeElement;
+
+      if (isRightButton || this._isNotDraggable(target) || isEditing) {
+        return;
+      }
+
+      preventDefault(event);
+
+      this.currentNodeId = tree.getNodeIdFromElement(target);
+
+      if (this.useHelper) {
+        nodeElement = document.querySelector(
+          '#' + this.currentNodeId + ' .' + tree.classNames.textClass
+        );
+        this._setHelper(nodeElement.innerHTML);
+      }
+
+      tree.on(
+        {
+          mousemove: this._onMousemove,
+          mouseup: this._onMouseup
+        },
+        this
+      );
+    },
+
+    /**
+     * Event handler - mousemove
+     * @param {MouseEvent} event - Mouse event
+     * @private
+     */
+    _onMousemove: function(event) {
+      var mousePos = getMousePosition(event);
+      var target = getTarget(event);
+      var nodeId;
+
+      if (!this.useHelper) {
+        return;
+      }
+
+      this._setClassNameOnDragItem('add');
+      this._changeHelperPosition(mousePos);
+
+      nodeId = this.tree.getNodeIdFromElement(target);
+      if (nodeId) {
+        this._applyMoveAction(nodeId, mousePos);
+      }
+    },
+
+    /**
+     * Event handler - mouseup
+     * @param {MouseEvent} event - Mouse event
+     * @private
+     */
+    _onMouseup: function(event) {
+      var tree = this.tree;
+      var nodeId = this.currentNodeId;
+      var target = getTarget(event);
+      var targetId = this._getTargetNodeId(target);
+      var index = this._getIndexToInsert(targetId);
+      var newParentId;
+
+      if (index === -1) {
+        // When the node is created as a child after moving
+        newParentId = targetId;
+      } else {
+        newParentId = tree.getParentId(targetId);
+      }
+
+      if (nodeId !== newParentId) {
+        // Don't fire beforeMove event
+        tree.move(nodeId, newParentId, index);
+      }
+
+      this._reset();
+    },
+
+    /**
+     * Get id of the target element on which the moved item is placed
+     * @param {HTMLElement} target - Target element
+     * @returns {string} Id of target element
+     * @private
+     */
+    _getTargetNodeId: function(target) {
+      var tree = this.tree;
+      var movingType = this.movingLineType;
+      var nodeId = tree.getNodeIdFromElement(target);
+      var childIds;
+
+      if (nodeId) {
+        return nodeId;
+      }
+
+      childIds = tree.getChildIds(tree.getRootNodeId());
+
+      if (movingType === 'top') {
+        nodeId = childIds[0];
+      } else {
+        nodeId = childIds[childIds.length - 1];
+      }
+
+      return nodeId;
+    },
+
+    /**
+     * Get a index number to insert the moved item
+     * @param {number} nodeId - Id of moved item
+     * @returns {number} Index number
+     * @private
+     */
+    _getIndexToInsert: function(nodeId) {
+      var movingType = this.movingLineType;
+      var index;
+
+      if (!movingType) {
+        return -1;
+      }
+
+      index = this.tree.getNodeIndex(nodeId);
+
+      if (movingType === 'bottom') {
+        index += 1;
+      }
+
+      return index;
+    },
+
+    /**
+     * Apply move action that are delay effect and sortable moving node
+     * @param {strig} nodeId - Selected tree node id
+     * @param {object} mousePos - Current mouse position
+     * @private
+     */
+    _applyMoveAction: function(nodeId, mousePos) {
+      var currentElement = document.getElementById(nodeId);
+      var targetPos = currentElement.getBoundingClientRect();
+      var isHover = hasClass(currentElement, this.hoverClassName);
+      var isContain = this._isContain(targetPos, mousePos);
+      var boundaryType;
+
+      if (!this.hoveredElement && isContain) {
+        this.hoveredElement = currentElement;
+        this._hover(nodeId);
+      } else if (!isHover) {
+        this._unhover();
+      } else if (!isContain) {
+        this._unhover();
+      }
+
+      if (this.isSortable) {
+        boundaryType = this._getBoundaryType(targetPos, mousePos);
+        this._drawBoundaryLine(targetPos, boundaryType);
+      }
+    },
+
+    /**
+     * Act to hover on tree item
+     * @param {string} nodeId - Tree node id
+     * @private
+     */
+    _hover: function(nodeId) {
+      var tree = this.tree;
+
+      addClass(this.hoveredElement, this.hoverClassName);
+
+      if (tree.isLeaf(nodeId)) {
+        return;
+      }
+
+      this.timer = setTimeout(function() {
+        tree.open(nodeId);
+      }, this.autoOpenDelay);
+    },
+
+    /**
+     * Act to unhover on tree item
+     * @private
+     */
+    _unhover: function() {
+      clearTimeout(this.timer);
+
+      if (this.hoveredElement) {
+        removeClass(this.hoveredElement, this.hoverClassName);
+      }
+
+      this.hoveredElement = null;
+      this.timer = null;
+    },
+
+    /**
+     * Check contained state of current target
+     * @param {object} targetPos - Position of tree item
+     * @param {object} mousePos - Position of moved mouse
+     * @returns {boolean} Contained state
+     * @private
+     */
+    _isContain: function(targetPos, mousePos) {
+      var top = targetPos.top;
+      var bottom = targetPos.bottom;
+
+      if (this.isSortable) {
+        top += this.lineBoundary.top;
+        bottom -= this.lineBoundary.bottom;
+      }
+
+      if (
+        targetPos.left < mousePos.x &&
+        targetPos.right > mousePos.x &&
+        top < mousePos.y &&
+        bottom > mousePos.y
+      ) {
+        return true;
+      }
+
+      return false;
+    },
+
+    /**
+     * Get boundary type by mouse position
+     * @param {object} targetPos - Position of tree item
+     * @param {object} mousePos - Position of moved mouse
+     * @returns {string} Position type in boundary
+     * @private
+     */
+    _getBoundaryType: function(targetPos, mousePos) {
+      var type;
+
+      if (mousePos[1] < targetPos.top + this.lineBoundary.top) {
+        type = 'top';
+      } else if (mousePos[1] > targetPos.bottom - this.lineBoundary.bottom) {
+        type = 'bottom';
+      }
+
+      return type;
+    },
+
+    /**
+     * Draw boundary line on tree
+     * @param {object} targetPos - Position of tree item
+     * @param {string} boundaryType - Position type in boundary
+     * @private
+     */
+    _drawBoundaryLine: function(targetPos, boundaryType) {
+      var style = this.lineElement.style;
+      var scrollTop;
+
+      if (boundaryType) {
+        scrollTop = this.tree.rootElement.parentNode.getBoundingClientRect().top;
+        style.top = targetPos[boundaryType] - scrollTop + 'px';
+        style.display = 'block';
+        this.movingLineType = boundaryType;
+      } else {
+        style.display = 'none';
+        this.movingLineType = null;
+      }
+    },
+
+    /**
+     * _reset properties and remove event
+     * @private
+     */
+    _reset: function() {
+      if (this.isSortable) {
+        this.lineElement.style.display = 'none';
+      }
+
+      if (this.hoveredElement) {
+        removeClass(this.hoveredElement, this.hoverClassName);
+        this.hoveredElement = null;
+      }
+
+      this._setClassNameOnDragItem('remove');
+
+      this.helperElement.style.display = 'none';
+
+      this.currentNodeId = null;
+      this.movingLineType = null;
+
+      this.tree.off(this, 'mousemove');
+      this.tree.off(this, 'mouseup');
+    },
+
+    /**
+     * Set class name on drag item's element
+     * @param {string} type - Set type ('add' or 'remove')
+     */
+    _setClassNameOnDragItem: function(type) {
+      var dragItemElement = document.getElementById(this.currentNodeId);
+      var dragItemClassName = defaultOptions.dragItemClassName;
+
+      if (dragItemElement) {
+        if (type === 'add') {
+          addClass(dragItemElement, dragItemClassName);
+        } else {
+          removeClass(dragItemElement, dragItemClassName);
+        }
+      }
+    }
+  }
+);
+
+module.exports = Draggable;
+
 
 /***/ }),
-
-/***/ "./src/js/index.js":
-/*!*************************!*\
-  !*** ./src/js/index.js ***!
-  \*************************/
-/*! no static exports found */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("__webpack_require__(/*! ../css/tree.css */ \"./src/css/tree.css\");\n\nmodule.exports = __webpack_require__(/*! ./tree */ \"./src/js/tree.js\");\n\n\n//# sourceURL=webpack://tui.Tree/./src/js/index.js?");
+"use strict";
+/**
+ * @fileoverview Get mouse position from mouse event
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+var isArray = __webpack_require__(2);
+
+/**
+ * Get mouse position from mouse event
+ *
+ * If supplied relatveElement parameter then return relative position based on
+ *  element
+ * @param {(MouseEvent|object|number[])} position - mouse position object
+ * @param {HTMLElement} relativeElement HTML element that calculate relative
+ *  position
+ * @returns {number[]} mouse position
+ * @memberof module:domEvent
+ */
+function getMousePosition(position, relativeElement) {
+  var positionArray = isArray(position);
+  var clientX = positionArray ? position[0] : position.clientX;
+  var clientY = positionArray ? position[1] : position.clientY;
+  var rect;
+
+  if (!relativeElement) {
+    return [clientX, clientY];
+  }
+
+  rect = relativeElement.getBoundingClientRect();
+
+  return [
+    clientX - rect.left - relativeElement.clientLeft,
+    clientY - rect.top - relativeElement.clientTop
+  ];
+}
+
+module.exports = getMousePosition;
+
 
 /***/ }),
-
-/***/ "./src/js/tree.js":
-/*!************************!*\
-  !*** ./src/js/tree.js ***!
-  \************************/
-/*! no static exports found */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("/**\n * @fileoverview Render tree and update tree\n * @author NHN. FE dev Lab <dl_javascript@nhn.com>\n */\n\nvar util = __webpack_require__(/*! ./util */ \"./src/js/util.js\");\nvar defaultOption = __webpack_require__(/*! ./consts/defaultOption */ \"./src/js/consts/defaultOption.js\");\nvar states = __webpack_require__(/*! ./consts/states */ \"./src/js/consts/states.js\");\nvar messages = __webpack_require__(/*! ./consts/messages */ \"./src/js/consts/messages.js\");\nvar outerTemplate = __webpack_require__(/*! ./consts/outerTemplate */ \"./src/js/consts/outerTemplate.js\");\nvar ajaxCommand = __webpack_require__(/*! ./consts/ajaxCommand */ \"./src/js/consts/ajaxCommand.js\");\nvar TreeModel = __webpack_require__(/*! ./treeModel */ \"./src/js/treeModel.js\");\nvar Selectable = __webpack_require__(/*! ./features/selectable */ \"./src/js/features/selectable.js\");\nvar Draggable = __webpack_require__(/*! ./features/draggable */ \"./src/js/features/draggable.js\");\nvar Editable = __webpack_require__(/*! ./features/editable */ \"./src/js/features/editable.js\");\nvar Checkbox = __webpack_require__(/*! ./features/checkbox */ \"./src/js/features/checkbox.js\");\nvar ContextMenu = __webpack_require__(/*! ./features/contextMenu */ \"./src/js/features/contextMenu.js\");\nvar Ajax = __webpack_require__(/*! ./features/ajax */ \"./src/js/features/ajax.js\");\n\nvar nodeStates = states.node;\nvar features = {\n  Selectable: Selectable,\n  Draggable: Draggable,\n  Editable: Editable,\n  Checkbox: Checkbox,\n  ContextMenu: ContextMenu,\n  Ajax: Ajax\n};\nvar snippet = __webpack_require__(/*! tui-code-snippet */ \"tui-code-snippet\");\nvar extend = snippet.extend;\n\nvar TIMEOUT_TO_DIFFERENTIATE_CLICK_AND_DBLCLICK = 200;\nvar MOUSE_MOVING_THRESHOLD = 5;\n\n/**\n * Create tree model and inject data to model\n * @class Tree\n * @param {string|HTMLElement|jQueryObject} container - Tree container element or id string value\n * @param {Object} options The options\n *     @param {Object} [options.data] A data to be used on tree\n *     @param {string} [options.nodeIdPrefix] A default prefix of a node\n *     @param {Object} [options.nodeDefaultState] A default state of a node\n *     @param {Object} [options.stateLabels] Toggle button state label\n *         @param {string} [options.stateLabels.opened] State-OPENED label\n *         @param {string} [options.stateLabels.closed] State-CLOSED label\n *     @param {Object} [options.template] A markup set to make element\n *         @param {string} [options.template.internalNode] HTML template\n *         @param {string} [options.template.leafNode] HTML template\n *     @param {Function} [options.renderTemplate] Function for rendering template\n *     @param {boolean} [options.usageStatistics=true] - Let us know the hostname. If you don't want to send the hostname, please set to false.\n * @example <caption>Get `Tree` module</caption>\n * // * node, commonjs\n * // * Get Tree module from `node_modules/tui-tree`\n * var Tree = require('tui-tree');\n * var instance = new Tree(...);\n * // * distribution file, script\n * // * there is `tui.Tree` as a global variable\n * var Tree = tui.Tree;\n * var instance = new Tree(...);\n * @example <caption>Initialize Tree</caption>\n * // Default options:\n * // {\n * //     data: [],\n * //     nodeIdPrefix: 'tui-tree-node-',\n * //     nodeDefaultState: 'closed',\n * //     stateLabels: {\n * //         opened: '-',\n * //         closed: '+'\n * //     },\n * //     template: {\n * //         internalNode:\n * //             '<div class=\"tui-tree-content-wrapper\">' +\n * //                 '<button type=\"button\" class=\"tui-tree-toggle-btn tui-js-tree-toggle-btn\">' +\n * //                     '<span class=\"tui-ico-tree\"></span>' +\n * //                     '{{stateLabel}}' +\n * //                 '</button>' +\n * //                 '<span class=\"tui-tree-text tui-js-tree-text\">' +\n * //                     '<span class=\"tui-tree-ico tui-ico-folder\"></span>' +\n * //                     '{{text}}' +\n * //                 '</span>' +\n * //             '</div>' +\n * //             '<ul class=\"tui-tree-subtree tui-js-tree-subtree\">' +\n * //                 '{{children}}' +\n * //             '</ul>',\n * //         leafNode:\n * //             '<div class=\"tui-tree-content-wrapper\">' +\n * //                 '<span class=\"tui-tree-text tui-js-tree-text\">' +\n * //                     '<span class=\"tui-tree-ico tui-ico-file\"></span>' +\n * //                     '{{text}}' +\n * //                 '</span>' +\n * //             '</div>'\n * //     }\n * // }\n * var container = document.getElementById('tree');\n * var data = [\n *     {text: 'rootA', children: [\n *         {text: 'root-1A'},\n *         {text: 'root-1B'},\n *         {text: 'root-1C'},\n *         {text: 'root-1D'},\n *         {text: 'root-2A', children: [\n *             {text: 'sub_1A', children:[\n *                 {text: 'sub_sub_1A'}\n *             ]},\n *             {text: 'sub_2A'}\n *         ]},\n *         {text: 'root-2B'},\n *         {text: 'root-2C'},\n *         {text: 'root-2D'},\n *         {text: 'root-3A', children: [\n *             {text: 'sub3_a'},\n *             {text: 'sub3_b'}\n *         ]},\n *         {text: 'root-3B'},\n *         {text: 'root-3C'},\n *         {text: 'root-3D'}\n *     ]},\n *     {text: 'rootB', children: [\n *         {text: 'B_sub1'},\n *         {text: 'B_sub2'},\n *         {text: 'b'}\n *     ]}\n * ];\n * var tree = new Tree(container, {\n *     data: data,\n *     nodeDefaultState: 'opened',\n *\n *     // ========= Option: Override template renderer ===========\n *\n *     template: { // template for Mustache engine\n *         internalNode:\n *             '<div class=\"tui-tree-content-wrapper\">' +\n *                 '<button type=\"button\" class=\"tui-tree-toggle-btn tui-js-tree-toggle-btn\">' +\n *                     '<span class=\"tui-ico-tree\"></span>' +\n *                     '{{stateLabel}}' +\n *                 '</button>' +\n *                 '<span class=\"tui-tree-text tui-js-tree-text\">' +\n *                     '<span class=\"tui-tree-ico tui-ico-folder\"></span>' +\n *                     '{{text}}' +\n *                 '</span>' +\n *             '</div>' +\n *             '<ul class=\"tui-tree-subtree tui-js-tree-subtree\">' +\n *                  '{{{children}}}' +\n *             '</ul>',\n *         leafNode:\n *             '<div class=\"tui-tree-content-wrapper\">' +\n *                 '<span class=\"tui-tree-text tui-js-tree-text\">' +\n *                     '<span class=\"tui-tree-ico tui-ico-file\"></span>' +\n *                     '{{text}}' +\n *                 '</span>' +\n *             '</div>'\n *     },\n *     renderTemplate: function(tmpl, props) {\n *         // Mustache template engine\n *         return Mustache.render(tmpl, props);\n *     }\n * });\n */\nvar Tree = snippet.defineClass(\n  /** @lends Tree.prototype */ {\n    init: function(container, options) {\n      options = extend({}, defaultOption, options);\n\n      /**\n       * Default class names\n       * @type {object.<string, string>}\n       */\n      this.classNames = extend({}, defaultOption.classNames, options.classNames);\n\n      /**\n       * Default template\n       * @type {{internalNode: string, leafNode: string}}\n       */\n      this.template = extend({}, defaultOption.template, options.template);\n\n      /**\n       * Root element\n       * @type {HTMLElement}\n       */\n      this.rootElement = null;\n\n      /**\n       * Toggle button state label\n       * @type {{opened: string, closed: string}}\n       */\n      this.stateLabels = options.stateLabels;\n\n      /**\n       * Make tree model\n       * @type {TreeModel}\n       * @private\n       */\n      this.model = new TreeModel(options);\n\n      /**\n       * Enabled features\n       * @type {Object.<string, object>}\n       * @private\n       */\n      this.enabledFeatures = {};\n\n      /**\n       * Click timer to prevent click-duplication with double click\n       * @type {number}\n       * @private\n       */\n      this.clickTimer = null;\n\n      /**\n       * To prevent click event if mouse moved before mouseup.\n       * @type {number}\n       * @private\n       */\n      this._mouseMovingFlag = false;\n\n      /**\n       * Render template\n       * It can be overrode by user's template engine.\n       * @type {Function}\n       * @private\n       */\n      this._renderTemplate = options.renderTemplate || util.renderTemplate;\n\n      /**\n       * Send the hostname to google analytics.\n       * If you do not want to send the hostname, this option set to false.\n       * @type {boolean}\n       * @private\n       */\n      this.usageStatistics = options.usageStatistics;\n\n      /**\n       * True when a node is moving\n       * @type {boolean}\n       * @example\n       * tree.on({\n       *     beforeDraw: function(nodeId) {\n       *         if (tree.isMovingNode) {\n       *             return;\n       *         }\n       *         //..\n       *     },\n       *     //....\n       * });\n       * tree.move('tui-tree-node-1', 'tui-tree-node-2');\n       */\n      this.isMovingNode = false;\n\n      /**\n       * Indentation value\n       * @type {number}\n       * @private\n       */\n      this._indent = options.indent;\n\n      this._setRoot(container);\n      this._draw(this.getRootNodeId());\n      this._setEvents();\n\n      if (this.usageStatistics) {\n        util.sendHostName();\n      }\n    },\n\n    /**\n     * Set root element of tree\n     * @param {string|HTMLElement|jQueryObject} container - Container element or id selector\n     * @private\n     */\n    _setRoot: function(container) {\n      var rootElement = outerTemplate.ROOT;\n\n      if (snippet.isString(container)) {\n        container = document.getElementById(container);\n      } else if (container.jquery) {\n        container = container[0];\n      }\n\n      if (!snippet.isHTMLNode(container)) {\n        throw new Error(messages.INVALID_CONTAINER_ELEMENT);\n      }\n\n      container.innerHTML = rootElement;\n      this.rootElement = container.firstChild;\n    },\n\n    /**\n     * Move event handler\n     * @param {string} nodeId - Node id\n     * @param {string} originalParentId - Original parent node id\n     * @param {string} newParentId - New parent node id\n     * @param {number} [index] - Start index number for inserting\n     * @private\n     */\n    _onMove: function(nodeId, originalParentId, newParentId, index) {\n      this._draw(originalParentId);\n      this._draw(newParentId);\n\n      /**\n       * @event Tree#move\n       * @type {object} evt - Event data\n       * @property {string} nodeId - Current node id to move\n       * @property {string} originalParentId - Original parent node id of moved node\n       * @property {string} newParentId - New parent node id of moved node\n       * @property {number} index - Moved index number\n       * @example\n       * tree.on('move', function(evt) {\n       *     var nodeId = evt.nodeId;\n       *     var originalParentId = evt.originalParentId;\n       *     var newParentId = evt.newParentId;\n       *     var index = evt.index;\n       *\n       *     console.log(nodeId, originalParentId, newParentId, index);\n       * });\n       */\n      this.fire('move', {\n        nodeId: nodeId,\n        originalParentId: originalParentId,\n        newParentId: newParentId,\n        index: index\n      });\n    },\n\n    /**\n     * Set event handlers\n     * @private\n     */\n    _setEvents: function() {\n      this.model.on(\n        {\n          update: this._draw,\n          move: this._onMove\n        },\n        this\n      );\n      util.addEventListener(this.rootElement, 'click', snippet.bind(this._onClick, this));\n      util.addEventListener(this.rootElement, 'mousedown', snippet.bind(this._onMousedown, this));\n      util.addEventListener(this.rootElement, 'dblclick', snippet.bind(this._onDoubleClick, this));\n      util.addEventListener(\n        this.rootElement,\n        'contextmenu',\n        snippet.bind(this._onContextMenu, this)\n      );\n    },\n\n    /**\n     * Event handler - contextmenu\n     * @param {MouseEvent} mouseEvent - Contextmenu event\n     * @private\n     */\n    _onContextMenu: function(mouseEvent) {\n      this.fire('contextmenu', mouseEvent);\n    },\n\n    /**\n     * Event handler - mousedown\n     * @param {MouseEvent} downEvent - Mouse event\n     * @private\n     */\n    _onMousedown: function(downEvent) {\n      var self = this,\n        clientX = downEvent.clientX,\n        clientY = downEvent.clientY,\n        abs = Math.abs;\n\n      /* eslint-disable require-jsdoc */\n      function onMouseMove(moveEvent) {\n        var newClientX = moveEvent.clientX,\n          newClientY = moveEvent.clientY;\n\n        if (abs(newClientX - clientX) + abs(newClientY - clientY) > MOUSE_MOVING_THRESHOLD) {\n          self.fire('mousemove', moveEvent);\n          self._mouseMovingFlag = true;\n        }\n      }\n\n      function onMouseUp(upEvent) {\n        self.fire('mouseup', upEvent);\n        util.removeEventListener(document, 'mousemove', onMouseMove);\n        util.removeEventListener(document, 'mouseup', onMouseUp);\n        util.removeEventListener(document, 'mouseout', onMouseOut);\n      }\n\n      function onMouseOut(event) {\n        if (event.toElement === null) {\n          self.fire('mouseup', event);\n        }\n      }\n      /* eslint-enable require-jsdoc */\n\n      this._mouseMovingFlag = false;\n      this.fire('mousedown', downEvent);\n      util.addEventListener(document, 'mousemove', onMouseMove);\n      util.addEventListener(document, 'mouseup', onMouseUp);\n      util.addEventListener(document, 'mouseout', onMouseOut);\n    },\n\n    /**\n     * Event handler - click\n     * @param {MouseEvent} event - Click event\n     * @private\n     */\n    _onClick: function(event) {\n      var target = util.getTarget(event);\n      var self = this;\n      var nodeId;\n\n      if (util.isRightButton(event)) {\n        this.clickTimer = null;\n\n        return;\n      }\n\n      if (this._isClickedToggleButton(target)) {\n        nodeId = this.getNodeIdFromElement(target);\n\n        this.toggle(nodeId);\n\n        /**\n         * @event Tree#clickToggleBtn\n         * @type {object} evt - Event data\n         * @property {string} nodeId - Node id\n         * @property {HTMLElement} target - Element of toggle button\n         * @example\n         * tree.on('clickToggleBtn', function(evt) {\n         *     console.log(evt.target);\n         * });\n         */\n        this.fire('clickToggleBtn', {\n          nodeId: nodeId,\n          target: target\n        });\n\n        return;\n      }\n\n      if (!this.clickTimer && !this._mouseMovingFlag) {\n        this.fire('singleClick', event);\n        this.clickTimer = setTimeout(function() {\n          self.resetClickTimer();\n        }, TIMEOUT_TO_DIFFERENTIATE_CLICK_AND_DBLCLICK);\n      }\n    },\n\n    /**\n     * Event handler - double click (dblclick)\n     * @param {MouseEvent} event - Double click event\n     * @private\n     */\n    _onDoubleClick: function(event) {\n      this.fire('doubleClick', event);\n      this.resetClickTimer();\n    },\n\n    /**\n     * Whether target element is toggle button or not\n     * @param {HTMLElement} target - Tree node element\n     * @returns {boolean} State\n     * @private\n     */\n    _isClickedToggleButton: function(target) {\n      var nodeId = this.getNodeIdFromElement(target);\n      var nodeElement;\n\n      if (!nodeId) {\n        return false;\n      }\n\n      nodeElement = util.getElementsByClassName(\n        document.getElementById(nodeId),\n        this.classNames.toggleBtnClass\n      )[0];\n\n      return nodeElement && nodeElement.contains(target);\n    },\n\n    /**\n     * Set node state - opened or closed\n     * @param {string} nodeId - Node id\n     * @param {string} state - Node state\n     * @private\n     */\n    _setDisplayFromNodeState: function(nodeId, state) {\n      var subtreeElement = this._getSubtreeElement(nodeId),\n        label,\n        btnElement,\n        nodeElement,\n        firstTextNode;\n\n      if (!subtreeElement || subtreeElement === this.rootElement) {\n        return;\n      }\n      label = this.stateLabels[state];\n      nodeElement = document.getElementById(nodeId);\n\n      btnElement = util.getElementsByClassName(nodeElement, this.classNames.toggleBtnClass)[0];\n\n      if (state === nodeStates.OPENED) {\n        subtreeElement.style.display = '';\n      } else {\n        subtreeElement.style.display = 'none';\n      }\n      this._setNodeClassNameFromState(nodeElement, state);\n\n      if (btnElement) {\n        firstTextNode = util.getFirstTextNode(btnElement);\n        firstTextNode.nodeValue = label;\n      }\n    },\n\n    /**\n     * Set node class name from provided state\n     * @param {HTMLElement} nodeElement - TreeNode element\n     * @param {string} state - New changed state\n     * @private\n     */\n    _setNodeClassNameFromState: function(nodeElement, state) {\n      var classNames = this.classNames,\n        openedClassName = classNames[nodeStates.OPENED + 'Class'],\n        closedClassName = classNames[nodeStates.CLOSED + 'Class'];\n\n      util.removeClass(nodeElement, openedClassName);\n      util.removeClass(nodeElement, closedClassName);\n      util.addClass(nodeElement, classNames[state + 'Class']);\n    },\n\n    /**\n     * Make html\n     * @param {Array.<string>} nodeIds - Node id list\n     * @returns {string} HTML\n     * @private\n     * @see outerTemplate uses \"util.renderTemplate\"\n     */\n    _makeHtml: function(nodeIds) {\n      var model = this.model,\n        html = '';\n\n      snippet.forEach(\n        nodeIds,\n        function(nodeId) {\n          var node = model.getNode(nodeId),\n            sources,\n            props;\n\n          if (!node) {\n            return;\n          }\n\n          sources = this._getTemplate(node);\n          props = this._makeTemplateProps(node);\n          props.innerTemplate = this._makeInnerHTML(node, {\n            source: sources.inner,\n            props: props\n          });\n          html += util.renderTemplate(sources.outer, props);\n        },\n        this\n      );\n\n      return html;\n    },\n\n    /**\n     * Make inner html of node\n     * @param {TreeNode} node - Node\n     * @param {{source: string, props: Object}} [cached] - Cashed data to make html\n     * @returns {string} Inner html of node\n     * @private\n     * @see innerTemplate uses \"this._renderTemplate\"\n     */\n    _makeInnerHTML: function(node, cached) {\n      var source, props;\n\n      cached = cached || {};\n      source = cached.source || this._getTemplate(node).inner;\n      props = cached.props || this._makeTemplateProps(node);\n\n      return this._renderTemplate(source, props);\n    },\n\n    /**\n     * Get template sources\n     * @param {TreeNode} node - Node\n     * @returns {{inner: string, outer: string}} Template sources\n     * @private\n     */\n    _getTemplate: function(node) {\n      var source;\n\n      if (node.isLeaf()) {\n        source = {\n          inner: this.template.leafNode,\n          outer: outerTemplate.LEAF_NODE\n        };\n      } else {\n        source = {\n          inner: this.template.internalNode,\n          outer: outerTemplate.INTERNAL_NODE\n        };\n      }\n\n      return source;\n    },\n\n    /**\n     * Make template properties\n     * @param {TreeNode} node - Node\n     * @returns {Object} Template properties\n     * @private\n     */\n    _makeTemplateProps: function(node) {\n      var classNames = this.classNames,\n        id = node.getId(),\n        props = {\n          id: id,\n          indent: this.getIndentWidth(id)\n        },\n        state;\n\n      if (node.isLeaf()) {\n        extend(props, {\n          isLeaf: true // for custom template method\n        });\n      } else {\n        state = node.getState();\n        extend(props, {\n          stateClass: classNames[state + 'Class'],\n          stateLabel: this.stateLabels[state],\n          children: this._makeHtml(node.getChildIds())\n        });\n      }\n\n      return extend(props, classNames, node.getAllData());\n    },\n\n    /**\n     * calculate tree node's padding left\n     * @param {string} nodeId - Node id\n     * @returns {number} - padding left of tree node division\n     */\n    getIndentWidth: function(nodeId) {\n      return this.getDepth(nodeId) * this._indent;\n    },\n\n    /**\n     * Draw element of node\n     * @param {string} nodeId - Node id\n     * @private\n     */\n    _draw: function(nodeId) {\n      var node = this.model.getNode(nodeId),\n        element,\n        html;\n\n      if (!node) {\n        return;\n      }\n\n      /**\n       * @event Tree#beforeDraw\n       * @type {object} evt - Event data\n       * @property {string} nodeId - Node id\n       * @example\n       * tree.on('beforeDraw', function(evt) {\n       *     if (tree.isMovingNode) {\n       *         console.log('isMovingNode');\n       *     }\n       *     console.log('beforeDraw: ' + evt.nodeId);\n       * });\n       */\n      this.fire('beforeDraw', {nodeId: nodeId});\n\n      if (node.isRoot()) {\n        html = this._makeHtml(node.getChildIds());\n        element = this.rootElement;\n      } else {\n        html = this._makeInnerHTML(node);\n        element = document.getElementById(nodeId);\n      }\n      element.innerHTML = html;\n      this._setClassNameAndVisibilityByFeature(node);\n\n      /**\n       * @event Tree#afterDraw\n       * @type {object} evt - Event data\n       * @property {string} nodeId - Node id\n       * @example\n       * tree.on('afterDraw', function(evt) {\n       *     if (tree.isMovingNode) {\n       *         console.log('isMovingNode');\n       *     }\n       *     console.log('afterDraw: ' + evt.nodeId);\n       * });\n       */\n      this.fire('afterDraw', {nodeId: nodeId});\n    },\n\n    /**\n     * Update class name by features on below<br>\n     * - leaf node: has classNames.leafClass<br>\n     * - internal node + opened: has classNames.openedClass, child is visible<br>\n     * - internal node + closed: has classNames.closedClass, child is not visible<br>\n     * @param {TreeNode} node - (re)drawing starts from this node\n     * @private\n     */\n    _setClassNameAndVisibilityByFeature: function(node) {\n      var nodeId = node.getId(),\n        element = document.getElementById(nodeId),\n        classNames = this.classNames;\n\n      if (node.isLeaf()) {\n        util.removeClass(element, classNames.openedClass);\n        util.removeClass(element, classNames.closedClass);\n        util.addClass(element, classNames.leafClass);\n      } else {\n        util.removeClass(element, classNames.leafClass);\n        this._setDisplayFromNodeState(nodeId, node.getState());\n        this.each(\n          function(child) {\n            this._setClassNameAndVisibilityByFeature(child);\n          },\n          nodeId,\n          this\n        );\n      }\n    },\n\n    /**\n     * Get subtree element\n     * @param {string} nodeId - TreeNode id\n     * @returns {HTMLElement} Subtree element\n     * @private\n     */\n    _getSubtreeElement: function(nodeId) {\n      var node = this.model.getNode(nodeId),\n        subtreeElement;\n\n      if (!node || node.isLeaf()) {\n        subtreeElement = null;\n      } else if (node.isRoot()) {\n        subtreeElement = this.rootElement;\n      } else {\n        subtreeElement = util.getElementsByClassName(\n          document.getElementById(nodeId),\n          this.classNames.subtreeClass\n        )[0];\n      }\n\n      return subtreeElement;\n    },\n\n    /**\n     * Return the depth of node\n     * @param {string} nodeId - Node id\n     * @returns {number|undefined} Depth\n     */\n    getDepth: function(nodeId) {\n      return this.model.getDepth(nodeId);\n    },\n\n    /**\n     * Return the last depth of tree\n     * @returns {number} Last depth\n     */\n    getLastDepth: function() {\n      return this.model.getLastDepth();\n    },\n\n    /**\n     * Return root node id\n     * @returns {string} Root node id\n     */\n    getRootNodeId: function() {\n      return this.model.rootNode.getId();\n    },\n\n    /**\n     * Return child ids\n     * @param {string} nodeId - Node id\n     * @returns {Array.<string>|undefined} Child ids\n     */\n    getChildIds: function(nodeId) {\n      return this.model.getChildIds(nodeId);\n    },\n\n    /**\n     * Return parent id of node\n     * @param {string} nodeId - Node id\n     * @returns {string|undefined} Parent id\n     */\n    getParentId: function(nodeId) {\n      return this.model.getParentId(nodeId);\n    },\n\n    /**\n     * Reset click timer\n     */\n    resetClickTimer: function() {\n      window.clearTimeout(this.clickTimer);\n      this.clickTimer = null;\n    },\n\n    /**\n     * Get node id from element\n     * @param {HTMLElement} element - Element\n     * @returns {string} Node id\n     * @example\n     * tree.getNodeIdFromElement(elementInNode); // 'tui-tree-node-3'\n     */\n    getNodeIdFromElement: function(element) {\n      var idPrefix = this.getNodeIdPrefix();\n\n      while (element && element.id.indexOf(idPrefix) === -1) {\n        element = element.parentElement;\n      }\n\n      return element ? element.id : '';\n    },\n\n    /**\n     * Get prefix of node id\n     * @returns {string} Prefix of node id\n     * @example\n     * tree.getNodeIdPrefix(); // 'tui-tree-node-'\n     */\n    getNodeIdPrefix: function() {\n      return this.model.getNodeIdPrefix();\n    },\n\n    /**\n     * Get node data\n     * @param {string} nodeId - Node id\n     * @returns {object|undefined} Node data\n     */\n    getNodeData: function(nodeId) {\n      return this.model.getNodeData(nodeId);\n    },\n\n    /**\n     * Set data properties of a node\n     * @param {string} nodeId - Node id\n     * @param {object} data - Properties\n     * @param {object} [options] - Options\n     *     @param {boolean} [options.isSilent] - If true, it doesn't trigger the 'update' event\n     *     @param {boolean} [options.useAjax] - State of using Ajax\n     * @exmaple\n     * tree.setNodeData(nodeId, {foo: 'bar'}); // auto refresh\n     * tree.setNodeData(nodeId, {foo: 'bar'}, true); // not refresh\n     */\n    setNodeData: function(nodeId, data, options) {\n      var self = this;\n      var treeAjax = this.enabledFeatures.Ajax;\n      var useAjax = options ? options.useAjax : !!treeAjax;\n      var isSilent = options ? options.isSilent : false;\n\n      if (useAjax) {\n        treeAjax.loadData(\n          ajaxCommand.UPDATE,\n          function() {\n            self._setNodeData(nodeId, data);\n          },\n          {\n            nodeId: nodeId,\n            data: data,\n            type: 'set'\n          }\n        );\n      } else {\n        this._setNodeData(nodeId, data, isSilent);\n      }\n    },\n\n    /**\n     * Set data properties of a node (Core method)\n     * @param {string} nodeId - Node id\n     * @param {object} data - Properties\n     * @param {boolean} [isSilent] - If true, it doesn't trigger the 'update' event\n     * @private\n     */\n    _setNodeData: function(nodeId, data, isSilent) {\n      this.model.setNodeData(nodeId, data, isSilent);\n    },\n\n    /**\n     * Remove node data\n     * @param {string} nodeId - Node id\n     * @param {string|Array} names - Names of properties\n     * @param {object} [options] - Options\n     *     @param {boolean} [options.isSilent] - If true, it doesn't trigger the 'update' event\n     *     @param {boolean} [options.useAjax] - State of using Ajax\n     * @example\n     * tree.setNodeData(nodeId, 'foo'); // auto refresh\n     * tree.setNodeData(nodeId, 'foo', true); // not refresh\n     */\n    removeNodeData: function(nodeId, names, options) {\n      var self = this;\n      var treeAjax = this.enabledFeatures.Ajax;\n      var useAjax = options ? options.useAjax : !!treeAjax;\n      var isSilent = options ? options.isSilent : false;\n\n      if (useAjax) {\n        treeAjax.loadData(\n          ajaxCommand.UPDATE,\n          function() {\n            self._removeNodeData(nodeId, names);\n          },\n          {\n            nodeId: nodeId,\n            names: names,\n            type: 'remove'\n          }\n        );\n      } else {\n        this._removeNodeData(nodeId, names, isSilent);\n      }\n    },\n\n    /**\n     * Remove node data (Core method)\n     * @param {string} nodeId - Node id\n     * @param {string|Array} names - Names of properties\n     * @param {boolean} [isSilent] - If true, it doesn't trigger the 'update' event\n     * @private\n     */\n    _removeNodeData: function(nodeId, names, isSilent) {\n      this.model.removeNodeData(nodeId, names, isSilent);\n    },\n\n    /**\n     * Get node state.\n     * @param {string} nodeId - Node id\n     * @returns {string|null} Node state(('opened', 'closed', null)\n     * @example\n     * tree.getState(nodeId); // 'opened', 'closed',\n     *                        // undefined if the node is nonexistent\n     */\n    getState: function(nodeId) {\n      var node = this.model.getNode(nodeId);\n\n      if (!node) {\n        return null;\n      }\n\n      return node.getState();\n    },\n    /**\n     * Open node\n     * @param {string} nodeId - Node id\n     * @param {boolean} recursive - If true, it open all parent (default: false)\n     * @example\n     * tree.open(nodeId ,true);\n     */\n    open: function(nodeId, recursive) {\n      if (recursive) {\n        this._openRecursiveNode(nodeId);\n      } else {\n        this._openNode(nodeId);\n      }\n    },\n    /**\n     * Open all parent node\n     * @param {string} nodeId - Node id\n     * @private\n     */\n    _openRecursiveNode: function(nodeId) {\n      var parentIds = this.model.getParentIds(nodeId);\n      parentIds.push(nodeId);\n      snippet.forEach(\n        parentIds,\n        function(parentId) {\n          this._openNode(parentId);\n        },\n        this\n      );\n    },\n    /**\n     * Open one target node\n     * @param {string} nodeId - Node id\n     * @private\n     */\n    _openNode: function(nodeId) {\n      var node = this.model.getNode(nodeId);\n      var state = nodeStates.OPENED;\n      var isAllowStateChange = node && !node.isRoot() && node.getState() === nodeStates.CLOSED;\n\n      if (isAllowStateChange) {\n        node.setState(state);\n        this._setDisplayFromNodeState(nodeId, state);\n      }\n\n      if (this.enabledFeatures.Ajax) {\n        this._reload(nodeId);\n      }\n    },\n\n    /**\n     * Close node\n     * @param {string} nodeId - Node id\n     * @param {boolean} recursive - If true, it close all child node (default: false)\n     * @example\n     * tree.close(nodeId, true);\n     */\n    close: function(nodeId, recursive) {\n      if (recursive) {\n        this._closeRecursiveNode(nodeId);\n      } else {\n        this._closeNode(nodeId);\n      }\n    },\n\n    /**\n     * Close all child node\n     * @param {string} nodeId - Node id\n     * @private\n     */\n    _closeRecursiveNode: function(nodeId) {\n      this._closeNode(nodeId);\n      this.model.each(\n        function(searchNode, searchNodeId) {\n          if (!searchNode.isLeaf()) {\n            this._closeNode(searchNodeId);\n          }\n        },\n        nodeId,\n        this\n      );\n    },\n\n    /**\n     * Close one target node\n     * @param {string} nodeId - Node id\n     * @private\n     */\n    _closeNode: function(nodeId) {\n      var node = this.model.getNode(nodeId);\n      var state = nodeStates.CLOSED;\n      var isAllowStateChange = node && !node.isRoot() && node.getState() === nodeStates.OPENED;\n      if (isAllowStateChange) {\n        node.setState(state);\n        this._setDisplayFromNodeState(nodeId, state);\n      }\n    },\n\n    /**\n     * Toggle node\n     * @param {string} nodeId - Node id\n     */\n    toggle: function(nodeId) {\n      var node = this.model.getNode(nodeId);\n      var state;\n\n      if (!node || node.isRoot()) {\n        return;\n      }\n\n      node.toggleState();\n      state = node.getState();\n      this._setDisplayFromNodeState(nodeId, state);\n\n      if (this.enabledFeatures.Ajax) {\n        this._reload(nodeId);\n      }\n    },\n\n    /**\n     * Reload children nodes while \"stateLable\" is clicked\n     * @param {string} nodeId - Node id\n     * @private\n     */\n    _reload: function(nodeId) {\n      var node = this.model.getNode(nodeId);\n      var state = node.getState();\n      var isReload = snippet.isUndefined(node.getData('reload')) || node.getData('reload');\n\n      if (state === nodeStates.CLOSED) {\n        // open -> close action\n        this._setNodeData(\n          nodeId,\n          {\n            reload: false\n          },\n          true\n        );\n      }\n\n      if (state === nodeStates.OPENED && isReload) {\n        // close -> open action\n        this.resetAllData(null, {\n          nodeId: nodeId,\n          useAjax: true\n        });\n      }\n    },\n\n    /**\n     * Sort all nodes\n     * @param {Function} comparator - Comparator for sorting\n     * @param {boolean} [isSilent] - If true, it doesn't redraw tree\n     * @param {string} [parentId] - Id of a node to sort partially\n     * @example\n     * var comparator = function(nodeA, nodeB) {\n     *     var aValue = nodeA.getData('text'),\n     *         bValue = nodeB.getData('text');\n     *\n     *     if (!bValue || !bValue.localeCompare) {\n     *         return 0;\n     *     }\n     *     return bValue.localeCompare(aValue);\n     * };\n     *\n     * // Sort with redrawing tree\n     * tree.sort(comparator);\n     *\n     * // Sort, but not redraw tree\n     * tree.sort(comparator, true);\n     *\n     * // Sort partially\n     * tree.sort(comparator, false, parentId)\n     */\n    sort: function(comparator, isSilent, parentId) {\n      this.model.sort(comparator, parentId);\n\n      if (!isSilent) {\n        this.refresh(parentId);\n      }\n    },\n\n    /**\n     * Refresh tree or node's children\n     * @param {string} [nodeId] - TreeNode id to refresh\n     */\n    refresh: function(nodeId) {\n      nodeId = nodeId || this.getRootNodeId();\n      this._draw(nodeId);\n    },\n\n    /**\n     * Traverse this tree iterating over all nodes.\n     * @param {Function} iteratee - Iteratee function\n     * @param {object} [context] - Context of iteratee\n     * @example\n     * tree.eachAll(function(node, nodeId) {\n     *     console.log(node.getId() === nodeId); // true\n     * });\n     */\n    eachAll: function(iteratee, context) {\n      this.model.eachAll(iteratee, context);\n    },\n\n    /**\n     * Traverse this tree iterating over all descendants of a node.\n     * @param {Function} iteratee - Iteratee function\n     * @param {string} parentId - Parent node id\n     * @param {object} [context] - Context of iteratee\n     * @example\n     * tree.each(function(node, nodeId) {\n     *     console.log(node.getId() === nodeId); // true\n     * }, parentId);\n     *\n     */\n    each: function(iteratee, parentId, context) {\n      this.model.each(iteratee, parentId, context);\n    },\n\n    /**\n     * Add node(s).\n     * - If the parentId is falsy, the node will be appended to rootNode.\n     * - If 'isSilent' is not true, it redraws the tree\n     * @param {Array|object} data - Raw-data\n     * @param {*} [parentId] - Parent id\n     * @param {object} [options] - Options\n     *     @param {boolean} [options.isSilent] - If true, it doesn't redraw children\n     *     @param {boolean} [options.useAjax] - State of using Ajax\n     * @returns {?Array.<string>} Added node ids\n     * @example\n     * // add node with redrawing\n     * var firstAddedIds = tree.add({text:'FE development team1'}, parentId);\n     * console.log(firstAddedIds); // [\"tui-tree-node-10\"]\n     *\n     * // add node without redrawing\n     * var secondAddedIds = tree.add([\n     *    {text: 'FE development team2'},\n     *    {text: 'FE development team3'}\n     * ], parentId, true);\n     * console.log(secondAddedIds); // [\"tui-tree-node-11\", \"tui-tree-node-12\"]\n     */\n    add: function(data, parentId, options) {\n      var self = this;\n      var treeAjax = this.enabledFeatures.Ajax;\n      var useAjax = options ? options.useAjax : !!treeAjax;\n      var isSilent = options ? options.isSilent : false;\n      var newChildIds;\n\n      if (useAjax) {\n        treeAjax.loadData(\n          ajaxCommand.CREATE,\n          function() {\n            return self._add(data, parentId);\n          },\n          {\n            parentId: parentId,\n            data: data\n          }\n        );\n      } else {\n        newChildIds = this._add(data, parentId, isSilent);\n      }\n\n      return newChildIds;\n    },\n\n    /**\n     * Add node(s). (Core method)\n     * - If the parentId is falsy, the node will be appended to rootNode.\n     * - If 'isSilent' is not true, it redraws the tree\n     * @param {Array|object} data - Raw-data\n     * @param {*} [parentId] - Parent id\n     * @param {boolean} [isSilent] - If true, it doesn't redraw children\n     * @returns {Array.<string>} Added node ids\n     * @private\n     */\n    _add: function(data, parentId, isSilent) {\n      return this.model.add(data, parentId, isSilent);\n    },\n\n    /**\n     * Reset all data\n     * @param {Array|object} data - Raw data for all nodes\n     * @param {object} [options] - Options\n     *     @param {string} [options.nodeId] - Parent node id to reset all child data\n     *     @param {boolean} [options.useAjax] - State of using Ajax\n     * @returns {?Array.<string>} Added node ids\n     * @example\n     * tree.resetAllData([\n     *  {text: 'hello', children: [\n     *      {text: 'foo'},\n     *      {text: 'bar'}\n     *  ]},\n     *  {text: 'world'}\n     * ]);\n     * tree.resetAllData([\n     *  {text: 'hello world'}\n     * ], {\n     *  nodeId: 'tui-tree-node-5',\n     *  useAjax: true\n     * });\n     */\n    resetAllData: function(data, options) {\n      var self = this;\n      var treeAjax = this.enabledFeatures.Ajax;\n      var nodeId = options ? options.nodeId : this.getRootNodeId();\n      var useAjax = options ? options.useAjax : !!treeAjax;\n      var newChildIds;\n\n      if (useAjax) {\n        treeAjax.loadData(\n          ajaxCommand.READ,\n          function(response) {\n            return self._resetAllData(response, nodeId);\n          },\n          {\n            nodeId: nodeId\n          }\n        );\n      } else {\n        newChildIds = this._resetAllData(data, nodeId);\n      }\n\n      return newChildIds;\n    },\n\n    /**\n     * Reset all data (Core method)\n     * @param {Array|object} data - Raw data for all nodes\n     * @param {string} nodeId - Node id to reset data\n     * @returns {Array.<string>} Added node ids\n     * @private\n     */\n    _resetAllData: function(data, nodeId) {\n      this._removeAllChildren(nodeId, {\n        isSilent: true\n      });\n\n      return this._add(data, nodeId);\n    },\n\n    /**\n     * Remove all children\n     * @param {string} nodeId - Parent node id\n     * @param {object} [options] - Options\n     *     @param {boolean} [options.isSilent] - If true, it doesn't redraw the node\n     *     @param {boolean} [options.useAjax] - State of using Ajax\n     * @example\n     * tree.removeAllChildren(nodeId); // Redraws the node\n     * tree.removeAllChildren(nodId, true); // Doesn't redraw the node\n     */\n    removeAllChildren: function(nodeId, options) {\n      var self = this;\n      var treeAjax = this.enabledFeatures.Ajax;\n      var useAjax = options ? options.useAjax : !!treeAjax;\n      var isSilent = options ? options.isSilent : false;\n\n      if (useAjax) {\n        treeAjax.loadData(\n          ajaxCommand.DELETE_ALL_CHILDREN,\n          function() {\n            self._removeAllChildren(nodeId);\n          },\n          {\n            parentId: nodeId\n          }\n        );\n      } else {\n        this._removeAllChildren(nodeId, isSilent);\n      }\n    },\n\n    /**\n     * Remove all children (Core method)\n     * @param {string} nodeId - Parent node id\n     * @param {boolean} [isSilent] - If true, it doesn't redraw the node\n     * @private\n     */\n    _removeAllChildren: function(nodeId, isSilent) {\n      var children = this.getChildIds(nodeId);\n\n      snippet.forEach(\n        children,\n        function(childId) {\n          this._remove(childId, true);\n        },\n        this\n      );\n\n      if (!isSilent) {\n        this._draw(nodeId);\n      }\n    },\n\n    /**\n     * Remove a node with children.\n     * - If 'isSilent' is not true, it redraws the tree\n     * @param {string} nodeId - Node id to remove\n     * @param {object} [options] - Options\n     *     @param {boolean} [options.isSilent] - If true, it doesn't redraw children\n     *     @param {boolean} [options.useAjax] - State of using Ajax\n     * @example\n     * tree.remove(myNodeId); // remove node with redrawing\n     * tree.remove(myNodeId, true); // remove node without redrawing\n     */\n    remove: function(nodeId, options) {\n      var self = this;\n      var treeAjax = this.enabledFeatures.Ajax;\n      var useAjax = options ? options.useAjax : !!treeAjax;\n      var isSilent = options ? options.isSilent : false;\n\n      if (useAjax) {\n        treeAjax.loadData(\n          ajaxCommand.DELETE,\n          function() {\n            self._remove(nodeId);\n          },\n          {\n            nodeId: nodeId\n          }\n        );\n      } else {\n        this._remove(nodeId, isSilent);\n      }\n    },\n\n    /**\n     * Remove a node with children. (Core method)\n     * - If 'isSilent' is not true, it redraws the tree\n     * @param {string} nodeId - Node id to remove\n     * @param {boolean} [isSilent] - If true, it doesn't redraw children\n     * @private\n     */\n    _remove: function(nodeId, isSilent) {\n      this.model.remove(nodeId, isSilent);\n    },\n\n    /**\n     * Move a node to new parent\n     * - If 'isSilent' is not true, it redraws the tree\n     * @param {string} nodeId - Node id\n     * @param {string} newParentId - New parent id\n     * @param {number} index - Index number of selected node\n     * @param {object} [options] - Options\n     *     @param {boolean} [options.isSilent] - If true, it doesn't trigger the 'update' event\n     *     @param {boolean} [options.useAjax] - State of using Ajax\n     * @example\n     * tree.move(myNodeId, newParentId); // mode node with redrawing\n     * tree.move(myNodeId, newParentId, true); // move node without redrawing\n     */\n    move: function(nodeId, newParentId, index, options) {\n      var self = this;\n      var treeAjax = this.enabledFeatures.Ajax;\n      var useAjax = options ? options.useAjax : !!treeAjax;\n      var isSilent = options ? options.isSilent : false;\n\n      if (useAjax) {\n        treeAjax.loadData(\n          ajaxCommand.MOVE,\n          function() {\n            if (self.getParentId(nodeId) !== newParentId) {\n              // just move, not sort!\n              self.setNodeData(\n                newParentId,\n                {\n                  reload: true\n                },\n                true\n              );\n            }\n            self._move(nodeId, newParentId, index);\n          },\n          {\n            nodeId: nodeId,\n            newParentId: newParentId,\n            index: index\n          }\n        );\n      } else {\n        this._move(nodeId, newParentId, index, isSilent);\n      }\n    },\n\n    /**\n     * Move a node to new parent (Core method)\n     * - If 'isSilent' is not true, it redraws the tree\n     * @param {string} nodeId - Node id\n     * @param {string} newParentId - New parent id\n     * @param {number} index - Index number of selected node\n     * @param {boolean} [isSilent] - If true, it doesn't redraw children\n     * @private\n     */\n    _move: function(nodeId, newParentId, index, isSilent) {\n      /**\n       * @event Tree#beforeMove\n       * @type {object} evt - Event data\n       * @property {string} nodeId - Current dragging node id\n       * @property {string} newParentId - New parent id\n       * @example\n       * tree.on('beforeMove', function(evt) {\n       *      console.log('dragging node: ' + evt.nodeId);\n       *      console.log('new parent node: ' + evt.newParentId);\n       *      console.log('original parent node: ' + tree.getParentId(evt.nodeId));\n       *\n       *      return false; // Cancel \"move\" event\n       *      // return true; // Fire \"move\" event\n       * });\n       */\n      if (\n        !this.invoke('beforeMove', {\n          nodeId: nodeId,\n          newParentId: newParentId\n        })\n      ) {\n        return;\n      }\n\n      this.isMovingNode = true;\n      this.model.move(nodeId, newParentId, index, isSilent);\n      this.isMovingNode = false;\n    },\n\n    /**\n     * Search node ids by passing the predicate check or matching data\n     * @param {Function|Object} predicate - Predicate or data\n     * @param {Object} [context] - Context of predicate\n     * @returns {Array.<string>} Node ids\n     * @example\n     * // search from predicate\n     * var leafNodeIds = tree.search(function(node, nodeId) {\n     *     return node.isLeaf();\n     * });\n     * console.log(leafNodeIds); // ['tui-tree-node-3', 'tui-tree-node-5']\n     *\n     * // search from data\n     * var specialNodeIds = tree.search({\n     *     isSpecial: true,\n     *     foo: 'bar'\n     * });\n     * console.log(specialNodeIds); // ['tui-tree-node-5', 'tui-tree-node-10']\n     * console.log(tree.getNodeData('tui-tree-node-5').isSpecial); // true\n     * console.log(tree.getNodeData('tui-tree-node-5').foo); // 'bar'\n     */\n    search: function(predicate, context) {\n      if (!snippet.isObject(predicate)) {\n        return [];\n      }\n\n      if (snippet.isFunction(predicate)) {\n        return this._filter(predicate, context);\n      }\n\n      return this._where(predicate);\n    },\n\n    /**\n     * Search node ids by matching data\n     * @param {Object} props - Data\n     * @returns {Array.<string>} Node ids\n     * @private\n     */\n    _where: function(props) {\n      return this._filter(function(node) {\n        var result = true,\n          data = node.getAllData();\n\n        snippet.forEach(props, function(value, key) {\n          result = key in data && data[key] === value;\n\n          return result;\n        });\n\n        return result;\n      });\n    },\n\n    /**\n     * Search node ids by passing the predicate check\n     * @param {Function} predicate - Predicate\n     * @param {Object} [context] - Context of predicate\n     * @returns {Array.<string>} Node ids\n     * @private\n     */\n    _filter: function(predicate, context) {\n      var filtered = [];\n\n      this.eachAll(function(node, nodeId) {\n        if (predicate(node, nodeId)) {\n          filtered.push(nodeId);\n        }\n      }, context);\n\n      return filtered;\n    },\n\n    /**\n     * Whether the node is leaf\n     * @param {string} nodeId - Node id\n     * @returns {boolean} True if the node is leaf.\n     */\n    isLeaf: function(nodeId) {\n      var node = this.model.getNode(nodeId);\n\n      return node && node.isLeaf();\n    },\n\n    /**\n     * Whether a node is a ancestor of another node.\n     * @param {string} containerNodeId - Id of a node that may contain the other node\n     * @param {string} containedNodeId - Id of a node that may be contained by the other node\n     * @returns {boolean} Whether a node contains another node\n     */\n    contains: function(containerNodeId, containedNodeId) {\n      return this.model.contains(containerNodeId, containedNodeId);\n    },\n\n    /**\n     * Enable facility of tree\n     * @param {string} featureName - 'Selectable', 'Draggable', 'Editable', 'ContextMenu'\n     * @param {object} [options] - Feature options\n     * @returns {Tree} this\n     * @example\n     * tree\n     *  .enableFeature('Selectable', {\n     *      selectedClassName: 'tui-tree-selected'\n     *  })\n     *  .enableFeature('Editable', {\n     *      enableClassName: tree.classNames.textClass,\n     *      dataKey: 'text',\n     *      defaultValue: 'new node',\n     *      inputClassName: 'myInput'\n     *  })\n     *  .enableFeature('Draggable', {\n     *      useHelper: true,\n     *      helperPos: {x: 5, y: 2},\n     *      rejectedTagNames: ['UL', 'INPUT', 'BUTTON'],\n     *      rejectedClassNames: ['notDraggable', 'notDraggable-2'],\n     *      autoOpenDelay: 1500,\n     *      isSortable: true,\n     *      hoverClassName: 'tui-tree-hover'\n     *      lineClassName: 'tui-tree-line',\n     *      lineBoundary: {\n     *          top: 10,\n     *          bottom: 10\n     *      }\n     *  })\n     *  .enableFeature('Checkbox', {\n     *      checkboxClassName: 'tui-tree-checkbox'\n     *  })\n     *  .enableFeature('ContextMenu', {\n     *      menuData: [\n     *          {title: 'menu1', command: 'copy'},\n     *          {title: 'menu2', command: 'paste'},\n     *          {separator: true},\n     *          {\n     *              title: 'menu3',\n     *              menu: [\n     *                  {title: 'submenu1'},\n     *                  {title: 'submenu2'}\n     *              ]\n     *          }\n     *      }\n     *  })\n     *  .enableFeature('Ajax', {\n     *      command: {\n     *          read: {\n     *              url: 'api/read',\n     *              dataType: 'json',\n     *              type: 'get'\n     *          },\n     *          create: {\n     *              url: 'api/create',\n     *              dataType: 'json',\n     *              type: 'post'\n     *          },\n     *          update: {\n     *              url: 'api/update',\n     *              dataType: 'json',\n     *              type: 'post',\n     *              data: {\n     *                  paramA: 'a',\n     *                  paramB: 'b'\n     *              }\n     *          },\n     *          remove: {\n     *              url: 'api/remove',\n     *              dataType: 'json',\n     *              type: 'post',\n     *              data: function(params) {\n     *                  return {\n     *                      paramA: params.a,\n     *                      paramB: params.b\n     *                  };\n     *              }\n     *          },\n     *          removeAllChildren: {\n     *              url: function(params) {\n     *                  return 'api/remove_all/' + params.nodeId,\n     *              },\n     *              dataType: 'json',\n     *              type: 'post'\n     *          },\n     *          move: {\n     *              url: 'api/move',\n     *              dataType: 'json',\n     *              type: 'post'\n     *          }\n     *      },\n     *      parseData: function(type, response) {\n     *          if (type === 'read' && response.code === '200') {\n     *              return response;\n     *          } else {\n     *              return false;\n     *          }\n     *      }\n     *  });\n     */\n    enableFeature: function(featureName, options) {\n      var Feature = features[featureName];\n\n      if (!Feature) {\n        return this;\n      }\n\n      this.disableFeature(featureName);\n\n      if (snippet.isObject(options)) {\n        options.usageStatistics = this.usageStatistics;\n      } else {\n        options = {\n          usageStatistics: this.usageStatistics\n        };\n      }\n\n      this.enabledFeatures[featureName] = new Feature(this, options);\n      this.fire('initFeature');\n\n      return this;\n    },\n\n    /**\n     * Disable facility of tree\n     * @param {string} featureName - 'Selectable', 'Draggable', 'Editable'\n     * @returns {Tree} this\n     * @example\n     * tree\n     *  .disableFeature('Selectable')\n     *  .disableFeature('Draggable')\n     *  .disableFeature('Editable')\n     *  .disableFeature('Checkbox')\n     *  .disableFeature('ContextMenu')\n     *  .disableFeature('Ajax');\n     */\n    disableFeature: function(featureName) {\n      var feature = this.enabledFeatures[featureName];\n\n      if (feature) {\n        feature.destroy();\n        delete this.enabledFeatures[featureName];\n      }\n\n      return this;\n    },\n\n    /**\n     * Get index number of selected node\n     * @param {string} nodeId - Id of selected node\n     * @returns {number} Index number of attached node\n     */\n    getNodeIndex: function(nodeId) {\n      var parentId = this.model.getParentId(nodeId);\n\n      return this.model.getNode(parentId).getChildIndex(nodeId);\n    }\n  }\n);\n\n/**\n * Set abstract apis to tree prototype\n * @param {string} featureName - Feature name\n * @param {object} feature - Feature\n * @ignore\n */\nfunction setAbstractAPIs(featureName, feature) {\n  var messageName = 'INVALID_API_' + featureName.toUpperCase(),\n    apiList = feature.getAPIList ? feature.getAPIList() : [];\n\n  snippet.forEach(apiList, function(api) {\n    Tree.prototype[api] = function() {\n      throw new Error(messages[messageName] || messages.INVALID_API);\n    };\n  });\n}\nsnippet.forEach(features, function(Feature, name) {\n  setAbstractAPIs(name, Feature);\n});\nsnippet.CustomEvents.mixin(Tree);\n\nmodule.exports = Tree;\n\n\n//# sourceURL=webpack://tui.Tree/./src/js/tree.js?");
+"use strict";
+/**
+ * @fileoverview Set data attribute to target element
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+var convertToKebabCase = __webpack_require__(22);
+
+/**
+ * Set data attribute to target element
+ * @param {HTMLElement} element - element to set data attribute
+ * @param {string} key - key
+ * @param {string} value - value
+ * @memberof module:domUtil
+ */
+function setData(element, key, value) {
+  if (element.dataset) {
+    element.dataset[key] = value;
+
+    return;
+  }
+
+  element.setAttribute('data-' + convertToKebabCase(key), value);
+}
+
+module.exports = setData;
+
 
 /***/ }),
-
-/***/ "./src/js/treeModel.js":
-/*!*****************************!*\
-  !*** ./src/js/treeModel.js ***!
-  \*****************************/
-/*! no static exports found */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("/**\n * @fileoverview Update view and control tree data\n * @author NHN. FE dev Lab <dl_javascript@nhn.com>\n */\nvar TreeNode = __webpack_require__(/*! ./treeNode */ \"./src/js/treeNode.js\");\nvar snippet = __webpack_require__(/*! tui-code-snippet */ \"tui-code-snippet\");\n\nvar extend = snippet.extend,\n  keys = snippet.keys,\n  forEach = snippet.forEach,\n  map = snippet.map;\n\n/**\n * Tree model\n * @class TreeModel\n * @param {Array} data - Data\n * @param {Object} options - Options for defaultState and nodeIdPrefix\n * @ignore\n */\nvar TreeModel = snippet.defineClass(\n  /** @lends TreeModel.prototype */ {\n    init: function(options) {\n      TreeNode.setIdPrefix(options.nodeIdPrefix);\n\n      /**\n       * Default state of node\n       * @type {String}\n       */\n      this.nodeDefaultState = options.nodeDefaultState;\n\n      /**\n       * Root node\n       * @type {TreeNode}\n       */\n      this.rootNode = new TreeNode(\n        {\n          state: 'opened'\n        },\n        null\n      );\n\n      /**\n       * Tree hash having all nodes\n       * @type {object.<string, TreeNode>}\n       */\n      this.treeHash = {};\n\n      this._setData(options.data);\n    },\n\n    /**\n     * Return prefix of node id\n     * @returns {string} Prefix\n     */\n    getNodeIdPrefix: function() {\n      return TreeNode.idPrefix;\n    },\n\n    /**\n     * Set model with tree data\n     * @param {Array} data - Tree data\n     */\n    _setData: function(data) {\n      var root = this.rootNode,\n        rootId = root.getId();\n\n      this.treeHash[rootId] = root;\n      this._makeTreeHash(data, root);\n    },\n\n    /**\n     * Make tree hash from data and parentNode\n     * @param {Array} data - Tree data\n     * @param {TreeNode} parent - Parent node id\n     * @returns {Array.<string>} Added node ids\n     * @private\n     */\n    _makeTreeHash: function(data, parent) {\n      var parentId = parent.getId(),\n        ids = [];\n\n      forEach(\n        data,\n        function(datum) {\n          var childrenData = datum.children,\n            node = this._createNode(datum, parentId),\n            nodeId = node.getId();\n\n          ids.push(nodeId);\n          this.treeHash[nodeId] = node;\n          parent.addChildId(nodeId);\n          this._makeTreeHash(childrenData, node);\n        },\n        this\n      );\n\n      return ids;\n    },\n\n    /**\n     * Create node\n     * @param {object} nodeData - Datum of node\n     * @param {string} parentId - Parent id\n     * @returns {TreeNode} TreeNode\n     */\n    _createNode: function(nodeData, parentId) {\n      nodeData = extend(\n        {\n          state: this.nodeDefaultState\n        },\n        nodeData\n      );\n\n      return new TreeNode(nodeData, parentId);\n    },\n\n    /**\n     * Get children\n     * @param {string} nodeId - Node id\n     * @returns {?Array.<TreeNode>} children\n     */\n    getChildren: function(nodeId) {\n      var childIds = this.getChildIds(nodeId);\n\n      if (!childIds) {\n        return null;\n      }\n\n      return map(\n        childIds,\n        function(childId) {\n          return this.getNode(childId);\n        },\n        this\n      );\n    },\n\n    /**\n     * Get child ids\n     * @param {string} nodeId - Node id\n     * @returns {?Array.<string>} Child ids\n     */\n    getChildIds: function(nodeId) {\n      var node = this.getNode(nodeId);\n\n      if (!node) {\n        return null;\n      }\n\n      return node.getChildIds();\n    },\n\n    /**\n     * Get the number of nodes\n     * @returns {number} The number of nodes\n     */\n    getCount: function() {\n      return keys(this.treeHash).length;\n    },\n\n    /**\n     * Get last depth\n     * @returns {number} The last depth\n     */\n    getLastDepth: function() {\n      var depths = map(\n        this.treeHash,\n        function(node) {\n          return this.getDepth(node.getId());\n        },\n        this\n      );\n\n      return Math.max.apply(null, depths);\n    },\n\n    /**\n     * Find node\n     * @param {string} id - A node id to find\n     * @returns {?TreeNode} Node\n     */\n    getNode: function(id) {\n      return this.treeHash[id];\n    },\n\n    /**\n     * Get depth from node id\n     * @param {string} id - A node id to find\n     * @returns {?number} Depth\n     */\n    getDepth: function(id) {\n      var node = this.getNode(id),\n        depth = 0,\n        parent;\n\n      if (!node) {\n        return null;\n      }\n\n      parent = this.getNode(node.getParentId());\n      while (parent) {\n        depth += 1;\n        parent = this.getNode(parent.getParentId());\n      }\n\n      return depth;\n    },\n\n    /**\n     * Return parent id of node\n     * @param {string} id - Node id\n     * @returns {?string} Parent id\n     */\n    getParentId: function(id) {\n      var node = this.getNode(id);\n\n      if (!node) {\n        return null;\n      }\n\n      return node.getParentId();\n    },\n    /**\n     * Return parents ids of node\n     * @param {string} id - Node id\n     * @returns {Array.<string>} Parents node ids\n     */\n    getParentIds: function(id) {\n      var parentsNodeList = [];\n      var node = this.getNode(id);\n      var parentNodeId = node.getParentId();\n\n      while (parentNodeId) {\n        node = this.getNode(parentNodeId);\n        parentNodeId = node.getParentId();\n        parentsNodeList.push(node);\n      }\n\n      return map(parentsNodeList, function(parentsNode) {\n        return parentsNode.getId();\n      });\n    },\n    /**\n     * Remove a node with children.\n     * - The update event will be fired with parent node.\n     * @param {string} id - Node id to remove\n     * @param {boolean} [isSilent] - If true, it doesn't trigger the 'update' event\n     */\n    remove: function(id, isSilent) {\n      var node = this.getNode(id),\n        parent;\n\n      if (!node) {\n        return;\n      }\n\n      parent = this.getNode(node.getParentId());\n\n      forEach(\n        node.getChildIds(),\n        function(childId) {\n          this.remove(childId, true);\n        },\n        this\n      );\n\n      parent.removeChildId(id);\n      delete this.treeHash[id];\n\n      if (!isSilent) {\n        this.fire('update', parent.getId());\n      }\n    },\n\n    /**\n     * Add node(s).\n     * - If the parentId is falsy, the node will be appended to rootNode.\n     * - The update event will be fired with parent node.\n     * @param {Array|object} data - Raw-data\n     * @param {string} parentId - Parent id\n     * @param {boolean} [isSilent] - If true, it doesn't trigger the 'update' event\n     * @returns {Array.<string>} New added node ids\n     */\n    add: function(data, parentId, isSilent) {\n      var parent = this.getNode(parentId) || this.rootNode,\n        ids;\n\n      data = [].concat(data);\n      ids = this._makeTreeHash(data, parent);\n\n      if (!isSilent) {\n        this.fire('update', parent.getId());\n      }\n\n      return ids;\n    },\n\n    /**\n     * Set data properties of a node\n     * @param {string} id - Node id\n     * @param {object} props - Properties\n     * @param {boolean} [isSilent] - If true, it doesn't trigger the 'update' event\n     */\n    setNodeData: function(id, props, isSilent) {\n      var node = this.getNode(id);\n\n      if (!node || !props) {\n        return;\n      }\n\n      node.setData(props);\n\n      if (!isSilent) {\n        this.fire('update', id);\n      }\n    },\n\n    /**\n     * Remove node data\n     * @param {string} id - Node id\n     * @param {string|Array} names - Names of properties\n     * @param {boolean} [isSilent] - If true, it doesn't trigger the 'update' event\n     */\n    removeNodeData: function(id, names, isSilent) {\n      var node = this.getNode(id);\n\n      if (!node || !names) {\n        return;\n      }\n\n      if (snippet.isArray(names)) {\n        node.removeData.apply(node, names);\n      } else {\n        node.removeData(names);\n      }\n\n      if (!isSilent) {\n        this.fire('update', id);\n      }\n    },\n\n    /**\n     * Move a node to new parent's child\n     * @param {string} nodeId - Node id\n     * @param {string} newParentId - New parent id\n     * @param {number} [index] - Start index number for inserting\n     * @param {boolean} [isSilent] - If true, it doesn't trigger the 'update' event\n     */\n    /* eslint-disable complexity*/\n    move: function(nodeId, newParentId, index, isSilent) {\n      var node = this.getNode(nodeId);\n      var originalParentId, newParent, sameParent;\n\n      if (!node) {\n        return;\n      }\n\n      newParent = this.getNode(newParentId) || this.rootNode;\n      newParentId = newParent.getId();\n      originalParentId = node.getParentId();\n      sameParent = index === -1 && originalParentId === newParentId;\n\n      if (nodeId === newParentId || sameParent || this.contains(nodeId, newParentId)) {\n        return;\n      }\n\n      this._changeOrderOfIds(nodeId, newParentId, originalParentId, index);\n\n      if (!isSilent) {\n        this.fire('move', nodeId, originalParentId, newParentId, index);\n      }\n    } /* eslint-enable complexity*/,\n\n    /**\n     * Change order of ids\n     * @param {string} nodeId - Node id\n     * @param {string} newParentId - New parent id\n     * @param {string} originalParentId - Original parent id\n     * @param {number} index - Moving index (When child node is moved on parent node, the value is -1)\n     * @private\n     */\n    _changeOrderOfIds: function(nodeId, newParentId, originalParentId, index) {\n      var node = this.getNode(nodeId);\n      var newParent = this.getNode(newParentId) || this.rootNode;\n      var originalParent = this.getNode(originalParentId);\n      var isSameParentIds = newParentId === originalParentId;\n\n      if (index !== -1) {\n        if (isSameParentIds) {\n          newParent.moveChildId(nodeId, index);\n        } else {\n          newParent.insertChildId(nodeId, index);\n          originalParent.removeChildId(nodeId);\n        }\n      } else if (!isSameParentIds) {\n        newParent.addChildId(nodeId);\n        originalParent.removeChildId(nodeId);\n      }\n\n      node.setParentId(newParentId);\n    },\n\n    /**\n     * Whether a node is a ancestor of another node.\n     * @param {string} containerId - Id of a node that may contain the other node\n     * @param {string} containedId - Id of a node that may be contained by the other node\n     * @returns {boolean} Whether a node contains another node\n     */\n    contains: function(containerId, containedId) {\n      var parentId = this.getParentId(containedId),\n        isContained = false;\n\n      while (!isContained && parentId) {\n        isContained = containerId === parentId;\n        parentId = this.getParentId(parentId);\n      }\n\n      return isContained;\n    },\n\n    /**\n     * Sort nodes\n     * @param {Function} comparator - Comparator function\n     * @param {string} [parentId] - Id of a node to sort partially\n     */\n    sort: function(comparator, parentId) {\n      var iteratee = function(node, nodeId) {\n        var children = this.getChildren(nodeId);\n        var childIds;\n\n        if (children.length > 1) {\n          children.sort(comparator);\n\n          childIds = map(children, function(child) {\n            return child.getId();\n          });\n          node.replaceChildIds(childIds);\n        }\n      };\n      var node;\n\n      if (parentId) {\n        node = this.getNode(parentId);\n        iteratee.call(this, node, parentId);\n      } else {\n        this.eachAll(iteratee, this);\n      }\n    },\n\n    /**\n     * Get node data (all)\n     * @param {string} nodeId - Node id\n     * @returns {?object} Node data\n     */\n    getNodeData: function(nodeId) {\n      var node = this.getNode(nodeId);\n\n      if (!node) {\n        return null;\n      }\n\n      return node.getAllData();\n    },\n\n    /**\n     * Traverse this tree iterating over all nodes.\n     * @param {Function} iteratee - Iteratee function\n     * @param {object} [context] - Context of iteratee\n     */\n    eachAll: function(iteratee, context) {\n      context = context || this;\n\n      forEach(this.treeHash, function() {\n        iteratee.apply(context, arguments);\n      });\n    },\n\n    /**\n     * Traverse this tree iterating over all descendants of a node.\n     * @param {Function} iteratee - Iteratee function\n     * @param {string} parentId - Parent node id\n     * @param {object} [context] - Context of iteratee\n     */\n    each: function(iteratee, parentId, context) {\n      // depth-first\n      var stack, nodeId, node;\n\n      node = this.getNode(parentId);\n      if (!node) {\n        return;\n      }\n      stack = node.getChildIds();\n\n      context = context || this;\n      while (stack.length) {\n        nodeId = stack.pop();\n        node = this.getNode(nodeId);\n        iteratee.call(context, node, nodeId);\n\n        stack = stack.concat(node.getChildIds());\n      }\n    }\n  }\n);\n\nsnippet.CustomEvents.mixin(TreeModel);\nmodule.exports = TreeModel;\n\n\n//# sourceURL=webpack://tui.Tree/./src/js/treeModel.js?");
+"use strict";
+/**
+ * @fileoverview Get data value from data-attribute
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+var convertToKebabCase = __webpack_require__(22);
+
+/**
+ * Get data value from data-attribute
+ * @param {HTMLElement} element - target element
+ * @param {string} key - key
+ * @returns {string} value
+ * @memberof module:domUtil
+ */
+function getData(element, key) {
+  if (element.dataset) {
+    return element.dataset[key];
+  }
+
+  return element.getAttribute('data-' + convertToKebabCase(key));
+}
+
+module.exports = getData;
+
 
 /***/ }),
-
-/***/ "./src/js/treeNode.js":
-/*!****************************!*\
-  !*** ./src/js/treeNode.js ***!
-  \****************************/
-/*! no static exports found */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("/**\n * @fileoverview Control each tree node's data\n * @author NHN. FE dev Lab <dl_javascript@nhn.com>\n */\nvar snippet = __webpack_require__(/*! tui-code-snippet */ \"tui-code-snippet\");\nvar states = __webpack_require__(/*! ./consts/states */ \"./src/js/consts/states.js\").node,\n  util = __webpack_require__(/*! ./util */ \"./src/js/util.js\");\n\nvar lastIndex = 0,\n  getNextIndex = function() {\n    var index = lastIndex;\n    lastIndex += 1;\n\n    return index;\n  },\n  RESERVED_PROPERTIES = {\n    id: '',\n    state: 'setState',\n    children: ''\n  },\n  inArray = snippet.inArray;\n\n/**\n * TreeNode\n * @Class TreeNode\n * @param {Object} nodeData - Node data\n * @param {string} [parentId] - Parent node id\n * @ignore\n */\nvar TreeNode = snippet.defineClass(\n  /** @lends TreeNode.prototype */ {\n    static: {\n      /**\n       * Set prefix of id\n       * @param {string} prefix - Prefix of id\n       */\n      setIdPrefix: function(prefix) {\n        this.idPrefix = prefix || this.idPrefix;\n      },\n\n      /**\n       * Prefix of id\n       * @type {string}\n       */\n      idPrefix: ''\n    },\n    init: function(nodeData, parentId) {\n      /**\n       * Node id\n       * @type {string}\n       * @private\n       */\n      this._id = this.constructor.idPrefix + getNextIndex();\n\n      /**\n       * Parent node id\n       * @type {string}\n       * @private\n       */\n      this._parentId = parentId;\n\n      /**\n       * Id list of children\n       * @type {Array.<number>}\n       * @private\n       */\n      this._childIds = [];\n\n      /**\n       * Node data\n       * @type {object}\n       * @private\n       */\n      this._data = {};\n\n      /**\n       * Node state\n       * @type {string}\n       * @private\n       */\n      this._state = states.CLOSED;\n\n      this.setData(nodeData);\n    },\n\n    /**\n     * Set reserved properties from data\n     * @param {object} data - Node data\n     * @returns {object} Node data\n     * @private\n     */\n    _setReservedProperties: function(data) {\n      snippet.forEachOwnProperties(\n        RESERVED_PROPERTIES,\n        function(setter, name) {\n          var value = data[name];\n\n          if (value && setter) {\n            this[setter](value);\n          }\n          delete data[name];\n        },\n        this\n      );\n\n      return data;\n    },\n\n    /**\n     * Toggle state\n     */\n    toggleState: function() {\n      if (this._state === states.CLOSED) {\n        this._state = states.OPENED;\n      } else {\n        this._state = states.CLOSED;\n      }\n    },\n\n    /**\n     * Set state\n     * @param {string} state - State of node ('closed', 'opened')\n     */\n    setState: function(state) {\n      state = String(state);\n      this._state = states[state.toUpperCase()] || this._state;\n    },\n\n    /**\n     * Get state\n     * @returns {string} state ('opened' or 'closed')\n     */\n    getState: function() {\n      return this._state;\n    },\n\n    /**\n     * Get id\n     * @returns {string} Node id\n     */\n    getId: function() {\n      return this._id;\n    },\n\n    /**\n     * Get parent id\n     * @returns {string} Parent node id\n     */\n    getParentId: function() {\n      return this._parentId;\n    },\n\n    /**\n     * Set parent id\n     * @param {string} parentId - Parent node id\n     */\n    setParentId: function(parentId) {\n      this._parentId = parentId;\n    },\n\n    /**\n     * Replace childIds\n     * @param {Array.<number>} childIds - Id list of children\n     */\n    replaceChildIds: function(childIds) {\n      this._childIds = childIds;\n    },\n\n    /**\n     * Get id list of children\n     * @returns {Array.<number>} Id list of children\n     */\n    getChildIds: function() {\n      return this._childIds.slice();\n    },\n\n    /**\n     * Add child id\n     * @param {string} id - Child node id\n     */\n    addChildId: function(id) {\n      var childIds = this._childIds;\n\n      if (snippet.inArray(childIds, id) === -1) {\n        childIds.push(id);\n      }\n    },\n\n    /**\n     * Remove child id\n     * @param {string} id - Child node id\n     */\n    removeChildId: function(id) {\n      util.removeItemFromArray(id, this._childIds);\n    },\n\n    /**\n     * Get data\n     * @param {string} name - Property name of data\n     * @returns {*} Data\n     */\n    getData: function(name) {\n      return this._data[name];\n    },\n\n    /**\n     * Get all data\n     * @returns {Object} Data\n     */\n    getAllData: function() {\n      return snippet.extend({}, this._data);\n    },\n\n    /**\n     * Set data\n     * @param {Object} data - Data for adding\n     */\n    setData: function(data) {\n      data = this._setReservedProperties(data);\n      snippet.extend(this._data, data);\n    },\n\n    /**\n     * Remove data\n     * @param {...string} names - Names of data\n     */\n    removeData: function() {\n      snippet.forEachArray(\n        arguments,\n        function(name) {\n          delete this._data[name];\n        },\n        this\n      );\n    },\n\n    /**\n     * Return true if this node has a provided child id.\n     * @param {string} id - Node id\n     * @returns {boolean} - Whether this node has a provided child id.\n     */\n    hasChild: function(id) {\n      return inArray(id, this._childIds) !== -1;\n    },\n\n    /**\n     * Return whether this node is leaf.\n     * @returns {boolean} Node is leaf or not.\n     */\n    isLeaf: function() {\n      return !this._childIds.length && !this.getData('hasChild');\n    },\n\n    /**\n     * Return whether this node is root.\n     * @returns {boolean} Node is root or not.\n     */\n    isRoot: function() {\n      return snippet.isFalsy(this._parentId);\n    },\n\n    /**\n     * Get index of child\n     * @param {string} id - Node id\n     * @returns {number} Index of child in children list\n     */\n    getChildIndex: function(id) {\n      return inArray(id, this._childIds);\n    },\n\n    /**\n     * Insert child id\n     * @param {string} id - Child node id\n     * @param {number} index - Index number of insert position\n     */\n    insertChildId: function(id, index) {\n      var childIds = this._childIds;\n\n      if (inArray(id, childIds) === -1) {\n        childIds.splice(index, 0, id);\n      }\n    },\n\n    /**\n     * Move child id\n     * @param {string} id - Child node id\n     * @param {number} index - Index number of insert position\n     */\n    moveChildId: function(id, index) {\n      var childIds = this._childIds;\n      var originIdx = this.getChildIndex(id);\n\n      if (inArray(id, childIds) !== -1) {\n        if (originIdx < index) {\n          index -= 1;\n        }\n\n        childIds.splice(index, 0, childIds.splice(originIdx, 1)[0]);\n      }\n    }\n  }\n);\nmodule.exports = TreeNode;\n\n\n//# sourceURL=webpack://tui.Tree/./src/js/treeNode.js?");
+"use strict";
+/**
+ * @fileoverview Remove data property
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+var convertToKebabCase = __webpack_require__(22);
+
+/**
+ * Remove data property
+ * @param {HTMLElement} element - target element
+ * @param {string} key - key
+ * @memberof module:domUtil
+ */
+function removeData(element, key) {
+  if (element.dataset) {
+    delete element.dataset[key];
+
+    return;
+  }
+
+  element.removeAttribute('data-' + convertToKebabCase(key));
+}
+
+module.exports = removeData;
+
 
 /***/ }),
-
-/***/ "./src/js/util.js":
-/*!************************!*\
-  !*** ./src/js/util.js ***!
-  \************************/
-/*! no static exports found */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("/**\n * @fileoverview Helper object to make easy tree elements\n * @author NHN. FE dev Lab <dl_javascript@nhn.com>\n */\nvar snippet = __webpack_require__(/*! tui-code-snippet */ \"tui-code-snippet\");\nvar isUndefined = snippet.isUndefined,\n  pick = snippet.pick,\n  templateMaskRe = /\\{\\{(.+?)}}/gi,\n  isValidDotNotationRe = /^\\w+(?:\\.\\w+)*$/,\n  isValidDotNotation = function(str) {\n    return isValidDotNotationRe.test(str);\n  },\n  isArray = snippet.isArraySafe,\n  forEach = snippet.forEach,\n  browser = snippet.browser,\n  isSupportPageOffset = typeof window.pageXOffset !== 'undefined',\n  isCSS1Compat = document.compatMode === 'CSS1Compat',\n  isOlderIE = browser.msie && browser.version < 9,\n  hostnameSent = false;\n\n/**\n * @ignore\n */\nvar util = {\n  /**\n   * Remove first specified item from array, if it exists\n   * @param {*} item Item to look for\n   * @param {Array} arr Array to query\n   */\n  removeItemFromArray: function(item, arr) {\n    var index = arr.length - 1;\n\n    while (index > -1) {\n      if (item === arr[index]) {\n        arr.splice(index, 1);\n      }\n      index -= 1;\n    }\n  },\n\n  /**\n   * Add classname\n   * @param {HTMLElement} element - Target element\n   * @param {string} className - Classname\n   */\n  addClass: function(element, className) {\n    if (!element) {\n      return;\n    }\n\n    if (element.className === '') {\n      element.className = className;\n    } else if (!util.hasClass(element, className)) {\n      element.className += ' ' + className;\n    }\n  },\n\n  /**\n   * Remove classname\n   * @param {HTMLElement} element - Target element\n   * @param {string} className - Classname\n   */\n  removeClass: function(element, className) {\n    var originalClassName = util.getClass(element),\n      arr,\n      index;\n\n    if (!originalClassName) {\n      return;\n    }\n\n    arr = originalClassName.split(' ');\n    index = snippet.inArray(className, arr);\n    if (index !== -1) {\n      arr.splice(index, 1);\n      element.className = arr.join(' ');\n    }\n  },\n\n  /**\n   * Add event to element\n   * @param {Object} element A target element\n   * @param {String} eventName A name of event\n   * @param {Function} handler A callback function to add\n   */\n  addEventListener: function(element, eventName, handler) {\n    if (element.addEventListener) {\n      element.addEventListener(eventName, handler, false);\n    } else {\n      element.attachEvent('on' + eventName, handler);\n    }\n  },\n\n  /**\n   * Remove event from element\n   * @param {Object} element A target element\n   * @param {String} eventName A name of event\n   * @param {Function} handler A callback function to remove\n   */\n  removeEventListener: function(element, eventName, handler) {\n    if (element.removeEventListener) {\n      element.removeEventListener(eventName, handler, false);\n    } else {\n      element.detachEvent('on' + eventName, handler);\n    }\n  },\n\n  /**\n   * Get target element\n   * @param {Event} e Event object\n   * @returns {HTMLElement} Event target\n   */\n  getTarget: function(e) {\n    var target;\n    e = e || window.event;\n    target = e.target || e.srcElement;\n\n    return target;\n  },\n\n  /**\n   * Get key code from event object\n   * @param {Event} e Event object\n   * @returns {Number} KeyCode\n   */\n  getKeyCode: function(e) {\n    e = e || window.event;\n\n    return e.which || e.keyCode;\n  },\n\n  /**\n   * Get class name\n   * @param {HTMLElement} element HTMLElement\n   * @returns {string} Class name\n   */\n  getClass: function(element) {\n    return (\n      element &&\n      element.getAttribute &&\n      (element.getAttribute('class') || element.getAttribute('className') || '')\n    );\n  },\n\n  /**\n   * Check the element has specific class or not\n   * @param {HTMLElement} element A target element\n   * @param {string} className A name of class to find\n   * @returns {boolean} Whether the element has the class\n   */\n  hasClass: function(element, className) {\n    var elClassName = util.getClass(element);\n\n    return elClassName.indexOf(className) > -1;\n  },\n\n  /**\n   * Find element by class name\n   * @param {HTMLElement} target A target element\n   * @param {string} className A name of class\n   * @returns {Array.<HTMLElement>} Elements\n   */\n  getElementsByClassName: function(target, className) {\n    var all, filtered;\n\n    if (target.querySelectorAll) {\n      filtered = target.querySelectorAll('.' + className);\n    } else {\n      all = snippet.toArray(target.getElementsByTagName('*'));\n      filtered = snippet.filter(all, function(el) {\n        var classNames = el.className || '';\n\n        return classNames.indexOf(className) !== -1;\n      });\n    }\n\n    if (!filtered) {\n      filtered = [];\n    }\n\n    return filtered;\n  },\n\n  /**\n   * Find element by class name among child nodes\n   * @param {HTMLElement} target A target element\n   * @param {string} className A name of class\n   * @returns {Array.<HTMLElement>} Elements\n   */\n  getChildElementByClassName: function(target, className) {\n    var children = target.childNodes;\n    var i = 0;\n    var length = children.length;\n    var child;\n\n    for (; i < length; i += 1) {\n      child = children[i];\n      if (util.hasClass(child, className)) {\n        return child;\n      }\n    }\n\n    return null;\n  },\n\n  /**\n   * Check whether the click event by right button\n   * @param {MouseEvent} event Event object\n   * @returns {boolean} Whether the click event by right button\n   */\n  isRightButton: function(event) {\n    return util._getButton(event) === 2;\n  },\n\n  /**\n   * Whether the property exist or not\n   * @param {Array} props A property\n   * @returns {string|boolean} Property name or false\n   * @example\n   * var userSelectProperty = util.testProp([\n   *     'userSelect',\n   *     'WebkitUserSelect',\n   *     'OUserSelect',\n   *     'MozUserSelect',\n   *     'msUserSelect'\n   * ]);\n   */\n  testProp: function(props) {\n    var style = document.documentElement.style,\n      propertyName = false;\n\n    /* eslint-disable consistent-return */\n    snippet.forEach(props, function(prop) {\n      if (prop in style) {\n        propertyName = prop;\n\n        return false;\n      }\n    });\n    /* eslint-enable consistent-return */\n\n    return propertyName;\n  },\n\n  /**\n   * Prevent default event\n   * @param {Event} event Event object\n   */\n  preventDefault: function(event) {\n    if (event.preventDefault) {\n      event.preventDefault();\n    } else {\n      event.returnValue = false;\n    }\n  },\n\n  /**\n   * Make html from template\n   * @param {string} source - Template html\n   * @param {Object} props - Template data\n   * @returns {string} html\n   */\n  renderTemplate: function(source, props) {\n    /* eslint-disable require-jsdoc */\n    function pickValue(names) {\n      return pick.apply(null, [props].concat(names));\n    }\n    /* eslint-enable require-jsdoc */\n\n    return source.replace(templateMaskRe, function(match, name) {\n      var value;\n\n      if (isValidDotNotation(name)) {\n        value = pickValue(name.split('.'));\n      }\n\n      if (isArray(value)) {\n        value = value.join(' ');\n      } else if (isUndefined(value)) {\n        value = '';\n      }\n\n      return value;\n    });\n  },\n\n  /**\n   * Normalization for event button property\n   * 0: First mouse button, 2: Second mouse button, 1: Center button\n   * @param {MouseEvent} event Event object\n   * @returns {?number} button type\n   * @private\n   */\n  _getButton: function(event) {\n    var primary = '0,1,3,5,7';\n    var secondary = '2,6';\n    var wheel = '4';\n    var result = null;\n    var button;\n\n    if (document.implementation.hasFeature('MouseEvents', '2.0')) {\n      return event.button;\n    }\n\n    button = String(event.button);\n    if (primary.indexOf(button) > -1) {\n      result = 0;\n    } else if (secondary.indexOf(button) > -1) {\n      result = 2;\n    } else if (wheel.indexOf(button) > -1) {\n      result = 1;\n    }\n\n    return result;\n  },\n\n  /**\n   * Get mouse position\n   * @param {MouseEvet} event - Event object\n   * @returns {object} X, Y position of mouse\n   */\n  getMousePos: function(event) {\n    return {\n      x: event.clientX,\n      y: event.clientY\n    };\n  },\n\n  /**\n   * Get value of scroll top on document.body (cross browsing)\n   * @returns {number} Value of scroll top\n   */\n  getWindowScrollTop: function() {\n    var scrollTop;\n\n    if (isSupportPageOffset) {\n      scrollTop = window.pageYOffset;\n    } else {\n      scrollTop = isCSS1Compat ? document.documentElement.scrollTop : document.body.scrollTop;\n    }\n\n    return scrollTop;\n  },\n\n  /**\n   * Get top position value of element\n   * @param {HTMLElement} element - Target element\n   * @returns {number} Top position value\n   */\n  getElementTop: function(element) {\n    var actualTop = 0;\n    var scrollTop;\n\n    while (element) {\n      if (element.tagName.toLowerCase === 'body') {\n        scrollTop = util.getWindowScrollTop();\n      } else {\n        scrollTop = element.scrollTop;\n      }\n\n      actualTop += element.offsetTop - scrollTop + element.clientTop;\n      element = element.offsetParent;\n    }\n\n    return actualTop;\n  },\n\n  /**\n   * Get first text node in target element\n   * @param {HTMLElement} element - Target element to find\n   * @returns {HTMLElement} Text node\n   */\n  getFirstTextNode: function(element) {\n    var childElements = snippet.toArray(element.childNodes);\n    var firstTextNode = '';\n\n    forEach(childElements, function(childElement) {\n      if (childElement.nodeName === '#text') {\n        firstTextNode = childElement;\n\n        return false;\n      }\n\n      return true;\n    });\n\n    return firstTextNode;\n  },\n\n  /**\n   * Remove element from parent element\n   * @param {HTMLElement} element - Target element to remove\n   */\n  removeElement: function(element) {\n    if (element && element.parentNode) {\n      element.parentNode.removeChild(element);\n    }\n  },\n\n  /**\n   * Get change event name as browser\n   * @returns {string} Event name\n   */\n  getChangeEventName: function() {\n    var changeEventName;\n\n    if (isOlderIE) {\n      changeEventName = 'propertychange';\n    } else {\n      changeEventName = 'change';\n    }\n\n    return changeEventName;\n  },\n\n  /**\n   * send hostname\n   */\n  sendHostName: function() {\n    if (hostnameSent) {\n      return;\n    }\n    hostnameSent = true;\n\n    snippet.sendHostname('tree', 'UA-129987462-1');\n  }\n};\n\nmodule.exports = util;\n\n\n//# sourceURL=webpack://tui.Tree/./src/js/util.js?");
+/**
+ * @fileoverview Feature that each tree node is possible to edit as double click
+ * @author NHN. FE dev Lab <dl_javascript@nhn.com>
+ */
+
+var forEachArray = __webpack_require__(0);
+var defineClass = __webpack_require__(3);
+var getTarget = __webpack_require__(10);
+var off = __webpack_require__(13);
+var on = __webpack_require__(14);
+var addClass = __webpack_require__(15);
+var hasClass = __webpack_require__(31);
+var removeElement = __webpack_require__(32);
+var extend = __webpack_require__(1);
+
+var util = __webpack_require__(5);
+var ajaxCommand = __webpack_require__(27);
+var states = __webpack_require__(20);
+
+var API_LIST = ['createChildNode', 'editNode', 'finishEditing'];
+var EDIT_TYPE = {
+  CREATE: 'create',
+  UPDATE: 'update'
+};
+var WRAPPER_CLASSNAME = 'tui-input-wrap';
+var INPUT_CLASSNAME = 'tui-tree-input';
+
+/**
+ * Set the tree selectable
+ * @class Editable
+ * @param {Tree} tree - Tree
+ * @param {Object} options - Options
+ *  @param {string} options.editableClassName - Classname of editable element
+ *  @param {string} options.dataKey - Key of node data to set value
+ *  @param {string} [options.dataValue] - Value of node data to set value (Use "createNode" API)
+ *  @param {string} [options.inputClassName] - Classname of input element
+ * @ignore
+ */
+var Editable = defineClass(
+  /** @lends Editable.prototype */ {
+    static: {
+      /**
+       * @static
+       * @memberof Selectable
+       * @returns {Array.<string>} API list of Editable
+       */
+      getAPIList: function() {
+        return API_LIST.slice();
+      }
+    },
+    init: function(tree, options) {
+      options = extend({}, options);
+
+      /**
+       * Tree
+       * @type {Tree}
+       */
+      this.tree = tree;
+
+      /**
+       * Classname of editable element
+       * @type {string}
+       */
+      this.editableClassName = options.editableClassName || tree.classNames.textClass;
+
+      /**
+       * Key of node data to set value
+       * @type {string}
+       */
+      this.dataKey = options.dataKey;
+
+      /**
+       * Default value for creating node
+       * @type {string}
+       */
+      this.defaultValue = options.defaultValue || '';
+
+      /**
+       * Input element for create or edit
+       * @type {HTMLElement}
+       */
+      this.inputElement = null;
+
+      /**
+       * Action mode - create or edit
+       * @type {string}
+       */
+      this.mode = null;
+
+      /**
+       * For block blur when unintentional blur event occur when alert popup
+       * @type {Boolean}
+       */
+      this._blockBlur = false;
+
+      /**
+       * Keyup event handler
+       * @type {Function}
+       */
+      this.boundOnKeyup = util.bind(this._onKeyup, this);
+
+      /**
+       * Blur event handler
+       * @type {Function}
+       */
+      this.boundOnBlur = util.bind(this._onBlur, this);
+
+      tree.on('doubleClick', this._onDoubleClick, this);
+
+      this._setAPIs();
+    },
+
+    /**
+     * Disable this module
+     */
+    destroy: function() {
+      var tree = this.tree;
+
+      this._detachInputElement();
+      tree.off(this);
+      forEachArray(API_LIST, function(apiName) {
+        delete tree[apiName];
+      });
+    },
+
+    /**
+     * Create child node
+     * @memberof Tree.prototype
+     * @requires Editable
+     * @param {string} parentId - Parent node id to create new node
+     * @example
+     * tree.createChildNode('tui-tree-node-1');
+     */
+    createChildNode: function(parentId) {
+      var tree = this.tree;
+      var useAjax = tree.enabledFeatures.Ajax;
+      var nodeId;
+
+      this.mode = EDIT_TYPE.CREATE;
+
+      if (useAjax) {
+        tree.on('successAjaxResponse', this._onSuccessResponse, this);
+      }
+
+      if (!tree.isLeaf(parentId) && tree.getState(parentId) === states.node.CLOSED) {
+        tree.open(parentId);
+      } else {
+        nodeId = tree._add({}, parentId)[0];
+        this._attachInputElement(nodeId);
+      }
+    },
+
+    /**
+     * Edit node
+     * @memberof Tree.prototype
+     * @requires Editable
+     * @param {string} nodeId - Node id
+     * @example
+     * tree.editNode('tui-tree-node-1');
+     */
+    editNode: function(nodeId) {
+      this.mode = EDIT_TYPE.UPDATE;
+      this._attachInputElement(nodeId);
+    },
+
+    /**
+     * Exit edit though remove input tag
+     * @memberof Tree.prototype
+     * @requires Editable
+     * @example
+     * tree.finishEditing();
+     */
+    finishEditing: function() {
+      if (this.inputElement) {
+        this._detachInputElement();
+      }
+    },
+
+    /**
+     * Custom event handler "successResponse"
+     * @param {string} type - Ajax command type
+     * @param {Array.<string>} nodeIds - Added node ids on tree
+     * @private
+     */
+    _onSuccessResponse: function(type, nodeIds) {
+      var tree = this.tree;
+      var parentId, nodeId;
+
+      if (type === ajaxCommand.READ && nodeIds) {
+        parentId = tree.getParentId(nodeIds[0]);
+        nodeId = tree._add({}, parentId)[0];
+        this._attachInputElement(nodeId);
+      }
+    },
+
+    /**
+     * Custom event handler "doubleClick"
+     * @param {MouseEvent} event - Mouse event
+     * @private
+     */
+    _onDoubleClick: function(event) {
+      var target = getTarget(event);
+      var nodeId;
+
+      if (hasClass(target, this.editableClassName)) {
+        nodeId = this.tree.getNodeIdFromElement(target);
+        this.editNode(nodeId);
+      }
+    },
+
+    /**
+     * InputElement is keep going
+     * @private
+     */
+    _keepEdit: function() {
+      if (this.inputElement) {
+        this.inputElement.focus();
+      }
+    },
+
+    /**
+     * Invoke 'beforeCreateChildNode'
+     * @param {Object} event - Information of 'beforeCreateChildNode'
+     * @returns {boolean} Result of invoke event
+     * @private
+     */
+    _invokeBeforeCreateChildNode: function(event) {
+      /**
+       * @event Tree#beforeCreateChildNode
+       * @type {object} evt - Event data
+       * @property {string} value - Return value of creating input element
+       * @property {string} nodeId - Return id of creating node
+       * @property {string} cause - Return 'blur' or 'enter' according cause of the event
+       * @example
+       * tree
+       *  .enableFeature('Editable')
+       *  .on('beforeCreateChildNode', function(evt) {
+       *      console.log(evt.value);
+       *      console.log(evt.nodeId);
+       *      console.log(evt.cause);
+       *      return false; // It cancels
+       *      // return true; // It execute next
+       *  });
+       */
+      return this.tree.invoke('beforeCreateChildNode', event);
+    },
+
+    /**
+     * Invoke 'beforeEditNode'
+     * @param {Event} event - Information of 'beforeEditNode'
+     * @returns {boolean} Result of invoke event
+     * @private
+     */
+    _invokeBeforeEditNode: function(event) {
+      /**
+       * @event Tree#beforeEditNode
+       * @type {object} evt - Event data
+       * @property {string} value - Return value of creating input element
+       * @property {string} nodeId - Return id of editing node
+       * @property {string} cause - Return 'blur' or 'enter' according cause of the event
+       * @example
+       * tree
+       *  .enableFeature('Editable')
+       *  .on('beforeEditNode', function(evt) {
+       *      console.log(evt.value);
+       *      console.log(evt.nodeId);
+       *      console.log(evt.cause);
+       *      return false; // It cancels
+       *      // return true; // It execute next
+       *  });
+       */
+      return this.tree.invoke('beforeEditNode', event);
+    },
+
+    /**
+     * Reflect the value of inputElement to node for creating or editing
+     * @param {string} cause - how finish editing ('blur' or 'enter')
+     * @returns {boolean} Result of submit input result
+     * @private
+     */
+    _submitInputResult: function(cause) {
+      var tree = this.tree;
+      var nodeId = tree.getNodeIdFromElement(this.inputElement);
+      var value = this.inputElement.value;
+      var event = {
+        value: value,
+        nodeId: nodeId,
+        cause: cause
+      };
+
+      if (this.mode === EDIT_TYPE.CREATE) {
+        if (!this._invokeBeforeCreateChildNode(event)) {
+          this._keepEdit();
+
+          return false;
+        }
+        this._addData(nodeId, value);
+      } else {
+        if (!this._invokeBeforeEditNode(event)) {
+          this._keepEdit();
+
+          return false;
+        }
+        this._setData(nodeId, value);
+      }
+      this._detachInputElement();
+
+      return true;
+    },
+
+    /**
+     * Event handler: keyup - input element
+     * @param {Event} event - Key event
+     * @private
+     */
+    _onKeyup: function(event) {
+      if (util.getKeyCode(event) === 13) {
+        this._blockBlur = true;
+        this._submitInputResult('enter');
+      }
+    },
+
+    /**
+     * Event handler: blur - input element
+     * @private
+     */
+    _onBlur: function() {
+      if (this._blockBlur) {
+        this._blockBlur = false;
+      } else {
+        this._blockBlur = !this._submitInputResult('blur');
+      }
+    },
+
+    /**
+     * Create input element
+     * @returns {HTMLElement} Input element
+     * @private
+     */
+    _createInputElement: function() {
+      var element = document.createElement('INPUT');
+      element.setAttribute('type', 'text');
+      addClass(element, INPUT_CLASSNAME);
+
+      return element;
+    },
+
+    /**
+     * Attach input element on tree
+     * @param {string} nodeId - Node id
+     * @private
+     */
+    _attachInputElement: function(nodeId) {
+      var tree = this.tree;
+      var target = document.getElementById(nodeId);
+      var wrapperElement = document.createElement('DIV');
+      var inputElement = this._createInputElement();
+
+      if (!target) {
+        return;
+      }
+
+      wrapperElement = target.querySelector('.' + WRAPPER_CLASSNAME);
+
+      if (!wrapperElement) {
+        wrapperElement = document.createElement('DIV');
+        inputElement = this._createInputElement();
+
+        addClass(wrapperElement, WRAPPER_CLASSNAME);
+        wrapperElement.style.paddingLeft = tree.getIndentWidth(nodeId) + 'px';
+
+        inputElement.value = tree.getNodeData(nodeId)[this.dataKey] || '';
+
+        wrapperElement.appendChild(inputElement);
+        target.appendChild(wrapperElement);
+
+        on(inputElement, {
+          keyup: this.boundOnKeyup,
+          blur: this.boundOnBlur
+        });
+
+        if (this.inputElement) {
+          this.inputElement.blur();
+        }
+        this.inputElement = inputElement;
+      }
+
+      this._blockBlur = false;
+      this.inputElement.focus();
+    },
+
+    /**
+     * Detach input element on tree
+     * @private
+     */
+    _detachInputElement: function() {
+      var tree = this.tree;
+      var inputElement = this.inputElement;
+      var wrapperElement = this.inputElement.parentNode;
+
+      off(inputElement, {
+        keyup: this.boundOnKeyup,
+        blur: this.boundOnBlur
+      });
+
+      removeElement(wrapperElement);
+
+      if (tree.enabledFeatures.Ajax) {
+        tree.off(this, 'successAjaxResponse');
+      }
+
+      this.inputElement = null;
+    },
+
+    /**
+     * Add data of input element to node and detach input element on tree
+     * @param {string} nodeId - Node id to add
+     * @param {string} value - Content for that node
+     * @private
+     */
+    _addData: function(nodeId, value) {
+      var tree = this.tree;
+      var parentId = tree.getParentId(nodeId);
+      var data = {};
+
+      if (nodeId) {
+        data[this.dataKey] = value || this.defaultValue;
+        tree._remove(nodeId);
+        tree.add(data, parentId);
+      }
+    },
+
+    /**
+     * Set data of input element to node and detach input element on tree
+     * @param {string} nodeId - Node id to change
+     * @param {string} value - Content for that node
+     * @private
+     */
+    _setData: function(nodeId, value) {
+      var tree = this.tree;
+      var data = {};
+
+      if (nodeId) {
+        data[this.dataKey] = value;
+        tree.setNodeData(nodeId, data);
+      }
+    },
+
+    /**
+     * Set apis of selectable tree
+     * @private
+     */
+    _setAPIs: function() {
+      var tree = this.tree;
+
+      forEachArray(
+        API_LIST,
+        function(apiName) {
+          tree[apiName] = util.bind(this[apiName], this);
+        },
+        this
+      );
+    }
+  }
+);
+
+module.exports = Editable;
+
 
 /***/ }),
+/* 57 */
+/***/ (function(module, exports, __webpack_require__) {
 
-/***/ "tui-code-snippet":
-/*!******************************************************************************************************************************!*\
-  !*** external {"commonjs":"tui-code-snippet","commonjs2":"tui-code-snippet","amd":"tui-code-snippet","root":["tui","util"]} ***!
-  \******************************************************************************************************************************/
-/*! no static exports found */
+/**
+ * @fileoverview Feature that each tree node is possible to check and uncheck
+ * @author NHN. FE dev Lab <dl_javascript@nhn.com>
+ */
+
+var inArray = __webpack_require__(4);
+var forEachArray = __webpack_require__(0);
+var CustomEvents = __webpack_require__(18);
+var defineClass = __webpack_require__(3);
+var getTarget = __webpack_require__(10);
+var once = __webpack_require__(58);
+var addClass = __webpack_require__(15);
+var removeClass = __webpack_require__(17);
+var extend = __webpack_require__(1);
+var util = __webpack_require__(5);
+
+var API_LIST = [
+  'check',
+  'uncheck',
+  'toggleCheck',
+  'isChecked',
+  'isIndeterminate',
+  'isUnchecked',
+  'getCheckedList',
+  'getTopCheckedList',
+  'getBottomCheckedList'
+];
+
+/* Checkbox tri-states */
+var STATE_CHECKED = 1;
+var STATE_UNCHECKED = 2;
+var STATE_INDETERMINATE = 3;
+var DATA_KEY_FOR_CHECKBOX_STATE = '__CheckBoxState__';
+var DATA = {};
+var CHECKED_CLASSNAME = 'tui-is-checked';
+var INDETERMINATE_CLASSNAME = 'tui-checkbox-root';
+
+/* Checkbox cascade-states */
+var CASCADE_UP = 'up';
+var CASCADE_DOWN = 'down';
+var CASCADE_BOTH = 'both';
+var CASCADE_NONE = false;
+
+/**
+ * Set the checkbox-api
+ * @class Checkbox
+ * @param {Tree} tree - Tree
+ * @param {Object} option - Option
+ *  @param {string} option.checkboxClassName - Classname of checkbox element
+ *  @param {string|boolean} [option.checkboxCascade='both'] - 'up', 'down', 'both', false
+ * @ignore
+ */
+var Checkbox = defineClass(
+  /** @lends Checkbox.prototype */ {
+    static: {
+      /**
+       * @static
+       * @memberof Checkbox
+       * @returns {Array.<string>} API list of checkbox
+       */
+      getAPIList: function() {
+        return API_LIST.slice();
+      }
+    },
+    init: function(tree, option) {
+      option = extend({}, option);
+
+      this.tree = tree;
+      this.checkboxClassName = option.checkboxClassName;
+      this.checkboxCascade = this._initCascadeOption(option.checkboxCascade);
+      this.checkedList = [];
+      this.rootCheckbox = document.createElement('INPUT');
+      this.rootCheckbox.type = 'checkbox';
+
+      this._setAPIs();
+      this._attachEvents();
+    },
+
+    /**
+     * Disable this module
+     */
+    destroy: function() {
+      var tree = this.tree;
+
+      tree.off(this);
+      forEachArray(API_LIST, function(apiName) {
+        delete tree[apiName];
+      });
+    },
+
+    /**
+     * @param {string|boolean} cascadeOption - Cascade option
+     * @returns {string|boolean} Cascade option
+     * @private
+     */
+    _initCascadeOption: function(cascadeOption) {
+      var cascadeOptions = [CASCADE_UP, CASCADE_DOWN, CASCADE_BOTH, CASCADE_NONE];
+      if (inArray(cascadeOption, cascadeOptions) === -1) {
+        cascadeOption = CASCADE_BOTH;
+      }
+
+      return cascadeOption;
+    },
+
+    /**
+     * Set apis of checkbox tree
+     * @private
+     */
+    _setAPIs: function() {
+      var tree = this.tree;
+
+      forEachArray(
+        API_LIST,
+        function(apiName) {
+          tree[apiName] = util.bind(this[apiName], this);
+        },
+        this
+      );
+    },
+
+    /**
+     * Attach event to tree instance
+     * @private
+     */
+    _attachEvents: function() {
+      this.tree.on(
+        {
+          singleClick: function(event) {
+            var target = getTarget(event);
+
+            if (target.querySelector('.' + this.checkboxClassName)) {
+              this._changeCustomCheckbox(target);
+            }
+          },
+          afterDraw: function(ev) {
+            if (this.tree.isMovingNode) {
+              return;
+            }
+            this._reflectChanges(ev.nodeId);
+          },
+          move: function(data) {
+            // @TODO - Optimization
+            this._reflectChanges(data.originalParentId);
+            this._reflectChanges(data.newParentId);
+          }
+        },
+        this
+      );
+    },
+
+    /**
+     * Change custom checkbox
+     * @param {HTMLElement} target - Label element
+     */
+    _changeCustomCheckbox: function(target) {
+      var nodeId = this.tree.getNodeIdFromElement(target);
+      var inputElement = target.getElementsByTagName('input')[0];
+
+      once(
+        inputElement,
+        'change propertychange',
+        util.bind(function() {
+          var state = this._getStateFromCheckbox(inputElement);
+          this._continuePostprocessing(nodeId, state);
+        }, this)
+      );
+    },
+
+    /**
+     * Reflect the changes on node.
+     * @param {string} nodeId - Node id
+     * @private
+     */
+    _reflectChanges: function(nodeId) {
+      this.tree.each(
+        function(descendant, descendantId) {
+          this._setState(descendantId, this._getState(descendantId), true);
+        },
+        nodeId,
+        this
+      );
+      this._judgeOwnState(nodeId);
+      this._updateAllAncestorsState(nodeId);
+    },
+
+    /**
+     * Set checkbox attributes (checked, indeterminate)
+     * @param {Element} checkbox - Checkbox element
+     * @param {boolean} isChecked - "checked"
+     * @param {boolean} isIndeterminate - "indeterminate"
+     * @private
+     */
+    _setCheckboxAttr: function(checkbox, isChecked, isIndeterminate) {
+      checkbox.indeterminate = isIndeterminate;
+      checkbox.checked = isChecked;
+    },
+
+    /**
+     * Get checking state of node
+     * @param {string} nodeId - Node id
+     * @param {number} state - State for checkbox
+     * @param {boolean} [stopPropagation] - If true, stop changing state propagation
+     * @private
+     */
+    _setState: function(nodeId, state, stopPropagation) {
+      var checkbox = this._getCheckboxElement(nodeId);
+
+      if (!checkbox) {
+        return;
+      }
+
+      switch (state) {
+        case STATE_CHECKED:
+          this._setCheckboxAttr(checkbox, true, false);
+          break;
+        case STATE_UNCHECKED:
+          this._setCheckboxAttr(checkbox, false, false);
+          break;
+        case STATE_INDETERMINATE:
+          this._setCheckboxAttr(checkbox, false, true);
+          break;
+        default:
+          // no more process if the state is invalid
+          return;
+      }
+
+      this._continuePostprocessing(nodeId, state, stopPropagation);
+    },
+
+    /**
+     * Get checking state of node
+     * @param {string} nodeId - Node id
+     * @returns {number} Checking state
+     * @private
+     */
+    _getState: function(nodeId) {
+      var tree = this.tree;
+      var state = tree.getNodeData(nodeId)[DATA_KEY_FOR_CHECKBOX_STATE];
+      var checkbox;
+
+      if (!state) {
+        checkbox = this._getCheckboxElement(nodeId);
+        state = this._getStateFromCheckbox(checkbox);
+      }
+
+      return state;
+    },
+
+    /**
+     * Get checking state of node element
+     * @private
+     * @param {Element} checkbox - Checkbox element
+     * @returns {?number} Checking state
+     */
+    _getStateFromCheckbox: function(checkbox) {
+      var state;
+
+      if (!checkbox) {
+        return null;
+      }
+
+      if (checkbox.checked) {
+        state = STATE_CHECKED;
+      } else if (checkbox.indeterminate) {
+        state = STATE_INDETERMINATE;
+      } else {
+        state = STATE_UNCHECKED;
+      }
+
+      return state;
+    },
+
+    /**
+     * Continue post-processing from changing:checkbox-state
+     * @param {string} nodeId - Node id
+     * @param {number} state - Checkbox state
+     * @param {boolean} [stopPropagation] - If true, stop update-propagation
+     * @private
+     */
+    _continuePostprocessing: function(nodeId, state, stopPropagation) {
+      var tree = this.tree;
+      var checkedList = this.checkedList;
+      var eventName;
+
+      /* Prevent duplicated node id */
+      util.removeItemFromArray(nodeId, checkedList);
+
+      if (state === STATE_CHECKED) {
+        checkedList.push(nodeId);
+        /**
+         * @event Tree#check
+         * @type {object} evt - Event data
+         * @property {string} nodeId - Checked node id
+         * @example
+         * tree.on('check', function(evt) {
+         *     console.log('checked: ' + evt.nodeId);
+         * });
+         */
+        eventName = 'check';
+      } else if (state === STATE_UNCHECKED) {
+        /**
+         * @event Tree#uncheck
+         * @type {object} evt - Event data
+         * @property {string} nodeId - Unchecked node id
+         * @example
+         * tree.on('uncheck', function(evt) {
+         *     console.log('unchecked: ' + evt.nodeId);
+         * });
+         */
+        eventName = 'uncheck';
+      }
+      DATA[DATA_KEY_FOR_CHECKBOX_STATE] = state;
+
+      tree.setNodeData(nodeId, DATA, {
+        isSilent: true
+      });
+
+      this._setClassName(nodeId, state);
+
+      if (!stopPropagation) {
+        this._propagateState(nodeId, state);
+        tree.fire(eventName, { nodeId: nodeId });
+      }
+    },
+
+    /**
+     * Set class name on label element
+     * @param {string} nodeId - Node id for finding input element
+     * @param {number} state - Checked state number
+     */
+    _setClassName: function(nodeId, state) {
+      var parentElement = this._getCheckboxElement(nodeId).parentNode;
+      var labelElement;
+
+      if (parentElement && parentElement.parentNode) {
+        labelElement = parentElement.parentNode;
+
+        removeClass(labelElement, INDETERMINATE_CLASSNAME);
+        removeClass(labelElement, CHECKED_CLASSNAME);
+
+        if (state === 1) {
+          addClass(labelElement, CHECKED_CLASSNAME);
+        } else if (state === 3) {
+          addClass(labelElement, INDETERMINATE_CLASSNAME);
+          addClass(labelElement, CHECKED_CLASSNAME);
+        }
+      }
+    },
+
+    /**
+     * Propagate a node state to descendants and ancestors for updating their states
+     * @param {string} nodeId - Node id
+     * @param {number} state - Checkbox state
+     * @private
+     */
+    _propagateState: function(nodeId, state) {
+      if (state === STATE_INDETERMINATE) {
+        return;
+      }
+      if (inArray(this.checkboxCascade, [CASCADE_DOWN, CASCADE_BOTH]) > -1) {
+        this._updateAllDescendantsState(nodeId, state);
+      }
+      if (inArray(this.checkboxCascade, [CASCADE_UP, CASCADE_BOTH]) > -1) {
+        this._updateAllAncestorsState(nodeId);
+      }
+    },
+
+    /**
+     * Update all descendants state
+     * @param {string} nodeId - Node id
+     * @param {number} state - State for checkbox
+     * @private
+     */
+    _updateAllDescendantsState: function(nodeId, state) {
+      this.tree.each(
+        function(descendant, descendantId) {
+          this._setState(descendantId, state, true);
+        },
+        nodeId,
+        this
+      );
+    },
+
+    /**
+     * Update all ancestors state
+     * @param {string} nodeId - Node id
+     * @private
+     */
+    _updateAllAncestorsState: function(nodeId) {
+      var tree = this.tree;
+      var parentId = tree.getParentId(nodeId);
+
+      while (parentId) {
+        this._judgeOwnState(parentId);
+        parentId = tree.getParentId(parentId);
+      }
+    },
+
+    /**
+     * Judge own state from child node is changed
+     * @param {string} nodeId - Node id
+     * @private
+     */
+    _judgeOwnState: function(nodeId) {
+      var tree = this.tree;
+      var childIds = tree.getChildIds(nodeId);
+      var checked = true;
+      var unchecked = true;
+
+      if (!childIds.length) {
+        checked = this.isChecked(nodeId);
+      } else {
+        forEachArray(
+          childIds,
+          function(childId) {
+            var state = this._getState(childId);
+            checked = checked && state === STATE_CHECKED;
+            unchecked = unchecked && state === STATE_UNCHECKED;
+
+            return checked || unchecked;
+          },
+          this
+        );
+      }
+
+      if (checked) {
+        this._setState(nodeId, STATE_CHECKED, true);
+      } else if (unchecked) {
+        this._setState(nodeId, STATE_UNCHECKED, true);
+      } else {
+        this._setState(nodeId, STATE_INDETERMINATE, true);
+      }
+    },
+
+    /**
+     * Get checkbox element of node
+     * @param {string} nodeId - Node id
+     * @returns {?HTMLElement} Checkbox element
+     * @private
+     */
+    _getCheckboxElement: function(nodeId) {
+      var tree = this.tree;
+      var el, nodeEl;
+
+      if (nodeId === tree.getRootNodeId()) {
+        el = this.rootCheckbox;
+      } else {
+        nodeEl = document.getElementById(nodeId);
+        if (!nodeEl) {
+          return null;
+        }
+        el = nodeEl.querySelector('.' + this.checkboxClassName);
+      }
+
+      return el;
+    },
+
+    /**
+     * Check node
+     * @memberof Tree.prototype
+     * @param {string} nodeId - Node id
+     * @example
+     * var nodeId = 'tui-tree-node-3';
+     * tree.check(nodeId);
+     */
+    check: function(nodeId) {
+      if (!this.isChecked(nodeId)) {
+        this._setState(nodeId, STATE_CHECKED);
+      }
+    },
+
+    /**
+     * Uncheck node
+     * @memberof Tree.prototype
+     * @param {string} nodeId - Node id
+     * @example
+     * var nodeId = 'tui-tree-node-3';
+     * tree.uncheck(nodeId);
+     */
+    uncheck: function(nodeId) {
+      if (!this.isUnchecked(nodeId)) {
+        this._setState(nodeId, STATE_UNCHECKED);
+      }
+    },
+
+    /**
+     * Toggle node checking
+     * @memberof Tree.prototype
+     * @param {string} nodeId - Node id
+     * @example
+     * var nodeId = 'tui-tree-node-3';
+     * tree.toggleCheck(nodeId);
+     */
+    toggleCheck: function(nodeId) {
+      if (!this.isChecked(nodeId)) {
+        this.check(nodeId);
+      } else {
+        this.uncheck(nodeId);
+      }
+    },
+
+    /**
+     * Whether the node is checked
+     * @memberof Tree.prototype
+     * @param {string} nodeId - Node id
+     * @returns {boolean} True if node is indeterminate
+     * @example
+     * var nodeId = 'tui-tree-node-3';
+     * tree.check(nodeId);
+     * console.log(tree.isChecked(nodeId)); // true
+     */
+    isChecked: function(nodeId) {
+      return STATE_CHECKED === this._getState(nodeId);
+    },
+
+    /**
+     * Whether the node is indeterminate
+     * @memberof Tree.prototype
+     * @param {string} nodeId - Node id
+     * @returns {boolean} True if node is indeterminate
+     * @example
+     * var nodeId = 'tui-tree-node-3';
+     * tree.check(nodeId);
+     * console.log(tree.isIndeterminate(nodeId)); // false
+     */
+    isIndeterminate: function(nodeId) {
+      return STATE_INDETERMINATE === this._getState(nodeId);
+    },
+
+    /**
+     * Whether the node is unchecked or not
+     * @memberof Tree.prototype
+     * @param {string} nodeId - Node id
+     * @returns {boolean} True if node is unchecked.
+     * @example
+     * var nodeId = 'tui-tree-node-3';
+     * tree.uncheck(nodeId);
+     * console.log(tree.isUnchecked(nodeId)); // true
+     */
+    isUnchecked: function(nodeId) {
+      return STATE_UNCHECKED === this._getState(nodeId);
+    },
+
+    /**
+     * Get checked list
+     * @memberof Tree.prototype
+     * @param {string} [parentId] - Node id (default: rootNode id)
+     * @returns {Array.<string>} Checked node ids
+     * @example
+     * // ├─ node1 (v)
+     * // │  ├─ node2 (v)
+     * // │  └─ node3 (v)
+     * // ├─ node4 ( )
+     * // │  └─ node5 (v)
+     * // └─ node6 ( )
+     * //    ├─ node7 (v)
+     * //    │  └─ node8 (v)
+     * //    └─ node9 ( )
+     *
+     * var allCheckedList = tree.getCheckedList(); // ['node1', 'node2', 'node3' ,....]
+     * var descendantsCheckedList = tree.getCheekedList('node6'); // ['node7', 'node8']
+     */
+    getCheckedList: function(parentId) {
+      var tree = this.tree;
+      var checkedList = this.checkedList;
+
+      if (!parentId) {
+        return checkedList.slice();
+      }
+
+      return util.filter(checkedList, function(nodeId) {
+        return tree.contains(parentId, nodeId);
+      });
+    },
+
+    /**
+     * Get top checked list
+     * @memberof Tree.prototype
+     * @param {string} [parentId] - Node id (default: rootNode id)
+     * @returns {Array.<string>} Checked node ids
+     * @example
+     * // ├─ node1 (v)
+     * // │  ├─ node2 (v)
+     * // │  └─ node3 (v)
+     * // ├─ node4 ( )
+     * // │  └─ node5 (v)
+     * // └─ node6 ( )
+     * //    ├─ node7 (v)
+     * //    │  └─ node8 (v)
+     * //    └─ node9 ( )
+     *
+     * var allTopCheckedList = tree.getTopCheckedList(); // ['node1', 'node5', 'node7']
+     * var descendantsTopCheckedList = tree.getTopCheekedList('node6'); // ['node7']
+     */
+    getTopCheckedList: function(parentId) {
+      var tree = this.tree;
+      var checkedList = [];
+      var state;
+
+      parentId = parentId || tree.getRootNodeId();
+      state = this._getState(parentId);
+      if (state === STATE_CHECKED) {
+        checkedList = tree.getChildIds(parentId);
+      } else if (state === STATE_INDETERMINATE) {
+        checkedList = this.getCheckedList(parentId);
+        checkedList = util.filter(
+          checkedList,
+          function(nodeId) {
+            return !this.isChecked(tree.getParentId(nodeId));
+          },
+          this
+        );
+      }
+
+      return checkedList;
+    },
+
+    /**
+     * Get bottom checked list
+     * @memberof Tree.prototype
+     * @param {string} [parentId] - Node id (default: rootNode id)
+     * @returns {Array.<string>} Checked node ids
+     * @example
+     * var allBottomCheckedList = tree.getBottomCheckedList(); // ['node2', 'node3', 'node5', 'node8']
+     * var descendantsBottomCheckedList = tree.getBottomCheekedList('node6'); // ['node8']
+     */
+    getBottomCheckedList: function(parentId) {
+      var tree = this.tree;
+      var checkedList;
+
+      parentId = parentId || tree.getRootNodeId();
+      checkedList = this.getCheckedList(parentId);
+
+      return util.filter(checkedList, function(nodeId) {
+        return tree.isLeaf(nodeId);
+      });
+    }
+  }
+);
+
+CustomEvents.mixin(Checkbox);
+module.exports = Checkbox;
+
+
+/***/ }),
+/* 58 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * @fileoverview Bind DOM event. this event will unbind after invokes.
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+var forEachOwnProperties = __webpack_require__(6);
+var isObject = __webpack_require__(11);
+var on = __webpack_require__(14);
+var off = __webpack_require__(13);
+
+/**
+ * Bind DOM event. this event will unbind after invokes.
+ * @param {HTMLElement} element - HTMLElement to bind events.
+ * @param {(string|object)} types - Space splitted events names or
+ *  eventName:handler object.
+ * @param {(function|object)} handler - handler function or context for handler method.
+ * @param {object} [context] - context object for handler method.
+ * @memberof module:domEvent
+ */
+function once(element, types, handler, context) {
+  /**
+     * Event handler for one time.
+     */
+  function onceHandler() {
+    handler.apply(context || element, arguments);
+    off(element, types, onceHandler, context);
+  }
+
+  if (isObject(types)) {
+    forEachOwnProperties(types, function(fn, type) {
+      once(element, type, fn, handler);
+    });
+
+    return;
+  }
+
+  on(element, types, onceHandler, context);
+}
+
+module.exports = once;
+
+
+/***/ }),
+/* 59 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/**
+ * @fileoverview Feature that each tree node is possible to have context-menu
+ * @author NHN. FE dev Lab <dl_javascript@nhn.com>
+ */
+
+var forEachArray = __webpack_require__(0);
+var defineClass = __webpack_require__(3);
+var getTarget = __webpack_require__(10);
+var disableTextSelection = __webpack_require__(28);
+var enableTextSelection = __webpack_require__(30);
+
+var util = __webpack_require__(5);
+var TuiContextMenu = __webpack_require__(60);
+var API_LIST = ['changeContextMenu'];
+
+/**
+ * Set ContextMenu feature on tree
+ * @class ContextMenu
+ * @param {Tree} tree - Tree
+ * @param {Object} options - Options
+ *     @param {Array.<Object>} options.menuData - Context menu data
+ *     @param {boolean} options.usageStatistics - Whether to send the hostname to GA
+ * @ignore
+ */
+var ContextMenu = defineClass(
+  /** @lends ContextMenu.prototype */ {
+    static: {
+      /**
+       * @static
+       * @memberof ContextMenu
+       * @returns {Array.<string>} API list of ContextMenu
+       */
+      getAPIList: function() {
+        return API_LIST.slice();
+      }
+    },
+
+    init: function(tree, options) {
+      var containerId = tree.rootElement.parentNode.id;
+
+      options = options || {};
+
+      /**
+       * Tree data
+       * @type {Tree}
+       */
+      this.tree = tree;
+
+      /**
+       * Tree selector for context menu
+       */
+      this.treeSelector = '#' + containerId;
+
+      /**
+       * Id of floating layer in tree
+       * @type {string}
+       */
+      this.flId = containerId + '-fl';
+
+      /**
+       * Floating layer element
+       * @type {HTMLElement}
+       */
+      this.flElement = document.getElementById(this.flId);
+
+      /**
+       * Info of context menu in tree
+       * @type {Object}
+       */
+      this.menu = this._generateContextMenu(options.usageStatistics);
+
+      /**
+       * Id of selected tree item
+       * @type {string}
+       */
+      this.selectedNodeId = null;
+
+      this.menu.register(this.treeSelector, util.bind(this._onSelect, this), options.menuData);
+
+      this.tree.on('contextmenu', this._onContextMenu, this);
+
+      this._preventTextSelection();
+
+      this._setAPIs();
+    },
+
+    /**
+     * Change current context-menu view
+     * @memberof Tree.prototype
+     * @requires ContextMenu
+     * @param {Array.<Object>} newMenuData - New context menu data
+     * @example
+     * tree.changeContextMenu([
+     *      {title: 'menu1'},
+     *      {title: 'menu2', disable: true},
+     *      {title: 'menu3', menu: [
+     *          {title: 'submenu1', disable: true},
+     *          {title: 'submenu2'}
+     *      ]}
+     * ]);
+     */
+    changeContextMenu: function(newMenuData) {
+      this.menu.unregister(this.treeSelector);
+      this.menu.register(this.treeSelector, util.bind(this._onSelect, this), newMenuData);
+    },
+
+    /**
+     * Disable ContextMenu feature
+     */
+    destroy: function() {
+      var tree = this.tree;
+
+      this.menu.destroy();
+
+      this._restoreTextSelection();
+      this._removeFloatingLayer();
+
+      tree.off(this);
+
+      forEachArray(API_LIST, function(apiName) {
+        delete tree[apiName];
+      });
+    },
+
+    /**
+     * Create floating layer for context menu
+     * @private
+     */
+    _createFloatingLayer: function() {
+      this.flElement = document.createElement('div');
+      this.flElement.id = this.flId;
+
+      document.body.appendChild(this.flElement);
+    },
+
+    /**
+     * Remove floating layer for context menu
+     * @private
+     */
+    _removeFloatingLayer: function() {
+      document.body.removeChild(this.flElement);
+      this.flElement = null;
+    },
+
+    /**
+     * Generate context menu in tree
+     * @returns {TuiContextMenu} Instance of TuiContextMenu
+     * @param {boolean} usageStatistics - Let us know the hostname.
+     * @private
+     */
+    _generateContextMenu: function(usageStatistics) {
+      if (!this.flElement) {
+        this._createFloatingLayer();
+      }
+
+      return new TuiContextMenu(this.flElement, {
+        usageStatistics: usageStatistics
+      });
+    },
+
+    /**
+     * Prevent text selection on selected tree item
+     * @private
+     */
+    _preventTextSelection: function() {
+      disableTextSelection(this.tree.rootElement);
+    },
+
+    /**
+     * Restore text selection on selected tree item
+     * @private
+     */
+    _restoreTextSelection: function() {
+      enableTextSelection(this.tree.rootElement);
+    },
+
+    /**
+     * Event handler on tree item
+     * @param {MouseEvent} e - Mouse event
+     * @private
+     */
+    _onContextMenu: function(e) {
+      var target = getTarget(e);
+
+      this.selectedNodeId = this.tree.getNodeIdFromElement(target);
+
+      /**
+       * @event Tree#beforeOpenContextMenu
+       * @type {object} evt - Event data
+       * @property {string} nodeId - Current selected node id
+       * @example
+       * tree.on('beforeOpenContextMenu', function(evt) {
+       *     console.log('nodeId: ' + evt.nodeId);
+       * });
+       */
+      this.tree.fire('beforeOpenContextMenu', {
+        nodeId: this.selectedNodeId
+      });
+    },
+
+    /**
+     * Event handler on context menu
+     * @param {MouseEvent} e - Mouse event
+     * @param {string} command - Options value of selected context menu ("title"|"command")
+     * @private
+     */
+    _onSelect: function(e, command) {
+      /**
+       * @event Tree#selectContextMenu
+       * @type {object} evt - Event data
+       * @property {string} command - Command type
+       * @property {string} nodeId - Node id
+       * @example
+       * tree.on('selectContextMenu', function(evt) {
+       *     var command = treeEvent.command; // key of context menu's data
+       *     var nodeId = treeEvent.nodeId;
+       *
+       *     console.log(evt.command, evt.nodeId);
+       * });
+       */
+      this.tree.fire('selectContextMenu', {
+        command: command,
+        nodeId: this.selectedNodeId
+      });
+    },
+
+    /**
+     * Set API of ContextMenu feature
+     * @private
+     */
+    _setAPIs: function() {
+      var tree = this.tree;
+
+      forEachArray(
+        API_LIST,
+        function(apiName) {
+          tree[apiName] = util.bind(this[apiName], this);
+        },
+        this
+      );
+    }
+  }
+);
+
+module.exports = ContextMenu;
+
+
+/***/ }),
+/* 60 */
 /***/ (function(module, exports) {
 
-eval("module.exports = __WEBPACK_EXTERNAL_MODULE_tui_code_snippet__;\n\n//# sourceURL=webpack://tui.Tree/external_%7B%22commonjs%22:%22tui-code-snippet%22,%22commonjs2%22:%22tui-code-snippet%22,%22amd%22:%22tui-code-snippet%22,%22root%22:%5B%22tui%22,%22util%22%5D%7D?");
+module.exports = __WEBPACK_EXTERNAL_MODULE__60__;
 
 /***/ }),
+/* 61 */
+/***/ (function(module, exports, __webpack_require__) {
 
-/***/ "tui-context-menu":
-/*!*************************************************************************************************************************************!*\
-  !*** external {"commonjs":"tui-context-menu","commonjs2":"tui-context-menu","amd":"tui-context-menu","root":["tui","ContextMenu"]} ***!
-  \*************************************************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
+/**
+ * @fileoverview Feature that tree action is enable to communicate server
+ * @author NHN. FE dev Lab <dl_javascript@nhn.com>
+ */
 
-eval("module.exports = __WEBPACK_EXTERNAL_MODULE_tui_context_menu__;\n\n//# sourceURL=webpack://tui.Tree/external_%7B%22commonjs%22:%22tui-context-menu%22,%22commonjs2%22:%22tui-context-menu%22,%22amd%22:%22tui-context-menu%22,%22root%22:%5B%22tui%22,%22ContextMenu%22%5D%7D?");
+var ajax = __webpack_require__(62);
+var defineClass = __webpack_require__(3);
+var extend = __webpack_require__(1);
+var isFunction = __webpack_require__(12);
+var isUndefined = __webpack_require__(7);
+var bind = __webpack_require__(5).bind;
+
+var API_LIST = [];
+var LOADER_CLASSNAME = 'tui-tree-loader';
+
+/**
+ * Set Ajax feature on tree
+ * @class Ajax
+ * @param {Tree} tree - Tree
+ * @param {Object} options - Options
+ *  @param {Object} options.command - Each Ajax request command options
+ *  @param {Function} [options.parseData] - Function to parse and return the response data
+ *  @param {string} [options.loaderClassName] - Classname of loader element
+ *  @param {boolean} [options.isLoadRoot] - Whether load data from root node or not
+ * @ignore
+ */
+var Ajax = defineClass(
+  /** @lends Ajax.prototype */ {
+    static: {
+      /**
+       * @static
+       * @memberof Ajax
+       * @returns {Array.<string>} API list of Ajax
+       */
+      getAPIList: function() {
+        return API_LIST.slice();
+      }
+    },
+    init: function(tree, options) {
+      options = extend({}, options);
+
+      /**
+       * Tree
+       * @type {Tree}
+       */
+      this.tree = tree;
+
+      /**
+       * Option for each request command
+       * @type {Object}
+       */
+      this.command = options.command;
+
+      /**
+       * Callback for parsing the response data
+       * @type {?Function}
+       */
+      this.parseData = options.parseData || null;
+
+      /**
+       * Classname of loader element
+       * @type {string}
+       */
+      this.loaderClassName = options.loaderClassName || LOADER_CLASSNAME;
+
+      /**
+       * State of loading root data or not
+       * @type {boolean}
+       */
+      this.isLoadRoot = !isUndefined(options.isLoadRoot) ? options.isLoadRoot : true;
+
+      /**
+       * Loader element
+       * @type {HTMLElement}
+       */
+      this.loader = null;
+
+      this._createLoader();
+
+      tree.on('initFeature', bind(this._onInitFeature, this));
+    },
+
+    /**
+     * Custom event handler "initFeature"
+     * @private
+     */
+    _onInitFeature: function() {
+      if (!this.isLoadRoot) {
+        return;
+      }
+
+      this.tree.resetAllData();
+    },
+
+    /**
+     * Disable this module
+     */
+    destroy: function() {
+      var tree = this.tree;
+
+      this._removeLoader();
+
+      tree.off(this);
+    },
+
+    /**
+     * Load data to request server
+     * @param {string} command - Command type
+     * @param {Function} callback - Executed function after response
+     * @param {Object} [data] - Values to make "data" property using request
+     */
+    loadData: function(command, callback, data) {
+      var options;
+
+      if (!this.command || !this.command[command] || !this.command[command].url) {
+        return;
+      }
+
+      options = this._getDefaultRequestOptions(command, data);
+
+      /**
+       * @event Tree#beforeAjaxRequest
+       * @type {object} evt - Event data
+       * @property {string} command - Command type
+       * @property {object} [data] - Request data
+       * @example
+       * tree.on('beforeAjaxRequest', function(evt) {
+       *     console.log('before ' + evt.command + ' request!');
+       *     return false; // It cancels request
+       *     // return true; // It fires request
+       * });
+       */
+      if (
+        !this.tree.invoke('beforeAjaxRequest', {
+          command: command,
+          data: data
+        })
+      ) {
+        return;
+      }
+
+      this._showLoader();
+
+      options.success = bind(function(response) {
+        this._responseSuccess(command, callback, response.data);
+      }, this);
+
+      options.error = bind(function(error) {
+        this._responseError(command, error);
+      }, this);
+
+      ajax(options);
+    },
+
+    /**
+     * Processing when response is success
+     * @param {string} command - Command type
+     * @param {Function} callback - Executed function after response
+     * @param {Object|boolean} [responseData] - Response data from server or return value of "parseData"
+     * @private
+     */
+    _responseSuccess: function(command, callback, responseData) {
+      var tree = this.tree;
+      var data;
+
+      this._hideLoader();
+
+      if (this.parseData) {
+        responseData = this.parseData(command, responseData);
+      }
+
+      if (responseData) {
+        data = callback(responseData);
+
+        /**
+         * @event Tree#successAjaxResponse
+         * @type {object} evt - Event data
+         * @property {string} command - Command type
+         * @property {object} [data] - Return value of executed command callback
+         * @example
+         * tree.on('successAjaxResponse', function(evt) {
+         *     console.log(evt.command + ' response is success!');
+         *     if (data) {
+         *           console.log('data:' + evt.data);
+         *     }
+         * });
+         */
+        tree.fire('successAjaxResponse', {
+          command: command,
+          data: data
+        });
+      } else {
+        /**
+         * @event Tree#failAjaxResponse
+         * @type {object} evt - Event data
+         * @property {string} command - Command type
+         * @example
+         * tree.on('failAjaxResponse', function(evt) {
+         *     console.log(evt.command + ' response is fail!');
+         * });
+         */
+        tree.fire('failAjaxResponse', {
+          command: command
+        });
+      }
+    },
+
+    /**
+     * Processing when response is error
+     * @param {string} command - Command type
+     * @private
+     */
+    _responseError: function(command, error) {
+      this._hideLoader();
+
+      /**
+       * @event Tree#errorAjaxResponse
+       * @type {object} evt - Event data
+       * @property {string} command - Command type
+       * @property {number} status - Error status code
+       * @property {string} statusText - Error status text
+       * @example
+       * tree.on('errorAjaxResponse', function(evt) {
+       *     console.log(evt.command + ' response is error!');
+       * });
+       */
+      this.tree.fire('errorAjaxResponse', {
+        command: command,
+        status: error.status,
+        statusText: error.statusText
+      });
+    },
+
+    /**
+     * Get default request options
+     * @param {string} type - Command type
+     * @param {Object} [data] - Value of request option "data"
+     * @returns {Object} Default options to request
+     * @private
+     */
+    _getDefaultRequestOptions: function(type, data) {
+      var options = extend({}, this.command[type]);
+
+      if (isFunction(options.url)) {
+        // for restful API url
+        options.url = options.url(data);
+      }
+
+      if (isFunction(options.params)) {
+        // for custom request data
+        options.params = options.params(data);
+      }
+
+      options.method = options.method || 'GET';
+      options.contentType = options.contentType || 'application/json';
+
+      return options;
+    },
+
+    /**
+     * Create loader element
+     * @private
+     */
+    _createLoader: function() {
+      var tree = this.tree;
+      var loader = document.createElement('span');
+
+      loader.className = this.loaderClassName;
+      loader.style.display = 'none';
+
+      tree.rootElement.parentNode.appendChild(loader);
+
+      this.loader = loader;
+    },
+
+    /**
+     * Remove loader element
+     * @private
+     */
+    _removeLoader: function() {
+      var tree = this.tree;
+      var loader = this.loader;
+
+      tree.rootElement.parentNode.removeChild(loader);
+
+      this.loader = null;
+    },
+
+    /**
+     * Show loader element on tree
+     * @private
+     */
+    _showLoader: function() {
+      this.loader.style.display = 'block';
+    },
+
+    /**
+     * Hide loader element on tree
+     * @private
+     */
+    _hideLoader: function() {
+      this.loader.style.display = 'none';
+    }
+  }
+);
+
+module.exports = Ajax;
+
+
+/***/ }),
+/* 62 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+exports.__esModule = true;
+exports["default"] = void 0;
+
+var _forEachArray = _interopRequireDefault(__webpack_require__(0));
+
+var _forEachOwnProperties = _interopRequireDefault(__webpack_require__(6));
+
+var _extend = _interopRequireDefault(__webpack_require__(1));
+
+var _isArray = _interopRequireDefault(__webpack_require__(2));
+
+var _isEmpty = _interopRequireDefault(__webpack_require__(63));
+
+var _isFunction = _interopRequireDefault(__webpack_require__(12));
+
+var _isNull = _interopRequireDefault(__webpack_require__(23));
+
+var _isObject = _interopRequireDefault(__webpack_require__(11));
+
+var _isUndefined = _interopRequireDefault(__webpack_require__(7));
+
+function _interopRequireDefault(obj) {
+  return obj && obj.__esModule ? obj : {
+    "default": obj
+  };
+}
+
+function encodePairs(key, value) {
+  return encodeURIComponent(key) + "=" + encodeURIComponent((0, _isNull["default"])(value) || (0, _isUndefined["default"])(value) ? '' : value);
+}
+
+function serializeParams(key, value, serializedList) {
+  if ((0, _isArray["default"])(value)) {
+    (0, _forEachArray["default"])(value, function (arrVal, index) {
+      serializeParams(key + "[" + ((0, _isObject["default"])(arrVal) ? index : '') + "]", arrVal, serializedList);
+    });
+  } else if ((0, _isObject["default"])(value)) {
+    (0, _forEachOwnProperties["default"])(value, function (objValue, objKey) {
+      serializeParams(key + "[" + objKey + "]", objValue, serializedList);
+    });
+  } else {
+    serializedList.push(encodePairs(key, value));
+  }
+}
+
+function serialize(params) {
+  if (!params || (0, _isEmpty["default"])(params)) {
+    return '';
+  }
+
+  var serializedList = [];
+  (0, _forEachOwnProperties["default"])(params, function (value, key) {
+    serializeParams(key, value, serializedList);
+  });
+  return serializedList.join('&');
+}
+
+var getDefaultOptions = function getDefaultOptions() {
+  return {
+    baseURL: '',
+    headers: {
+      common: {},
+      get: {},
+      post: {},
+      put: {},
+      "delete": {},
+      patch: {},
+      options: {},
+      head: {}
+    },
+    serializer: serialize
+  };
+};
+
+var HTTP_PROTOCOL_REGEXP = /^(http|https):\/\//i;
+
+function combineURL(baseURL, url) {
+  if (HTTP_PROTOCOL_REGEXP.test(url)) {
+    return url;
+  }
+
+  if (baseURL.slice(-1) === '/' && url.slice(0, 1) === '/') {
+    url = url.slice(1);
+  }
+
+  return baseURL + url;
+}
+
+function getComputedOptions(defaultOptions, customOptions) {
+  var baseURL = defaultOptions.baseURL,
+      defaultHeaders = defaultOptions.headers,
+      defaultSerializer = defaultOptions.serializer,
+      defaultBeforeRequest = defaultOptions.beforeRequest,
+      defaultSuccess = defaultOptions.success,
+      defaultError = defaultOptions.error,
+      defaultComplete = defaultOptions.complete;
+  var url = customOptions.url,
+      contentType = customOptions.contentType,
+      method = customOptions.method,
+      params = customOptions.params,
+      headers = customOptions.headers,
+      serializer = customOptions.serializer,
+      beforeRequest = customOptions.beforeRequest,
+      success = customOptions.success,
+      error = customOptions.error,
+      complete = customOptions.complete,
+      withCredentials = customOptions.withCredentials,
+      mimeType = customOptions.mimeType;
+  var options = {
+    url: combineURL(baseURL, url),
+    method: method,
+    params: params,
+    headers: (0, _extend["default"])(defaultHeaders.common, defaultHeaders[method.toLowerCase()], headers),
+    serializer: serializer || defaultSerializer || serialize,
+    beforeRequest: [defaultBeforeRequest, beforeRequest],
+    success: [defaultSuccess, success],
+    error: [defaultError, error],
+    complete: [defaultComplete, complete],
+    withCredentials: withCredentials,
+    mimeType: mimeType
+  };
+  options.contentType = contentType || options.headers['Content-Type'];
+  delete options.headers['Content-Type'];
+  return options;
+}
+
+function validateStatus(status) {
+  return status >= 200 && status < 300;
+}
+
+function hasRequestBody(method) {
+  return /^(?:POST|PUT|PATCH)$/.test(method.toUpperCase());
+}
+
+function executeCallback(callback, param) {
+  if ((0, _isArray["default"])(callback)) {
+    (0, _forEachArray["default"])(callback, function (fn) {
+      return executeCallback(fn, param);
+    });
+  } else if ((0, _isFunction["default"])(callback)) {
+    callback(param);
+  }
+}
+
+function parseHeaders(text) {
+  var headers = {};
+  (0, _forEachArray["default"])(text.split('\r\n'), function (header) {
+    var _header$split = header.split(': '),
+        key = _header$split[0],
+        value = _header$split[1];
+
+    if (key !== '' && !(0, _isUndefined["default"])(value)) {
+      headers[key] = value;
+    }
+  });
+  return headers;
+}
+
+function parseJSONData(data) {
+  var result = '';
+
+  try {
+    result = JSON.parse(data);
+  } catch (_) {
+    result = data;
+  }
+
+  return result;
+}
+
+var REQUEST_DONE = 4;
+
+function handleReadyStateChange(xhr, options) {
+  var readyState = xhr.readyState;
+
+  if (readyState != REQUEST_DONE) {
+    return;
+  }
+
+  var status = xhr.status,
+      statusText = xhr.statusText,
+      responseText = xhr.responseText;
+  var success = options.success,
+      resolve = options.resolve,
+      error = options.error,
+      reject = options.reject,
+      complete = options.complete;
+
+  if (validateStatus(status)) {
+    var contentType = xhr.getResponseHeader('Content-Type');
+    var data = responseText;
+
+    if (contentType && contentType.indexOf('application/json') > -1) {
+      data = parseJSONData(data);
+    }
+
+    executeCallback([success, resolve], {
+      status: status,
+      statusText: statusText,
+      data: data,
+      headers: parseHeaders(xhr.getAllResponseHeaders())
+    });
+  } else {
+    executeCallback([error, reject], {
+      status: status,
+      statusText: statusText
+    });
+  }
+
+  executeCallback(complete, {
+    status: status,
+    statusText: statusText
+  });
+}
+
+var QS_DELIM_REGEXP = /\?/;
+
+function open(xhr, options) {
+  var url = options.url,
+      method = options.method,
+      serializer = options.serializer,
+      params = options.params;
+  var requestUrl = url;
+
+  if (!hasRequestBody(method) && params) {
+    var qs = (QS_DELIM_REGEXP.test(url) ? '&' : '?') + serializer(params);
+    requestUrl = "" + url + qs;
+  }
+
+  xhr.open(method, requestUrl);
+}
+
+function applyConfig(xhr, options) {
+  var method = options.method,
+      contentType = options.contentType,
+      mimeType = options.mimeType,
+      headers = options.headers,
+      _options$withCredenti = options.withCredentials,
+      withCredentials = _options$withCredenti === void 0 ? false : _options$withCredenti;
+
+  if (withCredentials) {
+    xhr.withCredentials = withCredentials;
+  }
+
+  if (mimeType) {
+    xhr.overrideMimeType(mimeType);
+  }
+
+  (0, _forEachOwnProperties["default"])(headers, function (value, header) {
+    if (!(0, _isObject["default"])(value)) {
+      xhr.setRequestHeader(header, value);
+    }
+  });
+
+  if (hasRequestBody(method)) {
+    xhr.setRequestHeader('Content-Type', contentType + "; charset=UTF-8");
+  }
+
+  xhr.setRequestHeader('x-requested-with', 'XMLHttpRequest');
+}
+
+var ENCODED_SPACE_REGEXP = /%20/g;
+
+function send(xhr, options) {
+  var method = options.method,
+      serializer = options.serializer,
+      beforeRequest = options.beforeRequest,
+      _options$params = options.params,
+      params = _options$params === void 0 ? {} : _options$params,
+      _options$contentType = options.contentType,
+      contentType = _options$contentType === void 0 ? 'application/x-www-form-urlencoded' : _options$contentType;
+  var body = null;
+
+  if (hasRequestBody(method)) {
+    body = contentType.indexOf('application/x-www-form-urlencoded') > -1 ? serializer(params).replace(ENCODED_SPACE_REGEXP, '+') : JSON.stringify(params);
+  }
+
+  xhr.onreadystatechange = function () {
+    return handleReadyStateChange(xhr, options);
+  };
+
+  executeCallback(beforeRequest, xhr);
+  xhr.send(body);
+}
+
+function ajax(options) {
+  var xhr = new XMLHttpRequest();
+
+  var request = function request(opts) {
+    return (0, _forEachArray["default"])([open, applyConfig, send], function (fn) {
+      return fn(xhr, opts);
+    });
+  };
+
+  options = getComputedOptions(ajax.defaults, options);
+
+  if (typeof Promise !== 'undefined') {
+    return new Promise(function (resolve, reject) {
+      request((0, _extend["default"])(options, {
+        resolve: resolve,
+        reject: reject
+      }));
+    });
+  }
+
+  request(options);
+  return null;
+}
+
+ajax.defaults = getDefaultOptions();
+
+ajax._reset = function () {
+  ajax.defaults = getDefaultOptions();
+};
+
+ajax._request = function (url, method, options) {
+  if (options === void 0) {
+    options = {};
+  }
+
+  return ajax((0, _extend["default"])(options, {
+    url: url,
+    method: method
+  }));
+};
+
+(0, _forEachArray["default"])(['get', 'post', 'put', 'delete', 'patch', 'options', 'head'], function (type) {
+  ajax[type] = function (url, options) {
+    return ajax._request(url, type.toUpperCase(), options);
+  };
+});
+var _default = ajax;
+exports["default"] = _default;
+module.exports = exports["default"];
+
+
+/***/ }),
+/* 63 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* eslint-disable complexity */
+/**
+ * @fileoverview Check whether the given variable is empty(null, undefined, or empty array, empty object) or not.
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+var isString = __webpack_require__(8);
+var isExisty = __webpack_require__(16);
+var isArray = __webpack_require__(2);
+var isArguments = __webpack_require__(64);
+var isObject = __webpack_require__(11);
+var isFunction = __webpack_require__(12);
+
+/**
+ * Check whether given argument is empty string
+ * @param {*} obj - Target for checking
+ * @returns {boolean} whether given argument is empty string
+ * @private
+ */
+function _isEmptyString(obj) {
+  return isString(obj) && obj === '';
+}
+
+/**
+ * Check whether given argument has own property
+ * @param {Object} obj - Target for checking
+ * @returns {boolean} - whether given argument has own property
+ * @private
+ */
+function _hasOwnProperty(obj) {
+  var key;
+  for (key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+/**
+ * Check whether the given variable is empty(null, undefined, or empty array, empty object) or not.
+ *  If the given variables is empty, return true.
+ * @param {*} obj - Target for checking
+ * @returns {boolean} Is empty?
+ * @memberof module:type
+ */
+function isEmpty(obj) {
+  if (!isExisty(obj) || _isEmptyString(obj)) {
+    return true;
+  }
+
+  if (isArray(obj) || isArguments(obj)) {
+    return obj.length === 0;
+  }
+
+  if (isObject(obj) && !isFunction(obj)) {
+    return !_hasOwnProperty(obj);
+  }
+
+  return true;
+}
+
+module.exports = isEmpty;
+
+
+/***/ }),
+/* 64 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * @fileoverview Check whether the given variable is an arguments object or not.
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+var isExisty = __webpack_require__(16);
+
+/**
+ * @module type
+ */
+
+/**
+ * Check whether the given variable is an arguments object or not.
+ * If the given variable is an arguments object, return true.
+ * @param {*} obj - Target for checking
+ * @returns {boolean} Is arguments?
+ * @memberof module:type
+ */
+function isArguments(obj) {
+  var result = isExisty(obj) &&
+        ((Object.prototype.toString.call(obj) === '[object Arguments]') || !!obj.callee);
+
+  return result;
+}
+
+module.exports = isArguments;
+
 
 /***/ })
-
-/******/ });
+/******/ ]);
 });
