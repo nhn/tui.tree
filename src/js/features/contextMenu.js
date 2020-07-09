@@ -34,6 +34,7 @@ var ContextMenu = defineClass(
         return API_LIST.slice();
       }
     },
+
     init: function(tree, options) {
       var containerId = tree.rootElement.parentNode.id;
 
@@ -57,16 +58,16 @@ var ContextMenu = defineClass(
       this.flId = containerId + '-fl';
 
       /**
-       * Info of context menu in tree
-       * @type {Object}
-       */
-      this.menu = this._generateContextMenu(options.usageStatistics);
-
-      /**
        * Floating layer element
        * @type {HTMLElement}
        */
       this.flElement = document.getElementById(this.flId);
+
+      /**
+       * Info of context menu in tree
+       * @type {Object}
+       */
+      this.menu = this._generateContextMenu(options.usageStatistics);
 
       /**
        * Id of selected tree item
