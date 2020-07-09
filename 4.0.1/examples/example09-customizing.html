@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+    <head lang="en">
+        <meta charset="UTF-8">
+        <title>Tree with depth label using template option</title>
+        <link rel="stylesheet" type="text/css" href="./css/tui-example-style.css" />
+        <link rel="stylesheet" type="text/css" href="./css/docs.css" />
+        <link rel="stylesheet" type="text/css" href="../dist/tui-tree.css" />
+    </head>
+
+    <body>
+        <div class="code-html">
+            <div id="tree" class="tui-tree-wrap"></div>
+        </div>
+        <div class="explain">
+            <p>Set the labels for each depth: [' building', ' floor', ' section', ' block']<br />
+                - 1Depth : node's text + " building"<br />
+                - 2Depth : node's text + " floor"<br />
+                - 3Depth : node's text + " section"<br />
+                - 4Depth : node's text + " block"<br />
+            <p>The label is automatically appended when a tree node is created.</p>
+        </div>
+        <script src="../dist/tui-tree.js"></script>
+        <script class="code-js">
+
+        var data = [
+            {text: 'rootA', children: [
+                {text: 'root-1A'},
+                {text: 'root-1B'},
+                {text: 'root-1C'},
+                {text: 'root-1D'},
+                {text: 'root-2A', children: [
+                    {text:'sub_1A', children:[
+                        {text:'sub_sub_1A'}
+                    ]},
+                    {text:'sub_2A'}
+                ]},
+                {text: 'root-2B'},
+                {text: 'root-2C'},
+                {text: 'root-2D'},
+                {text: 'root-3A', children: [
+                    {text:'sub3_a'},
+                    {text:'sub3_b'}
+                ]},
+                {text: 'root-3B'},
+                {text: 'root-3C'},
+                {text: 'root-3D'}
+            ]},
+            {text: 'rootB', children: [
+                {text:'B_sub1'},
+                {text:'B_sub2'}
+            ]}
+        ];
+
+        var depthLabels = [' building', ' floor', ' section', ' block'];
+
+        var tree = new tui.Tree('#tree', {
+            data: data,
+            nodeDefaultState: 'opened',
+            template: {
+                internalNode:
+                    '<div class="tui-tree-content-wrapper" style="padding-left: {{indent}}px">' +
+                        '<button type="button" class="tui-tree-toggle-btn tui-js-tree-toggle-btn">' +
+                            '<span class="tui-ico-tree"></span>' +
+                            '{{stateLabel}}' +
+                        '</button>' +
+                        '</button>' +
+                        '<span class="tui-tree-text tui-js-tree-text">' +
+                            '<span class="tui-tree-ico tui-ico-folder"></span>' +
+                            '{{text}}<b>{{depthLabel}}</b>' +
+                        '</span>' +
+                    '</div>' +
+                    '<ul class="tui-tree-subtree tui-js-tree-subtree">{{children}}</ul>',
+                leafNode:
+                    '<div class="tui-tree-content-wrapper" style="padding-left: {{indent}}px">' +
+                        '<span class="tui-tree-text tui-js-tree-text">' +
+                            '<span class="tui-tree-ico tui-ico-file"></span>' +
+                            '{{text}}<b>{{depthLabel}}</b>' +
+                        '</span>' +
+                    '</div>'
+            }
+        }).enableFeature('Draggable', {
+            useHelper: true
+        });
+
+        tree.on('beforeDraw', function(evt) {
+            tree.each(function(child, childId) {
+                var depth = tree.getDepth(childId);
+
+                depth = Math.min(depth, depthLabels.length);
+                child.setData({
+                    depthLabel: depthLabels[depth - 1] || ''
+                });
+            }, evt.nodeId);
+        });
+
+        tree.refresh();
+
+        </script>
+    </body>
+</html>
