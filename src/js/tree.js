@@ -711,38 +711,50 @@ var Tree = defineClass(
     },
 
     /**
-     * Update class name by features on below<br>
-     * - leaf node: has classNames.leafClass<br>
-     * - internal node + opened: has classNames.openedClass, child is visible<br>
-     * - internal node + closed: has classNames.closedClass, child is not visible<br>
-     * @param {TreeNode} node - (re)drawing starts from this node
+     * Update class name by features on below
+     * - leaf node: has classNames.leafClass
+     * - internal node + opened: has classNames.openedClass, child is visible
+     * - internal node + closed: has classNames.closedClass, child is not visible
+     * @param {TreeNode} startNode - (re)drawing starts from this node
      * @private
      */
-    _setClassNameAndVisibilityByFeature: function(node) {
-      var nodeId = node.getId();
-      var element = document.getElementById(nodeId);
+    _setClassNameAndVisibilityByFeature: function(startNode) {
+      var nodeId = startNode.getId();
+
+      this._setNodeClassName(startNode);
+
+      if (!startNode.isLeaf()) {
+        this._setDisplayFromNodeState(nodeId, startNode.getState());
+        this.each(
+          function(child) {
+            this._setNodeClassName(child);
+          },
+          nodeId,
+          this
+        );
+      }
+    },
+
+    /**
+     * Update class name by features on below
+     * - leaf node: has classNames.leafClass
+     * - internal node + opened: has classNames.openedClass, child is visible
+     * - internal node + closed: has classNames.closedClass, child is not visible
+     * @param {TreeNode} node - (re)drawing this node
+     * @private
+     */
+    _setNodeClassName: function(node) {
+      var element = document.getElementById(node.getId());
       var classNames = this.classNames;
-      var isLeaf = node.isLeaf();
 
       if (element) {
-        if (isLeaf) {
+        if (node.isLeaf()) {
           removeClass(element, classNames.openedClass);
           removeClass(element, classNames.closedClass);
           addClass(element, classNames.leafClass);
         } else {
           removeClass(element, classNames.leafClass);
         }
-      }
-
-      if (!isLeaf) {
-        this._setDisplayFromNodeState(nodeId, node.getState());
-        this.each(
-          function(child) {
-            this._setClassNameAndVisibilityByFeature(child);
-          },
-          nodeId,
-          this
-        );
       }
     },
 
