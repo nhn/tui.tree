@@ -711,7 +711,7 @@ var Tree = defineClass(
     },
 
     /**
-     * Update class name by features on below
+     * Update class name and visibility by features on below
      * - leaf node: has classNames.leafClass
      * - internal node + opened: has classNames.openedClass, child is visible
      * - internal node + closed: has classNames.closedClass, child is not visible
@@ -719,17 +719,16 @@ var Tree = defineClass(
      * @private
      */
     _setClassNameAndVisibilityByFeature: function(startNode) {
-      var nodeId = startNode.getId();
-
       this._setNodeClassName(startNode);
+      this._setNodeVisibility(startNode);
 
       if (!startNode.isLeaf()) {
-        this._setDisplayFromNodeState(nodeId, startNode.getState());
         this.each(
           function(child) {
+            this._setNodeVisibility(child);
             this._setNodeClassName(child);
           },
-          nodeId,
+          startNode.getId(),
           this
         );
       }
@@ -755,6 +754,20 @@ var Tree = defineClass(
         } else {
           removeClass(element, classNames.leafClass);
         }
+      }
+    },
+
+    /**
+     * Update visibility by features on below
+     * - leaf node: has classNames.leafClass
+     * - internal node + opened: has classNames.openedClass, child is visible
+     * - internal node + closed: has classNames.closedClass, child is not visible
+     * @param {TreeNode} node - (re)drawing this node
+     * @private
+     */
+    _setNodeVisibility: function(node) {
+      if (!node.isLeaf()) {
+        this._setDisplayFromNodeState(node.getId(), node.getState());
       }
     },
 
