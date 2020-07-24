@@ -1,6 +1,6 @@
 /*!
  * TOAST UI Tree
- * @version 4.0.1
+ * @version 4.0.2
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -2935,18 +2935,44 @@ var Tree = defineClass(
     },
 
     /**
-     * Update class name by features on below<br>
-     * - leaf node: has classNames.leafClass<br>
-     * - internal node + opened: has classNames.openedClass, child is visible<br>
-     * - internal node + closed: has classNames.closedClass, child is not visible<br>
-     * @param {TreeNode} node - (re)drawing starts from this node
+     * Update class name and visibility by features on below
+     * - leaf node: has classNames.leafClass
+     * - internal node + opened: has classNames.openedClass, child is visible
+     * - internal node + closed: has classNames.closedClass, child is not visible
+     * @param {TreeNode} startNode - (re)drawing starts from this node
      * @private
      */
-    _setClassNameAndVisibilityByFeature: function(node) {
+    _setClassNameAndVisibilityByFeature: function(startNode) {
+      this._setNodeClassNameAndVisibility(startNode);
+
+      if (!startNode.isLeaf()) {
+        this.each(
+          function(child) {
+            this._setNodeClassNameAndVisibility(child);
+          },
+          startNode.getId(),
+          this
+        );
+      }
+    },
+
+    /**
+     * Update class name and visibility by features on below
+     * - leaf node: has classNames.leafClass
+     * - internal node + opened: has classNames.openedClass, child is visible
+     * - internal node + closed: has classNames.closedClass, child is not visible
+     * @param {TreeNode} node - (re)drawing this node
+     * @private
+     */
+    _setNodeClassNameAndVisibility: function(node) {
       var nodeId = node.getId();
       var element = document.getElementById(nodeId);
       var classNames = this.classNames;
       var isLeaf = node.isLeaf();
+
+      if (!isLeaf) {
+        this._setDisplayFromNodeState(nodeId, node.getState());
+      }
 
       if (element) {
         if (isLeaf) {
@@ -2956,17 +2982,6 @@ var Tree = defineClass(
         } else {
           removeClass(element, classNames.leafClass);
         }
-      }
-
-      if (!isLeaf) {
-        this._setDisplayFromNodeState(nodeId, node.getState());
-        this.each(
-          function(child) {
-            this._setClassNameAndVisibilityByFeature(child);
-          },
-          nodeId,
-          this
-        );
       }
     },
 
