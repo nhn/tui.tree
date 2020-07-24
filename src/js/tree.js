@@ -719,14 +719,12 @@ var Tree = defineClass(
      * @private
      */
     _setClassNameAndVisibilityByFeature: function(startNode) {
-      this._setNodeClassName(startNode);
-      this._setNodeVisibility(startNode);
+      this._setNodeClassNameAndVisibility(startNode);
 
       if (!startNode.isLeaf()) {
         this.each(
           function(child) {
-            this._setNodeVisibility(child);
-            this._setNodeClassName(child);
+            this._setNodeClassNameAndVisibility(child);
           },
           startNode.getId(),
           this
@@ -735,39 +733,31 @@ var Tree = defineClass(
     },
 
     /**
-     * Update class name by features on below
+     * Update class name and visibility by features on below
      * - leaf node: has classNames.leafClass
      * - internal node + opened: has classNames.openedClass, child is visible
      * - internal node + closed: has classNames.closedClass, child is not visible
      * @param {TreeNode} node - (re)drawing this node
      * @private
      */
-    _setNodeClassName: function(node) {
-      var element = document.getElementById(node.getId());
+    _setNodeClassNameAndVisibility: function(node) {
+      var nodeId = node.getId();
+      var element = document.getElementById(nodeId);
       var classNames = this.classNames;
+      var isLeaf = node.isLeaf();
+
+      if (isLeaf) {
+        this._setDisplayFromNodeState(nodeId, node.getState());
+      }
 
       if (element) {
-        if (node.isLeaf()) {
+        if (isLeaf) {
           removeClass(element, classNames.openedClass);
           removeClass(element, classNames.closedClass);
           addClass(element, classNames.leafClass);
         } else {
           removeClass(element, classNames.leafClass);
         }
-      }
-    },
-
-    /**
-     * Update visibility by features on below
-     * - leaf node: has classNames.leafClass
-     * - internal node + opened: has classNames.openedClass, child is visible
-     * - internal node + closed: has classNames.closedClass, child is not visible
-     * @param {TreeNode} node - (re)drawing this node
-     * @private
-     */
-    _setNodeVisibility: function(node) {
-      if (!node.isLeaf()) {
-        this._setDisplayFromNodeState(node.getId(), node.getState());
       }
     },
 

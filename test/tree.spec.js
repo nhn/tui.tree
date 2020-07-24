@@ -53,12 +53,12 @@ describe('Tree', function() {
     });
 
     it('should run once per node ', function() {
-      spyOn(tree, '_setNodeClassName').and.callThrough();
+      spyOn(tree, '_setNodeClassNameAndVisibility').and.callThrough();
 
       tree.refresh();
 
       // root 1 + data 24
-      expect(tree._setNodeClassName).toHaveBeenCalledTimes(25);
+      expect(tree._setNodeClassNameAndVisibility).toHaveBeenCalledTimes(25);
     });
 
     it('should throw an error if has invalid root element', function() {
