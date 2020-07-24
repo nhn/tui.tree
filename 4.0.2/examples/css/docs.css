@@ -1,0 +1,39 @@
+/* It is not component's styling and only use in example page */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+}
+
+.explain {
+    position: absolute;
+    top: 20px;
+    left: 380px;
+    font-size: 12px;
+}
+
+.explain textarea {
+    float: left;
+    width: 300px;
+    height: 500px;
+    resize: none;
+    line-height: 2em;
+    border: none;
+    outline: 0;
+}
+
+.explain button {
+    overflow: hidden;
+    display: inline-block;
+    padding: 0 14px 0 15px;
+    height: 28px;
+    font-size: 1em;
+    color: #fff;
+    border: 0;
+    vertical-align: top;
+    line-height: 22px;
+    background: #777;
+    cursor: pointer;
+    border-radius: 5px;
+    outline: 0;
+}
