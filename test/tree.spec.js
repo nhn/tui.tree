@@ -52,6 +52,15 @@ describe('Tree', function() {
       grandChildId = tree.model.getNode(firstChildId).getChildIds()[0];
     });
 
+    it('should run once per node ', function() {
+      spyOn(tree, '_setNodeClassNameAndVisibility').and.callThrough();
+
+      tree.refresh();
+
+      // root 1 + data 24
+      expect(tree._setNodeClassNameAndVisibility).toHaveBeenCalledTimes(25);
+    });
+
     it('should throw an error if has invalid root element', function() {
       expect(function() {
         return new Tree('#tree2');
