@@ -746,7 +746,7 @@ var Tree = defineClass(
       var classNames = this.classNames;
       var isLeaf = node.isLeaf();
 
-      if (isLeaf) {
+      if (!isLeaf) {
         this._setDisplayFromNodeState(nodeId, node.getState());
       }
 
