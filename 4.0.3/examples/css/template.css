@@ -1,0 +1,20 @@
+/* It use in the "template" example page and extended styles for service */
+.tui-tree-root-btn .tui-checkbox-root {
+    margin: 1px 10px 0 0;
+}
+
+.tui-tree-root>.tui-tree-node>.tui-tree-toggle-btn {
+    margin: 11px 1px 0 0;
+}
+
+.tui-tree-root .tui-tree-root-btn .tui-tree-text {
+    font-size: 14px;
+}
+
+.tui-tree-root .tui-tree-root-btn .tui-tree-toggle-btn {
+    margin-top: 7px;
+}
+
+.tui-tree-root>.tui-tree-node>.tui-input-wrap {
+    padding-left: 63px;
+}
