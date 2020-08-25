@@ -1,6 +1,6 @@
 /*!
  * TOAST UI Tree
- * @version 4.0.2
+ * @version 4.0.3
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -2449,7 +2449,7 @@ var Tree = defineClass(
 
       /**
        * To prevent click event if mouse moved before mouseup.
-       * @type {number}
+       * @type {boolean}
        * @private
        */
       this._mouseMovingFlag = false;
@@ -2605,7 +2605,7 @@ var Tree = defineClass(
       var clientY = downEvent.clientY;
       var abs = Math.abs;
 
-      var onMouseMove = util.bind(function onMouseMove(moveEvent) {
+      var onMouseMoveHandler = util.bind(function onMouseMove(moveEvent) {
         var newClientX = moveEvent.clientX;
         var newClientY = moveEvent.clientY;
 
@@ -2615,27 +2615,27 @@ var Tree = defineClass(
         }
       }, this);
 
-      var onMouseOut = util.bind(function onMouseOut(event) {
+      var onMouseOutHandler = util.bind(function onMouseOut(event) {
         if (event.toElement === null) {
           this.fire('mouseup', event);
         }
       }, this);
 
-      var onMouseUp = util.bind(function onMouseUp(upEvent) {
+      var onMouseUpHandler = util.bind(function onMouseUp(upEvent) {
         this.fire('mouseup', upEvent);
         off(document, {
-          mousemove: onMouseMove,
-          mouseup: onMouseUp,
-          mouseout: onMouseOut
+          mousemove: onMouseMoveHandler,
+          mouseup: onMouseUpHandler,
+          mouseout: onMouseOutHandler
         });
       }, this);
 
       this._mouseMovingFlag = false;
       this.fire('mousedown', downEvent);
       on(document, {
-        mousemove: onMouseMove,
-        mouseup: onMouseUp,
-        mouseout: onMouseOut
+        mousemove: onMouseMoveHandler,
+        mouseup: onMouseUpHandler,
+        mouseout: onMouseOutHandler
       });
     },
 
