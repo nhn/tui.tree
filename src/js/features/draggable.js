@@ -111,6 +111,12 @@ var Draggable = defineClass(
       this.timer = null;
 
       /**
+       * Last mouse hovered nodeId
+       * @type {string | null}
+       */
+      this.lastHoverNodeId = null;
+
+      /**
        * Tag list for rejecting to drag
        * @param {Array.<string>}
        */
@@ -370,6 +376,7 @@ var Draggable = defineClass(
 
       nodeId = this.tree.getNodeIdFromElement(target);
       if (nodeId) {
+        this.lastHoverNodeId = nodeId;
         this._applyMoveAction(nodeId, mousePos);
       }
     },
@@ -424,6 +431,10 @@ var Draggable = defineClass(
         nodeId = childIds[0];
       } else {
         nodeId = childIds[childIds.length - 1];
+      }
+
+      if (this._isMovingLineElement(target)) {
+        nodeId = this.lastHoverNodeId;
       }
 
       return nodeId;
@@ -569,10 +580,11 @@ var Draggable = defineClass(
      */
     _drawBoundaryLine: function(targetPos, boundaryType) {
       var style = this.lineElement.style;
+      var parentNodeOfRoot = this.tree.rootElement.parentNode;
       var scrollTop;
 
       if (boundaryType) {
-        scrollTop = this.tree.rootElement.parentNode.getBoundingClientRect().top;
+        scrollTop = parentNodeOfRoot.getBoundingClientRect().top - parentNodeOfRoot.offsetTop;
         style.top = targetPos[boundaryType] - scrollTop + 'px';
         style.display = 'block';
         this.movingLineType = boundaryType;
@@ -622,6 +634,16 @@ var Draggable = defineClass(
           removeClass(dragItemElement, dragItemClassName);
         }
       }
+    },
+
+    /**
+     * Check if an element is a movingLineElement
+     * @param {HTMLElement} element - target element
+     * @returns {boolean}
+     * @private
+     */
+    _isMovingLineElement: function(element) {
+      return hasClass(element, this.lineClassName);
     }
   }
 );
