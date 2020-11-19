@@ -251,7 +251,8 @@
     content: '';
 }
 
-.tui-tree-content-wrapper:hover, .tui-tree-hover>.tui-tree-content-wrapper {
+.tui-tree-content-wrapper:hover,
+.tui-tree-hover > .tui-tree-content-wrapper {
     background: #e7eff7;
     background-color: rgba(75, 150, 230, .1);
 }
