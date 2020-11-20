@@ -641,7 +641,7 @@ var Draggable = defineClass(
      * @private
      */
     _isMovingLineElement: function(element) {
-      return hasClass(element, this.lineClassName);
+      return element && hasClass(element, this.lineClassName);
     }
   }
 );

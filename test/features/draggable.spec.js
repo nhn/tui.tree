@@ -61,8 +61,8 @@ describe('draggable feature', function() {
       currentElement = rootElement.querySelector('li');
       nodeId = tree.getNodeIdFromElement(currentElement);
       mousePos = {
-        x: 10,
-        y: 20
+        0: 10,
+        1: 20
       };
     });
 
@@ -131,8 +131,8 @@ describe('draggable feature', function() {
 
     it('should return true state when mouse position is in enable touched area', function() {
       mousePos = {
-        x: 10,
-        y: 20
+        0: 10,
+        1: 20
       };
 
       state = treeDraggable._isContain(targetPos, mousePos);
@@ -142,8 +142,8 @@ describe('draggable feature', function() {
 
     it('should return false state when mouse position is not in enable touched area', function() {
       mousePos = {
-        x: 2,
-        y: 3
+        0: 2,
+        1: 3
       };
 
       state = treeDraggable._isContain(targetPos, mousePos);
