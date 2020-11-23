@@ -60,10 +60,7 @@ describe('draggable feature', function() {
     beforeEach(function() {
       currentElement = rootElement.querySelector('li');
       nodeId = tree.getNodeIdFromElement(currentElement);
-      mousePos = {
-        0: 10,
-        1: 20
-      };
+      mousePos = [10, 20];
     });
 
     it('mouse overed tree item should be changed to hover style', function() {
@@ -130,10 +127,7 @@ describe('draggable feature', function() {
     });
 
     it('should return true state when mouse position is in enable touched area', function() {
-      mousePos = {
-        0: 10,
-        1: 20
-      };
+      mousePos = [10, 20];
 
       state = treeDraggable._isContain(targetPos, mousePos);
 
@@ -141,10 +135,7 @@ describe('draggable feature', function() {
     });
 
     it('should return false state when mouse position is not in enable touched area', function() {
-      mousePos = {
-        0: 2,
-        1: 3
-      };
+      mousePos = [2, 3];
 
       state = treeDraggable._isContain(targetPos, mousePos);
 

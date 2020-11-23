@@ -406,6 +406,7 @@ var Draggable = defineClass(
         tree.move(nodeId, newParentId, index);
       }
 
+      this.lastHoverNodeId = null;
       this._reset();
     },
 
@@ -433,7 +434,7 @@ var Draggable = defineClass(
         nodeId = childIds[childIds.length - 1];
       }
 
-      if (this._isMovingLineElement(target)) {
+      if (this._isGuideLineElement(target)) {
         nodeId = this.lastHoverNodeId;
       }
 
@@ -635,12 +636,12 @@ var Draggable = defineClass(
     },
 
     /**
-     * Check if an element is a movingLineElement
+     * Check if an element is a GuideLineElement
      * @param {HTMLElement} element - target element
      * @returns {boolean}
      * @private
      */
-    _isMovingLineElement: function(element) {
+    _isGuideLineElement: function(element) {
       return element && hasClass(element, this.lineClassName);
     }
   }
