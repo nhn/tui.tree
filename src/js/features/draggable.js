@@ -465,7 +465,7 @@ var Draggable = defineClass(
 
     /**
      * Apply move action that are delay effect and sortable moving node
-     * @param {strig} nodeId - Selected tree node id
+     * @param {string} nodeId - Selected tree node id
      * @param {object} mousePos - Current mouse position
      * @private
      */
@@ -535,22 +535,20 @@ var Draggable = defineClass(
     _isContain: function(targetPos, mousePos) {
       var top = targetPos.top;
       var bottom = targetPos.bottom;
+      var mousePosX = mousePos[0];
+      var mousePosY = mousePos[1];
 
       if (this.isSortable) {
         top += this.lineBoundary.top;
         bottom -= this.lineBoundary.bottom;
       }
 
-      if (
-        targetPos.left < mousePos.x &&
-        targetPos.right > mousePos.x &&
-        top < mousePos.y &&
-        bottom > mousePos.y
-      ) {
-        return true;
-      }
-
-      return false;
+      return (
+        targetPos.left < mousePosX &&
+        targetPos.right > mousePosX &&
+        top < mousePosY &&
+        bottom > mousePosY
+      );
     },
 
     /**
@@ -643,7 +641,7 @@ var Draggable = defineClass(
      * @private
      */
     _isMovingLineElement: function(element) {
-      return hasClass(element, this.lineClassName);
+      return element && hasClass(element, this.lineClassName);
     }
   }
 );
