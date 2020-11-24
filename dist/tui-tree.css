@@ -1,6 +1,6 @@
 /*!
  * TOAST UI Tree
- * @version 4.0.3
+ * @version 4.0.4
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -257,7 +257,8 @@
     content: '';
 }
 
-.tui-tree-content-wrapper:hover, .tui-tree-hover>.tui-tree-content-wrapper {
+.tui-tree-content-wrapper:hover,
+.tui-tree-hover > .tui-tree-content-wrapper {
     background: #e7eff7;
     background-color: rgba(75, 150, 230, .1);
 }
