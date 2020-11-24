@@ -111,6 +111,12 @@ var Draggable = defineClass(
       this.timer = null;
 
       /**
+       * Last mouse hovered nodeId
+       * @type {string | null}
+       */
+      this.lastHoverNodeId = null;
+
+      /**
        * Tag list for rejecting to drag
        * @param {Array.<string>}
        */
@@ -370,6 +376,7 @@ var Draggable = defineClass(
 
       nodeId = this.tree.getNodeIdFromElement(target);
       if (nodeId) {
+        this.lastHoverNodeId = nodeId;
         this._applyMoveAction(nodeId, mousePos);
       }
     },
@@ -399,6 +406,7 @@ var Draggable = defineClass(
         tree.move(nodeId, newParentId, index);
       }
 
+      this.lastHoverNodeId = null;
       this._reset();
     },
 
@@ -424,6 +432,10 @@ var Draggable = defineClass(
         nodeId = childIds[0];
       } else {
         nodeId = childIds[childIds.length - 1];
+      }
+
+      if (this._isGuideLineElement(target)) {
+        nodeId = this.lastHoverNodeId;
       }
 
       return nodeId;
@@ -454,7 +466,7 @@ var Draggable = defineClass(
 
     /**
      * Apply move action that are delay effect and sortable moving node
-     * @param {strig} nodeId - Selected tree node id
+     * @param {string} nodeId - Selected tree node id
      * @param {object} mousePos - Current mouse position
      * @private
      */
@@ -524,22 +536,20 @@ var Draggable = defineClass(
     _isContain: function(targetPos, mousePos) {
       var top = targetPos.top;
       var bottom = targetPos.bottom;
+      var mousePosX = mousePos[0];
+      var mousePosY = mousePos[1];
 
       if (this.isSortable) {
         top += this.lineBoundary.top;
         bottom -= this.lineBoundary.bottom;
       }
 
-      if (
-        targetPos.left < mousePos.x &&
-        targetPos.right > mousePos.x &&
-        top < mousePos.y &&
-        bottom > mousePos.y
-      ) {
-        return true;
-      }
-
-      return false;
+      return (
+        targetPos.left < mousePosX &&
+        targetPos.right > mousePosX &&
+        top < mousePosY &&
+        bottom > mousePosY
+      );
     },
 
     /**
@@ -569,10 +579,11 @@ var Draggable = defineClass(
      */
     _drawBoundaryLine: function(targetPos, boundaryType) {
       var style = this.lineElement.style;
+      var parentNodeOfRoot = this.tree.rootElement.parentNode;
       var scrollTop;
 
       if (boundaryType) {
-        scrollTop = this.tree.rootElement.parentNode.getBoundingClientRect().top;
+        scrollTop = parentNodeOfRoot.getBoundingClientRect().top - parentNodeOfRoot.offsetTop;
         style.top = targetPos[boundaryType] - scrollTop + 'px';
         style.display = 'block';
         this.movingLineType = boundaryType;
@@ -622,6 +633,16 @@ var Draggable = defineClass(
           removeClass(dragItemElement, dragItemClassName);
         }
       }
+    },
+
+    /**
+     * Check if an element is a GuideLineElement
+     * @param {HTMLElement} element - target element
+     * @returns {boolean}
+     * @private
+     */
+    _isGuideLineElement: function(element) {
+      return element && hasClass(element, this.lineClassName);
     }
   }
 );
