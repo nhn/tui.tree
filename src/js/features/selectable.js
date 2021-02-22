@@ -145,6 +145,7 @@ var Selectable = defineClass(
           removeClass(prevElement, selectedClassName);
         }
         addClass(nodeElement, selectedClassName);
+        this.selectedNodeId = nodeId;
 
         /**
          * @event Tree#select
@@ -166,7 +167,6 @@ var Selectable = defineClass(
           prevNodeId: prevNodeId,
           target: target
         });
-        this.selectedNodeId = nodeId;
       }
     },
 
