@@ -1,6 +1,6 @@
 /*!
  * TOAST UI Tree
- * @version 4.0.5
+ * @version 4.0.6
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -5920,6 +5920,7 @@ var Selectable = defineClass(
           removeClass(prevElement, selectedClassName);
         }
         addClass(nodeElement, selectedClassName);
+        this.selectedNodeId = nodeId;
 
         /**
          * @event Tree#select
@@ -5941,7 +5942,6 @@ var Selectable = defineClass(
           prevNodeId: prevNodeId,
           target: target
         });
-        this.selectedNodeId = nodeId;
       }
     },
 
