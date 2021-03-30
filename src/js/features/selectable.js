@@ -112,8 +112,6 @@ var Selectable = defineClass(
       }
 
       tree = this.tree;
-      prevElement = this.getPrevElement();
-      nodeElement = document.getElementById(nodeId);
       selectedClassName = this.selectedClassName;
       prevNodeId = this.selectedNodeId;
 
@@ -139,6 +137,9 @@ var Selectable = defineClass(
         prevNodeId: prevNodeId,
         target: target
       });
+
+      prevElement = this.getPrevElement();
+      nodeElement = document.getElementById(nodeId);
 
       if (invokeResult) {
         if (prevElement) {
