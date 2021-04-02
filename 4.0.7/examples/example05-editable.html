@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+    <head lang="en">
+        <meta charset="UTF-8">
+        <title>Tree with "Editable" feature</title>
+        <link rel="stylesheet" type="text/css" href="./css/tui-example-style.css" />
+        <link rel="stylesheet" type="text/css" href="./css/docs.css" />
+        <link rel="stylesheet" type="text/css" href="../dist/tui-tree.css" />
+    </head>
+
+    <body>
+        <div class="code-html">
+            <div id="tree" class="tui-tree-wrap"></div>
+        </div>
+        <div class="explain">
+            <h3>Double-click on each node.</h3>
+        </div>
+        <script src="../dist/tui-tree.js"></script>
+        <script class="code-js">
+
+        var data = [
+            {text: 'rootA', children: [
+                {text: 'sub-A1'},
+                {text: 'sub-A2'},
+                {text: 'sub-A3'},
+                {text: 'sub-A4'},
+                {text: 'sub-A5', state: 'closed', children: [
+                    {text:'sub-A5A', children:[
+                        {text:'sub-A5A1'}
+                    ]},
+                    {text:'sub_A5B'}
+                ]},
+                {text: 'sub-A6'},
+                {text: 'sub-A7'},
+                {text: 'sub-A8'},
+                {text: 'sub-A9', state: 'closed', children: [
+                    {text:'sub-A9A'},
+                    {text:'sub-A9B'}
+                ]},
+                {text: 'sub-A10'},
+                {text: 'sub-A11'},
+                {text: 'sub-A12'}
+            ]},
+            {text: 'rootB', state:'closed', children: [
+                {text:'sub-B1'},
+                {text:'sub-B2'},
+                {text:'sub-B3'}
+            ]}
+        ];
+
+        var tree = new tui.Tree('#tree', {
+            data: data,
+            nodeDefaultState: 'opened'
+        }).enableFeature('Editable', {
+            dataKey: 'text'
+        });
+
+        </script>
+    </body>
+</html>
