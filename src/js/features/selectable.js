@@ -105,15 +105,14 @@ var Selectable = defineClass(
      * @private
      */
     _select: function(nodeId, target) {
-      var tree, prevElement, nodeElement, selectedClassName, prevNodeId, invokeResult;
+      var tree, root, prevElement, nodeElement, selectedClassName, prevNodeId, invokeResult;
 
       if (!nodeId) {
         return;
       }
 
       tree = this.tree;
-      prevElement = this.getPrevElement();
-      nodeElement = document.getElementById(nodeId);
+      root = tree.rootElement;
       selectedClassName = this.selectedClassName;
       prevNodeId = this.selectedNodeId;
 
@@ -139,6 +138,9 @@ var Selectable = defineClass(
         prevNodeId: prevNodeId,
         target: target
       });
+
+      prevElement = this.getPrevElement();
+      nodeElement = root.querySelector('#' + nodeId);
 
       if (invokeResult) {
         if (prevElement) {
