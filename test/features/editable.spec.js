@@ -65,9 +65,8 @@ describe('editable feature', function() {
     });
 
     it('should fire "successResponse" when Ajax feature is enabled', function() {
-      jasmine.Ajax.install();
-
-      spyOn(treeEditable, '_onSuccessResponse');
+      xhrMock.install();
+      treeEditable._onSuccessResponse = jest.fn();
 
       tree.enableFeature('Ajax', {
         command: {
@@ -81,7 +80,7 @@ describe('editable feature', function() {
 
       expect(treeEditable._onSuccessResponse).toHaveBeenCalled();
 
-      jasmine.Ajax.uninstall();
+      xhrMock.uninstall();
     });
   });
 

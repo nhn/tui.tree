@@ -6,7 +6,7 @@ describe('Ajax feature', function() {
   beforeEach(function() {
     loadFixtures('basicFixture.html');
 
-    jasmine.Ajax.install();
+    xhrMock.install();
 
     tree = new Tree('#tree', {
       rootElement: 'treeRoot'
@@ -14,7 +14,7 @@ describe('Ajax feature', function() {
   });
 
   afterEach(function() {
-    jasmine.Ajax.uninstall();
+    xhrMock.uninstall();
   });
 
   it('loader should be created in the tree when Ajax feature is enabled', function() {
@@ -87,7 +87,7 @@ describe('Ajax feature', function() {
     });
 
     it('should not request to a server on init when "isLoadRoot" is false', function() {
-      spyOn(tree, 'resetAllData');
+      tree.resetAllData = jest.fn();
 
       tree.on('initFeature');
 
@@ -113,24 +113,19 @@ describe('Ajax feature', function() {
     it('request should not be execute when request url is empty', function() {
       treeAjax.loadData('read');
 
-      request = jasmine.Ajax.requests.mostRecent();
-
-      expect(request).toBeUndefined();
+      expect(xhrMock.open).not.toHaveBeenCalled();
     });
 
     it('request should be executed when request options are valid', function() {
       treeAjax.loadData('remove');
 
-      request = jasmine.Ajax.requests.mostRecent();
-
-      expect(request.url).toBe('api/test');
-      expect(request.method).toBe('GET');
+      expect(xhrMock.open).toHaveBeenCalledWith('GET', 'api/test');
     });
 
     it('request url should include query strings when request is "GET" with parameters', function() {
       var expected = 'api/test?param1=a&param2=b';
 
-      spyOn(treeAjax, '_getDefaultRequestOptions').and.returnValue({
+      treeAjax._getDefaultRequestOptions = jest.fn().mockReturnValue({
         url: 'api/test',
         method: 'GET',
         contentType: 'application/json',
@@ -142,27 +137,25 @@ describe('Ajax feature', function() {
 
       treeAjax.loadData('remove');
 
-      request = jasmine.Ajax.requests.mostRecent();
-
-      expect(request.url).toBe(expected);
+      expect(xhrMock.open).toHaveBeenCalledWith('GET', expected);
     });
 
     it('request property should not be null when request is "POST" with parameters', function() {
-      spyOn(treeAjax, '_getDefaultRequestOptions').and.returnValue({
+      var parmas = {
+        param1: 'a',
+        param2: 'b'
+      };
+
+      treeAjax._getDefaultRequestOptions = jest.fn().mockReturnValue({
         url: 'api/test',
         method: 'POST',
         contentType: 'application/json',
-        params: {
-          param1: 'a',
-          param2: 'b'
-        }
+        params: parmas
       });
 
       treeAjax.loadData('remove');
 
-      request = jasmine.Ajax.requests.mostRecent();
-
-      expect(request.params).not.toBeNull();
+      expect(xhrMock.send).toHaveBeenCalledWith(JSON.stringify(parmas));
     });
   });
 
@@ -179,27 +172,27 @@ describe('Ajax feature', function() {
       });
 
       treeAjax = tree.enabledFeatures.Ajax;
-      callback = jasmine.createSpy('callback function');
+      callback = jest.fn();
     });
 
     it('callback function should be executed when response is success', function() {
-      treeAjax.loadData('read', callback);
-      jasmine.Ajax.requests.mostRecent().respondWith({
+      xhrMock.setResponse({
         status: 200,
         responseText: '{}'
       });
+      treeAjax.loadData('read', callback);
 
       expect(callback).toHaveBeenCalled();
     });
 
     it('the loader should be hidden when response is success', function() {
       var className = treeAjax.loaderClassName;
-      treeAjax._showLoader();
-      treeAjax.loadData('read', callback);
-      jasmine.Ajax.requests.mostRecent().respondWith({
+      xhrMock.setResponse({
         status: 200,
         responseText: '{}'
       });
+      treeAjax._showLoader();
+      treeAjax.loadData('read', callback);
 
       expect(document.querySelector('.' + className).style.display).toBe('none');
     });
@@ -208,7 +201,7 @@ describe('Ajax feature', function() {
       var className = treeAjax.loaderClassName;
       treeAjax._showLoader();
       treeAjax.loadData('read', callback);
-      jasmine.Ajax.requests.mostRecent().respondWith({
+      xhrMock.setResponse({
         status: 404
       });
 
@@ -216,12 +209,12 @@ describe('Ajax feature', function() {
     });
 
     it('the "errorAjaxResponse" custom event should be fired when response is failed', function() {
-      var handler = jasmine.createSpy('error event handler');
-      tree.on('errorAjaxResponse', handler);
-      treeAjax.loadData('read', callback);
-      jasmine.Ajax.requests.mostRecent().respondWith({
+      var handler = jest.fn();
+      xhrMock.setResponse({
         status: 404
       });
+      tree.on('errorAjaxResponse', handler);
+      treeAjax.loadData('read', callback);
 
       expect(handler).toHaveBeenCalled();
     });
@@ -232,6 +225,13 @@ describe('Ajax feature', function() {
 
     beforeEach(function() {
       rootNodeId = tree.getRootNodeId();
+      xhrMock.setResponse({
+        status: 200,
+        responseText: '[{"text":"A","state":"opened","hasChild":true},{"text":"B"}]',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
 
       tree.enableFeature('Ajax', {
         command: {
@@ -240,17 +240,8 @@ describe('Ajax feature', function() {
           }
         }
       });
-
       tree.on('successAjaxResponse', function(evt) {
         newChildIds = evt.data;
-      });
-
-      jasmine.Ajax.requests.mostRecent().respondWith({
-        status: 200,
-        responseText: '[{"text":"A","state":"opened","hasChild":true},{"text":"B"}]',
-        headers: {
-          'Content-Type': 'application/json'
-        }
       });
     });
 
@@ -260,16 +251,16 @@ describe('Ajax feature', function() {
 
     it('children nodes should be added when state label is opened', function() {
       var nodeId = tree.getChildIds(rootNodeId)[0];
-
-      tree.close(nodeId);
-      tree.toggle(nodeId);
-      jasmine.Ajax.requests.mostRecent().respondWith({
+      xhrMock.setResponse({
         status: 200,
         responseText: '[{"text":"A","state":"opened","hasChild":true},{"text":"B"}]',
         headers: {
           'Content-Type': 'application/json'
         }
       });
+
+      tree.close(nodeId);
+      tree.toggle(nodeId);
 
       expect(tree.getChildIds(nodeId)).toEqual(newChildIds);
     });
@@ -291,13 +282,7 @@ describe('Ajax feature', function() {
     });
 
     it('new node should be created when response data is success', function() {
-      tree.on('successAjaxResponse', function(evt) {
-        newChildIds = evt.data;
-      });
-
-      tree.add({ text: 'C' }, parentId);
-
-      jasmine.Ajax.requests.mostRecent().respondWith({
+      xhrMock.setResponse({
         status: 200,
         responseText: 'true',
         headers: {
@@ -305,19 +290,24 @@ describe('Ajax feature', function() {
         }
       });
 
+      tree.on('successAjaxResponse', function(evt) {
+        newChildIds = evt.data;
+      });
+      tree.add({ text: 'C' }, parentId);
+
       expect(tree.getChildIds(parentId)).toEqual(newChildIds);
     });
 
     it('new node should not be created when response data is error', function() {
-      tree.add({ text: 'C' }, parentId);
-
-      jasmine.Ajax.requests.mostRecent().respondWith({
+      xhrMock.setResponse({
         status: 200,
         responseText: 'false',
         headers: {
           'Content-Type': 'application/json'
         }
       });
+
+      tree.add({ text: 'C' }, parentId);
 
       expect(tree.getChildIds(parentId).length).toBe(0);
     });
@@ -343,29 +333,27 @@ describe('Ajax feature', function() {
     });
 
     it('selected node should be removed when response data is success', function() {
-      tree.remove(nodeId);
-
-      jasmine.Ajax.requests.mostRecent().respondWith({
+      xhrMock.setResponse({
         status: 200,
         responseText: 'true',
         headers: {
           'Content-Type': 'application/json'
         }
       });
+      tree.remove(nodeId);
 
       expect(tree.getChildIds(parentId).length).toBe(children.length - 1);
     });
 
     it('selected node should not be removed when response data is error', function() {
-      tree.remove(nodeId);
-
-      jasmine.Ajax.requests.mostRecent().respondWith({
+      xhrMock.setResponse({
         status: 200,
         responseText: 'false',
         headers: {
           'Content-Type': 'application/json'
         }
       });
+      tree.remove(nodeId);
 
       expect(tree.getChildIds(parentId).length).toBe(children.length);
     });
@@ -391,57 +379,53 @@ describe('Ajax feature', function() {
     });
 
     it('selected node data should be updated when response data is success', function() {
-      tree.setNodeData(nodeId, changedData);
-
-      jasmine.Ajax.requests.mostRecent().respondWith({
+      xhrMock.setResponse({
         status: 200,
         responseText: 'true',
         headers: {
           'Content-Type': 'application/json'
         }
       });
+      tree.setNodeData(nodeId, changedData);
 
       expect(tree.getNodeData(nodeId).text).toBe(changedData.text);
     });
 
     it('selected node data should not be updated when response data is error', function() {
-      tree.setNodeData(nodeId, changedData);
-
-      jasmine.Ajax.requests.mostRecent().respondWith({
+      xhrMock.setResponse({
         status: 200,
         responseText: 'false',
         headers: {
           'Content-Type': 'application/json'
         }
       });
+      tree.setNodeData(nodeId, changedData);
 
       expect(tree.getNodeData(nodeId).text).not.toBe(changedData.text);
     });
 
     it('deleted node data should be updated when response data is success', function() {
-      tree.removeNodeData(nodeId, 'propA');
-
-      jasmine.Ajax.requests.mostRecent().respondWith({
+      xhrMock.setResponse({
         status: 200,
         responseText: 'true',
         headers: {
           'Content-Type': 'application/json'
         }
       });
+      tree.removeNodeData(nodeId, 'propA');
 
       expect(tree.getNodeData(nodeId).propA).toBeUndefined();
     });
 
     it('deleted node data should not be updated when response data is error', function() {
-      tree.removeNodeData(nodeId, 'propA');
-
-      jasmine.Ajax.requests.mostRecent().respondWith({
+      xhrMock.setResponse({
         status: 200,
         responseText: 'false',
         headers: {
           'Content-Type': 'application/json'
         }
       });
+      tree.removeNodeData(nodeId, 'propA');
 
       expect(tree.getNodeData(nodeId).propA).toBe('aa');
     });
@@ -466,29 +450,27 @@ describe('Ajax feature', function() {
     });
 
     it('all children nodes should be removed when response data is success', function() {
-      tree.removeAllChildren(nodeId);
-
-      jasmine.Ajax.requests.mostRecent().respondWith({
+      xhrMock.setResponse({
         status: 200,
         responseText: 'true',
         headers: {
           'Content-Type': 'application/json'
         }
       });
+      tree.removeAllChildren(nodeId);
 
       expect(tree.getChildIds(nodeId).length).toBe(0);
     });
 
     it('all children nodes should not be removed when response data is faild', function() {
-      tree.removeAllChildren(nodeId);
-
-      jasmine.Ajax.requests.mostRecent().respondWith({
+      xhrMock.setResponse({
         status: 200,
         responseText: 'false',
         headers: {
           'Content-Type': 'application/json'
         }
       });
+      tree.removeAllChildren(nodeId);
 
       expect(tree.getChildIds(nodeId).length).toBe(children.length);
     });
@@ -519,29 +501,27 @@ describe('Ajax feature', function() {
     });
 
     it('node should be moved when response data is success', function() {
-      tree.move(nodeId, newParentId);
-
-      jasmine.Ajax.requests.mostRecent().respondWith({
+      xhrMock.setResponse({
         status: 200,
         responseText: 'true',
         headers: {
           'Content-Type': 'application/json'
         }
       });
+      tree.move(nodeId, newParentId);
 
       expect(tree.getParentId(nodeId)).toBe(newParentId);
     });
 
     it('node should not be moved when response data is error', function() {
-      tree.move(nodeId, newParentId);
-
-      jasmine.Ajax.requests.mostRecent().respondWith({
+      xhrMock.setResponse({
         status: 200,
         responseText: 'false',
         headers: {
           'Content-Type': 'application/json'
         }
       });
+      tree.move(nodeId, newParentId);
 
       expect(tree.getParentId(nodeId)).toBe(rootNodeId);
     });

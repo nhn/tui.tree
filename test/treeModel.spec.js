@@ -93,15 +93,15 @@ describe('TreeModel', function() {
   });
 
   it('- Each(all) method should iterate over all descendants of a (root or specific)node', function() {
-    var iteratee = jasmine.createSpy();
+    var iteratee = jest.fn();
     var firstChildIdOfRoot = treeModel.rootNode.getChildIds()[0];
 
     treeModel.eachAll(iteratee);
-    expect(iteratee.calls.count()).toEqual(25);
+    expect(iteratee).toHaveBeenCalledTimes(25);
 
-    iteratee.calls.reset();
+    iteratee.mockReset();
     treeModel.each(iteratee, firstChildIdOfRoot);
-    expect(iteratee.calls.count()).toEqual(17);
+    expect(iteratee).toHaveBeenCalledTimes(17);
   });
 
   describe('- Sort method', function() {
@@ -145,7 +145,7 @@ describe('TreeModel', function() {
   });
 
   it('should fire update event when a node added', function() {
-    var handler = jasmine.createSpy('updateHandler');
+    var handler = jest.fn();
     var rootId = treeModel.rootNode.getId();
 
     treeModel.on('update', handler);
@@ -155,7 +155,7 @@ describe('TreeModel', function() {
   });
 
   it('should fire update event when a node removed', function() {
-    var handler = jasmine.createSpy('updateHandler');
+    var handler = jest.fn();
     var rootId = treeModel.rootNode.getId();
     var firstChildId = treeModel.rootNode.getChildIds()[0];
 
@@ -166,7 +166,7 @@ describe('TreeModel', function() {
   });
 
   it('should fire update event when node data changed', function() {
-    var handler = jasmine.createSpy('updateHandler');
+    var handler = jest.fn();
     var firstChildId = treeModel.rootNode.getChildIds()[0];
 
     treeModel.on('update', handler);
@@ -177,7 +177,7 @@ describe('TreeModel', function() {
   });
 
   it('should fire move event when a node moved', function() {
-    var handler = jasmine.createSpy('moveHandler');
+    var handler = jest.fn();
     var rootId = treeModel.rootNode.getId();
     var firstChildId = treeModel.rootNode.getChildIds()[0];
     var grandChildId = treeModel.getNode(firstChildId).getChildIds()[0];

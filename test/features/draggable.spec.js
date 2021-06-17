@@ -2,8 +2,6 @@ var hasClass = require('tui-code-snippet/domUtil/hasClass');
 
 var Tree = require('../../src/js/tree');
 
-jasmine.getFixtures().fixturesPath = 'base/test/fixtures';
-
 describe('draggable feature', function() {
   var rootElement, tree, treeDraggable;
   var data = [
@@ -64,8 +62,8 @@ describe('draggable feature', function() {
     });
 
     it('mouse overed tree item should be changed to hover style', function() {
-      spyOn(treeDraggable, '_isContain').and.returnValue(true);
-      spyOn(treeDraggable, '_hover');
+      treeDraggable._isContain = jest.fn().mockReturnValue(true);
+      treeDraggable._hover = jest.fn();
 
       treeDraggable._applyMoveAction(nodeId, mousePos);
 
@@ -73,8 +71,8 @@ describe('draggable feature', function() {
     });
 
     it('mouse overed tree item should be changed to unhover style', function() {
-      spyOn(treeDraggable, '_isContain').and.returnValue(false);
-      spyOn(treeDraggable, '_unhover');
+      treeDraggable._isContain = jest.fn().mockReturnValue(false);
+      treeDraggable._unhover = jest.fn();
 
       treeDraggable._applyMoveAction(nodeId, mousePos);
 
@@ -82,8 +80,8 @@ describe('draggable feature', function() {
     });
 
     it('should draw boundary line on tree items when drag type is sortable', function() {
-      spyOn(treeDraggable, '_getBoundaryType').and.returnValue('top');
-      spyOn(treeDraggable, '_drawBoundaryLine');
+      treeDraggable._getBoundaryType = jest.fn().mockReturnValue('top');
+      treeDraggable._drawBoundaryLine = jest.fn();
 
       treeDraggable.isSortable = true;
 
@@ -97,7 +95,7 @@ describe('draggable feature', function() {
     var currentElement = rootElement.querySelector('li');
     var nodeId = tree.getNodeIdFromElement(currentElement);
 
-    spyOn(tree, 'isLeaf').and.returnValue(true);
+    tree.isLeaf = jest.fn().mockReturnValue(true);
 
     treeDraggable.hoveredElement = currentElement;
     treeDraggable._hover(nodeId);
@@ -225,7 +223,7 @@ describe('draggable feature', function() {
       target: null
     };
 
-    spyOn(tree.model, 'move');
+    tree.model.move = jest.fn();
 
     tree.on('beforeMove', function() {
       return false;

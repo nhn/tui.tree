@@ -53,7 +53,7 @@ describe('Tree', function() {
     });
 
     it('should run once per node ', function() {
-      spyOn(tree, '_setNodeClassNameAndVisibility').and.callThrough();
+      jest.spyOn(tree, '_setNodeClassNameAndVisibility');
 
       tree.refresh();
 
@@ -109,22 +109,22 @@ describe('Tree', function() {
     });
 
     it('should fire singleClick event', function() {
-      var handler = jasmine.createSpy('singleClick handler');
+      var handler = jest.fn();
       var eventMock = {
         target: document.createElement('DIV')
       };
 
-      jasmine.clock().uninstall();
-      jasmine.clock().install();
+      jest.useRealTimers();
+      jest.useFakeTimers();
 
       tree.on('singleClick', handler);
       tree.clickTimer = null; // No clicked
       tree._onClick(eventMock); // Single click
 
-      jasmine.clock().tick(401);
+      jest.advanceTimersByTime(401);
 
       expect(handler).toHaveBeenCalled();
-      jasmine.clock().uninstall();
+      jest.useRealTimers();
     });
 
     it('"open(), close()" should change button label', function() {
@@ -178,7 +178,7 @@ describe('Tree', function() {
     });
 
     it('should fire doubleClick event', function() {
-      var handler = jasmine.createSpy('doubleClick handler');
+      var handler = jest.fn();
       var eventMock = {
         target: document.createElement('DIV')
       };
@@ -194,7 +194,7 @@ describe('Tree', function() {
       var subtreeElement;
       var testData = [{ text: 'hello world' }, { text: 'new world' }];
 
-      spyOn(tree, '_draw').and.callThrough();
+      jest.spyOn(tree, '_draw');
 
       tree.add(testData, firstChildId);
       subtreeElement = document.getElementById(firstChildId).lastChild;
@@ -210,7 +210,7 @@ describe('Tree', function() {
       ];
       var ids = tree.add(testData, firstChildId, false, false);
 
-      expect(ids).toEqual(jasmine.any(Array));
+      expect(ids).toEqual(expect.any(Array));
       expect(ids.length).toEqual(2);
     });
 
@@ -240,7 +240,7 @@ describe('Tree', function() {
     });
 
     it('"move()" should fire "move" event with some related ids', function() {
-      var mock = jasmine.createSpy('move event handler');
+      var mock = jest.fn();
       var index = -1;
 
       tree.on('move', mock);
@@ -258,7 +258,7 @@ describe('Tree', function() {
       var result = tree.search({
         text: '5'
       });
-      expect(result).toEqual(jasmine.any(Array));
+      expect(result).toEqual(expect.any(Array));
       expect(result.length).toEqual(2);
 
       result = tree.search(function(node) {
@@ -266,12 +266,12 @@ describe('Tree', function() {
 
         return text === '가' || text === '나';
       });
-      expect(result).toEqual(jasmine.any(Array));
+      expect(result).toEqual(expect.any(Array));
       expect(result.length).toEqual(4);
     });
 
     it('option:"renderTemplate" should override template renderer', function() {
-      var templateRenderer = jasmine.createSpy().and.callFake(function(source, props) {
+      var templateRenderer = jest.fn().mockImplementation(function(source, props) {
         return template(source, props);
       });
 
@@ -329,7 +329,7 @@ describe('Tree', function() {
 
   describe('option', function() {
     beforeEach(function() {
-      spyOn(util, 'sendHostName');
+      util.sendHostName = jest.fn();
       loadFixtures('basicFixture.html');
       container = '#tree';
     });
