@@ -31,8 +31,8 @@
 - [🔧 Pull Request Steps](#-pull-request-steps)
   - [Setup](#setup)
   - [Develop](#develop)
-    - [Run dev server](#run-dev-server)
-    - [Run test](#run-test)
+    - [Running dev server](#running-dev-server)
+    - [Running test](#running-test)
   - [Pull Request](#pull-request)
 - [💬 Contributing](#-contributing)
 - [🍞 TOAST UI Family](#-toast-ui-family)
@@ -221,14 +221,14 @@ Let's start development!
 You can see your code is reflected as soon as you saving the codes by running a server.
 Don't miss adding test cases and then make green rights.
 
-#### Run dev server
+#### Running dev server
 
 ```sh
 $ npm run serve
 $ npm run serve:ie8 # Run on Internet Explorer 8
 ```
 
-#### Run test
+#### Running test
 
 ```sh
 $ npm run test
