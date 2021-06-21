@@ -114,7 +114,6 @@ describe('Tree', function() {
         target: document.createElement('DIV')
       };
 
-      jest.useRealTimers();
       jest.useFakeTimers();
 
       tree.on('singleClick', handler);

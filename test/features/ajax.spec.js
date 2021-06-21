@@ -96,7 +96,7 @@ describe('Ajax feature', function() {
   });
 
   describe('loadData() Ajax request - ', function() {
-    var request, treeAjax;
+    var treeAjax;
 
     beforeEach(function() {
       tree.enableFeature('Ajax', {
