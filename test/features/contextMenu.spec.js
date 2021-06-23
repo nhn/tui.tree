@@ -95,7 +95,7 @@ describe('contextMenu feature', function() {
     it('new floating layer should be generated', function() {
       contextMenu.flElement = null;
 
-      spyOn(contextMenu, '_createFloatingLayer');
+      contextMenu._createFloatingLayer = jest.fn();
 
       contextMenu._generateContextMenu();
 
@@ -113,7 +113,7 @@ describe('contextMenu feature', function() {
     var target = rootElement.querySelector('li');
     var nodeId = target.getAttribute('id');
 
-    spyOn(tree, 'getNodeIdFromElement').and.returnValue(nodeId);
+    tree.getNodeIdFromElement = jest.fn().mockReturnValue(nodeId);
 
     tree._onContextMenu({
       target: target
@@ -123,7 +123,7 @@ describe('contextMenu feature', function() {
   });
 
   it('custom event as "selectContextMenu" should be fired when the context menu is selected', function() {
-    var spyListener = jasmine.createSpy();
+    var spyListener = jest.fn();
     var mock = {
       command: 'test',
       nodeId: null
@@ -138,12 +138,12 @@ describe('contextMenu feature', function() {
 
   describe('When context-menu feature is disabled,', function() {
     beforeEach(function() {
-      spyOn(contextMenu, '_restoreTextSelection');
+      contextMenu._restoreTextSelection = jest.fn();
       tree.disableFeature('ContextMenu');
     });
 
     it('events should be removed', function() {
-      var spyListener = jasmine.createSpy();
+      var spyListener = jest.fn();
 
       tree.on('selectContextMenu', spyListener);
 

@@ -6,11 +6,12 @@ module.exports = {
   },
   env: {
     commonjs: true,
-    jasmine: true,
+    jest: true,
     amd: true,
     node: true
   },
   globals: {
-    loadFixtures: true
+    loadFixtures: true,
+    xhrMock: true
   }
 };
