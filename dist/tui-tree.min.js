@@ -1,6 +1,6 @@
 /*!
  * TOAST UI Tree
- * @version 4.0.7
+ * @version 4.0.8
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
