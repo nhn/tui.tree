@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+    <head lang="en">
+        <meta charset="UTF-8">
+        <title>Tree with "Ajax" feature</title>
+        <link rel="stylesheet" type="text/css" href="./css/tui-example-style.css" />
+        <link rel="stylesheet" type="text/css" href="./css/docs.css" />
+        <link rel="stylesheet" type="text/css" href="../dist/tui-tree.css" />
+        <link rel="stylesheet" type="text/css" href="https://uicdn.toast.com/tui.context-menu/v2.1.6/tui-context-menu.css" />
+    </head>
+
+    <body>
+        <div class="code-html">
+            <div id="tree" class="tui-tree-wrap"></div>
+        </div>
+        <div class="explain">
+            <h3>To create / update / remove a tree node, please right-click.</h3>
+            <p>ContextMenu feature does not support IE8.</p>
+            <textarea id="before-ajax-request" readonly></textarea>
+            <textarea id="success-ajax-response" readonly></textarea>
+        </div>
+
+        <script src="https://uicdn.toast.com/tui.context-menu/v2.1.6/tui-context-menu.min.js"></script>
+        <script src="../dist/tui-tree.js"></script>
+        <script class="code-js">
+        // Create Tree component
+        var tree = new tui.Tree('#tree', {
+            nodeDefaultState: 'opened',
+            template: {
+                internalNode: // Change to Mustache's format
+                    '<div class="tui-tree-content-wrapper" style="padding-left: {{indent}}px">' + // Example for using indent value
+                        '<button type="button" class="tui-tree-toggle-btn tui-js-tree-toggle-btn">' +
+                            '<span class="tui-ico-tree"></span>' +
+                            '{{stateLabel}}' +
+                        '</button>' +
+                        '<span class="tui-tree-text tui-js-tree-text">' +
+                            '<span class="tui-tree-ico tui-ico-folder"></span>' +
+                            '{{text}}' +
+                        '</span>' +
+                    '</div>' +
+                    '<ul class="tui-tree-subtree tui-js-tree-subtree">' +
+                        '{{children}}' + // Mustache's format
+                    '</ul>',
+                leafNode:
+                    '<div class="tui-tree-content-wrapper" style="padding-left: {{indent}}px">' + // Example for using indent value
+                        '<span class="tui-tree-text {{textClass}}">' +
+                            '<span class="tui-tree-ico tui-ico-file"></span>' +
+                            '{{text}}' +
+                        '</span>' +
+                    '</div>'
+            }
+        });
+
+        // Bind custom event
+        tree.on('selectContextMenu', function(e) {
+            var command = e.command;
+            var nodeId = e.nodeId;
+
+            switch (command) {
+                case 'create':
+                    tree.createChildNode(nodeId);
+                    break;
+                case 'update':
+                    tree.editNode(nodeId);
+                    break;
+                case 'remove':
+                    tree.remove(nodeId);
+                    break;
+            }
+        });
+
+        tree.on('beforeCreateChildNode', function(event) {
+            if (event.cause === 'blur') {
+                tree.finishEditing();
+                tree.remove(event.nodeId);
+                return false;
+            }
+            return confirm('Are you sure you want to create?');
+        });
+
+        tree.on('beforeEditNode', function(event) {
+            if (event.cause === 'blur') {
+                tree.finishEditing();
+                return false;
+            }
+            return confirm('Are you sure you want to edit?');
+        });
+
+        tree.on('beforeMove', function() {
+            console.log('before move');
+        });
+
+        tree.on('beforeAjaxRequest', function(eventData) {
+            print('beforeAjaxRequest', eventData);
+        })
+
+        tree.on('successAjaxResponse', function(eventData) {
+            print('successAjaxResponse', eventData);
+        });
+
+        function print(title, jsonData) {
+            var textareaId = title.replace(/([A-Z])/g, '-$1').toLowerCase();
+            var message = title + ' : \n';
+            message += JSON.stringify(jsonData, null, 8);
+
+            document.getElementById(textareaId).value = message
+        }
+
+        // Add features
+        tree.enableFeature('Selectable')
+            .enableFeature('Editable', {
+            dataKey: 'text'
+        }).enableFeature('Draggable', {
+            isSortable: true
+        }).enableFeature('ContextMenu', {
+            menuData: [
+                {title: 'create', command: 'create'},
+                {title: 'update', command: 'update'},
+                {title: 'remove', command: 'remove'}
+            ]
+        }).enableFeature('Ajax', {
+            command: {
+                read: {
+                    url: 'data/tree.json',
+                    contentType: 'application/json',
+                    params: function(treeData) {
+                        return {
+                            productId: tree.getNodeData(treeData.nodeId).pid
+                        };
+                    }
+                },
+                create: {
+                    url: 'data/response.json',
+                    contentType: 'application/json',
+                    params: function(treeData) {
+                        return {
+                            targetId: tree.getNodeData(treeData.parentId).pid,
+                            productName: treeData.data.text
+                        };
+                    }
+                },
+                update: {
+                    url: 'data/response.json',
+                    contentType: 'application/json',
+                    params: function(treeData) {
+                        return {
+                            productId: tree.getNodeData(treeData.nodeId).pid,
+                            productName: treeData.data.text
+                        };
+                    }
+                },
+                remove: {
+                    url: 'data/response.json',
+                    contentType: 'application/json',
+                    params: function(treeData) {
+                        return {
+                            productId: tree.getNodeData(treeData.nodeId).pid
+                        };
+                    }
+                },
+                move: {
+                    url: 'data/response.json',
+                    contentType: 'application/json',
+                    params: function(treeData) {
+                        return {
+                            productId: tree.getNodeData(treeData.nodeId).pid,
+                            targetId: tree.getNodeData(treeData.newParentId).pid,
+                            moveIdx: treeData.index
+                        };
+                    }
+                }
+            },
+            parseData: function(command, responseData) {
+                if (command === 'read') {
+                    return responseData.tree;
+                } else {
+                    return true;
+                }
+            }
+        });
+        </script>
+    </body>
+</html>
