@@ -70,7 +70,7 @@ describe('checkbox feature', function() {
 
   it('should fire "check"-event when a node is checked', function() {
     var firstChildId = tree.getChildIds(tree.getRootNodeId())[0];
-    var spy = jasmine.createSpy();
+    var spy = jest.fn();
 
     tree.on('check', spy);
     tree.check(firstChildId);
@@ -82,7 +82,7 @@ describe('checkbox feature', function() {
 
   it('should fire "uncheck"-event when a node is unchecked', function() {
     var firstChildId = tree.getChildIds(tree.getRootNodeId())[0];
-    var spy = jasmine.createSpy();
+    var spy = jest.fn();
     tree.on('uncheck', spy);
 
     tree.uncheck(firstChildId);

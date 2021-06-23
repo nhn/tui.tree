@@ -38,14 +38,14 @@ describe('TreeNode', function() {
 
   it('should add/remove a node by data', function() {
     expect(node.getAllData()).toEqual(
-      jasmine.objectContaining({
+      expect.objectContaining({
         title: 'My node'
       })
     );
 
     node.setData({ newData: 'data2' });
     expect(node.getAllData()).toEqual(
-      jasmine.objectContaining({
+      expect.objectContaining({
         title: 'My node',
         newData: 'data2'
       })

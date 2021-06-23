@@ -55,7 +55,7 @@ describe('selectable feature', function() {
     });
 
     it('should not invoke "beforeSelect" if the selected node does not exist', function() {
-      var spyListener = jasmine.createSpy();
+      var spyListener = jest.fn();
       eventMock = {
         target: null
       };
@@ -67,7 +67,7 @@ describe('selectable feature', function() {
     });
 
     it('should invoke "beforeSelect" if the selected node exists', function() {
-      var beforeSelectListenerSpy = jasmine.createSpy();
+      var beforeSelectListenerSpy = jest.fn();
 
       tree.on('beforeSelect', beforeSelectListenerSpy);
       treeSelection.onSingleClick(eventMock);
@@ -76,7 +76,7 @@ describe('selectable feature', function() {
     });
 
     it('should fire "select" event if the "beforeSelect"-listener does not return false', function() {
-      var selectListenerSpy = jasmine.createSpy();
+      var selectListenerSpy = jest.fn();
 
       tree.on('beforeSelect', function() {
         return '';
@@ -88,7 +88,7 @@ describe('selectable feature', function() {
     });
 
     it('should not fire "select" event if the "beforeSelect"-listener returns false', function() {
-      var selectListenerSpy = jasmine.createSpy();
+      var selectListenerSpy = jest.fn();
 
       tree.on('beforeSelect', function() {
         return false;
@@ -100,8 +100,8 @@ describe('selectable feature', function() {
     });
 
     it('should fire custom events with args containing "nodeId" and "prevNodeId"', function() {
-      var beforeSelectListenerSpy = jasmine.createSpy();
-      var selectListenerSpy = jasmine.createSpy();
+      var beforeSelectListenerSpy = jest.fn();
+      var selectListenerSpy = jest.fn();
       var curNodeId = target.id;
       var prevNodeId = 'previousNodeId';
       var expected;
@@ -130,8 +130,8 @@ describe('selectable feature', function() {
     });
 
     it('should invoke "beforeSelect" and fire "select"', function() {
-      var beforeSelectListenerSpy = jasmine.createSpy();
-      var selectListenerSpy = jasmine.createSpy();
+      var beforeSelectListenerSpy = jest.fn();
+      var selectListenerSpy = jest.fn();
       var targetId = rootElement.querySelectorAll('.tui-tree-node')[2].id;
 
       tree.on({
@@ -166,7 +166,7 @@ describe('selectable feature', function() {
 
     it('deselect() should invoke "deselect" event', function() {
       var nodeId = rootElement.querySelector('.tui-tree-node').id;
-      var handler = jasmine.createSpy();
+      var handler = jest.fn();
 
       tree.select(nodeId);
       tree.on('deselect', handler);
@@ -177,7 +177,7 @@ describe('selectable feature', function() {
 
     it('deselect() should not invoke "deselect" event when node is removed', function() {
       var nodeId = rootElement.querySelector('.tui-tree-node').id;
-      var handler = jasmine.createSpy();
+      var handler = jest.fn();
 
       tree.select(nodeId);
       tree.remove(nodeId);
