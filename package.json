@@ -46,6 +46,6 @@
     "webpack-dev-server": "^3.8.0"
   },
   "dependencies": {
-    "tui-context-menu": "^2.1.6"
+    "tui-context-menu": "^2.1.9"
   }
 }
