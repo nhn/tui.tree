@@ -176,6 +176,8 @@ var Draggable = defineClass(
        */
       this.helperClassName = options.helperClassName;
 
+      this.helperRect = null;
+
       this._initHelper();
 
       if (this.isSortable) {
@@ -205,10 +207,9 @@ var Draggable = defineClass(
       var mousePosX = mousePos[0];
       var mousePosY = mousePos[1];
       var helperStyle = this.helperElement.style;
-      var helperRect = this.helperElement.getBoundingClientRect();
 
-      helperStyle.top = mousePosY - helperRect.height * 2 + this.helperPos.y + 'px';
-      helperStyle.left = mousePosX - helperRect.width / 2 + this.helperPos.x + 'px';
+      helperStyle.top = mousePosY - this.helperRect.height * 2 + this.helperPos.y + 'px';
+      helperStyle.left = mousePosX - this.helperRect.width / 2 + this.helperPos.x + 'px';
       helperStyle.display = '';
     },
 
@@ -347,6 +348,10 @@ var Draggable = defineClass(
         );
         this._setHelper(nodeElement.innerHTML);
       }
+
+      this.helperElement.style.display = '';
+      this.helperRect = this.helperElement.getBoundingClientRect();
+      this.helperElement.style.display = 'none';
 
       tree.on(
         {
