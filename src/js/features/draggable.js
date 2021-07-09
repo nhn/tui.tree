@@ -205,10 +205,10 @@ var Draggable = defineClass(
       var mousePosX = mousePos[0];
       var mousePosY = mousePos[1];
       var helperStyle = this.helperElement.style;
-      var pos = this.helperElement.getBoundingClientRect();
+      var helperRect = this.helperElement.getBoundingClientRect();
 
-      helperStyle.top = mousePosY - pos.height * 2 + this.helperPos.y + 'px';
-      helperStyle.left = mousePosX - pos.width / 2 + this.helperPos.x + 'px';
+      helperStyle.top = mousePosY - helperRect.height * 2 + this.helperPos.y + 'px';
+      helperStyle.left = mousePosX - helperRect.width / 2 + this.helperPos.x + 'px';
       helperStyle.display = '';
     },
 
