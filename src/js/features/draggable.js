@@ -176,8 +176,6 @@ var Draggable = defineClass(
        */
       this.helperClassName = options.helperClassName;
 
-      this.helperRect = null;
-
       this._initHelper();
 
       if (this.isSortable) {
