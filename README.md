@@ -6,7 +6,7 @@
 [![npm](https://img.shields.io/npm/v/tui-tree.svg)](https://www.npmjs.com/package/tui-tree)
 [![GitHub license](https://img.shields.io/github/license/nhn/tui.tree.svg)](https://github.com/nhn/tui.tree/blob/master/LICENSE)
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhn/tui.tree/labels/Help%20Wanted%20🤝)
-[![code with hearth by NHN](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN-ff1414.svg)](https://github.com/nhn)
+[![code with hearth by NHN Cloud](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN_Cloud-ff1414.svg)](https://github.com/nhn)
 
 <p><a href="https://nhn.github.io/tui.tree/latest/"><img src="https://user-images.githubusercontent.com/8615506/64508620-d784ef00-d318-11e9-82b1-9cb93a2955c5.gif" /></a></p>
 
@@ -251,7 +251,7 @@ For more information on PR's steps, please see links in the Contributing section
 ## 🍞 TOAST UI Family
 
 - [TOAST UI Editor](https://github.com/nhn/tui.editor)
-- [TOAST UI Calendar](https://github.com/nhn/tui.calendar)
+- [TOAST UI Calendar](https://github.com/nhn/tui.calendar)
 - [TOAST UI Chart](https://github.com/nhn/tui.chart)
 - [TOAST UI Image-Editor](https://github.com/nhn/tui.image-editor)
 - [TOAST UI Grid](https://github.com/nhn/tui.grid)
@@ -259,4 +259,4 @@ For more information on PR's steps, please see links in the Contributing section
 
 ## 📜 License
 
-This software is licensed under the [MIT](https://github.com/nhn/tui.tree/blob/master/LICENSE) © [NHN](https://github.com/nhn).
+This software is licensed under the [MIT](https://github.com/nhn/tui.tree/blob/master/LICENSE) © [NHN Cloud](https://github.com/nhn).
