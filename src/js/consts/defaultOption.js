@@ -1,9 +1,4 @@
 /**
- * @fileoverview Set default value of options
- * @author NHN. FE dev Lab <dl_javascript@nhn.com>
- */
-
-/**
  * A default values for tree
  * @const
  * @type {Object}

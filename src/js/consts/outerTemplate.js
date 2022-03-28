@@ -1,9 +1,4 @@
 /**
- * @fileoverview Set outer template
- * @author NHN. FE dev Lab <dl_javascript@nhn.com>
- */
-
-/**
  * Outer template
  * @type {{internalNode: string, leafNode: string}}
  */

@@ -1,8 +1,3 @@
-/**
- * Configs file for bundling
- * @author NHN. FE Development Lab <dl_javascript@nhn.com>
- */
-
 var path = require('path');
 var pkg = require('./package.json');
 var webpack = require('webpack');
