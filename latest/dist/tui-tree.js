@@ -1,7 +1,6 @@
 /*!
  * TOAST UI Tree
  * @version 4.0.9
- * @author NHN FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -371,11 +370,6 @@ module.exports = inArray;
 /***/ }),
 /* 5 */
 /***/ (function(module, exports, __webpack_require__) {
-
-/**
- * @fileoverview Helper object to make easy tree elements
- * @author NHN. FE dev Lab <dl_javascript@nhn.com>
- */
 
 var inArray = __webpack_require__(4);
 var forEach = __webpack_require__(9);
@@ -1731,11 +1725,6 @@ module.exports = getClass;
 /***/ (function(module, exports) {
 
 /**
- * @fileoverview Set default value of toggle button
- * @author NHN. FE dev Lab <dl_javascript@nhn.com>
- */
-
-/**
  * States in tree
  * @type {Object.<string, string>}
  */
@@ -1989,12 +1978,7 @@ module.exports = setClassName;
 /***/ (function(module, exports) {
 
 /**
- * @fileoverview Set each command name using in Ajax feature
- * @author NHN. FE dev Lab <dl_javascript@nhn.com>
- */
-
-/**
- * Ajax comman in tree
+ * Ajax command in tree
  * @type {Object.<string, string>}
  */
 module.exports = {
@@ -2221,11 +2205,6 @@ module.exports = __webpack_require__(35);
 /***/ }),
 /* 35 */
 /***/ (function(module, exports, __webpack_require__) {
-
-/**
- * @fileoverview Render tree and update tree
- * @author NHN. FE dev Lab <dl_javascript@nhn.com>
- */
 
 var forEachArray = __webpack_require__(0);
 var forEachOwnProperties = __webpack_require__(6);
@@ -4761,11 +4740,6 @@ module.exports = imagePing;
 /***/ (function(module, exports) {
 
 /**
- * @fileoverview Set default value of options
- * @author NHN. FE dev Lab <dl_javascript@nhn.com>
- */
-
-/**
  * A default values for tree
  * @const
  * @type {Object}
@@ -4836,11 +4810,6 @@ module.exports = {
 /***/ (function(module, exports) {
 
 /**
- * @fileoverview Set error messages
- * @author NHN. FE dev Lab <dl_javascript@nhn.com>
- */
-
-/**
  * Messages for tree
  * @type {Object.<string, string>}
  */
@@ -4859,11 +4828,6 @@ module.exports = {
 /***/ (function(module, exports) {
 
 /**
- * @fileoverview Set outer template
- * @author NHN. FE dev Lab <dl_javascript@nhn.com>
- */
-
-/**
  * Outer template
  * @type {{internalNode: string, leafNode: string}}
  */
@@ -4877,11 +4841,6 @@ module.exports = {
 /***/ }),
 /* 46 */
 /***/ (function(module, exports, __webpack_require__) {
-
-/**
- * @fileoverview Update view and control tree data
- * @author NHN. FE dev Lab <dl_javascript@nhn.com>
- */
 
 var forEachArray = __webpack_require__(0);
 var forEachOwnProperties = __webpack_require__(6);
@@ -5401,11 +5360,6 @@ module.exports = TreeModel;
 /* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/**
- * @fileoverview Control each tree node's data
- * @author NHN. FE dev Lab <dl_javascript@nhn.com>
- */
-
 var inArray = __webpack_require__(4);
 var forEachArray = __webpack_require__(0);
 var forEachOwnProperties = __webpack_require__(6);
@@ -5773,11 +5727,6 @@ module.exports = isTruthy;
 /* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/**
- * @fileoverview Feature that each tree node is possible to select as click
- * @author NHN. FE dev Lab <dl_javascript@nhn.com>
- */
-
 var forEachArray = __webpack_require__(0);
 var defineClass = __webpack_require__(3);
 var getTarget = __webpack_require__(10);
@@ -6029,11 +5978,6 @@ module.exports = Selectable;
 /***/ }),
 /* 51 */
 /***/ (function(module, exports, __webpack_require__) {
-
-/**
- * @fileoverview Feature that each tree node is possible to drag and drop
- * @author NHN. FE dev Lab <dl_javascript@nhn.com>
- */
 
 var inArray = __webpack_require__(4);
 var forEachArray = __webpack_require__(0);
@@ -6830,11 +6774,6 @@ module.exports = removeData;
 /* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/**
- * @fileoverview Feature that each tree node is possible to edit as double click
- * @author NHN. FE dev Lab <dl_javascript@nhn.com>
- */
-
 var forEachArray = __webpack_require__(0);
 var defineClass = __webpack_require__(3);
 var getTarget = __webpack_require__(10);
@@ -7302,11 +7241,6 @@ module.exports = Editable;
 /***/ }),
 /* 57 */
 /***/ (function(module, exports, __webpack_require__) {
-
-/**
- * @fileoverview Feature that each tree node is possible to check and uncheck
- * @author NHN. FE dev Lab <dl_javascript@nhn.com>
- */
 
 var inArray = __webpack_require__(4);
 var forEachArray = __webpack_require__(0);
@@ -8000,11 +7934,6 @@ module.exports = once;
 /* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/**
- * @fileoverview Feature that each tree node is possible to have context-menu
- * @author NHN. FE dev Lab <dl_javascript@nhn.com>
- */
-
 var forEachArray = __webpack_require__(0);
 var defineClass = __webpack_require__(3);
 var getTarget = __webpack_require__(10);
@@ -8256,11 +8185,6 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__60__;
 /***/ }),
 /* 61 */
 /***/ (function(module, exports, __webpack_require__) {
-
-/**
- * @fileoverview Feature that tree action is enable to communicate server
- * @author NHN. FE dev Lab <dl_javascript@nhn.com>
- */
 
 var ajax = __webpack_require__(62);
 var defineClass = __webpack_require__(3);
