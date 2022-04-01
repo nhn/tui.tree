@@ -18,11 +18,12 @@
   "repository": "https://github.com/nhn/tui.tree.git",
   "keywords": [
     "nhn",
+    "nhn cloud",
     "tui",
     "component",
     "tree"
   ],
-  "author": "NHN FE Development Lab <dl_javascript@nhn.com>",
+  "author": "NHN Cloud. FE Development Lab <dl_javascript@nhn.com>",
   "license": "MIT",
   "devDependencies": {
     "@toast-ui/release-notes": "^2.0.1",

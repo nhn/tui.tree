@@ -1,8 +1,3 @@
-/**
- * @fileoverview Helper object to make easy tree elements
- * @author NHN. FE dev Lab <dl_javascript@nhn.com>
- */
-
 var inArray = require('tui-code-snippet/array/inArray');
 var forEach = require('tui-code-snippet/collection/forEach');
 var forEachArray = require('tui-code-snippet/collection/forEachArray');

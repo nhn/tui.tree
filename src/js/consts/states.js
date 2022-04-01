@@ -1,9 +1,4 @@
 /**
- * @fileoverview Set default value of toggle button
- * @author NHN. FE dev Lab <dl_javascript@nhn.com>
- */
-
-/**
  * States in tree
  * @type {Object.<string, string>}
  */

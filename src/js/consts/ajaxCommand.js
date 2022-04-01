@@ -1,10 +1,5 @@
 /**
- * @fileoverview Set each command name using in Ajax feature
- * @author NHN. FE dev Lab <dl_javascript@nhn.com>
- */
-
-/**
- * Ajax comman in tree
+ * Ajax command in tree
  * @type {Object.<string, string>}
  */
 module.exports = {

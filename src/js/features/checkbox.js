@@ -1,8 +1,3 @@
-/**
- * @fileoverview Feature that each tree node is possible to check and uncheck
- * @author NHN. FE dev Lab <dl_javascript@nhn.com>
- */
-
 var inArray = require('tui-code-snippet/array/inArray');
 var forEachArray = require('tui-code-snippet/collection/forEachArray');
 var CustomEvents = require('tui-code-snippet/customEvents/customEvents');

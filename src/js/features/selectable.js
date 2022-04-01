@@ -1,8 +1,3 @@
-/**
- * @fileoverview Feature that each tree node is possible to select as click
- * @author NHN. FE dev Lab <dl_javascript@nhn.com>
- */
-
 var forEachArray = require('tui-code-snippet/collection/forEachArray');
 var defineClass = require('tui-code-snippet/defineClass/defineClass');
 var getTarget = require('tui-code-snippet/domEvent/getTarget');

@@ -1,8 +1,3 @@
-/**
- * Configs file for bundling
- * @author NHN. FE Development Lab <dl_javascript@nhn.com>
- */
-
 var path = require('path');
 var pkg = require('./package.json');
 var webpack = require('webpack');
@@ -34,12 +29,7 @@ module.exports = function(env, argv) {
   var isProduction = argv.mode === 'production';
   var isMinified = !!argv.minify;
   var FILENAME = pkg.name + (isMinified ? '.min' : '');
-  var BANNER = [
-    'TOAST UI Tree',
-    '@version ' + pkg.version,
-    '@author ' + pkg.author,
-    '@license ' + pkg.license
-  ].join('\n');
+  var BANNER = ['TOAST UI Tree', '@version ' + pkg.version, '@license ' + pkg.license].join('\n');
 
   return {
     mode: 'development',

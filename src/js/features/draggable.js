@@ -1,8 +1,3 @@
-/**
- * @fileoverview Feature that each tree node is possible to drag and drop
- * @author NHN. FE dev Lab <dl_javascript@nhn.com>
- */
-
 var inArray = require('tui-code-snippet/array/inArray');
 var forEachArray = require('tui-code-snippet/collection/forEachArray');
 var defineClass = require('tui-code-snippet/defineClass/defineClass');
