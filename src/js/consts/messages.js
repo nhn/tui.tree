@@ -1,9 +1,4 @@
 /**
- * @fileoverview Set error messages
- * @author NHN. FE dev Lab <dl_javascript@nhn.com>
- */
-
-/**
  * Messages for tree
  * @type {Object.<string, string>}
  */

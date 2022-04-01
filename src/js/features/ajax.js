@@ -1,8 +1,3 @@
-/**
- * @fileoverview Feature that tree action is enable to communicate server
- * @author NHN. FE dev Lab <dl_javascript@nhn.com>
- */
-
 var ajax = require('tui-code-snippet/ajax/index.js');
 var defineClass = require('tui-code-snippet/defineClass/defineClass');
 var extend = require('tui-code-snippet/object/extend');

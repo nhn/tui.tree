@@ -1,8 +1,3 @@
-/**
- * @fileoverview Render tree and update tree
- * @author NHN. FE dev Lab <dl_javascript@nhn.com>
- */
-
 var forEachArray = require('tui-code-snippet/collection/forEachArray');
 var forEachOwnProperties = require('tui-code-snippet/collection/forEachOwnProperties');
 var CustomEvents = require('tui-code-snippet/customEvents/customEvents');

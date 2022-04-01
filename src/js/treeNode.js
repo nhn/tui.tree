@@ -1,8 +1,3 @@
-/**
- * @fileoverview Control each tree node's data
- * @author NHN. FE dev Lab <dl_javascript@nhn.com>
- */
-
 var inArray = require('tui-code-snippet/array/inArray');
 var forEachArray = require('tui-code-snippet/collection/forEachArray');
 var forEachOwnProperties = require('tui-code-snippet/collection/forEachOwnProperties');
