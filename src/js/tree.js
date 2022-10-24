@@ -1569,7 +1569,7 @@ var Tree = defineClass(
     isLeaf: function(nodeId) {
       var node = this.model.getNode(nodeId);
 
-      return node && node.isLeaf();
+      return !!node && node.isLeaf();
     },
 
     /**
