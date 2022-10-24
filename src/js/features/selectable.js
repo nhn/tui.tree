@@ -115,7 +115,7 @@ var Selectable = defineClass(
        * @event Tree#beforeSelect
        * @type {object} evt - Event data
        * @property {string} nodeId - Selected node id
-       * @property {string} prevNodeId - Previous selected node id
+       * @property {?string} prevNodeId - Previous selected node id
        * @property {HTMLElement|undefined} target - Target element
        * @example
        * tree
@@ -148,7 +148,7 @@ var Selectable = defineClass(
          * @event Tree#select
          * @type {object} evt - Event data
          * @property {string} nodeId - Selected node id
-         * @property {string} prevNodeId - Previous selected node id
+         * @property {?string} prevNodeId - Previous selected node id
          * @property {HTMLElement|undefined} target - Target element
          * @example
          * tree
@@ -190,7 +190,7 @@ var Selectable = defineClass(
     /**
      * Get selected node id
      * @memberof Tree.prototype
-     * @returns {string} selected node id
+     * @returns {?string} selected node id
      */
     getSelectedNodeId: function() {
       return this.selectedNodeId;

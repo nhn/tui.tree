@@ -182,7 +182,7 @@ var TreeModel = defineClass(
     /**
      * Find node
      * @param {string} id - A node id to find
-     * @returns {?TreeNode} Node
+     * @returns {TreeNode|undefined} Node
      */
     getNode: function(id) {
       return this.treeHash[id];
