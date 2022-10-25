@@ -1409,7 +1409,7 @@ var Tree = defineClass(
      * - If 'isSilent' is not true, it redraws the tree
      * @param {string} nodeId - Node id
      * @param {string} newParentId - New parent id
-     * @param {number} index - Index number of selected node
+     * @param {number} [index] - Index number of selected node (default 0)
      * @param {object} [options] - Options
      *     @param {boolean} [options.isSilent] - If true, it doesn't trigger the 'update' event
      *     @param {boolean} [options.useAjax] - State of using Ajax
@@ -1454,7 +1454,7 @@ var Tree = defineClass(
      * - If 'isSilent' is not true, it redraws the tree
      * @param {string} nodeId - Node id
      * @param {string} newParentId - New parent id
-     * @param {number} index - Index number of selected node
+     * @param {number} [index] - Index number of selected node (default 0)
      * @param {boolean} [isSilent] - If true, it doesn't redraw children
      * @private
      */

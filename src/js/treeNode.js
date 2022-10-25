@@ -272,7 +272,7 @@ var TreeNode = defineClass(
     /**
      * Insert child id
      * @param {string} id - Child node id
-     * @param {number} index - Index number of insert position
+     * @param {number} [index] - Index number of insert position (default 0)
      */
     insertChildId: function(id, index) {
       var childIds = this._childIds;
@@ -285,7 +285,7 @@ var TreeNode = defineClass(
     /**
      * Move child id
      * @param {string} id - Child node id
-     * @param {number} index - Index number of insert position
+     * @param {number} [index] - Index number of insert position (default 0)
      */
     moveChildId: function(id, index) {
       var childIds = this._childIds;
