@@ -49,7 +49,6 @@ var API_LIST = [];
  *     @param {string} options.hoverClassName - Class name for hovered node
  *     @param {string} options.lineClassName - Class name for moving position line
  *     @param {string} options.helperClassName - Class name for helper's outer element
- *     @param {string} options.helperTemplate - Template string for helper's inner contents
  *     @param {{top: number, bottom: number}} options.lineBoundary - Boundary value for visible moving line
  * @ignore
  */

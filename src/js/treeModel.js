@@ -182,7 +182,7 @@ var TreeModel = defineClass(
     /**
      * Find node
      * @param {string} id - A node id to find
-     * @returns {?TreeNode} Node
+     * @returns {TreeNode|undefined} Node
      */
     getNode: function(id) {
       return this.treeHash[id];
@@ -348,7 +348,7 @@ var TreeModel = defineClass(
      * Move a node to new parent's child
      * @param {string} nodeId - Node id
      * @param {string} newParentId - New parent id
-     * @param {number} [index] - Start index number for inserting
+     * @param {number} [index] - Start index number for inserting (default 0)
      * @param {boolean} [isSilent] - If true, it doesn't trigger the 'update' event
      */
     /* eslint-disable complexity*/
@@ -381,7 +381,7 @@ var TreeModel = defineClass(
      * @param {string} nodeId - Node id
      * @param {string} newParentId - New parent id
      * @param {string} originalParentId - Original parent id
-     * @param {number} index - Moving index (When child node is moved on parent node, the value is -1)
+     * @param {number} [index] - Moving index (When child node is moved on parent node, the value is -1) (default 0)
      * @private
      */
     _changeOrderOfIds: function(nodeId, newParentId, originalParentId, index) {

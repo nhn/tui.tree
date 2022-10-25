@@ -553,7 +553,7 @@ var Checkbox = defineClass(
      * //    └─ node9 ( )
      *
      * var allCheckedList = tree.getCheckedList(); // ['node1', 'node2', 'node3' ,....]
-     * var descendantsCheckedList = tree.getCheekedList('node6'); // ['node7', 'node8']
+     * var descendantsCheckedList = tree.getCheckedList('node6'); // ['node7', 'node8']
      */
     getCheckedList: function(parentId) {
       var tree = this.tree;
@@ -585,7 +585,7 @@ var Checkbox = defineClass(
      * //    └─ node9 ( )
      *
      * var allTopCheckedList = tree.getTopCheckedList(); // ['node1', 'node5', 'node7']
-     * var descendantsTopCheckedList = tree.getTopCheekedList('node6'); // ['node7']
+     * var descendantsTopCheckedList = tree.getTopCheckedList('node6'); // ['node7']
      */
     getTopCheckedList: function(parentId) {
       var tree = this.tree;
@@ -617,7 +617,7 @@ var Checkbox = defineClass(
      * @returns {Array.<string>} Checked node ids
      * @example
      * var allBottomCheckedList = tree.getBottomCheckedList(); // ['node2', 'node3', 'node5', 'node8']
-     * var descendantsBottomCheckedList = tree.getBottomCheekedList('node6'); // ['node8']
+     * var descendantsBottomCheckedList = tree.getBottomCheckedList('node6'); // ['node8']
      */
     getBottomCheckedList: function(parentId) {
       var tree = this.tree;

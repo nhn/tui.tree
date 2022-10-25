@@ -25,10 +25,9 @@ var INPUT_CLASSNAME = 'tui-tree-input';
  * @class Editable
  * @param {Tree} tree - Tree
  * @param {Object} options - Options
- *  @param {string} options.editableClassName - Classname of editable element
+ *  @param {string} [options.editableClassName] - Classname of editable element
  *  @param {string} options.dataKey - Key of node data to set value
- *  @param {string} [options.dataValue] - Value of node data to set value (Use "createNode" API)
- *  @param {string} [options.inputClassName] - Classname of input element
+ *  @param {string} [options.defaultValue] - Default value to use when the user leaves the input empty
  * @ignore
  */
 var Editable = defineClass(

@@ -858,7 +858,7 @@ var Tree = defineClass(
     /**
      * Get node data
      * @param {string} nodeId - Node id
-     * @returns {object|undefined} Node data
+     * @returns {?object} Node data
      */
     getNodeData: function(nodeId) {
       return this.model.getNodeData(nodeId);
@@ -873,7 +873,7 @@ var Tree = defineClass(
      *     @param {boolean} [options.useAjax] - State of using Ajax
      * @exmaple
      * tree.setNodeData(nodeId, {foo: 'bar'}); // auto refresh
-     * tree.setNodeData(nodeId, {foo: 'bar'}, true); // not refresh
+     * tree.setNodeData(nodeId, {foo: 'bar'}, {isSilent: true}); // not refresh
      */
     setNodeData: function(nodeId, data, options) {
       var treeAjax = this.enabledFeatures.Ajax;
@@ -916,8 +916,8 @@ var Tree = defineClass(
      *     @param {boolean} [options.isSilent] - If true, it doesn't trigger the 'update' event
      *     @param {boolean} [options.useAjax] - State of using Ajax
      * @example
-     * tree.setNodeData(nodeId, 'foo'); // auto refresh
-     * tree.setNodeData(nodeId, 'foo', true); // not refresh
+     * tree.removeNodeData(nodeId, 'foo'); // auto refresh
+     * tree.removeNodeData(nodeId, 'foo', {isSilent: true}); // not refresh
      */
     removeNodeData: function(nodeId, names, options) {
       var treeAjax = this.enabledFeatures.Ajax;
@@ -958,7 +958,7 @@ var Tree = defineClass(
      * @returns {string|null} Node state(('opened', 'closed', null)
      * @example
      * tree.getState(nodeId); // 'opened', 'closed',
-     *                        // undefined if the node is nonexistent
+     *                        // null if the node is nonexistent
      */
     getState: function(nodeId) {
       var node = this.model.getNode(nodeId);
@@ -1197,7 +1197,7 @@ var Tree = defineClass(
      * @param {object} [options] - Options
      *     @param {boolean} [options.isSilent] - If true, it doesn't redraw children
      *     @param {boolean} [options.useAjax] - State of using Ajax
-     * @returns {?Array.<string>} Added node ids
+     * @returns {Array.<string>|undefined} Added node ids
      * @example
      * // add node with redrawing
      * var firstAddedIds = tree.add({text:'FE development team1'}, parentId);
@@ -1207,7 +1207,9 @@ var Tree = defineClass(
      * var secondAddedIds = tree.add([
      *    {text: 'FE development team2'},
      *    {text: 'FE development team3'}
-     * ], parentId, true);
+     * ], parentId, {
+     *    isSilent: true
+     * });
      * console.log(secondAddedIds); // ["tui-tree-node-11", "tui-tree-node-12"]
      */
     add: function(data, parentId, options) {
@@ -1254,7 +1256,7 @@ var Tree = defineClass(
      * @param {object} [options] - Options
      *     @param {string} [options.nodeId] - Parent node id to reset all child data
      *     @param {boolean} [options.useAjax] - State of using Ajax
-     * @returns {?Array.<string>} Added node ids
+     * @returns {Array.<string>|undefined} Added node ids
      * @example
      * tree.resetAllData([
      *  {text: 'hello', children: [
@@ -1316,7 +1318,7 @@ var Tree = defineClass(
      *     @param {boolean} [options.useAjax] - State of using Ajax
      * @example
      * tree.removeAllChildren(nodeId); // Redraws the node
-     * tree.removeAllChildren(nodId, true); // Doesn't redraw the node
+     * tree.removeAllChildren(nodId, {isSilent: true}); // Doesn't redraw the node
      */
     removeAllChildren: function(nodeId, options) {
       var treeAjax = this.enabledFeatures.Ajax;
@@ -1369,7 +1371,7 @@ var Tree = defineClass(
      *     @param {boolean} [options.useAjax] - State of using Ajax
      * @example
      * tree.remove(myNodeId); // remove node with redrawing
-     * tree.remove(myNodeId, true); // remove node without redrawing
+     * tree.remove(myNodeId, {isSilent: true}); // remove node without redrawing
      */
     remove: function(nodeId, options) {
       var treeAjax = this.enabledFeatures.Ajax;
@@ -1407,13 +1409,13 @@ var Tree = defineClass(
      * - If 'isSilent' is not true, it redraws the tree
      * @param {string} nodeId - Node id
      * @param {string} newParentId - New parent id
-     * @param {number} index - Index number of selected node
+     * @param {number} [index] - Index number of selected node (default 0)
      * @param {object} [options] - Options
      *     @param {boolean} [options.isSilent] - If true, it doesn't trigger the 'update' event
      *     @param {boolean} [options.useAjax] - State of using Ajax
      * @example
      * tree.move(myNodeId, newParentId); // mode node with redrawing
-     * tree.move(myNodeId, newParentId, true); // move node without redrawing
+     * tree.move(myNodeId, newParentId, {isSilent: true}); // move node without redrawing
      */
     move: function(nodeId, newParentId, index, options) {
       var treeAjax = this.enabledFeatures.Ajax;
@@ -1452,7 +1454,7 @@ var Tree = defineClass(
      * - If 'isSilent' is not true, it redraws the tree
      * @param {string} nodeId - Node id
      * @param {string} newParentId - New parent id
-     * @param {number} index - Index number of selected node
+     * @param {number} [index] - Index number of selected node (default 0)
      * @param {boolean} [isSilent] - If true, it doesn't redraw children
      * @private
      */
@@ -1567,7 +1569,7 @@ var Tree = defineClass(
     isLeaf: function(nodeId) {
       var node = this.model.getNode(nodeId);
 
-      return node && node.isLeaf();
+      return !!node && node.isLeaf();
     },
 
     /**
@@ -1655,14 +1657,13 @@ var Tree = defineClass(
      *              method: 'POST',
      *              params: function(evt) {
      *                  return {
-     *                      paramA: evt.a,
-     *                      paramB: evt.b
+     *                      paramA: evt.nodeId,
      *                  };
      *              }
      *          },
      *          removeAllChildren: {
      *              url: function(evt) {
-     *                  return 'api/remove_all/' + evt.nodeId,
+     *                  return 'api/remove_all/' + evt.parentId,
      *              },
      *              contentType: 'application/json',
      *              method: 'POST'
