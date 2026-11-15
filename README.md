@@ -1,5 +1,9 @@
 # TOAST UI Component : Tree
 
+> **⚠️ This project is no longer maintained.**
+>
+> TOAST UI Tree is deprecated, and this repository is archived. No new features or bug fixes will be released.
+
 > Component that displays data hierarchically.
 
 [![GitHub release](https://img.shields.io/github/release/nhn/tui.tree.svg)](https://github.com/nhn/tui.tree/releases/latest)
