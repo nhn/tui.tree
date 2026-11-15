@@ -9,6 +9,7 @@ var on = require('tui-code-snippet/domEvent/on');
 var addClass = require('tui-code-snippet/domUtil/addClass');
 var removeClass = require('tui-code-snippet/domUtil/removeClass');
 var template = require('tui-code-snippet/domUtil/template');
+var sanitize = require('dompurify').sanitize;
 var extend = require('tui-code-snippet/object/extend');
 var isFunction = require('tui-code-snippet/type/isFunction');
 var isHTMLNode = require('tui-code-snippet/type/isHTMLNode');
@@ -233,6 +234,7 @@ var Tree = defineClass(
        * @private
        */
       this._renderTemplate = options.renderTemplate || template;
+      this._useCustomRenderer = !!options.renderTemplate;
 
       /**
        * Send the hostname to google analytics.
@@ -641,7 +643,7 @@ var Tree = defineClass(
         });
       }
 
-      return extend(props, classNames, node.getAllData());
+      return extend({}, node.getAllData(), classNames, props);
     },
 
     /**
@@ -687,7 +689,7 @@ var Tree = defineClass(
         html = this._makeInnerHTML(node);
         element = document.getElementById(nodeId);
       }
-      element.innerHTML = html;
+      element.innerHTML = this._useCustomRenderer ? html : sanitize(html);
       this._setClassNameAndVisibilityByFeature(node);
 
       /**

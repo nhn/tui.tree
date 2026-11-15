@@ -1,6 +1,6 @@
 {
   "name": "tui-tree",
-  "version": "4.0.9",
+  "version": "4.0.10",
   "main": "dist/tui-tree",
   "files": [
     "dist"
@@ -47,6 +47,7 @@
     "webpack-dev-server": "^3.8.0"
   },
   "dependencies": {
+    "dompurify": "^2.5.9",
     "tui-context-menu": "^2.1.9"
   }
 }

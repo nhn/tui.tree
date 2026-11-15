@@ -94,7 +94,7 @@ Information about each option is as follows:
 |`[template]`|`{string}`|Template for rendering each tree node|
 |`[template.internalNode]`|`{string}`|Template of node having children|
 |`[template.leafNode]`|`{string}`|Template of leaf node|
-|`[renderTemplate]`|`{function}`|Render template function|
+|`[renderTemplate]`|`{function}`|Render template function. The rendered HTML is not sanitized when this option is set.|
 
 ### Tree data format: `data`
 
@@ -152,6 +152,9 @@ You can customize each tree node's contents using `template` and `renderTemplate
 `template` option is override default template string.
 `renderTemplate` option can process template using a template engine like [mustache.js](https://github.com/janl/mustache.js/).
 tui.tree uses [tui-code-snippet's template](https://nhn.github.io/tui.code-snippet/2.2.0/domUtil#template) as default template engine.
+
+With the default template engine, tui.tree sanitizes the rendered HTML with [DOMPurify](https://github.com/cure53/DOMPurify) before inserting it into the DOM. Event handler attributes, `script` elements, and `javascript:` URLs are removed.
+If you set `renderTemplate`, the rendered HTML is inserted as it is. Escape or sanitize untrusted data in your render function.
 
 This example show how to replace node's contents having children by a template engine.
 

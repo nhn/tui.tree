@@ -1,3 +1,7 @@
+> **⚠️ This project is no longer maintained.**
+>
+> TOAST UI Tree is deprecated, and this repository is archived. No new features or bug fixes will be released.
+
 ## Tutorials
 
 - [Getting Started](getting-started.md)
