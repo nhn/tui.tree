@@ -47,6 +47,7 @@
     "webpack-dev-server": "^3.8.0"
   },
   "dependencies": {
+    "dompurify": "^2.5.9",
     "tui-context-menu": "^2.1.9"
   }
 }

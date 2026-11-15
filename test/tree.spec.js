@@ -352,4 +352,109 @@ describe('Tree', function() {
       expect(util.sendHostName).not.toHaveBeenCalled();
     });
   });
+
+  describe('rendering', function() {
+    var injected = 'x"><img src="x" onerror="window.injected = true"><span class="y';
+
+    beforeEach(function() {
+      loadFixtures('basicFixture.html');
+      container = '#tree';
+    });
+
+    it('should not let node data override internal template properties', function() {
+      var leafElement;
+
+      tree = new Tree(container, {
+        data: [
+          { text: 'leaf', textClass: injected, nodeClass: injected, leafClass: injected },
+          {
+            text: 'folder',
+            state: 'opened',
+            toggleBtnClass: injected,
+            subtreeClass: injected,
+            stateClass: injected,
+            children: [{ text: 'child' }]
+          }
+        ],
+        usageStatistics: false
+      });
+      leafElement = tree.rootElement.querySelector('li');
+
+      expect(tree.rootElement.querySelector('img')).toBeNull();
+      expect(leafElement.className).toBe('tui-tree-node tui-tree-leaf');
+      expect(leafElement.querySelector('.tui-tree-text').className).toBe(
+        'tui-tree-text tui-js-tree-text'
+      );
+    });
+
+    it('should not let node data from add() and setNodeData() override internal template properties', function() {
+      var nodeId;
+
+      tree = new Tree(container, {
+        data: [{ text: 'leaf' }],
+        usageStatistics: false
+      });
+      nodeId = tree.getChildIds(tree.getRootNodeId())[0];
+
+      tree.setNodeData(nodeId, { textClass: injected });
+      tree.add({ text: 'added', nodeClass: injected });
+
+      expect(tree.rootElement.querySelector('img')).toBeNull();
+    });
+
+    it('should pass custom node data to the template', function() {
+      tree = new Tree(container, {
+        data: [{ text: 'leaf', pid: 'p1' }],
+        template: {
+          leafNode: '<span class="{{textClass}}" data-pid="{{pid}}">{{text}}</span>'
+        },
+        usageStatistics: false
+      });
+
+      expect(tree.rootElement.querySelector('[data-pid]').getAttribute('data-pid')).toBe('p1');
+    });
+
+    it('should remove scripts from html rendered by the default renderer', function() {
+      var anchor;
+
+      tree = new Tree(container, {
+        data: [
+          { text: '<img src="x" onerror="window.injected = true"><b>bold</b>' },
+          {
+            text:
+              '<a href="javascript:void(0)" target="_blank" onclick="window.injected = true">a</a>'
+          }
+        ],
+        usageStatistics: false
+      });
+      anchor = tree.rootElement.querySelector('a');
+
+      expect(tree.rootElement.querySelector('img').hasAttribute('onerror')).toBe(false);
+      expect(tree.rootElement.querySelector('b').textContent).toBe('bold');
+      expect(anchor.hasAttribute('href')).toBe(false);
+      expect(anchor.hasAttribute('target')).toBe(false);
+      expect(anchor.hasAttribute('onclick')).toBe(false);
+    });
+
+    it('should not sanitize html rendered by the renderTemplate option', function() {
+      tree = new Tree(container, {
+        data: [{ text: '<span class="inline" onclick="window.selected = true">leaf</span>' }],
+        renderTemplate: template,
+        usageStatistics: false
+      });
+
+      expect(tree.rootElement.querySelector('.inline').hasAttribute('onclick')).toBe(true);
+    });
+
+    it('should not let node data override outer template properties with the renderTemplate option', function() {
+      tree = new Tree(container, {
+        data: [{ text: 'leaf', nodeClass: injected }],
+        renderTemplate: template,
+        usageStatistics: false
+      });
+
+      expect(tree.rootElement.querySelector('img')).toBeNull();
+      expect(tree.rootElement.querySelector('li').className).toBe('tui-tree-node tui-tree-leaf');
+    });
+  });
 });
